@@ -12,25 +12,29 @@ const socialLinks = [
     name: 'LinkedIn',
     url: 'https://www.linkedin.com/in/john-davis-williams/',
     description: 'Professional network',
-    thumbnail: '/images/previews/linkedin.svg'
+    icon: '/images/previews/linkedin.svg',
+    preview: '/images/previews/linkedin-preview.jpg'
   },
   {
     name: 'GitHub',
     url: 'https://github.com/thejohndwilliams',
     description: 'Code & projects',
-    thumbnail: '/images/previews/github.svg'
+    icon: '/images/previews/github.svg',
+    preview: '/images/previews/github-preview.jpg'
   },
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/thejohndwilliams/',
     description: 'Visual journal',
-    thumbnail: '/images/previews/instagram.svg'
+    icon: '/images/previews/instagram.svg',
+    preview: '/images/previews/instagram-preview.jpg'
   },
   {
     name: 'Behance',
     url: 'https://www.behance.net/killthewizard',
     description: 'Design work',
-    thumbnail: '/images/previews/behance.svg'
+    icon: '/images/previews/behance.svg',
+    preview: '/images/previews/behance-preview.jpg'
   }
 ];
 ---
@@ -70,21 +74,29 @@ const socialLinks = [
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="link-card flex items-center gap-4 group"
+              class="link-card flex items-center justify-between gap-4 group"
             >
-              <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-white/5 ring-1 ring-white/10">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-white/5 p-2">
+                  <img
+                    src={link.icon}
+                    alt=""
+                    class="w-full h-full object-contain"
+                  />
+                </div>
+                <div class="min-w-0">
+                  <span class="font-medium text-gold">{link.name}</span>
+                  <p class="text-sm opacity-50 truncate">{link.description}</p>
+                </div>
+              </div>
+              <div class="w-20 h-14 rounded-md overflow-hidden flex-shrink-0 bg-white/5 ring-1 ring-white/10">
                 <img
-                  src={link.thumbnail}
-                  alt={`${link.name} preview`}
+                  src={link.preview}
+                  alt={`${link.name} content preview`}
                   class="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>
-              <div class="flex-grow min-w-0">
-                <span class="font-medium text-gold">{link.name}</span>
-                <p class="text-sm opacity-50 truncate">{link.description}</p>
-              </div>
-              <span class="opacity-30 group-hover:opacity-60 transition-all flex-shrink-0">&nearr;</span>
             </a>
           ))}
         </div>
