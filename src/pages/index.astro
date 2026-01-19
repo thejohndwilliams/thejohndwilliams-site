@@ -11,22 +11,26 @@ const socialLinks = [
   {
     name: 'LinkedIn',
     url: 'https://www.linkedin.com/in/john-davis-williams/',
-    description: 'Professional network'
+    description: 'Professional network',
+    thumbnail: '/images/previews/linkedin.svg'
   },
   {
     name: 'GitHub',
     url: 'https://github.com/thejohndwilliams',
-    description: 'Code & projects'
+    description: 'Code & projects',
+    thumbnail: '/images/previews/github.svg'
   },
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/thejohndwilliams/',
-    description: 'Visual journal'
+    description: 'Visual journal',
+    thumbnail: '/images/previews/instagram.svg'
   },
   {
     name: 'Behance',
     url: 'https://www.behance.net/killthewizard',
-    description: 'Design work'
+    description: 'Design work',
+    thumbnail: '/images/previews/behance.svg'
   }
 ];
 ---
@@ -62,17 +66,25 @@ const socialLinks = [
         <p class="text-subhead mb-4">Elsewhere</p>
         <div class="space-y-3">
           {socialLinks.map((link) => (
-            <a 
+            <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="link-card flex justify-between items-center group"
+              class="link-card flex items-center gap-4 group"
             >
-              <div>
-                <span class="font-medium text-gold">{link.name}</span>
-                <p class="text-sm opacity-50">{link.description}</p>
+              <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-white/5 ring-1 ring-white/10">
+                <img
+                  src={link.thumbnail}
+                  alt={`${link.name} preview`}
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
-              <span class="opacity-30 group-hover:opacity-60 transition-all">&nearr;</span>
+              <div class="flex-grow min-w-0">
+                <span class="font-medium text-gold">{link.name}</span>
+                <p class="text-sm opacity-50 truncate">{link.description}</p>
+              </div>
+              <span class="opacity-30 group-hover:opacity-60 transition-all flex-shrink-0">&nearr;</span>
             </a>
           ))}
         </div>
