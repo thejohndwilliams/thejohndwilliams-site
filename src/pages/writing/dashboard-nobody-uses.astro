@@ -1,0 +1,112 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+
+const frontmatter = {
+  title: 'The Dashboard Nobody Uses',
+  description: 'Why most analytics projects fail before they launch, and what to do about it.',
+  date: '2025-01-15',
+  readTime: '5 min'
+};
+---
+
+<PostLayout {...frontmatter}>
+  <p>
+    There's a particular kind of silence that follows a dashboard demo. The executive 
+    nods politely. Someone mentions how "clean" it looks. Then everyone goes back to 
+    making decisions the same way they always have—gut instinct, loudest voice in the 
+    room, or whatever the CEO saw on their commute.
+  </p>
+
+  <p>
+    I've watched this happen dozens of times. A team spends months building something 
+    technically elegant—real-time data, beautiful visualizations, all the right metrics. 
+    Six months later, the dashboard sits unused, a monument to good intentions and 
+    misaligned assumptions.
+  </p>
+
+  <h2>The problem isn't technical</h2>
+
+  <p>
+    Most analytics projects fail for the same reason: they solve problems nobody actually 
+    has. The technical architecture is flawless. The data pipeline is robust. The 
+    visualizations are gorgeous. But somewhere along the way, someone forgot to ask a 
+    basic question: <em>What decision will change because of this?</em>
+  </p>
+
+  <p>
+    If you can't answer that specifically—"When this metric drops below X, we will do Y"—you 
+    don't have an analytics project. You have a data decoration project.
+  </p>
+
+  <h2>Start with the decision</h2>
+
+  <p>
+    Every successful analytics implementation I've been part of started backwards. Not 
+    "what data do we have?" but "what decisions do we need to make, and what would we 
+    need to know to make them well?"
+  </p>
+
+  <p>
+    This sounds obvious. It isn't. Organizations are remarkably bad at articulating 
+    their actual decision-making processes. Leaders will tell you they want "better 
+    visibility" or "more insights"—vague language that masks a deeper uncertainty 
+    about what they're actually trying to accomplish.
+  </p>
+
+  <blockquote>
+    <p>
+      The dashboard that gets used is the one that answers a question someone 
+      was already asking.
+    </p>
+  </blockquote>
+
+  <h2>What to do instead</h2>
+
+  <p>
+    Before building anything, spend time with the people who will supposedly use it. 
+    Not just the executives who requested it—the managers and analysts who will check 
+    it daily (or won't).
+  </p>
+
+  <p>
+    Ask them: What decisions do you make regularly? What information do you wish you 
+    had? What questions come up in your weekly meetings that nobody can answer?
+  </p>
+
+  <p>
+    Then build the simplest thing that addresses those specific needs. Not a platform. 
+    Not a comprehensive solution. A focused tool that helps real people make real 
+    decisions.
+  </p>
+
+  <p>
+    The best dashboard I ever built had three metrics on it. Three. It replaced a 
+    40-tab Excel monster that nobody understood, and it actually got used because it 
+    answered exactly the questions that mattered.
+  </p>
+
+  <h2>The real work is organizational</h2>
+
+  <p>
+    Technical skills are table stakes. The actual challenge is navigating organizational 
+    dynamics—understanding who really makes decisions, what they're afraid of, and why 
+    they might resist better information even when they claim to want it.
+  </p>
+
+  <p>
+    Because sometimes people don't use dashboards on purpose. They prefer ambiguity. 
+    They'd rather have plausible deniability than clear accountability. A dashboard 
+    that works is a dashboard that forces choices, and not everyone is ready for that.
+  </p>
+
+  <p>
+    Your job isn't just to build something that works. It's to build something that 
+    works <em>for this organization, with these people, at this moment</em>. That 
+    requires understanding people as much as understanding data.
+  </p>
+
+  <p>
+    The dashboard nobody uses is usually trying to solve a political problem with 
+    technology. Don't make that mistake.
+  </p>
+</PostLayout>

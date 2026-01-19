@@ -1,0 +1,63 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: string;
+  readTime?: string;
+}
+
+const { title, description, date, readTime } = Astro.props;
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="py-16 md:py-24">
+    <div class="container-narrow">
+      <!-- Header -->
+      <header class="max-w-2xl mb-12 animate-fade-in">
+        <a href="/writing" class="text-small text-slate-500 hover:text-charcoal-900 no-underline mb-6 inline-block">
+          ← Back to Writing
+        </a>
+        <h1 class="text-display mb-6">{title}</h1>
+        <p class="text-xl text-charcoal-700 mb-4">{description}</p>
+        <div class="flex items-center gap-4 text-small text-slate-500">
+          <time datetime={date}>{formatDate(date)}</time>
+          {readTime && (
+            <>
+              <span>·</span>
+              <span>{readTime} read</span>
+            </>
+          )}
+        </div>
+        <div class="divider-gold mt-8"></div>
+      </header>
+
+      <!-- Content -->
+      <div class="prose animate-slide-up delay-100">
+        <slot />
+      </div>
+
+      <!-- Footer -->
+      <footer class="mt-16 pt-12 border-t border-cream-300 animate-slide-up delay-200">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <p class="font-serif text-lg text-charcoal-900 mb-2">Thanks for reading.</p>
+            <p class="text-charcoal-700 text-body">
+              Have thoughts or questions? I'd like to hear them.
+            </p>
+          </div>
+          <a href="/links" class="btn btn-outline">Get in touch</a>
+        </div>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>

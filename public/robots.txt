@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thejohndwilliams.com/sitemap-index.xml

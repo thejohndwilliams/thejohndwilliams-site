@@ -1,0 +1,39 @@
+﻿---
+const currentYear = new Date().getFullYear();
+
+const socialLinks = [
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/john-davis-williams/' },
+  { name: 'GitHub', url: 'https://github.com/thejohndwilliams' },
+  { name: 'Instagram', url: 'https://www.instagram.com/thejohndwilliams/' },
+];
+---
+
+<footer class="py-12 md:py-16 border-t border-white/5">
+  <div class="container-narrow">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <!-- Left: Copyright & Scripture -->
+      <div class="space-y-1">
+        <p class="text-sm opacity-40">
+          &copy; {currentYear} John D. Williams
+        </p>
+        <p class="text-sm opacity-30 italic font-serif">
+          John 15:13
+        </p>
+      </div>
+
+      <!-- Right: Social Links -->
+      <div class="flex items-center gap-6">
+        {socialLinks.map((link) => (
+          <a 
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm opacity-40 hover:opacity-80 transition-opacity"
+          >
+            {link.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

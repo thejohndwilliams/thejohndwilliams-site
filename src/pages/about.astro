@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="About" 
+  description="John D. Williams is a data engineer and strategist with experience spanning SpaceX, cybersecurity, and policy work."
+>
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="grid md:grid-cols-3 gap-10 mb-16">
+        <div class="md:col-span-2">
+          <h1 class="text-3xl md:text-4xl mb-6">About</h1>
+          <p class="text-lg leading-relaxed opacity-75">
+            I am a technical professional who has spent the last several years 
+            building systems that help organizations understand their data - and 
+            actually use it.
+          </p>
+        </div>
+        <div class="flex justify-center md:justify-end">
+          <div class="w-40 h-52 overflow-hidden rounded ring-1 ring-white/10">
+            <img 
+              src="/images/headshot.jpg" 
+              alt="John D. Williams" 
+              class="w-full h-full object-cover object-top"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>Background</h2>
+        <p>
+          My career has moved through some unexpected territory. I have worked on 
+          enterprise systems at SpaceX, built cybersecurity infrastructure, and 
+          contributed to policy research and intelligence analysis. Each role 
+          taught me something different about how organizations actually function - 
+          and fail.
+        </p>
+        <p>
+          The common thread: data. Not data for its own sake, but data as the 
+          foundation for clear thinking and decisive action. Most organizations 
+          are drowning in information but starving for insight. My work is about 
+          bridging that gap.
+        </p>
+
+        <h2>Philosophy</h2>
+        <p>
+          I believe technology should serve people, not the other way around. 
+          That dashboards are useless unless someone changes their behavior because 
+          of what they see. That the best technical solutions are the ones you 
+          barely notice because they just work.
+        </p>
+        <p>
+          I also believe in stepping up. When times get hard, when problems seem 
+          intractable, when everyone else is pointing fingers - that is when the work 
+          matters most. Not for applause. Because it is necessary.
+        </p>
+
+        <h2>Approach</h2>
+        <p>
+          I work at the intersection of data engineering, analytics, and design. 
+          That means building pipelines, yes - but also thinking hard about how 
+          information gets presented, how decisions get made, and how systems 
+          evolve over time.
+        </p>
+        <p>
+          I favor solutions that are modular, well-documented, and built to last. 
+          Technology moves fast, but good architecture gives you room to adapt.
+        </p>
+
+        <h2>Outside Work</h2>
+        <p>
+          I am interested in design, particularly the kind that communicates 
+          clearly without shouting. I read widely - history, science, philosophy. 
+          I believe in taking care of the basics: sleep, exercise, time outside.
+        </p>
+      </div>
+
+      <div class="mt-16 pt-12 border-t border-white/5">
+        <div class="glass-card p-8 max-w-md">
+          <h2 class="text-lg font-serif mb-3">Work together?</h2>
+          <p class="opacity-60 mb-6 text-sm">
+            I am selectively available for consulting engagements in data engineering, 
+            analytics strategy, and technical leadership.
+          </p>
+          <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

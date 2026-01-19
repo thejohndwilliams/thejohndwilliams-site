@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    title: 'Enterprise Analytics Platform',
+    description: 'End-to-end data infrastructure serving thousands of users. Designed medallion architecture, built automated pipelines, created executive dashboards that actually drove decisions.',
+    tags: ['Python', 'PostgreSQL', 'PowerBI', 'Data Engineering'],
+    outcome: 'Reduced reporting time from days to minutes'
+  },
+  {
+    title: 'Operational Intelligence System',
+    description: 'Real-time monitoring and forecasting for high-stakes operations. Integrated disparate data sources, built predictive models, designed interfaces for rapid decision-making.',
+    tags: ['Python', 'Forecasting', 'ETL', 'Dashboard Design'],
+    outcome: 'Improved forecast accuracy by 40%'
+  },
+  {
+    title: 'Security Infrastructure',
+    description: 'Cybersecurity systems protecting critical assets. Built detection pipelines, automated response workflows, created visibility into previously opaque attack surfaces.',
+    tags: ['Security', 'Automation', 'Data Pipelines'],
+    outcome: 'Dramatically reduced incident response time'
+  }
+];
+
+const expertise = [
+  'Data Engineering',
+  'Analytics & BI',
+  'Python Development',
+  'SQL & Databases',
+  'ETL Pipelines',
+  'Dashboard Design',
+  'Forecasting',
+  'Technical Strategy'
+];
+---
+
+<BaseLayout 
+  title="Work" 
+  description="Selected projects in data engineering, analytics, and technical strategy."
+>
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="max-w-xl mb-14">
+        <h1 class="text-3xl md:text-4xl mb-6">Work</h1>
+        <p class="text-lg leading-relaxed opacity-75">
+          I build data systems that help organizations see clearly and act decisively. 
+          Here is a selection of what that looks like in practice.
+        </p>
+      </div>
+
+      <div class="space-y-6 mb-16">
+        {projects.map((project) => (
+          <div class="glass-card p-6 md:p-8">
+            <h2 class="text-lg font-serif mb-3">{project.title}</h2>
+            <p class="opacity-60 mb-5 leading-relaxed text-sm">{project.description}</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              {project.tags.map((tag) => (
+                <span class="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded opacity-70">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p class="text-sm text-gold">{project.outcome}</p>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <h2 class="text-subhead mb-6">Expertise</h2>
+        <div class="flex flex-wrap gap-2">
+          {expertise.map((skill) => (
+            <span class="px-4 py-2 text-sm opacity-70 bg-white/5 border border-white/10 rounded">
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-16 pt-12 border-t border-white/5">
+        <div class="glass-card p-8 max-w-md">
+          <h2 class="text-lg font-serif mb-3">Have a project in mind?</h2>
+          <p class="opacity-60 mb-6 text-sm">
+            I take on select consulting engagements for organizations that need 
+            data infrastructure done right.
+          </p>
+          <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

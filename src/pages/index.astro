@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const siteLinks = [
+  { name: 'About', url: '/about', description: 'Background & philosophy' },
+  { name: 'Work', url: '/work', description: 'Projects & expertise' },
+  { name: 'Writing', url: '/writing', description: 'Essays & thoughts' }
+];
+
+const socialLinks = [
+  {
+    name: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/john-davis-williams/',
+    description: 'Professional network'
+  },
+  {
+    name: 'GitHub',
+    url: 'https://github.com/thejohndwilliams',
+    description: 'Code & projects'
+  },
+  {
+    name: 'Instagram',
+    url: 'https://www.instagram.com/thejohndwilliams/',
+    description: 'Visual journal'
+  },
+  {
+    name: 'Behance',
+    url: 'https://www.behance.net/killthewizard',
+    description: 'Design work'
+  }
+];
+---
+
+<BaseLayout title="John D. Williams" description="Data engineer and strategist. Building systems that help organizations see clearly and act decisively.">
+  <section class="min-h-screen py-16 md:py-24 flex items-center">
+    <div class="max-w-lg mx-auto px-6 w-full">
+      
+      <div class="text-center mb-14">
+        <div class="w-28 h-28 mx-auto mb-8 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a0a0a]">
+          <img src="/images/headshot.jpg" alt="John D. Williams" class="w-full h-full object-cover object-top" />
+        </div>
+        <h1 class="text-3xl md:text-4xl font-serif mb-3 tracking-tight">John D. Williams</h1>
+        <p class="text-xs tracking-[0.25em] uppercase opacity-50 font-light">DATA &middot; DESIGN &middot; DECISIONS</p>
+      </div>
+
+      <nav class="space-y-3 mb-10">
+        {siteLinks.map((link) => (
+          <a 
+            href={link.url}
+            class="link-card flex justify-between items-center group"
+          >
+            <div>
+              <span class="font-medium text-gold">{link.name}</span>
+              <p class="text-sm opacity-50">{link.description}</p>
+            </div>
+            <span class="opacity-30 group-hover:opacity-60 group-hover:translate-x-1 transition-all">&rarr;</span>
+          </a>
+        ))}
+      </nav>
+
+      <div class="mb-10">
+        <p class="text-subhead mb-4">Elsewhere</p>
+        <div class="space-y-3">
+          {socialLinks.map((link) => (
+            <a 
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-card flex justify-between items-center group"
+            >
+              <div>
+                <span class="font-medium text-gold">{link.name}</span>
+                <p class="text-sm opacity-50">{link.description}</p>
+              </div>
+              <span class="opacity-30 group-hover:opacity-60 transition-all">&nearr;</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <a 
+          href="mailto:hello@thejohndwilliams.com"
+          class="btn btn-primary w-full justify-center"
+        >
+          Get in touch
+        </a>
+      </div>
+
+      <div class="mt-20 text-center">
+        <p class="text-sm opacity-40 italic font-serif">John 15:13</p>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
