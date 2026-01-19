@@ -1,5 +1,6 @@
 ---
 import PostLayout from '../../layouts/PostLayout.astro';
+import LinkPreview from '../../components/LinkPreview.astro';
 
 const frontmatter = {
   title: 'The Dashboard Nobody Uses',
@@ -63,10 +64,12 @@ const frontmatter = {
   <h2>What to do instead</h2>
 
   <p>
-    Before building anything, spend time with the people who will supposedly use it. 
-    Not just the executives who requested it—the managers and analysts who will check 
+    Before building anything, spend time with the people who will supposedly use it.
+    Not just the executives who requested it—the managers and analysts who will check
     it daily (or won't).
   </p>
+
+  <LinkPreview url="https://hbr.org/2018/01/data-science-and-the-art-of-persuasion" />
 
   <p>
     Ask them: What decisions do you make regularly? What information do you wish you 

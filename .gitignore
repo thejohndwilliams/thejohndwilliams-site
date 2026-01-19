@@ -31,3 +31,6 @@ pnpm-debug.log*
 test-results/
 playwright-report/
 coverage/
+
+# link preview cache
+.link-preview-cache/
