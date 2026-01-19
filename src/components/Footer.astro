@@ -1,11 +1,7 @@
 ﻿---
-const currentYear = new Date().getFullYear();
+import { getCurrentYear, socialLinks } from '../utils/date';
 
-const socialLinks = [
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/john-davis-williams/' },
-  { name: 'GitHub', url: 'https://github.com/thejohndwilliams' },
-  { name: 'Instagram', url: 'https://www.instagram.com/thejohndwilliams/' },
-];
+const currentYear = getCurrentYear();
 ---
 
 <footer class="py-12 md:py-16 border-t border-white/5">
