@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { formatDate } from '../utils/date';
 
 interface Props {
   title: string;
@@ -9,14 +10,6 @@ interface Props {
 }
 
 const { title, description, date, readTime } = Astro.props;
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
 ---
 
 <BaseLayout title={title} description={description}>
