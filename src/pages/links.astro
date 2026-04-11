@@ -49,23 +49,7 @@ const socialLinks = [
         <p class="text-xs tracking-[0.25em] uppercase opacity-50 font-light">DATA &middot; SECURITY &middot; DECISIONS</p>
       </div>
 
-      <nav class="space-y-3 mb-12">
-        {siteLinks.map((link) => (
-          <a
-            href={link.url}
-            class="link-card flex justify-between items-center group"
-          >
-            <div>
-              <span class="font-medium text-gold">{link.name}</span>
-              <p class="text-sm opacity-50">{link.description}</p>
-            </div>
-            <span class="opacity-30 group-hover:opacity-60 group-hover:translate-x-1 transition-all">&rarr;</span>
-          </a>
-        ))}
-      </nav>
-
       <div class="mb-12">
-        <p class="text-subhead mb-6">Elsewhere</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {socialLinks.map((link) => (
             <a
