@@ -14,36 +14,36 @@ const socialLinks = [
     url: 'https://www.linkedin.com/in/john-davis-williams/',
     description: 'Professional network',
     icon: '/images/previews/linkedin.svg',
-    preview: '/images/previews/linkedin-preview.jpg'
+    hero: '/images/linkedin-hero.jpg'
   },
   {
     name: 'GitHub',
     url: 'https://github.com/thejohndwilliams',
     description: 'Code & projects',
     icon: '/images/previews/github.svg',
-    preview: '/images/previews/github-preview.jpg'
+    hero: '/images/github-hero.jpg'
   },
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/thejohndwilliams/',
     description: 'Visual journal',
     icon: '/images/previews/instagram.svg',
-    preview: '/images/previews/instagram-preview.jpg'
+    hero: '/images/instagram-hero.jpg'
   },
   {
     name: 'Behance',
     url: 'https://www.behance.net/killthewizard',
     description: 'Design work',
     icon: '/images/previews/behance.svg',
-    preview: '/images/previews/behance-preview.jpg'
+    hero: '/images/behance-hero.jpg'
   }
 ];
 ---
 
-<BaseLayout title="Links | John D. Williams" description="Connect with John D. Williams across platforms.">
+<BaseLayout title="Links" description="Connect with John D. Williams across platforms.">
   <section class="min-h-screen py-16 md:py-24 flex items-center">
-    <div class="max-w-lg mx-auto px-6 w-full">
-      
+    <div class="max-w-2xl mx-auto px-6 w-full">
+
       <div class="text-center mb-14">
         <div class="w-28 h-28 mx-auto mb-8 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-4 ring-offset-[#0a0a0a]">
           <img src="/images/headshot.jpg" alt="John D. Williams" class="w-full h-full object-cover object-center" />
@@ -52,9 +52,9 @@ const socialLinks = [
         <p class="text-xs tracking-[0.25em] uppercase opacity-50 font-light">DATA &middot; SECURITY &middot; DECISIONS</p>
       </div>
 
-      <nav class="space-y-3 mb-10">
+      <nav class="space-y-3 mb-12">
         {siteLinks.map((link) => (
-          <a 
+          <a
             href={link.url}
             class="link-card flex justify-between items-center group"
           >
@@ -67,36 +67,42 @@ const socialLinks = [
         ))}
       </nav>
 
-      <div class="mb-10">
-        <p class="text-subhead mb-4">Elsewhere</p>
-        <div class="space-y-3">
+      <div class="mb-12">
+        <p class="text-subhead mb-6">Elsewhere</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {socialLinks.map((link) => (
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="link-card flex items-center justify-between gap-4 group"
+              class="group relative block rounded-lg overflow-hidden aspect-[16/10] ring-1 ring-white/6 hover:ring-white/15 transition-all duration-300"
             >
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-white/5 p-2">
-                  <img
-                    src={link.icon}
-                    alt=""
-                    class="w-full h-full object-contain"
-                  />
-                </div>
-                <div class="min-w-0">
-                  <span class="font-medium text-gold">{link.name}</span>
-                  <p class="text-sm opacity-50 truncate">{link.description}</p>
+              <img
+                src={link.hero}
+                alt=""
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-md bg-white/10 backdrop-blur-sm p-1.5 flex-shrink-0">
+                    <img
+                      src={link.icon}
+                      alt=""
+                      class="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <span class="font-medium text-sm text-white">{link.name}</span>
+                    <p class="text-xs opacity-60">{link.description}</p>
+                  </div>
                 </div>
               </div>
-              <div class="w-20 h-14 rounded-md overflow-hidden flex-shrink-0 bg-white/5 ring-1 ring-white/10">
-                <img
-                  src={link.preview}
-                  alt={`${link.name} content preview`}
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                />
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+                </svg>
               </div>
             </a>
           ))}
@@ -104,7 +110,7 @@ const socialLinks = [
       </div>
 
       <div>
-        <a 
+        <a
           href="mailto:hello@thejohndwilliams.com"
           class="btn btn-primary w-full justify-center"
         >
