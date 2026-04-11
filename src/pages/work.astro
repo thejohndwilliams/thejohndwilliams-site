@@ -6,29 +6,40 @@ const projects = [
     title: 'Enterprise Analytics Platform',
     description: 'End-to-end data infrastructure serving thousands of users. Designed medallion architecture, built automated pipelines, created executive dashboards that actually drove decisions.',
     tags: ['Python', 'PostgreSQL', 'PowerBI', 'Data Engineering'],
-    outcome: 'Reduced reporting time from days to minutes'
+    outcome: 'Reduced reporting time from days to minutes',
+    github: 'https://github.com/thejohndwilliams/jobappanalysis'
   },
   {
     title: 'Operational Intelligence System',
     description: 'Real-time monitoring and forecasting for high-stakes operations. Integrated disparate data sources, built predictive models, designed interfaces for rapid decision-making.',
     tags: ['Python', 'Forecasting', 'ETL', 'Dashboard Design'],
-    outcome: 'Improved forecast accuracy by 40%'
+    outcome: 'Improved forecast accuracy by 40%',
+    github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard'
   },
   {
     title: 'Security Infrastructure',
     description: 'Cybersecurity systems protecting critical assets. Built detection pipelines, automated response workflows, created visibility into previously opaque attack surfaces.',
     tags: ['Security', 'Automation', 'Data Pipelines'],
-    outcome: 'Dramatically reduced incident response time'
+    outcome: 'Dramatically reduced incident response time',
+    github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment'
+  },
+  {
+    title: 'Healthcare Cybersecurity Strategy',
+    description: 'Comprehensive security framework for healthcare organizations. Applied NIST CSF and NIST 800-53 Rev 5 controls to design risk assessment methodology, compliance mapping, and remediation roadmaps.',
+    tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Compliance'],
+    outcome: 'End-to-end security strategy from assessment to implementation',
+    github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha'
   }
 ];
 
 const expertise = [
   'Data Engineering',
+  'Cybersecurity',
   'Analytics & BI',
   'Python Development',
   'SQL & Databases',
   'ETL Pipelines',
-  'Dashboard Design',
+  'Incident Management',
   'Forecasting',
   'Technical Strategy'
 ];
@@ -60,7 +71,14 @@ const expertise = [
                 </span>
               ))}
             </div>
-            <p class="text-sm text-gold">{project.outcome}</p>
+            <div class="flex items-center justify-between">
+              <p class="text-sm text-gold">{project.outcome}</p>
+              {project.github && (
+                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm opacity-50 hover:opacity-80 hover:text-gold transition-all">
+                  View on GitHub →
+                </a>
+              )}
+            </div>
           </div>
         ))}
       </div>
