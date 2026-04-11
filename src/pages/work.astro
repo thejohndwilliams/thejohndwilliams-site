@@ -3,31 +3,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const projects = [
   {
-    title: 'Enterprise Analytics Platform',
-    description: 'End-to-end data infrastructure serving thousands of users. Designed medallion architecture, built automated pipelines, created executive dashboards that actually drove decisions.',
-    tags: ['Python', 'PostgreSQL', 'PowerBI', 'Data Engineering'],
-    outcome: 'Reduced reporting time from days to minutes',
-    github: 'https://github.com/thejohndwilliams/jobappanalysis'
-  },
-  {
-    title: 'Operational Intelligence System',
-    description: 'Real-time monitoring and forecasting for high-stakes operations. Integrated disparate data sources, built predictive models, designed interfaces for rapid decision-making.',
-    tags: ['Python', 'Forecasting', 'ETL', 'Dashboard Design'],
-    outcome: 'Improved forecast accuracy by 40%',
+    title: 'Queue Forecast Dashboard',
+    description: 'A browser-based forecasting tool I built from scratch for enterprise support operations. Uses Holt-Winters exponential smoothing to predict queue demand across time windows. Sanitized and open-sourced with proportions-only output to respect operational security.',
+    tags: ['Python', 'Forecasting', 'Holt-Winters', 'Operations'],
+    outcome: 'Used in production for workforce planning',
     github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard'
   },
   {
-    title: 'Security Infrastructure',
-    description: 'Cybersecurity systems protecting critical assets. Built detection pipelines, automated response workflows, created visibility into previously opaque attack surfaces.',
-    tags: ['Security', 'Automation', 'Data Pipelines'],
-    outcome: 'Dramatically reduced incident response time',
+    title: 'Job Application Analytics',
+    description: 'Data science project analyzing 580+ job applications over two years. Built predictive models for rejection patterns, ran anomaly detection on response rates, and identified which variables actually matter in hiring outcomes. Written in Python with full statistical methodology.',
+    tags: ['Python', 'Machine Learning', 'Data Analysis', 'Statistics'],
+    outcome: 'Identified actionable patterns across 580+ applications',
+    github: 'https://github.com/thejohndwilliams/jobappanalysis'
+  },
+  {
+    title: 'Government Cybersecurity Assessment',
+    description: 'NIST-framework risk assessment for government sector organizations. Covers threat analysis, control mapping, and remediation planning using NIST CSF and 800-53 Rev 5.',
+    tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Cybersecurity'],
+    outcome: 'Full threat model with prioritized remediation roadmap',
     github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment'
   },
   {
-    title: 'Healthcare Cybersecurity Strategy',
-    description: 'Comprehensive security framework for healthcare organizations. Applied NIST CSF and NIST 800-53 Rev 5 controls to design risk assessment methodology, compliance mapping, and remediation roadmaps.',
-    tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Compliance'],
-    outcome: 'End-to-end security strategy from assessment to implementation',
+    title: 'Healthcare Security Strategy',
+    description: 'MBA cybersecurity capstone project at Baylor University. Designed a comprehensive security framework for a healthcare organization using NIST CSF and 800-53 Rev 5 controls, including risk assessment methodology, compliance mapping, and implementation roadmap.',
+    tags: ['NIST CSF', 'NIST 800-53', 'Capstone', 'Compliance'],
+    outcome: 'Baylor University MBA Cybersecurity Capstone',
     github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha'
   }
 ];
@@ -35,27 +35,27 @@ const projects = [
 const expertise = [
   'Data Engineering',
   'Cybersecurity',
-  'Analytics & BI',
-  'Python Development',
-  'SQL & Databases',
-  'ETL Pipelines',
-  'Incident Management',
+  'Incident Command',
+  'Python',
+  'Power BI',
+  'SQL',
+  'Operations Analytics',
   'Forecasting',
-  'Technical Strategy'
+  'Photography'
 ];
 ---
 
-<BaseLayout 
-  title="Work" 
-  description="Selected projects in data engineering, analytics, and technical strategy."
+<BaseLayout
+  title="Work"
+  description="Selected projects by John D. Williams — data engineering, cybersecurity, and operations."
 >
   <section class="py-16 md:py-24">
     <div class="container-narrow">
       <div class="max-w-xl mb-14">
         <h1 class="text-3xl md:text-4xl mb-6">Work</h1>
         <p class="text-lg leading-relaxed opacity-75">
-          I build data systems that help organizations see clearly and act decisively. 
-          Here is a selection of what that looks like in practice.
+          Projects I have built, shipped, or open-sourced. Everything here is real
+          work — no demos, no hypotheticals.
         </p>
       </div>
 
@@ -65,7 +65,7 @@ const expertise = [
             <h2 class="text-lg font-serif mb-3">{project.title}</h2>
             <p class="opacity-60 mb-5 leading-relaxed text-sm">{project.description}</p>
             <div class="flex flex-wrap gap-2 mb-4">
-              {project.tags.map((tag) => (
+              {project.tags.map((tag: string) => (
                 <span class="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded opacity-70">
                   {tag}
                 </span>
@@ -98,8 +98,8 @@ const expertise = [
         <div class="glass-card p-8 max-w-md">
           <h2 class="text-lg font-serif mb-3">Have a project in mind?</h2>
           <p class="opacity-60 mb-6 text-sm">
-            I take on select consulting engagements for organizations that need 
-            data infrastructure done right.
+            I take on select consulting engagements in data engineering,
+            cybersecurity, and operational analytics.
           </p>
           <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
         </div>

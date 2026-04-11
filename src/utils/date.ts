@@ -31,6 +31,7 @@ export function getCurrentYear(): number {
 export const navItems = [
   { name: 'About', href: '/about' },
   { name: 'Work', href: '/work' },
+  { name: 'Photography', href: '/photography' },
   { name: 'Writing', href: '/writing' },
   { name: 'Links', href: '/links' },
 ] as const;

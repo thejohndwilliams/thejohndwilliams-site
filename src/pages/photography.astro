@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Photography"
+  description="Nature and landscape photography by John D. Williams. Shot on Sony A7R."
+>
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="max-w-xl mb-14">
+        <h1 class="text-3xl md:text-4xl mb-6">Photography</h1>
+        <p class="text-lg leading-relaxed opacity-75">
+          Nature and landscape work, shot on a Sony A7R system. Nearly 3,000 images
+          in the archive. This is what I see when I step outside.
+        </p>
+      </div>
+
+      <!-- Gallery grid — images will be added from Lightroom exports -->
+      <div class="glass-card p-8 md:p-10 mb-16">
+        <p class="opacity-70 leading-relaxed mb-4">
+          Gallery loading soon. I am curating selects from the Lightroom archive —
+          landscape, nature, and light studies from across Texas and beyond.
+        </p>
+        <p class="opacity-70 leading-relaxed">
+          In the meantime, visual work is on
+          <a href="https://www.instagram.com/thejohndwilliams/" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all">Instagram</a>
+          and
+          <a href="https://www.behance.net/killthewizard" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all">Behance</a>.
+        </p>
+      </div>
+
+      <!-- Placeholder grid for when images are ready -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
+        {Array.from({ length: 6 }).map(() => (
+          <div class="aspect-[4/3] bg-white/3 border border-white/6 rounded overflow-hidden flex items-center justify-center">
+            <span class="text-xs opacity-20 tracking-wider uppercase">Image</span>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <h2 class="text-subhead mb-4">Equipment</h2>
+        <p class="opacity-60 text-sm">Sony A7R system &middot; Nature &amp; Landscape &middot; Lightroom</p>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-subhead mb-4">Noticing Nature</h2>
+        <p class="opacity-60 text-sm leading-relaxed max-w-lg">
+          Photography operates under Noticing Nature, one arm of the Noticing venture.
+          Print sales and licensing are coming. If you are interested in a specific
+          image or a commissioned shoot, reach out.
+        </p>
+        <a href="mailto:hello@thejohndwilliams.com" class="inline-block mt-4 text-sm text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all">
+          Get in touch →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

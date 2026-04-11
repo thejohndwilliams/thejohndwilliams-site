@@ -1,73 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const posts = [
-  {
-    title: 'Data Infrastructure as Competitive Advantage',
-    description: 'The case for investing in boring, reliable systems.',
-    date: '2026',
-    href: '/writing/data-infrastructure-competitive-advantage'
-  },
-  {
-    title: 'On Technical Debt and Organizational Trust',
-    description: 'What your codebase says about your company culture.',
-    date: '2026',
-    href: '/writing/technical-debt-organizational-trust'
-  },
-  {
-    title: 'The Dashboard Nobody Uses',
-    description: 'Why most analytics projects fail - and what to do instead.',
-    date: '2024',
-    href: '/writing/dashboard-nobody-uses'
-  }
-];
-
 const topics = [
   'Data Engineering',
-  'Cybersecurity Operations',
-  'Analytics Strategy',
-  'Incident Management',
-  'Technical Leadership',
-  'System Design',
+  'Cybersecurity',
+  'Photography',
+  'Operations',
+  'Technology & Liberal Arts',
   'Decision Making'
 ];
 ---
 
-<BaseLayout 
-  title="Writing" 
-  description="Essays on data, technology, and building things that matter."
+<BaseLayout
+  title="Writing"
+  description="Essays and thoughts from John D. Williams. Infrequent but honest."
 >
   <section class="py-16 md:py-24">
     <div class="container-narrow">
       <div class="max-w-xl mb-14">
         <h1 class="text-3xl md:text-4xl mb-6">Writing</h1>
         <p class="text-lg leading-relaxed opacity-75">
-          Essays on data, technology, and building things that work. 
-          Infrequent but considered.
+          I write when I have something worth saying. Essays on technology,
+          photography, operations, and the places where they overlap.
         </p>
       </div>
 
-      <div class="space-y-4 mb-16">
-        {posts.map((post) => (
-          <a
-            href={post.href}
-            class="block glass-card p-5 md:p-6 cursor-pointer"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <h2 class="text-base font-serif mb-1.5 text-gold">
-                  {post.title}
-                </h2>
-                <p class="opacity-60 text-sm">{post.description}</p>
-              </div>
-              <span class="text-sm opacity-40 shrink-0">{post.date}</span>
-            </div>
-          </a>
-        ))}
+      <div class="glass-card p-8 md:p-10 mb-16">
+        <p class="opacity-70 leading-relaxed mb-4">
+          This section is being rebuilt. The pieces that were here before were not mine —
+          they were generated content that had nothing to do with my actual thinking or
+          experience. I would rather have an empty page than a dishonest one.
+        </p>
+        <p class="opacity-70 leading-relaxed">
+          Real writing is on the way. In the meantime, my project work and READMEs
+          on <a href="https://github.com/thejohndwilliams" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all">GitHub</a> are
+          the best window into how I think.
+        </p>
       </div>
 
       <div>
-        <h2 class="text-subhead mb-6">Topics I Write About</h2>
+        <h2 class="text-subhead mb-6">Topics I Think About</h2>
         <div class="flex flex-wrap gap-2">
           {topics.map((topic) => (
             <span class="px-4 py-2 text-sm opacity-70 bg-white/5 border border-white/10 rounded">
