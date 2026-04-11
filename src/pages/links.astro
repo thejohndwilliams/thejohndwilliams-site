@@ -1,96 +1,185 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const siteLinks = [
-  { name: 'About', url: '/about', description: 'Background & philosophy' },
-  { name: 'Work', url: '/work', description: 'Projects & expertise' },
-  { name: 'Photography', url: '/photography', description: 'Nature & landscape' },
-  { name: 'Writing', url: '/writing', description: 'Essays & thoughts' }
-];
-
 const socialLinks = [
   {
     name: 'LinkedIn',
     url: 'https://www.linkedin.com/in/john-davis-williams/',
+    handle: 'john-davis-williams',
     description: 'Professional network',
     icon: '/images/previews/linkedin.svg',
-    hero: '/images/linkedin-hero.jpg'
+    hero: '/images/linkedin-hero.jpg',
+    size: 'large'
   },
   {
     name: 'GitHub',
     url: 'https://github.com/thejohndwilliams',
+    handle: 'thejohndwilliams',
     description: 'Code & projects',
     icon: '/images/previews/github.svg',
-    hero: '/images/github-hero.jpg'
+    hero: '/images/github-hero.jpg',
+    size: 'medium'
   },
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/thejohndwilliams/',
+    handle: '@thejohndwilliams',
     description: 'Visual journal',
     icon: '/images/previews/instagram.svg',
-    hero: '/images/instagram-hero.jpg'
+    hero: '/images/instagram-hero.jpg',
+    size: 'medium'
   },
   {
     name: 'Behance',
     url: 'https://www.behance.net/killthewizard',
+    handle: 'killthewizard',
     description: 'Design work',
     icon: '/images/previews/behance.svg',
-    hero: '/images/behance-hero.jpg'
+    hero: '/images/behance-hero.jpg',
+    size: 'large'
   }
 ];
 ---
 
 <BaseLayout title="Links" description="Connect with John D. Williams across platforms.">
-  <section class="min-h-screen py-16 md:py-24 flex items-center">
-    <div class="max-w-2xl mx-auto px-6 w-full">
+  <section class="min-h-screen py-16 md:py-24">
+    <div class="max-w-5xl mx-auto px-6 w-full">
 
       <div class="text-center mb-14">
         <h1 class="text-3xl md:text-4xl font-serif mb-3 tracking-tight">John D. Williams</h1>
         <p class="text-xs tracking-[0.25em] uppercase opacity-50 font-light">DATA &middot; SECURITY &middot; DECISIONS</p>
       </div>
 
-      <div class="mb-12">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {socialLinks.map((link) => (
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group relative block rounded-lg overflow-hidden aspect-[16/10] ring-1 ring-white/6 hover:ring-white/15 transition-all duration-300"
-            >
-              <img
-                src={link.hero}
-                alt=""
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-5">
-                <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-md bg-white/10 backdrop-blur-sm p-1.5 flex-shrink-0">
-                    <img
-                      src={link.icon}
-                      alt=""
-                      class="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <span class="font-medium text-sm text-white">{link.name}</span>
-                    <p class="text-xs opacity-60">{link.description}</p>
-                  </div>
-                </div>
+      <!-- Staggered bento grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 mb-14">
+
+        <!-- LinkedIn — wide hero -->
+        <a
+          href={socialLinks[0].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative block rounded-xl overflow-hidden md:col-span-7 aspect-[16/10] md:aspect-[16/9] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-300"
+        >
+          <img
+            src={socialLinks[0].hero}
+            alt=""
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm p-2 flex-shrink-0 ring-1 ring-white/10">
+                <img src={socialLinks[0].icon} alt="" class="w-full h-full object-contain" />
               </div>
-              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
-                </svg>
+              <div>
+                <span class="font-serif text-xl text-white">{socialLinks[0].name}</span>
               </div>
-            </a>
-          ))}
-        </div>
+            </div>
+            <p class="text-sm opacity-50 font-mono">{socialLinks[0].handle}</p>
+          </div>
+          <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-70 transition-opacity duration-300">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+            </svg>
+          </div>
+        </a>
+
+        <!-- GitHub — tall right -->
+        <a
+          href={socialLinks[1].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative block rounded-xl overflow-hidden md:col-span-5 aspect-[16/10] md:aspect-[4/3] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-300"
+        >
+          <img
+            src={socialLinks[1].hero}
+            alt=""
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm p-2 flex-shrink-0 ring-1 ring-white/10">
+                <img src={socialLinks[1].icon} alt="" class="w-full h-full object-contain" />
+              </div>
+              <div>
+                <span class="font-serif text-xl text-white">{socialLinks[1].name}</span>
+              </div>
+            </div>
+            <p class="text-sm opacity-50 font-mono">{socialLinks[1].handle}</p>
+          </div>
+          <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-70 transition-opacity duration-300">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+            </svg>
+          </div>
+        </a>
+
+        <!-- Instagram — tall left -->
+        <a
+          href={socialLinks[2].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative block rounded-xl overflow-hidden md:col-span-5 aspect-[16/10] md:aspect-[4/3] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-300"
+        >
+          <img
+            src={socialLinks[2].hero}
+            alt=""
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm p-2 flex-shrink-0 ring-1 ring-white/10">
+                <img src={socialLinks[2].icon} alt="" class="w-full h-full object-contain" />
+              </div>
+              <div>
+                <span class="font-serif text-xl text-white">{socialLinks[2].name}</span>
+              </div>
+            </div>
+            <p class="text-sm opacity-50 font-mono">{socialLinks[2].handle}</p>
+          </div>
+          <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-70 transition-opacity duration-300">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+            </svg>
+          </div>
+        </a>
+
+        <!-- Behance — wide bottom -->
+        <a
+          href={socialLinks[3].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative block rounded-xl overflow-hidden md:col-span-7 aspect-[16/10] md:aspect-[16/9] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-300"
+        >
+          <img
+            src={socialLinks[3].hero}
+            alt=""
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm p-2 flex-shrink-0 ring-1 ring-white/10">
+                <img src={socialLinks[3].icon} alt="" class="w-full h-full object-contain" />
+              </div>
+              <div>
+                <span class="font-serif text-xl text-white">{socialLinks[3].name}</span>
+              </div>
+            </div>
+            <p class="text-sm opacity-50 font-mono">{socialLinks[3].handle}</p>
+          </div>
+          <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-70 transition-opacity duration-300">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+            </svg>
+          </div>
+        </a>
+
       </div>
 
-      <div>
+      <div class="max-w-md mx-auto">
         <a
           href="mailto:hello@thejohndwilliams.com"
           class="btn btn-primary w-full justify-center"
