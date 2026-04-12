@@ -6,30 +6,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="About"
   description="John D. Williams — film graduate, cybersecurity MBA, SpaceX engineer, nature photographer. Liberal arts meets technology."
 >
+  <!-- HERO -->
   <section class="py-16 md:py-24">
     <div class="container-narrow">
-      <div class="grid md:grid-cols-3 gap-10 mb-16">
+      <div class="reveal grid md:grid-cols-3 gap-10 items-start mb-16">
         <div class="md:col-span-2">
-          <h1 class="text-3xl md:text-4xl mb-6">About</h1>
-          <p class="text-lg leading-relaxed opacity-75">
+          <h1 class="mb-8">About</h1>
+          <p class="text-lg md:text-xl leading-relaxed opacity-70">
             I studied film. I work in cybersecurity. I shoot landscapes with a Sony A7R
             and build data pipelines in Python. The through-line is not obvious until you
             see it: I have always been interested in how things are made visible — whether
             that is a story on screen, a threat on a network, or light on a mountain.
           </p>
         </div>
-        <div class="flex justify-center md:justify-end">
-          <div class="w-40 h-52 overflow-hidden rounded ring-1 ring-white/10">
-            <img
-              src="/images/headshot.jpg"
-              alt="John D. Williams"
-              class="w-full h-full object-cover object-top"
-            />
+        <div class="reveal reveal-delay-2 flex justify-center md:justify-end">
+          <div class="w-44 h-56 overflow-hidden rounded-card ring-1 ring-white/10">
+            <picture>
+              <source srcset="/images/headshot.webp" type="image/webp" />
+              <img
+                src="/images/headshot.jpg"
+                alt="John D. Williams"
+                class="w-full h-full object-cover object-top"
+                fetchpriority="high"
+              />
+            </picture>
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="prose">
+  <!-- BACKGROUND — alternating section -->
+  <section class="section-light py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal prose max-w-2xl">
         <h2>Background</h2>
         <p>
           I graduated from Baylor University in 2015 with a BA in Film and Digital Media.
@@ -47,7 +57,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           per week, building forecasting tools from scratch, and designing operational
           analytics in an environment where downtime is not abstract.
         </p>
+      </div>
+    </div>
+  </section>
 
+  <!-- THE INTERSECTION -->
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal prose max-w-2xl">
         <h2>The Intersection</h2>
         <p>
           People ask why a film graduate ended up in cybersecurity and data engineering.
@@ -62,7 +79,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           live. The liberal arts and technology are not separate tracks for me. They are
           the same track, and the best work I do happens when both are engaged.
         </p>
+      </div>
+    </div>
+  </section>
 
+  <!-- WHAT I AM BUILDING — alternating -->
+  <section class="section-light py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal prose max-w-2xl">
         <h2>What I Am Building</h2>
         <p>
           Outside of SpaceX, I am building Noticing — a venture with three arms.
@@ -75,7 +99,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           The name comes from a conviction: most of what matters is already in front of
           us. The work is learning to see it.
         </p>
+      </div>
+    </div>
+  </section>
 
+  <!-- CREDENTIALS -->
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal prose max-w-2xl">
         <h2>Credentials</h2>
         <p>
           BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
@@ -83,7 +114,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           ITAR clearance. CompTIA Security+ (in progress). I am also pursuing an Air Force
           Reserve commission in cybersecurity operations.
         </p>
+      </div>
+    </div>
+  </section>
 
+  <!-- OUTSIDE WORK — alternating -->
+  <section class="section-light py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal prose max-w-2xl">
         <h2>Outside Work</h2>
         <p>
           I am a nature photographer. That is not a hobby line on a resume — it is a
@@ -93,16 +131,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           applause.
         </p>
       </div>
+    </div>
+  </section>
 
-      <div class="mt-16 pt-12 border-t border-white/5">
-        <div class="glass-card p-8 max-w-md">
-          <h2 class="text-lg font-serif mb-3">Work together?</h2>
-          <p class="opacity-60 mb-6 text-sm">
-            I take on select consulting work in data engineering, cybersecurity
-            operations, and technical strategy.
-          </p>
-          <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
-        </div>
+  <!-- CTA -->
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal glass-card p-10 max-w-lg">
+        <h2 class="text-xl font-serif mb-4">Work together?</h2>
+        <p class="opacity-50 mb-8">
+          I take on select consulting work in data engineering, cybersecurity
+          operations, and technical strategy.
+        </p>
+        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
       </div>
     </div>
   </section>

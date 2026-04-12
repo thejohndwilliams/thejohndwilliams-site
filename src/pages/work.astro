@@ -49,24 +49,30 @@ const expertise = [
   title="Work"
   description="Selected projects by John D. Williams — data engineering, cybersecurity, and operations."
 >
+  <!-- HERO -->
   <section class="py-16 md:py-24">
     <div class="container-narrow">
-      <div class="max-w-xl mb-14">
-        <h1 class="text-3xl md:text-4xl mb-6">Work</h1>
-        <p class="text-lg leading-relaxed opacity-75">
+      <div class="reveal max-w-2xl mb-16">
+        <h1 class="mb-8">Work</h1>
+        <p class="text-lg md:text-xl leading-relaxed opacity-70">
           Projects I have built, shipped, or open-sourced. Everything here is real
           work — no demos, no hypotheticals.
         </p>
       </div>
+    </div>
+  </section>
 
-      <div class="space-y-6 mb-16">
+  <!-- PROJECTS — alternating section -->
+  <section class="section-light py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="stagger-children space-y-6 mb-16">
         {projects.map((project) => (
-          <div class="glass-card p-6 md:p-8">
-            <h2 class="text-lg font-serif mb-3">{project.title}</h2>
-            <p class="opacity-60 mb-5 leading-relaxed text-sm">{project.description}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
+          <div class="glass-card p-8 md:p-10">
+            <h2 class="text-xl font-serif mb-4">{project.title}</h2>
+            <p class="opacity-55 mb-6 leading-relaxed">{project.description}</p>
+            <div class="flex flex-wrap gap-2 mb-6">
               {project.tags.map((tag: string) => (
-                <span class="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded opacity-70">
+                <span class="text-xs px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg opacity-70">
                   {tag}
                 </span>
               ))}
@@ -74,7 +80,7 @@ const expertise = [
             <div class="flex items-center justify-between">
               <p class="text-sm text-gold">{project.outcome}</p>
               {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm opacity-50 hover:opacity-80 hover:text-gold transition-all">
+                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm opacity-40 hover:opacity-80 hover:text-gold transition-all duration-300">
                   View on GitHub →
                 </a>
               )}
@@ -82,27 +88,35 @@ const expertise = [
           </div>
         ))}
       </div>
+    </div>
+  </section>
 
-      <div>
-        <h2 class="text-subhead mb-6">Expertise</h2>
-        <div class="flex flex-wrap gap-2">
+  <!-- EXPERTISE -->
+  <section class="py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal">
+        <p class="text-subhead mb-8">Expertise</p>
+        <div class="flex flex-wrap gap-3">
           {expertise.map((skill) => (
-            <span class="px-4 py-2 text-sm opacity-70 bg-white/5 border border-white/10 rounded">
+            <span class="px-5 py-2.5 text-sm opacity-60 bg-white/5 border border-white/10 rounded-lg">
               {skill}
             </span>
           ))}
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="mt-16 pt-12 border-t border-white/5">
-        <div class="glass-card p-8 max-w-md">
-          <h2 class="text-lg font-serif mb-3">Have a project in mind?</h2>
-          <p class="opacity-60 mb-6 text-sm">
-            I take on select consulting engagements in data engineering,
-            cybersecurity, and operational analytics.
-          </p>
-          <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
-        </div>
+  <!-- CTA — alternating -->
+  <section class="section-light py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal glass-card p-10 max-w-lg">
+        <h2 class="text-xl font-serif mb-4">Have a project in mind?</h2>
+        <p class="opacity-50 mb-8">
+          I take on select consulting engagements in data engineering,
+          cybersecurity, and operational analytics.
+        </p>
+        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
       </div>
     </div>
   </section>

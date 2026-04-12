@@ -2,20 +2,20 @@
 import { navItems } from '../utils/date';
 ---
 
-<header class="py-6 md:py-8">
+<header class="py-6 md:py-8" transition:persist>
   <div class="container-narrow">
     <nav class="flex items-center justify-between">
-      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity text-gold">
+      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-gold" transition:name="logo">
         JW
       </a>
-      
+
       <!-- Desktop Navigation -->
       <ul class="hidden md:flex items-center gap-8">
         {navItems.map((item) => (
           <li>
-            <a 
+            <a
               href={item.href}
-              class="text-sm opacity-50 hover:opacity-100 transition-opacity"
+              class="text-sm opacity-40 hover:opacity-100 transition-opacity duration-300"
             >
               {item.name}
             </a>
@@ -24,9 +24,9 @@ import { navItems } from '../utils/date';
       </ul>
 
       <!-- Mobile Menu Button -->
-      <button 
+      <button
         id="menu-toggle"
-        class="md:hidden opacity-50 hover:opacity-100 transition-opacity"
+        class="md:hidden opacity-40 hover:opacity-100 transition-opacity duration-300"
         aria-label="Toggle menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,9 +40,9 @@ import { navItems } from '../utils/date';
       <ul class="space-y-4">
         {navItems.map((item) => (
           <li>
-            <a 
+            <a
               href={item.href}
-              class="block opacity-60 hover:opacity-100 transition-opacity"
+              class="block opacity-50 hover:opacity-100 transition-opacity duration-300"
             >
               {item.name}
             </a>
@@ -54,10 +54,13 @@ import { navItems } from '../utils/date';
 </header>
 
 <script>
-  const toggle = document.getElementById('menu-toggle');
-  const menu = document.getElementById('mobile-menu');
-  
-  toggle?.addEventListener('click', () => {
-    menu?.classList.toggle('hidden');
-  });
+  function initMenu() {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    toggle?.addEventListener('click', () => {
+      menu?.classList.toggle('hidden');
+    });
+  }
+  initMenu();
+  document.addEventListener('astro:after-swap', initMenu);
 </script>
