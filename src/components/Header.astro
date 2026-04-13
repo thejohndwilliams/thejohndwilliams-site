@@ -4,7 +4,7 @@ import { navItems } from '../utils/date';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class="py-4 sm:py-6 md:py-8 relative z-40" transition:persist>
+<header id="site-header" class="py-4 sm:py-6 md:py-8 sticky top-0 z-40 transition-all duration-500" transition:persist>
   <div class="container-narrow">
     <nav class="flex items-center justify-between">
       <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-gold min-h-[44px] flex items-center" transition:name="logo">
@@ -145,10 +145,35 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     });
   }
 
+  function initGlassHeader() {
+    const header = document.getElementById('site-header');
+    if (!header) return;
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 40) {
+            header.classList.add('glass-nav');
+          } else {
+            header.classList.remove('glass-nav');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Set initial state
+    if (window.scrollY > 40) header.classList.add('glass-nav');
+  }
+
   initMenu();
   updateActiveNav();
+  initGlassHeader();
   document.addEventListener('astro:after-swap', () => {
     initMenu();
     updateActiveNav();
+    initGlassHeader();
   });
 </script>

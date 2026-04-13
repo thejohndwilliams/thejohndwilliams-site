@@ -128,7 +128,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
   </section>
 
   <!-- CATEGORY FILTER -->
-  <section class="section-light py-3 sm:py-4 md:py-5 sticky top-0 z-30 backdrop-blur-xl bg-[#141414]/90 border-b border-white/5">
+  <section class="section-light py-3 sm:py-4 md:py-5 sticky top-0 z-30 glass-nav">
     <div class="container-narrow">
       <nav class="flex items-center gap-1 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide -mx-1 px-1" id="category-nav" role="tablist">
         <button
@@ -183,7 +183,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 
             return (
               <div
-                class={`gallery-item press-feedback group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
+                class={`gallery-item press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
               >
@@ -211,7 +211,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
   ))}
 
   <!-- LIGHTBOX — touch-friendly with swipe support -->
-  <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/92 backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
     <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-40 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />

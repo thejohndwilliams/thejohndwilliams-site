@@ -77,7 +77,7 @@ const expertise = [
   <section class="py-0 -mt-4 sm:-mt-8 relative z-10">
     <div class="container-wide">
       <div class="reveal grid grid-cols-3 gap-1.5 sm:gap-2">
-        <div class="rounded-lg overflow-hidden aspect-[16/9]">
+        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
           <img
             src="/images/photography/gallery/7r50993-enhanced-sr.webp"
             srcset="/images/photography/thumb/7r50993-enhanced-sr.webp 400w, /images/photography/gallery/7r50993-enhanced-sr.webp 1200w"
@@ -87,7 +87,7 @@ const expertise = [
             loading="lazy"
           />
         </div>
-        <div class="rounded-lg overflow-hidden aspect-[16/9]">
+        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
           <img
             src="/images/photography/gallery/img-7598-enhanced-sr.webp"
             srcset="/images/photography/thumb/img-7598-enhanced-sr.webp 400w, /images/photography/gallery/img-7598-enhanced-sr.webp 1200w"
@@ -97,7 +97,7 @@ const expertise = [
             loading="lazy"
           />
         </div>
-        <div class="rounded-lg overflow-hidden aspect-[16/9]">
+        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
           <img
             src="/images/photography/gallery/dscf0261.webp"
             srcset="/images/photography/thumb/dscf0261.webp 400w, /images/photography/gallery/dscf0261.webp 1200w"
@@ -121,7 +121,7 @@ const expertise = [
             <p class="text-sm sm:text-base opacity-55 mb-4 sm:mb-6 leading-relaxed">{project.description}</p>
             <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
               {project.tags.map((tag: string) => (
-                <span class="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 border border-white/10 rounded-md sm:rounded-lg opacity-70">
+                <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">
                   {tag}
                 </span>
               ))}
@@ -147,7 +147,7 @@ const expertise = [
         <p class="text-subhead mb-5 sm:mb-8">Expertise</p>
         <div class="flex flex-wrap gap-2 sm:gap-3">
           {expertise.map((skill) => (
-            <span class="px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm opacity-60 bg-white/5 border border-white/10 rounded-md sm:rounded-lg">
+            <span class="glass-tag px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm opacity-60 rounded-md sm:rounded-lg">
               {skill}
             </span>
           ))}

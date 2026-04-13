@@ -62,6 +62,7 @@ export default {
         'fade-in': 'fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
         'slide-up': 'slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
         'scale-in': 'scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'glass-shimmer': 'glassShimmer 3s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -75,6 +76,10 @@ export default {
         scaleIn: {
           '0%': { opacity: '0', transform: 'scale(0.96)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        glassShimmer: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.8' },
         },
       },
       transitionTimingFunction: {
