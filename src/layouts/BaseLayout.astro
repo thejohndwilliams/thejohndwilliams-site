@@ -50,17 +50,45 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohnd
     <!-- View Transitions — cinematic page-to-page feel -->
     <ViewTransitions />
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col pb-16 md:pb-0">
     <Header />
     <main id="content" class="flex-grow" transition:animate="fade">
       <slot />
     </main>
     <Footer />
 
-    <!-- Back to top — appears after scrolling on mobile -->
+    <!-- Mobile bottom tab navigation — thumb zone, always reachable -->
+    <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
+      <div class="flex items-center justify-around px-2 h-14">
+        <a href="/" class="bottom-nav-item flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1.5" data-path="/">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /></svg>
+          <span class="text-[9px] tracking-wide uppercase">Home</span>
+        </a>
+        <a href="/work" class="bottom-nav-item flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1.5" data-path="/work">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+          <span class="text-[9px] tracking-wide uppercase">Work</span>
+        </a>
+        <a href="/photography" class="bottom-nav-item flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1.5" data-path="/photography">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          <span class="text-[9px] tracking-wide uppercase">Photos</span>
+        </a>
+        <a href="/about" class="bottom-nav-item flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1.5" data-path="/about">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          <span class="text-[9px] tracking-wide uppercase">About</span>
+        </a>
+        <a href="mailto:hello@thejohndwilliams.com" class="flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1.5 text-gold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          <span class="text-[9px] tracking-wide uppercase font-medium">Inquire</span>
+        </a>
+      </div>
+      <!-- Safe area padding for notched phones -->
+      <div class="h-[env(safe-area-inset-bottom,0px)] bg-[#0a0a0a]/95"></div>
+    </nav>
+
+    <!-- Back to top — repositioned above bottom nav on mobile -->
     <button
       id="back-to-top"
-      class="fixed bottom-6 right-4 sm:bottom-8 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300"
+      class="fixed bottom-20 md:bottom-8 right-4 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300"
       aria-label="Back to top"
     >
       <svg class="w-4 h-4 sm:w-5 sm:h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,30 +98,63 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohnd
 
     <!-- Scroll reveal observer — IntersectionObserver, no scroll hijacking -->
     <script>
-      function initBackToTop() {
+      function initBottomNav() {
+        const nav = document.getElementById('bottom-nav');
         const btn = document.getElementById('back-to-top');
-        if (!btn) return;
+        if (!nav) return;
 
+        // Highlight active tab
+        const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+        nav.querySelectorAll('.bottom-nav-item').forEach((item) => {
+          const el = item as HTMLElement;
+          if (el.dataset.path === currentPath) {
+            el.classList.add('text-gold');
+          } else {
+            el.classList.add('opacity-40');
+          }
+        });
+
+        // Show nav after scrolling past hero, hide near footer
         let ticking = false;
+        let lastScrollY = 0;
+
         window.addEventListener('scroll', () => {
           if (!ticking) {
             window.requestAnimationFrame(() => {
-              if (window.scrollY > 600) {
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
-                btn.style.transform = 'translateY(0)';
-              } else {
-                btn.style.opacity = '0';
-                btn.style.pointerEvents = 'none';
-                btn.style.transform = 'translateY(1rem)';
+              const scrollY = window.scrollY;
+              const docHeight = document.documentElement.scrollHeight;
+              const winHeight = window.innerHeight;
+              const nearBottom = scrollY + winHeight > docHeight - 200;
+
+              // Show bottom nav after 300px scroll
+              if (scrollY > 300 && !nearBottom) {
+                nav.style.transform = 'translateY(0)';
+              } else if (scrollY <= 300) {
+                nav.style.transform = 'translateY(100%)';
               }
+
+              // Back to top button
+              if (btn) {
+                if (scrollY > 600) {
+                  btn.style.opacity = '1';
+                  btn.style.pointerEvents = 'auto';
+                  btn.style.transform = 'translateY(0)';
+                } else {
+                  btn.style.opacity = '0';
+                  btn.style.pointerEvents = 'none';
+                  btn.style.transform = 'translateY(1rem)';
+                }
+              }
+
+              lastScrollY = scrollY;
               ticking = false;
             });
             ticking = true;
           }
         }, { passive: true });
 
-        btn.addEventListener('click', () => {
+        // Back to top click
+        btn?.addEventListener('click', () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
@@ -118,12 +179,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohnd
 
       // Run on initial load
       initReveal();
-      initBackToTop();
+      initBottomNav();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {
         initReveal();
-        initBackToTop();
+        initBottomNav();
       });
     </script>
   </body>

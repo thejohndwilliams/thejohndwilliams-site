@@ -31,55 +31,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- BACKGROUND — alternating section -->
+  <!-- BACKGROUND — collapsible on mobile -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
-        <h2>Background</h2>
-        <p>
-          I graduated from Baylor University in 2015 with a BA in Film and Digital Media.
-          That degree taught me composition, narrative structure, and how to communicate
-          visually — skills I still use daily, just in different contexts. I went to law
-          school. Life intervened. I left, earned an MBA in Cybersecurity from
-          Baylor and Texas A&amp;M University-Corpus Christi (2024, 3.86 GPA), and found
-          that the analytical rigor of security work suited me better than the courtroom
-          ever would have.
-        </p>
-        <p>
-          For the past two years I have worked at SpaceX on the Starlink enterprise
-          support team, running night shift operations. That means incident command across
-          enterprise, government, aviation, and maritime accounts — 175+ P1/P2 incidents
-          per week, building forecasting tools from scratch, and designing operational
-          analytics in an environment where downtime is not abstract.
-        </p>
+        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
+          <h2 class="mb-0">Background</h2>
+          <svg class="accordion-chevron w-5 h-5 opacity-30 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
+          <p class="mt-4 sm:mt-6">
+            I graduated from Baylor University in 2015 with a BA in Film and Digital Media.
+            That degree taught me composition, narrative structure, and how to communicate
+            visually — skills I still use daily, just in different contexts. I went to law
+            school. Life intervened. I left, earned an MBA in Cybersecurity from
+            Baylor and Texas A&amp;M University-Corpus Christi (2024, 3.86 GPA), and found
+            that the analytical rigor of security work suited me better than the courtroom
+            ever would have.
+          </p>
+          <p>
+            For the past two years I have worked at SpaceX on the Starlink enterprise
+            support team, running night shift operations. That means incident command across
+            enterprise, government, aviation, and maritime accounts — 175+ P1/P2 incidents
+            per week, building forecasting tools from scratch, and designing operational
+            analytics in an environment where downtime is not abstract.
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- THE INTERSECTION -->
+  <!-- Visual break — editorial image -->
+  <section class="py-0">
+    <div class="container-wide">
+      <div class="reveal relative rounded-lg sm:rounded-card overflow-hidden aspect-[21/9] sm:aspect-[3/1]">
+        <img
+          src="/images/photography/gallery/7r50674-enhanced-sr.webp"
+          srcset="/images/photography/thumb/7r50674-enhanced-sr.webp 400w, /images/photography/gallery/7r50674-enhanced-sr.webp 1200w, /images/photography/hero/7r50674-enhanced-sr.webp 2400w"
+          sizes="100vw"
+          alt="El Arco de Cabo San Lucas"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/40 to-transparent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE INTERSECTION — collapsible on mobile -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
-    <img
-      src="/images/photography/gallery/7r52258.webp"
-      alt=""
-      class="absolute top-0 right-0 w-1/3 h-full object-cover opacity-10 hidden lg:block"
-      loading="lazy"
-    />
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
-        <h2>The Intersection</h2>
-        <p>
-          People ask why a film graduate ended up in cybersecurity and data engineering.
-          The honest answer is that I never left the core discipline. Film is about
-          taking raw material — footage, sound, light — and organizing it so that someone
-          else can see what you see. Data engineering is the same problem with different
-          inputs. Cybersecurity is about making the invisible visible before it causes
-          damage. Photography is about noticing what is already there.
-        </p>
-        <p>
-          I work at the intersection of these things because that is where I actually
-          live. The liberal arts and technology are not separate tracks for me. They are
-          the same track, and the best work I do happens when both are engaged.
-        </p>
+        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
+          <h2 class="mb-0">The Intersection</h2>
+          <svg class="accordion-chevron w-5 h-5 opacity-30 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
+          <p class="mt-4 sm:mt-6">
+            People ask why a film graduate ended up in cybersecurity and data engineering.
+            The honest answer is that I never left the core discipline. Film is about
+            taking raw material — footage, sound, light — and organizing it so that someone
+            else can see what you see. Data engineering is the same problem with different
+            inputs. Cybersecurity is about making the invisible visible before it causes
+            damage. Photography is about noticing what is already there.
+          </p>
+          <p>
+            I work at the intersection of these things because that is where I actually
+            live. The liberal arts and technology are not separate tracks for me. They are
+            the same track, and the best work I do happens when both are engaged.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -104,17 +125,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- CREDENTIALS -->
+  <!-- Visual break — diptych -->
+  <section class="py-0">
+    <div class="container-wide">
+      <div class="reveal grid grid-cols-2 gap-2 sm:gap-3">
+        <div class="rounded-lg sm:rounded-card overflow-hidden aspect-[4/3]">
+          <img
+            src="/images/photography/gallery/img-7576-enhanced.webp"
+            srcset="/images/photography/thumb/img-7576-enhanced.webp 400w, /images/photography/gallery/img-7576-enhanced.webp 1200w"
+            sizes="50vw"
+            alt="Shanghai Tower from below"
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+        <div class="rounded-lg sm:rounded-card overflow-hidden aspect-[4/3]">
+          <img
+            src="/images/photography/gallery/dscf0530.webp"
+            srcset="/images/photography/thumb/dscf0530.webp 400w, /images/photography/gallery/dscf0530.webp 1200w"
+            sizes="50vw"
+            alt="Night Tokyo street with neon"
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CREDENTIALS — collapsible on mobile -->
   <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
-        <h2>Credentials</h2>
-        <p>
-          BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
-          Baylor / Texas A&amp;M University-Corpus Christi (2024, 3.86 GPA). Eagle Scout.
-          ITAR clearance. CompTIA Security+ (in progress). I am also pursuing an Air Force
-          Reserve commission in cybersecurity operations.
-        </p>
+        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
+          <h2 class="mb-0">Credentials</h2>
+          <svg class="accordion-chevron w-5 h-5 opacity-30 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
+          <p class="mt-4 sm:mt-6">
+            BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
+            Baylor / Texas A&amp;M University-Corpus Christi (2024, 3.86 GPA). Eagle Scout.
+            ITAR clearance. CompTIA Security+ (in progress). I am also pursuing an Air Force
+            Reserve commission in cybersecurity operations.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -171,4 +225,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
+<script>
+  function initAccordions() {
+    // Only enable accordion behavior on mobile
+    if (window.innerWidth >= 768) return;
+
+    document.querySelectorAll('.accordion-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const body = btn.nextElementSibling as HTMLElement;
+        const chevron = btn.querySelector('.accordion-chevron') as HTMLElement;
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+          body.style.maxHeight = '0';
+          btn.setAttribute('aria-expanded', 'false');
+          chevron?.style.setProperty('transform', 'rotate(0deg)');
+        } else {
+          body.style.maxHeight = body.scrollHeight + 'px';
+          btn.setAttribute('aria-expanded', 'true');
+          chevron?.style.setProperty('transform', 'rotate(180deg)');
+        }
+      });
+    });
+  }
+
+  initAccordions();
+  document.addEventListener('astro:after-swap', initAccordions);
+</script>
 </BaseLayout>

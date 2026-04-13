@@ -11,19 +11,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-size: 16px; /* Mobile-first: 16px base, scales up */
-  }
-
-  @media (min-width: 640px) {
-    html {
-      font-size: 17px;
-    }
-  }
-
-  @media (min-width: 768px) {
-    html {
-      font-size: 18px; /* Research: 18px body boosts reading time ~40% vs 16px */
-    }
+    /* Fluid base: 16px at 320w → 18px at 1024w, no breakpoint jumps */
+    font-size: clamp(1rem, 0.943rem + 0.28vw, 1.125rem);
   }
 
   body {
@@ -59,31 +48,22 @@
   }
 
   h1 {
-    font-size: 2.667rem; /* 48px mobile */
+    /* Fluid: 36px at 320w → 56px at 1200w */
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
     line-height: 1.1;
     letter-spacing: -0.025em;
   }
 
-  @media (min-width: 768px) {
-    h1 {
-      font-size: 3.111rem; /* 56px desktop — research range 48-56px */
-    }
-  }
-
   h2 {
-    font-size: 1.556rem; /* 28px */
+    /* Fluid: 24px at 320w → 32px at 1200w */
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
     line-height: 1.25;
     letter-spacing: -0.015em;
   }
 
-  @media (min-width: 768px) {
-    h2 {
-      font-size: 1.778rem; /* 32px */
-    }
-  }
-
   h3 {
-    font-size: 1.333rem; /* 24px */
+    /* Fluid: 20px at 320w → 24px at 1200w */
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
     line-height: 1.3;
     letter-spacing: -0.01em;
   }
@@ -147,6 +127,14 @@
     .container-wide {
       padding-left: 2rem;
       padding-right: 2rem;
+    }
+  }
+
+  /* Touch press feedback — subtle scale-down on tap */
+  @media (hover: none) {
+    .press-feedback:active {
+      transform: scale(0.98);
+      transition-duration: 0.1s;
     }
   }
 

@@ -183,7 +183,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 
             return (
               <div
-                class={`gallery-item group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
+                class={`gallery-item press-feedback group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
               >
@@ -199,8 +199,8 @@ const allCategories = ['all', ...categories.map(c => c.id)];
                   decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                  <p class="text-[10px] sm:text-xs opacity-60">{img.alt}</p>
+                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                  <p class="text-[10px] sm:text-xs opacity-40 sm:opacity-60">{img.alt}</p>
                 </div>
               </div>
             );
@@ -237,27 +237,31 @@ const allCategories = ['all', ...categories.map(c => c.id)];
     </div>
   </div>
 
-  <!-- ABOUT / EQUIPMENT -->
+  <!-- ABOUT / EQUIPMENT / COLLECTING -->
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Equipment</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Sony Alpha 7R V</p>
-          <p class="text-xs sm:text-sm opacity-40 mb-4 sm:mb-6">Primary system. Landscape, macro, and fine art work.</p>
+          <p class="text-xs sm:text-sm opacity-40 mb-4 sm:mb-6">61 megapixels. Landscape, macro, and fine art work.</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Fujifilm X100VI</p>
-          <p class="text-xs sm:text-sm opacity-40">Street, travel, and night photography.</p>
+          <p class="text-xs sm:text-sm opacity-40">40 megapixels. Street, travel, and night photography.</p>
         </div>
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Noticing</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-4 sm:mb-6">
+          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Philosophy</p>
+          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
             The threshold between the vast and the intimate. Where a thunderhead holds the same weight as a single rain-wet leaf. This is what I notice.
           </p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
-            Fine art prints and licensing inquiries welcome.
+          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Collecting</p>
+          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+            Available as limited edition archival prints.
+          </p>
+          <p class="text-xs sm:text-sm opacity-30 leading-relaxed mb-6 sm:mb-8">
+            Giclée on Hahnemühle Photo Rag. Signed and numbered editions. Licensing inquiries welcome.
           </p>
           <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary w-full sm:w-auto">
-            Inquire about prints
+            Inquire about acquisitions
           </a>
         </div>
       </div>
