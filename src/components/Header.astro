@@ -1,8 +1,10 @@
 ---
 import { navItems } from '../utils/date';
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class="py-4 sm:py-6 md:py-8" transition:persist>
+<header class="py-4 sm:py-6 md:py-8 relative z-40" transition:persist>
   <div class="container-narrow">
     <nav class="flex items-center justify-between">
       <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-gold min-h-[44px] flex items-center" transition:name="logo">
@@ -11,16 +13,20 @@ import { navItems } from '../utils/date';
 
       <!-- Desktop Navigation -->
       <ul class="hidden md:flex items-center gap-8">
-        {navItems.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              class="text-sm opacity-40 hover:opacity-100 transition-opacity duration-300 py-2"
-            >
-              {item.name}
-            </a>
-          </li>
-        ))}
+        {navItems.map((item) => {
+          const isActive = currentPath === item.href;
+          return (
+            <li>
+              <a
+                href={item.href}
+                class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'opacity-40 hover:opacity-100'}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.name}
+              </a>
+            </li>
+          );
+        })}
       </ul>
 
       <!-- Mobile Menu Button — 44px touch target -->
@@ -43,16 +49,20 @@ import { navItems } from '../utils/date';
     <div id="mobile-menu" class="mobile-menu-closed md:hidden overflow-hidden">
       <div class="pt-4 pb-2 border-t border-white/10 mt-4">
         <ul class="space-y-1">
-          {navItems.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                class="block py-3 px-2 opacity-50 hover:opacity-100 active:opacity-100 transition-opacity duration-300 text-base min-h-[44px] flex items-center"
-              >
-                {item.name}
-              </a>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = currentPath === item.href;
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class={`block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-50 hover:opacity-100 active:opacity-100'}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.name}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

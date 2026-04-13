@@ -57,8 +57,47 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohnd
     </main>
     <Footer />
 
+    <!-- Back to top — appears after scrolling on mobile -->
+    <button
+      id="back-to-top"
+      class="fixed bottom-6 right-4 sm:bottom-8 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300"
+      aria-label="Back to top"
+    >
+      <svg class="w-4 h-4 sm:w-5 sm:h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 15l7-7 7 7" />
+      </svg>
+    </button>
+
     <!-- Scroll reveal observer — IntersectionObserver, no scroll hijacking -->
     <script>
+      function initBackToTop() {
+        const btn = document.getElementById('back-to-top');
+        if (!btn) return;
+
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              if (window.scrollY > 600) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.style.transform = 'translateY(0)';
+              } else {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+                btn.style.transform = 'translateY(1rem)';
+              }
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+
+        btn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
       function initReveal() {
         const observer = new IntersectionObserver(
           (entries) => {
@@ -79,9 +118,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohnd
 
       // Run on initial load
       initReveal();
+      initBackToTop();
 
       // Re-run after View Transitions navigate
-      document.addEventListener('astro:after-swap', initReveal);
+      document.addEventListener('astro:after-swap', () => {
+        initReveal();
+        initBackToTop();
+      });
     </script>
   </body>
 </html>

@@ -4,25 +4,25 @@ import { getCurrentYear, socialLinks } from '../utils/date';
 const currentYear = getCurrentYear();
 ---
 
-<footer class="py-12 md:py-16 border-t border-white/5" transition:persist>
+<footer class="py-8 sm:py-12 md:py-16 border-t border-white/5" transition:persist>
   <div class="container-narrow">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div class="flex flex-col items-center text-center sm:text-left sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
       <div class="space-y-1">
-        <p class="text-sm opacity-30">
+        <p class="text-xs sm:text-sm opacity-30">
           &copy; {currentYear} John D. Williams
         </p>
-        <p class="text-sm opacity-20 italic font-serif">
+        <p class="text-xs sm:text-sm opacity-20 italic font-serif">
           John 15:13
         </p>
       </div>
 
-      <div class="flex items-center gap-8">
+      <div class="flex items-center gap-6 sm:gap-8">
         {socialLinks.map((link) => (
           <a
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm opacity-30 hover:opacity-70 transition-opacity duration-300"
+            class="text-xs sm:text-sm opacity-30 hover:opacity-70 transition-opacity duration-300 min-h-[44px] flex items-center"
           >
             {link.name}
           </a>

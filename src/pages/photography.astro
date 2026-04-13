@@ -183,7 +183,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 
             return (
               <div
-                class={`gallery-item group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/6 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
+                class={`gallery-item group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
               >
@@ -229,6 +229,12 @@ const allCategories = ['all', ...categories.map(c => c.id)];
     </button>
     <img id="lightbox-img" src="" alt="" class="max-w-[96vw] sm:max-w-[92vw] max-h-[85vh] sm:max-h-[90vh] object-contain select-none" draggable="false" />
     <p id="lightbox-caption" class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-xs sm:text-sm opacity-40 whitespace-nowrap max-w-[90vw] truncate"></p>
+    <!-- Mobile swipe hint — shows once then fades -->
+    <div id="swipe-hint" class="sm:hidden absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-0 transition-opacity duration-500 pointer-events-none">
+      <svg class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
+      <span class="opacity-40">Swipe</span>
+      <svg class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" /></svg>
+    </div>
   </div>
 
   <!-- ABOUT / EQUIPMENT -->
@@ -327,6 +333,8 @@ const allCategories = ['all', ...categories.map(c => c.id)];
       visibleItems = Array.from(document.querySelectorAll('.gallery-section:not([data-hidden]) .gallery-item'));
     }
 
+    let swipeHintShown = false;
+
     function openLightbox(index: number) {
       updateVisibleItems();
       currentIndex = index;
@@ -337,6 +345,16 @@ const allCategories = ['all', ...categories.map(c => c.id)];
       lightboxCaption!.textContent = item.dataset.alt || '';
       lightbox!.classList.add('active');
       document.body.style.overflow = 'hidden';
+
+      // Show swipe hint on first mobile open
+      if (!swipeHintShown && window.innerWidth < 640) {
+        swipeHintShown = true;
+        const hint = document.getElementById('swipe-hint');
+        if (hint) {
+          setTimeout(() => { hint.style.opacity = '1'; }, 400);
+          setTimeout(() => { hint.style.opacity = '0'; }, 2500);
+        }
+      }
     }
 
     function closeLightbox() {
