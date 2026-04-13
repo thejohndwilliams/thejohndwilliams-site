@@ -8,7 +8,8 @@ const socialLinks = [
     description: 'Professional network',
     icon: '/images/previews/linkedin.svg',
     hero: '/images/linkedin-hero.webp',
-    heroFallback: '/images/linkedin-hero.jpg'
+    heroFallback: '/images/linkedin-hero.jpg',
+    heroAlt: 'Macro photograph of wet moss with water droplets and golden highlights'
   },
   {
     name: 'GitHub',
@@ -16,7 +17,8 @@ const socialLinks = [
     description: 'Code & projects',
     icon: '/images/previews/github.svg',
     hero: '/images/github-hero.webp',
-    heroFallback: '/images/github-hero.jpg'
+    heroFallback: '/images/github-hero.jpg',
+    heroAlt: 'Thermal visualization of a floor plan in neon pink and cyan'
   },
   {
     name: 'Instagram',
@@ -24,7 +26,8 @@ const socialLinks = [
     description: 'Visual journal',
     icon: '/images/previews/instagram.svg',
     hero: '/images/instagram-hero.webp',
-    heroFallback: '/images/instagram-hero.jpg'
+    heroFallback: '/images/instagram-hero.jpg',
+    heroAlt: 'Single white cloud against a deep blue night sky'
   },
   {
     name: 'Behance',
@@ -32,12 +35,13 @@ const socialLinks = [
     description: 'Design work',
     icon: '/images/previews/behance.svg',
     hero: '/images/behance-hero.webp',
-    heroFallback: '/images/behance-hero.jpg'
+    heroFallback: '/images/behance-hero.jpg',
+    heroAlt: 'Abstract minimalist silhouettes in soft gray and pale green tones'
   }
 ];
 ---
 
-<BaseLayout title="Home" description="Film graduate, cybersecurity MBA, SpaceX engineer, nature photographer. Liberal arts meets technology.">
+<BaseLayout title="Home" description="Photography, cybersecurity, and data — the work of John D. Williams.">
 
   <!-- HERO — Full-bleed cloudscape with centered identity -->
   <section class="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -45,7 +49,7 @@ const socialLinks = [
       src="/images/photography/gallery/7r52326.webp"
       srcset="/images/photography/thumb/7r52326.webp 400w, /images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w"
       sizes="100vw"
-      alt=""
+      alt="Dramatic cloudscape with towering cumulus clouds illuminated against a dark sky"
       class="absolute inset-0 w-full h-full object-cover opacity-40"
       fetchpriority="high"
     />
@@ -82,7 +86,7 @@ const socialLinks = [
             src="/images/photography/gallery/7r52258.webp"
             srcset="/images/photography/thumb/7r52258.webp 400w, /images/photography/gallery/7r52258.webp 1200w"
             sizes="(max-width: 639px) 100vw, 33vw"
-            alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+            alt="Cumulus cloud formation rising against a deep blue-black sky" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
             <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">About</h2>
@@ -94,7 +98,7 @@ const socialLinks = [
             src="/images/photography/gallery/dscf0530.webp"
             srcset="/images/photography/thumb/dscf0530.webp 400w, /images/photography/gallery/dscf0530.webp 1200w"
             sizes="(max-width: 639px) 100vw, 33vw"
-            alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+            alt="Night urban street scene with warm-lit buildings and neon signage" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
             <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">Work</h2>
@@ -106,7 +110,7 @@ const socialLinks = [
             src="/images/photography/gallery/dscf0952.webp"
             srcset="/images/photography/thumb/dscf0952.webp 400w, /images/photography/gallery/dscf0952.webp 1200w"
             sizes="(max-width: 639px) 100vw, 33vw"
-            alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+            alt="Serene river landscape with traditional wooden boats and forested hills" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
             <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">Photography</h2>
@@ -133,7 +137,7 @@ const socialLinks = [
               <source srcset={link.hero} type="image/webp" />
               <img
                 src={link.heroFallback}
-                alt=""
+                alt={link.heroAlt}
                 class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
                 loading="lazy"
                 decoding="async"

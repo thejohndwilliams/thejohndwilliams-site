@@ -31,7 +31,9 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Theme color — brand midnight for mobile status bars -->
     <meta name="theme-color" content="#0a0a0a" />
@@ -57,6 +59,23 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="twitter:image" content={ogImageURL} />
 
     <title>{fullTitle}</title>
+
+    <!-- JSON-LD Person schema — semantic identity for search engines -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "John D. Williams",
+      "url": "https://thejohndwilliams.com",
+      "image": "https://thejohndwilliams.com/favicon-512.png",
+      "jobTitle": "Cybersecurity & Data Professional",
+      "description": "Photography, cybersecurity, and data — the work of John D. Williams.",
+      "sameAs": [
+        "https://www.linkedin.com/in/john-davis-williams/",
+        "https://github.com/thejohndwilliams",
+        "https://www.instagram.com/thejohndwilliams/"
+      ],
+      "knowsAbout": ["Cybersecurity", "Data Analytics", "Photography", "SpaceX"]
+    })} />
 
     <!-- View Transitions — cinematic page-to-page feel -->
     <ViewTransitions />
