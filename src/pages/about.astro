@@ -6,32 +6,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="About"
   description="John D. Williams — film graduate, cybersecurity MBA, SpaceX engineer, nature photographer. Liberal arts meets technology."
 >
-  <!-- HERO -->
-  <section class="py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal grid md:grid-cols-3 gap-10 items-start mb-16">
-        <div class="md:col-span-2">
-          <h1 class="mb-8">About</h1>
-          <p class="text-lg md:text-xl leading-relaxed opacity-70">
-            I studied film. I work in cybersecurity. I shoot landscapes with a Sony A7R
-            and build data pipelines in Python. The through-line is not obvious until you
-            see it: I have always been interested in how things are made visible — whether
-            that is a story on screen, a threat on a network, or light on a mountain.
-          </p>
-        </div>
-        <div class="reveal reveal-delay-2 flex justify-center md:justify-end">
-          <div class="w-44 h-56 overflow-hidden rounded-card ring-1 ring-white/10">
-            <picture>
-              <source srcset="/images/headshot.webp" type="image/webp" />
-              <img
-                src="/images/headshot.jpg"
-                alt="John D. Williams"
-                class="w-full h-full object-cover object-top"
-                fetchpriority="high"
-              />
-            </picture>
-          </div>
-        </div>
+  <!-- HERO — Portrait with full-bleed image -->
+  <section class="relative py-16 md:py-24 overflow-hidden">
+    <img
+      src="/images/photography/hero/7r50898-enhanced-sr.webp"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover opacity-20"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
+    <div class="relative z-10 container-narrow">
+      <div class="reveal max-w-2xl">
+        <p class="text-xs tracking-[0.3em] uppercase opacity-30 mb-4 font-light">About</p>
+        <h1 class="mb-8">About</h1>
+        <p class="text-lg md:text-xl leading-relaxed opacity-70">
+          I studied film. I work in cybersecurity. I shoot landscapes with a Sony A7R
+          and build data pipelines in Python. The through-line is not obvious until you
+          see it: I have always been interested in how things are made visible — whether
+          that is a story on screen, a threat on a network, or light on a mountain.
+        </p>
       </div>
     </div>
   </section>
@@ -62,7 +55,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- THE INTERSECTION -->
-  <section class="py-16 md:py-24">
+  <section class="relative py-16 md:py-24 overflow-hidden">
+    <img
+      src="/images/photography/gallery/7r52258.webp"
+      alt=""
+      class="absolute top-0 right-0 w-1/3 h-full object-cover opacity-10 hidden lg:block"
+      loading="lazy"
+    />
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
         <h2>The Intersection</h2>
@@ -118,10 +117,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- OUTSIDE WORK — alternating -->
+  <!-- OUTSIDE WORK — alternating, with image grid -->
   <section class="section-light py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal prose max-w-2xl">
+      <div class="reveal prose max-w-2xl mb-12">
         <h2>Outside Work</h2>
         <p>
           I am a nature photographer. That is not a hobby line on a resume — it is a
@@ -130,6 +129,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           it is hard, and in doing the work that is in front of you without waiting for
           applause.
         </p>
+      </div>
+      <div class="reveal grid grid-cols-3 gap-3">
+        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img src="/images/photography/gallery/img-7055-enhanced-enhanced-sr.webp" alt="Sunset over wildflower field" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img src="/images/photography/gallery/dscf0936.webp" alt="Mountain landscape with clouds" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img src="/images/photography/gallery/7r51108-enhanced-sr.webp" alt="Sunlight through tree canopy" class="w-full h-full object-cover" loading="lazy" />
+        </div>
       </div>
     </div>
   </section>

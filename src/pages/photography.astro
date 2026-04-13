@@ -1,70 +1,379 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Gallery data organized by category
+const categories = [
+  {
+    id: 'sky',
+    name: 'Sky',
+    description: 'Looking up.',
+    images: [
+      { file: '7r52326', alt: 'Thunderheads against black sky', orientation: 'landscape', featured: true },
+      { file: '7r52258', alt: 'Cloud mass rising into darkness', orientation: 'portrait' },
+      { file: '7r52256', alt: 'Storm clouds from below', orientation: 'portrait' },
+      { file: '7r52314', alt: 'Backlit dramatic cloudscape', orientation: 'landscape' },
+      { file: 'dscf0088', alt: 'Cumulus formations in deep blue', orientation: 'landscape' },
+      { file: 'dscf0056', alt: 'Lone cloud against cobalt', orientation: 'landscape' },
+      { file: 'dscf0060', alt: 'Cirrus wisps in blue gradient', orientation: 'landscape' },
+      { file: 'dscf1275', alt: 'Cloud dissolving into blue', orientation: 'portrait' },
+      { file: 'dscf0090', alt: 'Cloud layers at altitude', orientation: 'landscape' },
+      { file: 'dscf0091', alt: 'Cloud texture study', orientation: 'landscape' },
+      { file: 'dscf0074', alt: 'Towering cumulus', orientation: 'portrait' },
+      { file: 'dscf0082', alt: 'Cloud illuminated from within', orientation: 'portrait' },
+      { file: 'dscf0086', alt: 'Cloud column against sky', orientation: 'portrait' },
+      { file: 'dscf0069', alt: 'Cloud mass in afternoon light', orientation: 'portrait' },
+      { file: 'dscf0077', alt: 'Sky gradient with clouds', orientation: 'portrait' },
+      { file: 'img-7029-hdr-enhanced', alt: 'Clouds parting over deep blue', orientation: 'landscape' },
+      { file: 'dscf0936', alt: 'Mountain river below cloud cover', orientation: 'portrait' },
+      { file: '7r52322', alt: 'Storm formation detail', orientation: 'portrait' },
+      { file: '7r52355', alt: 'Cloud edge study', orientation: 'portrait' },
+      { file: '7r52352', alt: 'Atmospheric cloud layers', orientation: 'portrait' },
+    ]
+  },
+  {
+    id: 'earth',
+    name: 'Earth',
+    description: 'Looking close.',
+    images: [
+      { file: '7r51025-enhanced-sr', alt: 'Rain-wet leaf in darkness', orientation: 'portrait', featured: true },
+      { file: '7r51024-enhanced-sr', alt: 'Water droplets on dark leaf', orientation: 'landscape' },
+      { file: '7r51018-enhanced-sr', alt: 'Leaf veins with rain', orientation: 'landscape' },
+      { file: '7r50580-enhanced-sr', alt: 'Bougainvillea bloom', orientation: 'landscape' },
+      { file: '7r51505-enhanced-sr', alt: 'Bee on citrus blossom', orientation: 'landscape' },
+      { file: 'dsc-0009-2-enhanced-sr', alt: 'Fern frond macro', orientation: 'landscape' },
+      { file: '7r51108-enhanced-sr', alt: 'Sunlight through tree canopy', orientation: 'portrait' },
+      { file: 'dscf1737', alt: 'Forest canopy light', orientation: 'portrait' },
+      { file: 'dscf1658', alt: 'Tropical garden', orientation: 'portrait' },
+      { file: 'dscf1573', alt: 'Sky through branches', orientation: 'portrait' },
+      { file: 'dscf1845', alt: 'Botanical detail', orientation: 'portrait' },
+      { file: 'dscf1844', alt: 'Plant texture study', orientation: 'portrait' },
+      { file: 'dscf1831', alt: 'Garden flora', orientation: 'portrait' },
+      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait' },
+      { file: '7r51784-enhanced-sr', alt: 'Flowering tree and clouds', orientation: 'portrait' },
+      { file: '7r51911-enhanced-sr', alt: 'Botanical close-up', orientation: 'portrait' },
+    ]
+  },
+  {
+    id: 'water',
+    name: 'Water',
+    description: 'Where land dissolves.',
+    images: [
+      { file: '7r50674-enhanced-sr', alt: 'El Arco de Cabo San Lucas', orientation: 'landscape', featured: true },
+      { file: '7r50680-enhanced-sr', alt: 'Turquoise sea against rock formations', orientation: 'landscape' },
+      { file: '7r50993-enhanced-sr', alt: 'Blue hour over Cabo harbor', orientation: 'landscape' },
+      { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
+      { file: '7r50804-enhanced-sr', alt: 'Ocean at dusk', orientation: 'landscape' },
+      { file: 'dscf0952', alt: 'Traditional boat on Kyoto river', orientation: 'portrait' },
+      { file: 'img-7461-hdr-enhanced-hdr-enhanced', alt: 'Riverboat at pink dusk', orientation: 'landscape' },
+    ]
+  },
+  {
+    id: 'structure',
+    name: 'Structure',
+    description: 'What we build toward the sky.',
+    images: [
+      { file: 'img-7576-enhanced', alt: 'Shanghai Tower from below', orientation: 'portrait', featured: true },
+      { file: 'img-7575-enhanced', alt: 'Glass tower looking up', orientation: 'portrait' },
+      { file: 'img-7598-enhanced-sr', alt: 'Chinese pagoda at night', orientation: 'portrait' },
+      { file: 'img-7610-enhanced-sr', alt: 'Temple reflected in purple water', orientation: 'landscape' },
+      { file: 'img-7395-enhanced-sr', alt: 'Temple gate against blue sky', orientation: 'landscape' },
+      { file: 'dscf0530', alt: 'Night Tokyo street with neon', orientation: 'portrait' },
+      { file: 'dscf0423', alt: 'Japanese alleyway at night', orientation: 'portrait' },
+      { file: 'dscf0261', alt: 'Urban night architecture', orientation: 'portrait' },
+      { file: 'dsc-1076-enhanced', alt: 'Blue glass sculptures in garden', orientation: 'landscape' },
+      { file: 'dsc-1081-enhanced', alt: 'Red glass spires in garden', orientation: 'landscape' },
+      { file: 'dsc-1137-enhanced', alt: 'Chihuly sun sculpture', orientation: 'landscape' },
+      { file: 'dsc-1138-enhanced', alt: 'Glass tower in garden', orientation: 'landscape' },
+    ]
+  },
+  {
+    id: 'light',
+    name: 'Light',
+    description: 'What changes everything.',
+    images: [
+      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset wildflower field', orientation: 'portrait', featured: true },
+      { file: '7r50971-enhanced-sr', alt: 'Golden light over water', orientation: 'landscape' },
+      { file: 'burningcold-enhanced', alt: 'Fire consuming structure', orientation: 'landscape' },
+    ]
+  },
+];
+
+const allCategories = ['all', ...categories.map(c => c.id)];
 ---
 
 <BaseLayout
   title="Photography"
-  description="Nature and landscape photography by John D. Williams. Shot on Sony A7R."
+  description="Fine art photography by John D. Williams. Sky, earth, water, structure, and light — shot on Sony Alpha and Fujifilm X-Series."
 >
-  <!-- HERO -->
-  <section class="py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal max-w-2xl mb-16">
-        <h1 class="mb-8">Photography</h1>
-        <p class="text-lg md:text-xl leading-relaxed opacity-70">
-          Nature and landscape work, shot on a Sony A7R system. Nearly 3,000 images
-          in the archive. This is what I see when I step outside.
+  <!-- HERO — Featured image full-bleed -->
+  <section class="relative min-h-[70vh] md:min-h-[80vh] flex items-end overflow-hidden">
+    <picture>
+      <img
+        src="/images/photography/hero/7r52326.webp"
+        alt="Thunderheads against black sky"
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
+    <div class="relative z-10 container-narrow pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="text-xs tracking-[0.3em] uppercase opacity-40 mb-4 font-light">Noticing</p>
+        <h1 class="text-title md:text-headline font-serif mb-6 tracking-tight">Photography</h1>
+        <p class="text-lg md:text-xl leading-relaxed opacity-60 max-w-lg">
+          The art of looking up. The art of looking close.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- GALLERY PLACEHOLDER — alternating section -->
+  <!-- CATEGORY FILTER -->
+  <section class="section-light py-8 md:py-10 sticky top-0 z-30 backdrop-blur-xl bg-[#111111]/90 border-b border-white/5">
+    <div class="container-narrow">
+      <nav class="flex items-center gap-6 overflow-x-auto scrollbar-hide" id="category-nav" role="tablist">
+        <button
+          class="category-btn active text-sm opacity-90 whitespace-nowrap pb-2 border-b-2 border-gold transition-all duration-300"
+          data-category="all"
+          role="tab"
+          aria-selected="true"
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            class="category-btn text-sm opacity-40 hover:opacity-70 whitespace-nowrap pb-2 border-b-2 border-transparent transition-all duration-300"
+            data-category={cat.id}
+            role="tab"
+            aria-selected="false"
+          >
+            {cat.name}
+          </button>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  <!-- GALLERY SECTIONS -->
+  {categories.map((cat, catIndex) => (
+    <section
+      class={`gallery-section py-16 md:py-24 ${catIndex % 2 === 0 ? '' : 'section-light'}`}
+      data-category={cat.id}
+      id={`gallery-${cat.id}`}
+    >
+      <div class="container-wide px-4 md:px-6">
+        <!-- Category header -->
+        <div class="reveal mb-10 md:mb-14">
+          <h2 class="text-2xl md:text-3xl font-serif mb-2 tracking-tight">{cat.name}</h2>
+          <p class="text-sm opacity-40 italic">{cat.description}</p>
+        </div>
+
+        <!-- Masonry-style grid -->
+        <div class="stagger-children grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+          {cat.images.map((img, i) => {
+            const spanClass = img.featured
+              ? 'col-span-2 row-span-2'
+              : img.orientation === 'portrait'
+                ? 'row-span-2'
+                : '';
+            const aspectClass = img.featured
+              ? 'aspect-square md:aspect-auto md:h-full'
+              : img.orientation === 'portrait'
+                ? 'aspect-[3/4]'
+                : 'aspect-[4/3]';
+
+            return (
+              <div
+                class={`gallery-item group relative overflow-hidden rounded-card ring-1 ring-white/6 hover:ring-gold/20 transition-all duration-500 cursor-pointer ${spanClass}`}
+                data-src={`/images/photography/hero/${img.file}.webp`}
+                data-alt={img.alt}
+              >
+                <img
+                  src={`/images/photography/gallery/${img.file}.webp`}
+                  alt={img.alt}
+                  class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform ${aspectClass}`}
+                  loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
+                  decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <p class="text-xs opacity-60">{img.alt}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button id="lightbox-close" class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity duration-300" aria-label="Close">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <button id="lightbox-prev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center opacity-30 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button id="lightbox-next" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center opacity-30 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-w-[92vw] max-h-[90vh] object-contain" />
+    <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm opacity-40"></p>
+  </div>
+
+  <!-- ABOUT / EQUIPMENT -->
   <section class="section-light py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal glass-card p-10 mb-16">
-        <p class="opacity-60 leading-relaxed mb-4">
-          Gallery loading soon. I am curating selects from the Lightroom archive —
-          landscape, nature, and light studies from across Texas and beyond.
-        </p>
-        <p class="opacity-60 leading-relaxed">
-          In the meantime, visual work is on
-          <a href="https://www.instagram.com/thejohndwilliams/" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all duration-300">Instagram</a>
-          and
-          <a href="https://www.behance.net/killthewizard" target="_blank" rel="noopener noreferrer" class="text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all duration-300">Behance</a>.
-        </p>
-      </div>
-
-      <!-- Placeholder grid -->
-      <div class="stagger-children grid grid-cols-2 md:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map(() => (
-          <div class="aspect-[4/3] bg-white/[0.03] border border-white/[0.06] rounded-card overflow-hidden flex items-center justify-center">
-            <span class="text-xs opacity-15 tracking-wider uppercase">Image</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- DETAILS -->
-  <section class="py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal grid md:grid-cols-2 gap-12">
+      <div class="reveal grid md:grid-cols-2 gap-12 md:gap-16">
         <div>
-          <p class="text-subhead mb-4">Equipment</p>
-          <p class="opacity-50">Sony A7R system &middot; Nature &amp; Landscape &middot; Lightroom</p>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-4">Equipment</p>
+          <p class="text-lg font-serif mb-2 opacity-80">Sony Alpha 7R V</p>
+          <p class="text-sm opacity-40 mb-6">Primary system. Landscape, macro, and fine art work.</p>
+          <p class="text-lg font-serif mb-2 opacity-80">Fujifilm X100VI</p>
+          <p class="text-sm opacity-40">Street, travel, and night photography.</p>
         </div>
         <div>
-          <p class="text-subhead mb-4">Noticing Nature</p>
-          <p class="opacity-50 leading-relaxed mb-4">
-            Photography operates under Noticing Nature, one arm of the Noticing venture.
-            Print sales and licensing are coming.
+          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-4">Noticing</p>
+          <p class="opacity-50 leading-relaxed mb-6">
+            The threshold between the vast and the intimate. Where a thunderhead holds the same weight as a single rain-wet leaf. This is what I notice.
           </p>
-          <a href="mailto:hello@thejohndwilliams.com" class="text-sm text-gold hover:text-gold/80 border-b border-gold/30 hover:border-gold transition-all duration-300">
-            Get in touch →
+          <p class="opacity-50 leading-relaxed mb-8">
+            Fine art prints and licensing inquiries welcome.
+          </p>
+          <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">
+            Inquire about prints
           </a>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- SCRIPTURE -->
+  <section class="py-12">
+    <div class="container-narrow text-center">
+      <p class="text-sm opacity-20 italic font-serif">John 15:13</p>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .gallery-section[data-hidden="true"] { display: none; }
+
+  #lightbox.active { display: flex; }
+
+  #lightbox img {
+    animation: lightbox-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes lightbox-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+<script>
+  function initGallery() {
+    // Category filtering
+    const buttons = document.querySelectorAll('.category-btn');
+    const sections = document.querySelectorAll('.gallery-section');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.category;
+
+        buttons.forEach(b => {
+          b.classList.remove('active', 'opacity-90', 'border-gold');
+          b.classList.add('opacity-40', 'border-transparent');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active', 'opacity-90', 'border-gold');
+        btn.classList.remove('opacity-40', 'border-transparent');
+        btn.setAttribute('aria-selected', 'true');
+
+        sections.forEach(s => {
+          if (cat === 'all' || s.dataset.category === cat) {
+            s.removeAttribute('data-hidden');
+            s.style.display = '';
+          } else {
+            s.setAttribute('data-hidden', 'true');
+            s.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const items = document.querySelectorAll('.gallery-item');
+    let currentIndex = 0;
+    let visibleItems: Element[] = [];
+
+    function updateVisibleItems() {
+      visibleItems = Array.from(document.querySelectorAll('.gallery-section:not([data-hidden]) .gallery-item'));
+    }
+
+    function openLightbox(index: number) {
+      updateVisibleItems();
+      currentIndex = index;
+      const item = visibleItems[currentIndex] as HTMLElement;
+      if (!item) return;
+      lightboxImg!.src = item.dataset.src || '';
+      lightboxImg!.alt = item.dataset.alt || '';
+      lightboxCaption!.textContent = item.dataset.alt || '';
+      lightbox!.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox!.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function navigate(dir: number) {
+      updateVisibleItems();
+      currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
+      const item = visibleItems[currentIndex] as HTMLElement;
+      if (!item) return;
+      lightboxImg!.src = item.dataset.src || '';
+      lightboxImg!.alt = item.dataset.alt || '';
+      lightboxCaption!.textContent = item.dataset.alt || '';
+    }
+
+    items.forEach((item, i) => {
+      item.addEventListener('click', () => {
+        updateVisibleItems();
+        const idx = visibleItems.indexOf(item);
+        openLightbox(idx >= 0 ? idx : 0);
+      });
+    });
+
+    document.getElementById('lightbox-close')?.addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev')?.addEventListener('click', () => navigate(-1));
+    document.getElementById('lightbox-next')?.addEventListener('click', () => navigate(1));
+
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox?.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+    });
+  }
+
+  initGallery();
+  document.addEventListener('astro:after-swap', initGallery);
+</script>

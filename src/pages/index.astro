@@ -39,13 +39,20 @@ const socialLinks = [
 
 <BaseLayout title="Home" description="Film graduate, cybersecurity MBA, SpaceX engineer, nature photographer. Liberal arts meets technology.">
 
-  <!-- HERO — Single-focus composition: one name, one thesis, one action -->
-  <section class="min-h-[85vh] flex items-center justify-center py-16 md:py-24">
-    <div class="max-w-3xl mx-auto px-6 text-center">
+  <!-- HERO — Full-bleed cloudscape with centered identity -->
+  <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+    <img
+      src="/images/photography/hero/7r52326.webp"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover opacity-40"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-transparent to-[#0a0a0a]"></div>
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
       <div class="reveal">
-        <p class="text-subhead mb-6 opacity-60">DATA &middot; SECURITY &middot; DECISIONS</p>
-        <h1 class="text-title md:text-headline mb-8" transition:name="site-title">John D. Williams</h1>
-        <p class="text-lg md:text-xl opacity-60 leading-relaxed max-w-2xl mx-auto mb-12">
+        <p class="text-xs tracking-[0.3em] uppercase opacity-40 mb-6 font-light">DATA &middot; SECURITY &middot; DECISIONS</p>
+        <h1 class="text-title md:text-headline mb-8 font-serif tracking-tight" transition:name="site-title">John D. Williams</h1>
+        <p class="text-lg md:text-xl opacity-50 leading-relaxed max-w-2xl mx-auto mb-12">
           Film graduate. Cybersecurity MBA. SpaceX engineer.<br class="hidden md:block" />
           Nature photographer. Building at the intersection.
         </p>
@@ -66,17 +73,29 @@ const socialLinks = [
     <div class="container-narrow">
       <p class="text-subhead mb-8 reveal">Explore</p>
       <div class="stagger-children grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="/about" class="glass-card p-8 group">
-          <h2 class="text-lg font-serif mb-2 group-hover:text-gold transition-colors duration-300">About</h2>
-          <p class="text-sm opacity-50">Background, philosophy, credentials</p>
+        <a href="/about" class="group relative block rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-500">
+          <img src="/images/photography/gallery/7r52258.webp" alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">About</h2>
+            <p class="text-xs opacity-40">Background, philosophy, credentials</p>
+          </div>
         </a>
-        <a href="/work" class="glass-card p-8 group">
-          <h2 class="text-lg font-serif mb-2 group-hover:text-gold transition-colors duration-300">Work</h2>
-          <p class="text-sm opacity-50">Projects I have built and shipped</p>
+        <a href="/work" class="group relative block rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-500">
+          <img src="/images/photography/gallery/dscf0530.webp" alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">Work</h2>
+            <p class="text-xs opacity-40">Projects I have built and shipped</p>
+          </div>
         </a>
-        <a href="/photography" class="glass-card p-8 group">
-          <h2 class="text-lg font-serif mb-2 group-hover:text-gold transition-colors duration-300">Photography</h2>
-          <p class="text-sm opacity-50">Nature and landscape on Sony A7R</p>
+        <a href="/photography" class="group relative block rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/6 hover:ring-gold/30 transition-all duration-500">
+          <img src="/images/photography/gallery/dscf0952.webp" alt="" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2 class="text-lg font-serif mb-1 group-hover:text-gold transition-colors duration-300">Photography</h2>
+            <p class="text-xs opacity-40">Sky, earth, water, structure, light</p>
+          </div>
         </a>
       </div>
     </div>
