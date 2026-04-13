@@ -7,9 +7,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   description="John D. Williams — film graduate, cybersecurity MBA, SpaceX engineer, nature photographer. Liberal arts meets technology."
 >
   <!-- HERO — Portrait with full-bleed image -->
-  <section class="relative py-16 md:py-24 overflow-hidden">
+  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <img
-      src="/images/photography/hero/john-portrait-bw.webp"
+      src="/images/photography/gallery/john-portrait-bw.webp"
+      srcset="/images/photography/thumb/john-portrait-bw.webp 400w, /images/photography/gallery/john-portrait-bw.webp 1200w, /images/photography/hero/john-portrait-bw.webp 2400w"
+      sizes="100vw"
       alt=""
       class="absolute inset-0 w-full h-full object-cover object-top opacity-15"
       fetchpriority="high"
@@ -17,9 +19,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl">
-        <p class="text-xs tracking-[0.3em] uppercase opacity-30 mb-4 font-light">About</p>
-        <h1 class="mb-8">About</h1>
-        <p class="text-lg md:text-xl leading-relaxed opacity-70">
+        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-30 mb-3 sm:mb-4 font-light">About</p>
+        <h1 class="mb-5 sm:mb-8">About</h1>
+        <p class="text-base sm:text-lg md:text-xl leading-relaxed opacity-70">
           I studied film. I work in cybersecurity. I shoot landscapes with a Sony A7R
           and build data pipelines in Python. The through-line is not obvious until you
           see it: I have always been interested in how things are made visible — whether
@@ -30,7 +32,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- BACKGROUND — alternating section -->
-  <section class="section-light py-16 md:py-24">
+  <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
         <h2>Background</h2>
@@ -55,7 +57,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- THE INTERSECTION -->
-  <section class="relative py-16 md:py-24 overflow-hidden">
+  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <img
       src="/images/photography/gallery/7r52258.webp"
       alt=""
@@ -103,7 +105,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- CREDENTIALS -->
-  <section class="py-16 md:py-24">
+  <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
         <h2>Credentials</h2>
@@ -130,30 +132,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           applause.
         </p>
       </div>
-      <div class="reveal grid grid-cols-3 gap-3">
-        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
-          <img src="/images/photography/gallery/img-7055-enhanced-enhanced-sr.webp" alt="Sunset over wildflower field" class="w-full h-full object-cover" loading="lazy" />
+      <div class="reveal grid grid-cols-3 gap-2 sm:gap-3">
+        <div class="rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img
+            src="/images/photography/gallery/img-7055-enhanced-enhanced-sr.webp"
+            srcset="/images/photography/thumb/img-7055-enhanced-enhanced-sr.webp 400w, /images/photography/gallery/img-7055-enhanced-enhanced-sr.webp 1200w"
+            sizes="33vw"
+            alt="Sunset over wildflower field" class="w-full h-full object-cover" loading="lazy" />
         </div>
-        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
-          <img src="/images/photography/gallery/dscf0936.webp" alt="Mountain landscape with clouds" class="w-full h-full object-cover" loading="lazy" />
+        <div class="rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img
+            src="/images/photography/gallery/dscf0936.webp"
+            srcset="/images/photography/thumb/dscf0936.webp 400w, /images/photography/gallery/dscf0936.webp 1200w"
+            sizes="33vw"
+            alt="Mountain landscape with clouds" class="w-full h-full object-cover" loading="lazy" />
         </div>
-        <div class="rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
-          <img src="/images/photography/gallery/7r51108-enhanced-sr.webp" alt="Sunlight through tree canopy" class="w-full h-full object-cover" loading="lazy" />
+        <div class="rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/6">
+          <img
+            src="/images/photography/gallery/7r51108-enhanced-sr.webp"
+            srcset="/images/photography/thumb/7r51108-enhanced-sr.webp 400w, /images/photography/gallery/7r51108-enhanced-sr.webp 1200w"
+            sizes="33vw"
+            alt="Sunlight through tree canopy" class="w-full h-full object-cover" loading="lazy" />
         </div>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="py-16 md:py-24">
+  <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal glass-card p-10 max-w-lg">
-        <h2 class="text-xl font-serif mb-4">Work together?</h2>
-        <p class="opacity-50 mb-8">
+      <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
+        <h2 class="text-lg sm:text-xl font-serif mb-3 sm:mb-4">Work together?</h2>
+        <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
           I take on select consulting work in data engineering, cybersecurity
           operations, and technical strategy.
         </p>
-        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
+        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary w-full sm:w-auto">Get in touch</a>
       </div>
     </div>
   </section>

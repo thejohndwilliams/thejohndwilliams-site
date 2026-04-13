@@ -50,19 +50,21 @@ const expertise = [
   description="Selected projects by John D. Williams — data engineering, cybersecurity, and operations."
 >
   <!-- HERO — with architectural accent -->
-  <section class="relative py-16 md:py-24 overflow-hidden">
+  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <img
-      src="/images/photography/hero/img-7576-enhanced.webp"
+      src="/images/photography/gallery/img-7576-enhanced.webp"
+      srcset="/images/photography/thumb/img-7576-enhanced.webp 400w, /images/photography/gallery/img-7576-enhanced.webp 1200w, /images/photography/hero/img-7576-enhanced.webp 2400w"
+      sizes="100vw"
       alt=""
       class="absolute inset-0 w-full h-full object-cover opacity-15"
       fetchpriority="high"
     />
     <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-[#0a0a0a]/60"></div>
     <div class="relative z-10 container-narrow">
-      <div class="reveal max-w-2xl mb-16">
-        <p class="text-xs tracking-[0.3em] uppercase opacity-30 mb-4 font-light">Work</p>
-        <h1 class="mb-8">Work</h1>
-        <p class="text-lg md:text-xl leading-relaxed opacity-70">
+      <div class="reveal max-w-2xl mb-10 sm:mb-16">
+        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-30 mb-3 sm:mb-4 font-light">Work</p>
+        <h1 class="mb-5 sm:mb-8">Work</h1>
+        <p class="text-base sm:text-lg md:text-xl leading-relaxed opacity-70">
           Projects I have built, shipped, or open-sourced. Everything here is real
           work — no demos, no hypotheticals.
         </p>
@@ -71,24 +73,24 @@ const expertise = [
   </section>
 
   <!-- PROJECTS — alternating section -->
-  <section class="section-light py-16 md:py-24">
+  <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
-      <div class="stagger-children space-y-6 mb-16">
+      <div class="stagger-children space-y-4 sm:space-y-6 mb-10 sm:mb-16">
         {projects.map((project) => (
-          <div class="glass-card p-8 md:p-10">
-            <h2 class="text-xl font-serif mb-4">{project.title}</h2>
-            <p class="opacity-55 mb-6 leading-relaxed">{project.description}</p>
-            <div class="flex flex-wrap gap-2 mb-6">
+          <div class="glass-card p-5 sm:p-8 md:p-10">
+            <h2 class="text-lg sm:text-xl font-serif mb-3 sm:mb-4">{project.title}</h2>
+            <p class="text-sm sm:text-base opacity-55 mb-4 sm:mb-6 leading-relaxed">{project.description}</p>
+            <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
               {project.tags.map((tag: string) => (
-                <span class="text-xs px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg opacity-70">
+                <span class="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 border border-white/10 rounded-md sm:rounded-lg opacity-70">
                   {tag}
                 </span>
               ))}
             </div>
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gold">{project.outcome}</p>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+              <p class="text-xs sm:text-sm text-gold">{project.outcome}</p>
               {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm opacity-40 hover:opacity-80 hover:text-gold transition-all duration-300">
+                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-40 hover:opacity-80 hover:text-gold transition-all duration-300 min-h-[44px] flex items-center">
                   View on GitHub →
                 </a>
               )}
@@ -100,13 +102,13 @@ const expertise = [
   </section>
 
   <!-- EXPERTISE -->
-  <section class="py-16 md:py-24">
+  <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal">
-        <p class="text-subhead mb-8">Expertise</p>
-        <div class="flex flex-wrap gap-3">
+        <p class="text-subhead mb-5 sm:mb-8">Expertise</p>
+        <div class="flex flex-wrap gap-2 sm:gap-3">
           {expertise.map((skill) => (
-            <span class="px-5 py-2.5 text-sm opacity-60 bg-white/5 border border-white/10 rounded-lg">
+            <span class="px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm opacity-60 bg-white/5 border border-white/10 rounded-md sm:rounded-lg">
               {skill}
             </span>
           ))}
@@ -116,15 +118,15 @@ const expertise = [
   </section>
 
   <!-- CTA — alternating -->
-  <section class="section-light py-16 md:py-24">
+  <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal glass-card p-10 max-w-lg">
-        <h2 class="text-xl font-serif mb-4">Have a project in mind?</h2>
-        <p class="opacity-50 mb-8">
+      <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
+        <h2 class="text-lg sm:text-xl font-serif mb-3 sm:mb-4">Have a project in mind?</h2>
+        <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
           I take on select consulting engagements in data engineering,
           cybersecurity, and operational analytics.
         </p>
-        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary">Get in touch</a>
+        <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary w-full sm:w-auto">Get in touch</a>
       </div>
     </div>
   </section>
