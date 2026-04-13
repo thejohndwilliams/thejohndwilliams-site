@@ -78,7 +78,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .mobile-menu-open {
-    max-height: 300px;
+    max-height: 500px;
     opacity: 1;
     transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
@@ -116,6 +116,39 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       link.addEventListener('click', () => setMenuState(false));
     });
   }
+
+  function updateActiveNav() {
+    const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+
+    // Update desktop nav
+    document.querySelectorAll('header ul.hidden a').forEach(link => {
+      const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
+      const isActive = href === currentPath;
+      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'opacity-40 hover:opacity-100'}`;
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    // Update mobile nav
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+      const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
+      const isActive = href === currentPath;
+      link.className = `block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-50 hover:opacity-100 active:opacity-100'}`;
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
   initMenu();
-  document.addEventListener('astro:after-swap', initMenu);
+  updateActiveNav();
+  document.addEventListener('astro:after-swap', () => {
+    initMenu();
+    updateActiveNav();
+  });
 </script>
