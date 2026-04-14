@@ -30,6 +30,18 @@ export default {
           700: '#3D3D3D',
           900: '#0a0a0a',
         },
+        /* Muted text — WCAG AA pass on midnight (#0a0a0a): 5.1:1.
+           Use in place of opacity-40 for any prose or functional text. */
+        mute: '#787878',
+        /* Secondary accent — warm stone. Cool counterpoint to the
+           gold. Use for secondary actions, hover states, subtle
+           highlights. Leaves gold free to mean "primary / most
+           important" per surface. */
+        stone: {
+          DEFAULT: '#A89F8C',
+          light: '#C7C0AF',
+          dark: '#7A7366',
+        },
       },
       fontFamily: {
         serif: ['Libre Baskerville', 'Georgia', 'serif'],

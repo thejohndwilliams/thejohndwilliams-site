@@ -11,28 +11,37 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         JW
       </a>
 
-      <!-- Desktop Navigation -->
-      <ul class="hidden md:flex items-center gap-8">
-        {navItems.map((item) => {
-          const isActive = currentPath === item.href;
-          return (
-            <li>
-              <a
-                href={item.href}
-                class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'opacity-40 hover:opacity-100'}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {item.name}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+      <!-- Desktop Navigation + Inquire CTA -->
+      <div class="hidden md:flex items-center gap-8">
+        <ul class="flex items-center gap-8">
+          {navItems.map((item) => {
+            const isActive = currentPath === item.href;
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'text-mute hover:opacity-100 hover:text-cream'}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.name}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+        <a
+          href="mailto:johnw700@gmail.com"
+          class="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border border-gold/40 text-gold hover:border-gold hover:bg-gold/10 transition-all duration-300"
+        >
+          Inquire
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </a>
+      </div>
 
       <!-- Mobile Menu Button — 44px touch target -->
       <button
         id="menu-toggle"
-        class="md:hidden w-11 h-11 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity duration-300 -mr-2"
+        class="md:hidden w-11 h-11 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300 -mr-2"
         aria-label="Toggle menu"
         aria-expanded="false"
       >
@@ -120,11 +129,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
   function updateActiveNav() {
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
 
-    // Update desktop nav
-    document.querySelectorAll('header ul.hidden a').forEach(link => {
+    // Update desktop nav — selector matches the new div.hidden wrapper
+    document.querySelectorAll('header nav > div.hidden ul a').forEach(link => {
       const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
       const isActive = href === currentPath;
-      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'opacity-40 hover:opacity-100'}`;
+      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'text-mute hover:opacity-100 hover:text-cream'}`;
       if (isActive) {
         link.setAttribute('aria-current', 'page');
       } else {

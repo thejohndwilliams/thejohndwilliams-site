@@ -129,7 +129,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
-        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-40 mb-3 sm:mb-4 font-light">The Threshold</p>
+        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60 mb-3 sm:mb-4 font-light">The Threshold</p>
         <h1 class="text-title md:text-headline font-serif mb-4 sm:mb-6 tracking-tight">Photography</h1>
         <p class="text-base sm:text-lg md:text-xl leading-relaxed opacity-60 max-w-lg">
           Where the vast meets the intimate. Always looking up, always looking close.
@@ -152,7 +152,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
         </button>
         {categories.map((cat) => (
           <button
-            class="category-btn text-sm opacity-40 hover:opacity-70 whitespace-nowrap py-2 px-3 sm:px-2 sm:pb-2 sm:pt-0 border-b-2 border-transparent transition-all duration-300 min-h-[44px] flex items-center"
+            class="category-btn text-sm opacity-60 hover:opacity-70 whitespace-nowrap py-2 px-3 sm:px-2 sm:pb-2 sm:pt-0 border-b-2 border-transparent transition-all duration-300 min-h-[44px] flex items-center"
             data-category={cat.id}
             role="tab"
             aria-selected="false"
@@ -175,7 +175,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
         <!-- Category header -->
         <div class="reveal mb-6 sm:mb-10 md:mb-14">
           <h2 class="text-xl sm:text-2xl md:text-3xl font-serif mb-1 sm:mb-2 tracking-tight">{cat.name}</h2>
-          <p class="text-xs sm:text-sm opacity-40 italic">{cat.description}</p>
+          <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
         </div>
 
         <!-- Masonry-style grid — 1col phone, 2col phablet, 3col tablet, 4col desktop -->
@@ -223,7 +223,7 @@ const allCategories = ['all', ...categories.map(c => c.id)];
                 </picture>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                  <p class="text-[10px] sm:text-xs opacity-40 sm:opacity-60">{img.alt}</p>
+                  <p class="text-[10px] sm:text-xs opacity-60 sm:opacity-60">{img.alt}</p>
                 </div>
               </div>
             );
@@ -235,28 +235,28 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 
   <!-- LIGHTBOX — touch-friendly with swipe support -->
   <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/92 backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
-    <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-40 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
+    <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-60 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-    <button id="lightbox-prev" class="hidden sm:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-30 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
+    <button id="lightbox-prev" class="hidden sm:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
-    <button id="lightbox-next" class="hidden sm:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-30 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
+    <button id="lightbox-next" class="hidden sm:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
       </svg>
     </button>
     <img id="lightbox-img" src="" alt="" class="max-w-[96vw] sm:max-w-[92vw] max-h-[85vh] sm:max-h-[90vh] object-contain select-none" draggable="false" />
-    <p id="lightbox-caption" class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-xs sm:text-sm opacity-40 whitespace-nowrap max-w-[90vw] truncate"></p>
+    <p id="lightbox-caption" class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-xs sm:text-sm opacity-60 whitespace-nowrap max-w-[90vw] truncate"></p>
     <!-- Mobile swipe hint — shows once then fades -->
     <div id="swipe-hint" class="sm:hidden absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-0 transition-opacity duration-500 pointer-events-none">
-      <svg class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
-      <span class="opacity-40">Swipe</span>
-      <svg class="w-4 h-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" /></svg>
+      <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
+      <span class="opacity-60">Swipe</span>
+      <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" /></svg>
     </div>
   </div>
 
@@ -265,22 +265,22 @@ const allCategories = ['all', ...categories.map(c => c.id)];
     <div class="container-narrow">
       <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Equipment</p>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Equipment</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Sony Alpha 7R V</p>
-          <p class="text-xs sm:text-sm opacity-40 mb-4 sm:mb-6">61 megapixels. Landscape, macro, and fine art work.</p>
+          <p class="text-xs sm:text-sm opacity-60 mb-4 sm:mb-6">61 megapixels. Landscape, macro, and fine art work.</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Fujifilm X100VI</p>
-          <p class="text-xs sm:text-sm opacity-40">40 megapixels. Street, travel, and night photography.</p>
+          <p class="text-xs sm:text-sm opacity-60">40 megapixels. Street, travel, and night photography.</p>
         </div>
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Philosophy</p>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Philosophy</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
             A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject — attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-30 mb-3 sm:mb-4">Collecting</p>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
             Available as limited edition archival prints.
           </p>
-          <p class="text-xs sm:text-sm opacity-30 leading-relaxed mb-6 sm:mb-8">
+          <p class="text-xs sm:text-sm opacity-60 leading-relaxed mb-6 sm:mb-8">
             Giclée on Hahnemühle Photo Rag. Signed and numbered editions. Licensing inquiries welcome.
           </p>
           <a href="mailto:hello@thejohndwilliams.com" class="btn btn-primary w-full sm:w-auto">
@@ -329,11 +329,11 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 
         buttons.forEach(b => {
           b.classList.remove('active', 'opacity-90', 'border-gold');
-          b.classList.add('opacity-40', 'border-transparent');
+          b.classList.add('opacity-60', 'border-transparent');
           b.setAttribute('aria-selected', 'false');
         });
         btn.classList.add('active', 'opacity-90', 'border-gold');
-        btn.classList.remove('opacity-40', 'border-transparent');
+        btn.classList.remove('opacity-60', 'border-transparent');
         btn.setAttribute('aria-selected', 'true');
 
         sections.forEach(s => {
