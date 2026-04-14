@@ -397,6 +397,46 @@
       0 0 80px rgba(184, 151, 63, 0.03);
   }
 
+
+  /* ============================================================
+     PHOTO THEFT FRICTION
+     Not DRM — there is no web-standard equivalent of Apple TV's
+     HDCP-enforced screenshot blocking. The OS-level black-screenshot
+     trick only works because Apple's compositor cooperates with the
+     screen-capture pipeline; browsers do not expose that hook for
+     images.
+
+     What these rules do:
+     - Block the native drag-to-save behavior.
+     - Block right-click > "Save Image As".
+     - Make the image non-selectable (prevents "screenshot the
+       selection" on touch devices).
+
+     What they do NOT do:
+     - Prevent screenshots (OS-level; browsers cannot intercept).
+     - Prevent screen recording.
+     - Prevent DevTools > Network > image URL copy.
+     - Prevent a determined thief.
+
+     The real protection is publishing at monitor resolution (≤ 2400px
+     long edge) so the capture a thief gets is not print-suitable.
+     Print sales deliver the full-resolution file by email after
+     purchase, watermarked with the buyer's name.
+     ============================================================ */
+  .photo-protect {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    pointer-events: auto; /* keep click events for lightbox */
+    -webkit-touch-callout: none; /* disable iOS long-press menu */
+  }
+
+  .photo-protect::selection { background: transparent; }
+  .photo-protect::-moz-selection { background: transparent; }
+
   /* Link cards — glass-infused */
   .link-card {
     display: block;

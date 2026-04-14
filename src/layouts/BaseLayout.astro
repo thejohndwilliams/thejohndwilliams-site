@@ -321,11 +321,32 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         window.addEventListener('pointermove', handler, { passive: true });
       }
 
+
+      // Photo-theft friction — block native context menu on protected
+      // photos and drag. Honest: this does not prevent screenshots
+      // (browsers cannot intercept OS-level screen capture). It only
+      // raises the floor against casual save-as and drag-to-desktop.
+      function initPhotoProtect() {
+        document.addEventListener('contextmenu', (e) => {
+          const t = e.target;
+          if (t instanceof HTMLElement && t.closest('.photo-protect')) {
+            e.preventDefault();
+          }
+        });
+        document.addEventListener('dragstart', (e) => {
+          const t = e.target;
+          if (t instanceof HTMLElement && t.closest('.photo-protect')) {
+            e.preventDefault();
+          }
+        });
+      }
+
       // Run on initial load
       initReveal();
       initBottomNav();
       initGlassSpecular();
       initScrollProgress();
+      initPhotoProtect();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {

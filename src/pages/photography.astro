@@ -254,7 +254,7 @@ const jsonLd = {
 
             return (
               <div
-                class={`gallery-item press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-gold/20 active:ring-gold/30 transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-meta={formatMetaLine(getPhotoMeta(img.file))}
@@ -311,7 +311,7 @@ const jsonLd = {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
       </svg>
     </button>
-    <img id="lightbox-img" src="" alt="" class="max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
+    <img id="lightbox-img" src="" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
     <div class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
       <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>

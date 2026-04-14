@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lastUpdated = '2026-04-14';
+---
+
+<BaseLayout
+  title="Privacy"
+  description="Privacy policy for thejohndwilliams.com. What we collect, what we don't, and how to reach us."
+>
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow max-w-2xl">
+      <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60 mb-3 sm:mb-4 font-light">Fine Print</p>
+      <h1 class="mb-6 sm:mb-8">Privacy</h1>
+      <p class="text-sm opacity-60 mb-8 sm:mb-12">Last updated: {lastUpdated}</p>
+
+      <div class="prose max-w-none space-y-6 text-base sm:text-lg opacity-90 leading-relaxed">
+        <p>
+          This is a personal portfolio site. It exists to show photography and published
+          work. It is not a product, it does not run analytics beyond what the host provides,
+          and it does not collect data about you for any purpose beyond serving pages.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">What this site collects</h2>
+        <p>
+          The site is served through Cloudflare Pages. Cloudflare maintains server-side
+          request logs (IP address, user agent, URL requested, response code, timestamp)
+          for operational and security purposes. These logs are retained per Cloudflare's
+          default retention policy and are used only to diagnose traffic anomalies and
+          protect the site from abuse. I do not query, export, or aggregate them for
+          any other purpose.
+        </p>
+        <p>
+          No first-party analytics, ad networks, or tracking pixels run on this site.
+          No cookies are set by the application itself. Your browser may receive
+          Cloudflare security cookies (e.g. <code>__cf_bm</code>) which are used to
+          distinguish humans from bots and expire after 30 minutes of inactivity.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">What this site does not collect</h2>
+        <p>
+          No name, email, phone number, or device identifier is collected unless you
+          write to me directly. No fingerprinting, session recording, or behavioral
+          profiling runs here.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">If you write to me</h2>
+        <p>
+          Email sent to the contact address on this site is retained in my inbox
+          under standard mail-client retention. I do not share it, sell it, or feed
+          it into any automated pipeline. If you want your prior correspondence
+          deleted, ask and I will.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">Your rights (GDPR / CCPA posture)</h2>
+        <p>
+          If you are in the EU, UK, or California, you have the right to ask what
+          data I hold about you, correct inaccuracies, request deletion, and refuse
+          further processing. Given what this site collects — effectively server logs
+          and any email you sent me — responding to these requests is straightforward.
+          Write to the contact address below.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">AI training</h2>
+        <p>
+          The photographs on this site are protected intellectual property. The
+          <a href="/robots.txt" class="text-gold hover:underline">robots.txt</a>
+          explicitly disallows known AI training crawlers from indexing the site.
+          If you operate a model-training crawler that honors robots.txt, please do.
+          If you use this site's content for model training without permission,
+          that is copyright infringement.
+        </p>
+
+        <h2 class="text-xl sm:text-2xl font-serif pt-4">Contact</h2>
+        <p>
+          Questions, corrections, or data requests:
+          <a href="mailto:jndwcreative@gmail.com" class="text-gold hover:underline">jndwcreative@gmail.com</a>.
+        </p>
+
+        <p class="pt-8 text-sm opacity-60">
+          This page is written in plain English on purpose. If something here is unclear,
+          write to me and I will fix it.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
