@@ -83,11 +83,16 @@ const socialLinks = [
               </picture>
               <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
               <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5 md:p-8">
-                <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-3">
-                  <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm p-1 sm:p-2 flex-shrink-0 ring-1 ring-white/10">
-                    <img src={link.icon} alt="" class="w-full h-full object-contain" />
-                  </div>
-                  <span class="font-serif text-sm sm:text-lg md:text-xl text-white">{link.name}</span>
+                <div class="flex items-center gap-2.5 sm:gap-3.5 mb-1 sm:mb-3">
+                  <!-- Monochrome brand glyph rendered via CSS mask so it
+                       inherits cream / gold-light from the surrounding text
+                       color, avoiding the rented brand-color tile look. -->
+                  <div
+                    class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 bg-cream group-hover:bg-gold-light transition-colors duration-300"
+                    style={`mask-image:url(${link.icon});-webkit-mask-image:url(${link.icon});mask-size:contain;-webkit-mask-size:contain;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat;mask-position:center;-webkit-mask-position:center;`}
+                    aria-hidden="true"
+                  ></div>
+                  <span class="font-serif text-base sm:text-lg md:text-xl text-cream">{link.name}</span>
                 </div>
                 <p class="text-[10px] sm:text-sm opacity-60 font-mono hidden sm:block">{link.handle}</p>
               </div>
