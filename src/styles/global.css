@@ -155,8 +155,8 @@
       rgba(255, 255, 255, 0.01) 50%,
       rgba(255, 255, 255, 0.03) 100%
     );
-    backdrop-filter: blur(24px) saturate(1.5);
-    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    backdrop-filter: blur(26px) saturate(1.7);
+    -webkit-backdrop-filter: blur(26px) saturate(1.7);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     box-shadow:
@@ -221,8 +221,8 @@
       rgba(255, 255, 255, 0.03) 0%,
       rgba(255, 255, 255, 0.01) 100%
     );
-    backdrop-filter: blur(32px) saturate(1.6);
-    -webkit-backdrop-filter: blur(32px) saturate(1.6);
+    backdrop-filter: blur(34px) saturate(1.8);
+    -webkit-backdrop-filter: blur(34px) saturate(1.8);
     border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
@@ -279,8 +279,8 @@
   .glass-nav {
     position: relative;
     background: rgba(10, 10, 10, 0.75);
-    backdrop-filter: blur(40px) saturate(1.7);
-    -webkit-backdrop-filter: blur(40px) saturate(1.7);
+    backdrop-filter: blur(44px) saturate(1.85);
+    -webkit-backdrop-filter: blur(44px) saturate(1.85);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03);
   }
@@ -306,13 +306,43 @@
     z-index: 1;
   }
 
-  /* Tier 2: subtle refraction of content scrolling beneath the nav.
-     Gated by @supports so Safari (which does not reliably honor
-     backdrop-filter: url()) silently keeps the Tier 1 treatment. */
-  @supports (backdrop-filter: url(#glass-lens)) {
-    .glass-nav {
-      backdrop-filter: blur(40px) saturate(1.7) url(#glass-lens);
-    }
+  /* Tier 2 refraction was removed — iOS Safari reports @supports for
+     backdrop-filter: url(#id) as true, but then fails to resolve the
+     filter at paint time, breaking the entire backdrop-filter
+     declaration. Net effect: nav goes transparent on iPhone. Not worth
+     the Chrome-only flair at the cost of mobile breakage. If re-added
+     later, gate on runtime JS feature-detection, not @supports. */
+
+  /* Mobile bottom tab bar — glass parity with .glass-nav. Same blur
+     and saturate; border-top instead of border-bottom; rim highlight
+     at the top edge (light-from-above convention reads the same on a
+     surface above or below content). */
+  .glass-tabbar {
+    position: relative;
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(44px) saturate(1.85);
+    -webkit-backdrop-filter: blur(44px) saturate(1.85);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .glass-tabbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      rgba(255, 255, 255, 0.025) 35%,
+      transparent 70%
+    );
+    z-index: 0;
+  }
+
+  .glass-tabbar > * {
+    position: relative;
+    z-index: 1;
   }
 
   /* Reduced-motion — disable pointer-tracked specular animation by

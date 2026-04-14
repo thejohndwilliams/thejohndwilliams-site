@@ -208,10 +208,15 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('var(--my');
   });
 
-  it('gates the Tier 2 displacement behind @supports', () => {
-    expect(cssBundle).toContain('backdrop-filter: url(#glass-lens)');
-    // The @supports rule should be emitted, not the unconditional form.
-    expect(cssBundle).toMatch(/@supports[^{]*backdrop-filter:\s*url\(#glass-lens\)/);
+  it('does NOT apply backdrop-filter: url(#glass-lens) — iOS Safari breaks on it', () => {
+    // Tier 2 displacement was removed due to iOS Safari @supports
+    // false-positive. If this ever comes back, gate on runtime JS
+    // feature-detection rather than @supports.
+    expect(cssBundle).not.toContain('url(#glass-lens)');
+  });
+
+  it('defines .glass-tabbar for the mobile bottom nav', () => {
+    expect(cssBundle).toContain('.glass-tabbar');
   });
 
   it('respects prefers-reduced-motion for glass specular', () => {

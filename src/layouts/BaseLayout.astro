@@ -110,8 +110,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           Inquire
         </a>
       </div>
-      <!-- Tab bar — 4 items, glass bezel -->
-      <div class="bg-[#0a0a0a]/80 backdrop-blur-2xl border-t border-white/8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+      <!-- Tab bar — 4 items, glass bezel (mobile). Uses .glass-tabbar
+           for parity with .glass-nav on desktop: same blur, saturate,
+           and a bottom-oriented rim highlight via ::before. -->
+      <div class="glass-tabbar relative">
         <div class="flex items-center justify-evenly px-6 h-[52px]">
           <a href="/" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/">
             <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /></svg>
@@ -130,8 +132,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
             <span class="text-[10px] tracking-wider uppercase">About</span>
           </a>
         </div>
-        <!-- Safe area padding for notched phones -->
-        <div class="h-[env(safe-area-inset-bottom,0px)] bg-[#0a0a0a]/80"></div>
+        <!-- Safe area padding for notched phones — transparent so
+             the glass tab bar above it reads as one continuous
+             surface when blurring content behind. -->
+        <div class="h-[env(safe-area-inset-bottom,0px)]"></div>
       </div>
     </nav>
 
