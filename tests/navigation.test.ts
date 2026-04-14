@@ -3,23 +3,21 @@ import { navItems, socialLinks } from '../src/utils/date';
 
 describe('navItems', () => {
   it('has the correct number of navigation items', () => {
-    expect(navItems).toHaveLength(4);
+    expect(navItems).toHaveLength(3);
   });
 
   it('contains all required navigation pages', () => {
     const names = navItems.map((item) => item.name);
     expect(names).toContain('About');
     expect(names).toContain('Work');
-    expect(names).toContain('Writing');
-    expect(names).toContain('Links');
+    expect(names).toContain('Photography');
   });
 
   it('has correct href paths for all items', () => {
     const hrefs = navItems.map((item) => item.href);
     expect(hrefs).toContain('/about');
     expect(hrefs).toContain('/work');
-    expect(hrefs).toContain('/writing');
-    expect(hrefs).toContain('/links');
+    expect(hrefs).toContain('/photography');
   });
 
   it('each item has both name and href properties', () => {

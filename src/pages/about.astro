@@ -9,15 +9,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 >
   <!-- HERO — Portrait with full-bleed image -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
-    <img
-      src="/images/photography/gallery/john-portrait-bw.webp"
-      srcset="/images/photography/thumb/john-portrait-bw.webp 400w, /images/photography/gallery/john-portrait-bw.webp 1200w, /images/photography/hero/john-portrait-bw.webp 2400w"
-      sizes="100vw"
-      alt="John D. Williams — black and white portrait"
-      class="absolute inset-0 w-full h-full object-cover object-top opacity-15"
-      fetchpriority="high"
-    />
-    <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/john-portrait-bw.avif 400w, /images/photography/gallery/john-portrait-bw.avif 1200w, /images/photography/hero/john-portrait-bw.avif 2400w"
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="/images/photography/thumb/john-portrait-bw.webp 400w, /images/photography/gallery/john-portrait-bw.webp 1200w, /images/photography/hero/john-portrait-bw.webp 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/hero/john-portrait-bw.webp"
+        alt="John D. Williams — black and white portrait"
+        class="absolute inset-0 w-full h-full object-cover object-top opacity-15"
+        fetchpriority="high"
+      />
+    </picture>
+    <!-- Multi-stop gradient: 6 stops to break up 8-bit banding on dark sRGB -->
+    <div
+      class="absolute inset-0"
+      style="background-image: linear-gradient(to right, #0a0a0a 0%, rgba(10,10,10,0.96) 18%, rgba(10,10,10,0.82) 34%, rgba(10,10,10,0.58) 52%, rgba(10,10,10,0.28) 74%, rgba(10,10,10,0) 100%);"
+    ></div>
+    <!-- Local noise dither, scoped to hero, overlaid via mix-blend to kill residual banding -->
+    <div
+      class="absolute inset-0 pointer-events-none"
+      aria-hidden="true"
+      style="opacity:0.08; mix-blend-mode:overlay; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>&quot;);"
+    ></div>
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl">
         <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-30 mb-3 sm:mb-4 font-light">The Intersection</p>

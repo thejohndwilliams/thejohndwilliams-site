@@ -107,14 +107,24 @@ const allCategories = ['all', ...categories.map(c => c.id)];
 >
   <!-- HERO — Featured image full-bleed -->
   <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
-    <img
-      src="/images/photography/gallery/7r52326.webp"
-      srcset="/images/photography/thumb/7r52326.webp 400w, /images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w"
-      sizes="100vw"
-      alt="Thunderheads against black sky"
-      class="absolute inset-0 w-full h-full object-cover"
-      fetchpriority="high"
-    />
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/7r52326.avif 400w, /images/photography/gallery/7r52326.avif 1200w, /images/photography/hero/7r52326.avif 2400w"
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="/images/photography/thumb/7r52326.webp 400w, /images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/hero/7r52326.webp"
+        alt="Thunderheads against black sky"
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
@@ -187,17 +197,29 @@ const allCategories = ['all', ...categories.map(c => c.id)];
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
               >
-                <img
-                  src={`/images/photography/gallery/${img.file}.webp`}
-                  srcset={`/images/photography/thumb/${img.file}.webp 400w, /images/photography/gallery/${img.file}.webp 1200w`}
-                  sizes={img.featured
-                    ? '(max-width: 479px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 66vw, 50vw'
-                    : '(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'}
-                  alt={img.alt}
-                  class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform ${aspectClass}`}
-                  loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
-                  decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
-                />
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcset={`/images/photography/thumb/${img.file}.avif 400w, /images/photography/gallery/${img.file}.avif 1200w`}
+                    sizes={img.featured
+                      ? '(max-width: 479px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 66vw, 50vw'
+                      : '(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'}
+                  />
+                  <source
+                    type="image/webp"
+                    srcset={`/images/photography/thumb/${img.file}.webp 400w, /images/photography/gallery/${img.file}.webp 1200w`}
+                    sizes={img.featured
+                      ? '(max-width: 479px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 66vw, 50vw'
+                      : '(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'}
+                  />
+                  <img
+                    src={`/images/photography/gallery/${img.file}.webp`}
+                    alt={img.alt}
+                    class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform ${aspectClass}`}
+                    loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
+                    decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
+                  />
+                </picture>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                   <p class="text-[10px] sm:text-xs opacity-40 sm:opacity-60">{img.alt}</p>

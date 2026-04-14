@@ -45,14 +45,24 @@ const socialLinks = [
 
   <!-- HERO — Full-bleed cloudscape with centered identity -->
   <section class="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden">
-    <img
-      src="/images/photography/gallery/7r52326.webp"
-      srcset="/images/photography/thumb/7r52326.webp 400w, /images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w"
-      sizes="100vw"
-      alt="Dramatic cloudscape with towering cumulus clouds illuminated against a dark sky"
-      class="absolute inset-0 w-full h-full object-cover opacity-40"
-      fetchpriority="high"
-    />
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/7r52326.avif 400w, /images/photography/gallery/7r52326.avif 1200w, /images/photography/hero/7r52326.avif 2400w"
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="/images/photography/thumb/7r52326.webp 400w, /images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/hero/7r52326.webp"
+        alt="Dramatic cloudscape with towering cumulus clouds illuminated against a dark sky"
+        class="absolute inset-0 w-full h-full object-cover opacity-40"
+        fetchpriority="high"
+      />
+    </picture>
     <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-transparent to-[#0a0a0a]"></div>
     <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
       <div class="reveal">
