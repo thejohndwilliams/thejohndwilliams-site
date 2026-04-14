@@ -47,12 +47,15 @@ describe('Astro Build', () => {
     expect(html).toContain('noindex');
   });
 
-  it('/links renders as a redirect to home', () => {
+  it('/links renders as a full bento grid page (restored)', () => {
     const linksPath = path.join(distDir, 'links', 'index.html');
     expect(fs.existsSync(linksPath)).toBe(true);
     const html = fs.readFileSync(linksPath, 'utf-8');
-    expect(html).toMatch(/http-equiv="refresh"/i);
-    expect(html).toContain('noindex');
+    // Real page now — not a redirect. Should NOT contain meta-refresh.
+    expect(html).not.toMatch(/http-equiv="refresh"/i);
+    expect(html).toContain('linkedin.com');
+    expect(html).toContain('github.com');
+    expect(html).toContain('instagram.com');
   });
 });
 
@@ -79,13 +82,7 @@ describe('Generated HTML Content', () => {
       expect(indexHtml).toContain('href="/about"');
       expect(indexHtml).toContain('href="/work"');
       expect(indexHtml).toContain('href="/photography"');
-    });
-
-    it('does not contain the removed Links nav entry', () => {
-      // Removed from the desktop/mobile nav — nav items array is now 3
-      // The /links route still exists as a redirect but is not linked from nav
-      const navSection = indexHtml.match(/<nav[\s\S]*?<\/nav>/g)?.join('\n') ?? '';
-      expect(navSection).not.toContain('href="/links"');
+      expect(indexHtml).toContain('href="/links"');
     });
 
     it('contains social links in the footer', () => {
