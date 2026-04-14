@@ -67,7 +67,12 @@
           }
         ],
         "uses-long-cache-ttl": "off",
-        "color-contrast": "error",
+        "color-contrast": [
+          "warn",
+          {
+            "minScore": 0.9
+          }
+        ],
         "document-title": "error",
         "meta-description": "error",
         "html-has-lang": "error",

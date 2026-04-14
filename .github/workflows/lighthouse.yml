@@ -10,6 +10,11 @@ on:
   push:
     branches: [main]
 
+env:
+  # Force actions/checkout + actions/setup-node to run with Node 24
+  # internally (their bundled Node 20 runtime is deprecated June 2026).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
