@@ -7,6 +7,10 @@ export default defineConfig({
   integrations: [tailwind(), sitemap()],
   output: 'static',
   build: {
-    assets: '_assets'
+    assets: '_assets',
+    // Inline small stylesheets to eliminate render-blocking CSS.
+    // Bundles under this threshold get <style> inlined into the HTML; larger
+    // ones keep their separate <link rel='stylesheet'>.
+    inlineStylesheets: 'auto'
   }
 });

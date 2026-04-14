@@ -30,7 +30,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
           })}
         </ul>
         <a
-          href="mailto:johnw700@gmail.com"
+          href="mailto:jndwcreative@gmail.com"
           class="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border border-gold/40 text-gold hover:border-gold hover:bg-gold/10 transition-all duration-300"
         >
           Inquire
@@ -64,7 +64,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
               <li>
                 <a
                   href={item.href}
-                  class={`block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-50 hover:opacity-100 active:opacity-100'}`}
+                  class={`block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-70 hover:opacity-100 active:opacity-100'}`}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   {item.name}
@@ -145,7 +145,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     document.querySelectorAll('#mobile-menu a').forEach(link => {
       const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
       const isActive = href === currentPath;
-      link.className = `block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-50 hover:opacity-100 active:opacity-100'}`;
+      link.className = `block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-70 hover:opacity-100 active:opacity-100'}`;
       if (isActive) {
         link.setAttribute('aria-current', 'page');
       } else {
