@@ -8,12 +8,17 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  /** LCP image basename (no extension), served from /images/photography/.
+      Browsers will preload the AVIF tier; WebP fallback is implicit via
+      imagesrcset with type negotiation. Leave undefined to skip. */
+  lcpImage?: string;
 }
 
 const {
   title = 'John D. Williams',
   description = 'Photography, cybersecurity, and data — the work of John D. Williams.',
-  ogImage = '/images/photography/hero/7r52326.webp'
+  ogImage = '/images/photography/hero/7r52326.webp',
+  lcpImage
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -42,6 +47,29 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <!-- Preload critical fonts — self-hosted, no third-party dependency -->
     <link rel="preload" href="/fonts/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxMaC82U.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/nwpStKy2OAdR1K-IwhWudF-R3w8aZejf5Hc.woff2" as="font" type="font/woff2" crossorigin />
+
+    {lcpImage && (
+      <>
+        <link
+          rel="preload"
+          as="image"
+          type="image/avif"
+          href={`/images/photography/hero/${lcpImage}.avif`}
+          imagesrcset={`/images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
+          imagesizes="100vw"
+          fetchpriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          type="image/webp"
+          href={`/images/photography/hero/${lcpImage}.webp`}
+          imagesrcset={`/images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
+          imagesizes="100vw"
+          fetchpriority="high"
+        />
+      </>
+    )}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

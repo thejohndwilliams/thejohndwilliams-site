@@ -39,14 +39,6 @@ describe('Astro Build', () => {
     expect(fs.existsSync(sitemapPath)).toBe(true);
   });
 
-  it('/writing renders as a redirect to home', () => {
-    const writingPath = path.join(distDir, 'writing', 'index.html');
-    expect(fs.existsSync(writingPath)).toBe(true);
-    const html = fs.readFileSync(writingPath, 'utf-8');
-    expect(html).toMatch(/http-equiv="refresh"/i);
-    expect(html).toContain('noindex');
-  });
-
   it('/links renders as a full bento grid page (restored)', () => {
     const linksPath = path.join(distDir, 'links', 'index.html');
     expect(fs.existsSync(linksPath)).toBe(true);
@@ -57,6 +49,12 @@ describe('Astro Build', () => {
     expect(html).toContain('github.com');
     expect(html).toContain('instagram.com');
   });
+
+  it('does NOT emit /writing — page was removed', () => {
+    const writingPath = path.join(distDir, 'writing', 'index.html');
+    expect(fs.existsSync(writingPath)).toBe(false);
+  });
+
 });
 
 describe('Generated HTML Content', () => {
