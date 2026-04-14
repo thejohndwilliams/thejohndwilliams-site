@@ -25,7 +25,9 @@
     line-height: 1.667; /* 30px / 18px — generous for readability */
   }
 
-  /* Subtle noise texture */
+  /* Subtle noise texture — imperceptible dither to break sRGB banding
+     on large dark gradients. Opacity tuned to just-below-conscious-
+     perception on a calibrated display. If you can SEE it, it is wrong. */
   body::before {
     content: '';
     position: fixed;
@@ -34,7 +36,8 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0.038;
+    opacity: 0.018;
+    mix-blend-mode: soft-light;
     z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
