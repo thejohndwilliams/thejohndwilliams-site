@@ -1,4 +1,2641 @@
 {
-  "_README": "Populated by scripts/extract-exif.py. Keys are image basenames without extension (e.g. '7r52326'). Values are partial ExifEntry objects. Unknown basenames fall back to filename-pattern camera inference.",
-  "_SCHEMA": "{ camera?: string, lens?: string, aperture?: string, shutter?: string, iso?: number, focalLength?: string, captureDate?: string, location?: string }"
+  "_README": "Populated by scripts/extract-exif.py. Keys are camera-original basenames matching the site (e.g. '7r52326'). Values are partial ExifEntry objects extracted from the Lightroom/Gallery archive.",
+  "_SCHEMA": "{ camera?: string, lens?: string, aperture?: string, shutter?: string, iso?: number, focalLength?: string, captureDate?: string, location?: string }",
+  "7r50354": {
+    "captureDate": "2023-10-16"
+  },
+  "7r50377": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/2.8",
+    "shutter": "1/60s",
+    "iso": 320,
+    "focalLength": "48mm",
+    "captureDate": "2023-03-31"
+  },
+  "7r50378": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/2.8",
+    "shutter": "1/60s",
+    "iso": 400,
+    "focalLength": "24mm",
+    "captureDate": "2023-03-31"
+  },
+  "7r50380": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/2.8",
+    "shutter": "1/60s",
+    "iso": 1250,
+    "focalLength": "41mm",
+    "captureDate": "2023-03-31"
+  },
+  "7r50387": {
+    "captureDate": "2023-09-04"
+  },
+  "7r50599": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/10",
+    "shutter": "1/250s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50762": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5.6",
+    "shutter": "1/320s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50784": {
+    "captureDate": "2023-12-08"
+  },
+  "7r50794": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/800s",
+    "iso": 100,
+    "focalLength": "68mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50800": {
+    "captureDate": "2023-12-08"
+  },
+  "7r50849": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/8",
+    "shutter": "1/160s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50898": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/500s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50940": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/8",
+    "shutter": "1/160s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50953": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/8",
+    "shutter": "1/1000s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50954": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/7.1",
+    "shutter": "1/500s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50982": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/160s",
+    "iso": 250,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50985": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/8",
+    "shutter": "1/160s",
+    "iso": 160,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50995": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/200s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50996": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5.6",
+    "shutter": "1/100s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "7r50997": {
+    "captureDate": "2023-12-07"
+  },
+  "7r51141": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/3.5",
+    "shutter": "1/160s",
+    "iso": 1600,
+    "focalLength": "70mm",
+    "captureDate": "2023-10-14"
+  },
+  "7r51151": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/160s",
+    "iso": 640,
+    "focalLength": "47mm",
+    "captureDate": "2023-10-14"
+  },
+  "7r51318": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/60s",
+    "iso": 160,
+    "focalLength": "24mm",
+    "captureDate": "2024-01-09"
+  },
+  "7r51319": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/60s",
+    "iso": 160,
+    "focalLength": "24mm",
+    "captureDate": "2024-01-09"
+  },
+  "7r51320": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/160s",
+    "iso": 1250,
+    "focalLength": "24mm",
+    "captureDate": "2024-01-09"
+  },
+  "7r51505": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/800s",
+    "iso": 4000,
+    "focalLength": "70mm",
+    "captureDate": "2024-03-05"
+  },
+  "7r51633": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/640s",
+    "iso": 4000,
+    "focalLength": "70mm",
+    "captureDate": "2024-07-25"
+  },
+  "7r51710": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/160s",
+    "iso": 100,
+    "focalLength": "46mm",
+    "captureDate": "2024-08-25"
+  },
+  "7r51728": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/100s",
+    "iso": 100,
+    "focalLength": "35mm",
+    "captureDate": "2024-08-26"
+  },
+  "7r51735": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/800s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2024-08-27"
+  },
+  "7r51770": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/1000s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2024-08-31"
+  },
+  "7r51784": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/640s",
+    "iso": 100,
+    "focalLength": "68mm",
+    "captureDate": "2024-08-31"
+  },
+  "7r51813": {
+    "captureDate": "2024-09-17"
+  },
+  "7r51817": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/400s",
+    "iso": 100,
+    "focalLength": "41mm",
+    "captureDate": "2024-09-15"
+  },
+  "7r51823": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/500s",
+    "iso": 100,
+    "focalLength": "63mm",
+    "captureDate": "2024-09-15"
+  },
+  "7r51848": {
+    "captureDate": "2024-12-25"
+  },
+  "7r52035": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/3.5",
+    "shutter": "1/160s",
+    "iso": 1600,
+    "focalLength": "70mm",
+    "captureDate": "2024-12-31"
+  },
+  "7r52151": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/60s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2025-01-21"
+  },
+  "7r52176": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/60s",
+    "iso": 125,
+    "focalLength": "24mm",
+    "captureDate": "2025-01-21"
+  },
+  "7r52231": {
+    "captureDate": "2025-07-13"
+  },
+  "7r52258": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/4000s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2025-07-27"
+  },
+  "7r52268": {
+    "captureDate": "2025-07-27"
+  },
+  "7r52314": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/2500s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2025-08-02"
+  },
+  "7r52322": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/1600s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2025-08-02"
+  },
+  "7r52326": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/2500s",
+    "iso": 100,
+    "focalLength": "41mm",
+    "captureDate": "2025-08-02"
+  },
+  "7r52330": {
+    "captureDate": "2025-08-03"
+  },
+  "7r52339": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/2000s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2025-08-03"
+  },
+  "7r52352": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/2500s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2025-08-13"
+  },
+  "7r52397": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4",
+    "shutter": "1/160s",
+    "iso": 200,
+    "focalLength": "70mm",
+    "captureDate": "2025-08-24"
+  },
+  "7r52445": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/1250s",
+    "iso": 100,
+    "focalLength": "48mm",
+    "captureDate": "2025-09-13"
+  },
+  "7r52451": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/5",
+    "shutter": "1/2000s",
+    "iso": 100,
+    "focalLength": "39mm",
+    "captureDate": "2025-09-13"
+  },
+  "7r52563": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/4.5",
+    "shutter": "1/100s",
+    "iso": 100,
+    "focalLength": "70mm",
+    "captureDate": "2026-01-11"
+  },
+  "dsc-0007": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4.2",
+    "shutter": "1/200s",
+    "iso": 1600,
+    "focalLength": "26mm",
+    "captureDate": "2016-03-30"
+  },
+  "dsc-0009": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "55.0-200.0 mm f/4.0-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/500s",
+    "iso": 1400,
+    "focalLength": "200mm",
+    "captureDate": "2010-09-04"
+  },
+  "dsc-0014": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/640s",
+    "iso": 800,
+    "focalLength": "48mm",
+    "captureDate": "2015-05-20"
+  },
+  "dsc-0016": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/6.3",
+    "shutter": "1/1600s",
+    "iso": 400,
+    "focalLength": "22mm",
+    "captureDate": "2016-03-06"
+  },
+  "dsc-0022": {
+    "captureDate": "2024-12-24"
+  },
+  "dsc-0027": {
+    "captureDate": "2024-12-21"
+  },
+  "dsc-0042": {
+    "captureDate": "2025-07-21"
+  },
+  "dsc-0049": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4.5",
+    "shutter": "1/1250s",
+    "iso": 400,
+    "focalLength": "24mm",
+    "captureDate": "2016-02-09"
+  },
+  "dsc-0050": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/8",
+    "shutter": "1/250s",
+    "iso": 200,
+    "focalLength": "52mm",
+    "captureDate": "2015-05-30"
+  },
+  "dsc-0054": {
+    "captureDate": "2024-08-28"
+  },
+  "dsc-0063": {
+    "captureDate": "2023-12-05"
+  },
+  "dsc-0085": {
+    "captureDate": "2024-10-11"
+  },
+  "dsc-0098": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/5.6",
+    "shutter": "1/1250s",
+    "iso": 400,
+    "focalLength": "55mm",
+    "captureDate": "2016-03-06"
+  },
+  "dsc-0101": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/3.8",
+    "shutter": "1/40s",
+    "iso": 1600,
+    "focalLength": "20mm",
+    "captureDate": "2015-06-11"
+  },
+  "dsc-0106": {
+    "captureDate": "2023-10-17"
+  },
+  "dsc-0107": {
+    "captureDate": "2023-10-14"
+  },
+  "dsc-0121": {
+    "captureDate": "2024-10-10"
+  },
+  "dsc-0126": {
+    "captureDate": "2023-12-09"
+  },
+  "dsc-0128": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4",
+    "shutter": "1/1000s",
+    "iso": 400,
+    "focalLength": "18mm",
+    "captureDate": "2015-06-12"
+  },
+  "dsc-0130": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4",
+    "shutter": "1/1000s",
+    "iso": 720,
+    "focalLength": "18mm",
+    "captureDate": "2015-06-12"
+  },
+  "dsc-0131": {
+    "captureDate": "2023-10-08"
+  },
+  "dsc-0136": {
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/10",
+    "shutter": "1/200s",
+    "iso": 200,
+    "focalLength": "18mm",
+    "captureDate": "2015-04-27"
+  },
+  "dsc-0139": {
+    "captureDate": "2023-12-09"
+  },
+  "dsc-0151": {
+    "captureDate": "2023-12-05"
+  },
+  "dsc-0156": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX Zoom-Nikkor 55-200mm f/4-5.6G ED",
+    "aperture": "f/6.3",
+    "shutter": "1/125s",
+    "iso": 400,
+    "focalLength": "200mm",
+    "captureDate": "2010-09-22"
+  },
+  "dsc-0168": {
+    "captureDate": "2024-08-21"
+  },
+  "dsc-0217": {
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4",
+    "shutter": "1/640s",
+    "iso": 800,
+    "focalLength": "22mm",
+    "captureDate": "2015-04-30"
+  },
+  "dsc-0237": {
+    "captureDate": "2023-12-04"
+  },
+  "dsc-0240": {
+    "captureDate": "2010-09-17",
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX Zoom-Nikkor 55-200mm f/4-5.6G ED",
+    "aperture": "f/7.1",
+    "shutter": "1/30s",
+    "iso": 800,
+    "focalLength": "55mm"
+  },
+  "dsc-0307": {
+    "captureDate": "2024-09-15"
+  },
+  "dsc-0329": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/6.3",
+    "shutter": "1/15s",
+    "iso": 500,
+    "focalLength": "26mm",
+    "captureDate": "2015-04-30"
+  },
+  "dsc-0344-2": {
+    "captureDate": "2024-08-23"
+  },
+  "dsc-0354": {
+    "captureDate": "2024-09-09"
+  },
+  "dsc-0366": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/7.1",
+    "shutter": "1/2000s",
+    "iso": 400,
+    "focalLength": "38mm",
+    "captureDate": "2015-04-30"
+  },
+  "dsc-0376": {
+    "captureDate": "2023-10-16"
+  },
+  "dsc-0378": {
+    "captureDate": "2023-10-16"
+  },
+  "dsc-0398": {
+    "captureDate": "2024-12-20"
+  },
+  "dsc-0415": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/8",
+    "shutter": "1/320s",
+    "iso": 200,
+    "focalLength": "26mm",
+    "captureDate": "2017-06-29"
+  },
+  "dsc-0424": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/8",
+    "shutter": "1/250s",
+    "iso": 200,
+    "focalLength": "20mm",
+    "captureDate": "2017-06-29"
+  },
+  "dsc-0445": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/5",
+    "shutter": "1/1250s",
+    "iso": 400,
+    "focalLength": "24mm",
+    "captureDate": "2015-04-30"
+  },
+  "dsc-0502": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/20",
+    "shutter": "2.5s",
+    "iso": 640,
+    "focalLength": "55mm",
+    "captureDate": "2017-07-01"
+  },
+  "dsc-0542": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/5.6",
+    "shutter": "1/1250s",
+    "iso": 400,
+    "focalLength": "18mm",
+    "captureDate": "2017-07-04"
+  },
+  "dsc-0548": {
+    "captureDate": "2024-08-29"
+  },
+  "dsc-0574": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/10",
+    "shutter": "8.7s",
+    "iso": 640,
+    "focalLength": "18mm",
+    "captureDate": "2017-07-04"
+  },
+  "dsc-0656": {
+    "captureDate": "2023-12-30"
+  },
+  "dsc-0675": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/13",
+    "shutter": "1/200s",
+    "iso": 200,
+    "focalLength": "32mm",
+    "captureDate": "2017-07-06"
+  },
+  "dsc-0676": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/11",
+    "shutter": "1/200s",
+    "iso": 200,
+    "focalLength": "26mm",
+    "captureDate": "2017-07-06"
+  },
+  "dsc-0697": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/10",
+    "shutter": "1/200s",
+    "iso": 100,
+    "focalLength": "30mm",
+    "captureDate": "2017-07-06"
+  },
+  "dsc-0730": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/4.8",
+    "shutter": "1/800s",
+    "iso": 800,
+    "focalLength": "32mm",
+    "captureDate": "2017-07-06"
+  },
+  "dsc-0731": {
+    "captureDate": "2023-12-05"
+  },
+  "dsc-0738": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "55.0-200.0 mm f/4.0-5.6",
+    "aperture": "f/7.1",
+    "shutter": "1/40s",
+    "iso": 800,
+    "focalLength": "55mm",
+    "captureDate": "2011-06-17"
+  },
+  "dsc-0764": {
+    "captureDate": "2023-12-07"
+  },
+  "dsc-0787": {
+    "captureDate": "2023-12-07"
+  },
+  "dsc-0790": {
+    "captureDate": "2023-11-21"
+  },
+  "dsc-0822": {
+    "captureDate": "2023-12-30"
+  },
+  "dsc-0826": {
+    "captureDate": "2023-10-13"
+  },
+  "dsc-0982": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/4.8",
+    "shutter": "1/80s",
+    "iso": 1600,
+    "focalLength": "32mm",
+    "captureDate": "2012-05-28"
+  },
+  "dsc-0983": {
+    "captureDate": "2024-02-06"
+  },
+  "dsc-1069": {
+    "captureDate": "2023-12-04"
+  },
+  "dsc-1071": {
+    "captureDate": "2023-12-07"
+  },
+  "dsc-1076": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/4.8",
+    "shutter": "1/640s",
+    "iso": 800,
+    "focalLength": "32mm",
+    "captureDate": "2012-06-23"
+  },
+  "dsc-1081": {
+    "captureDate": "2023-11-16"
+  },
+  "dsc-1089": {
+    "captureDate": "2024-01-05"
+  },
+  "dsc-1098": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/7.1",
+    "shutter": "1/2000s",
+    "iso": 400,
+    "focalLength": "22mm",
+    "captureDate": "2012-06-23"
+  },
+  "dsc-1107": {
+    "captureDate": "2023-12-07"
+  },
+  "dsc-1137": {
+    "captureDate": "2023-11-16"
+  },
+  "dsc-1138": {
+    "captureDate": "2023-11-16"
+  },
+  "dsc-1141": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/1000s",
+    "iso": 800,
+    "focalLength": "55mm",
+    "captureDate": "2012-06-23"
+  },
+  "dsc-1156": {
+    "captureDate": "2023-12-07"
+  },
+  "dsc-1162": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/8",
+    "shutter": "1/2000s",
+    "iso": 400,
+    "focalLength": "32mm",
+    "captureDate": "2012-06-23"
+  },
+  "dsc-1207": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/3.5",
+    "shutter": "1/8s",
+    "iso": 1600,
+    "focalLength": "18mm",
+    "captureDate": "2012-07-04"
+  },
+  "dsc-1597": {
+    "captureDate": "2023-12-06"
+  },
+  "dsc-1608": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "55.0-200.0 mm f/4.0-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/1250s",
+    "iso": 400,
+    "focalLength": "200mm",
+    "captureDate": "2013-03-13"
+  },
+  "dsc-1643": {
+    "captureDate": "2024-12-29"
+  },
+  "dsc-1654": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "55.0-200.0 mm f/4.0-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/1000s",
+    "iso": 450,
+    "focalLength": "200mm",
+    "captureDate": "2013-03-15"
+  },
+  "dsc-1730": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "18.0-55.0 mm f/3.5-5.6",
+    "aperture": "f/5.6",
+    "shutter": "1/1000s",
+    "iso": 450,
+    "focalLength": "55mm",
+    "captureDate": "2013-04-01"
+  },
+  "dsc-1770": {
+    "captureDate": "2024-01-10"
+  },
+  "dscf0036": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5",
+    "shutter": "1/4000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-13"
+  },
+  "dscf0037": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.2",
+    "shutter": "1/6400s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-13"
+  },
+  "dscf0042": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/4000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-13"
+  },
+  "dscf0043": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/7.1",
+    "shutter": "1/4000s",
+    "iso": 320,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-13"
+  },
+  "dscf0056": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-13"
+  },
+  "dscf0059": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-14"
+  },
+  "dscf0060": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-14"
+  },
+  "dscf0069": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 500,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-14"
+  },
+  "dscf0074": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 2000,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-14"
+  },
+  "dscf0077": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/4000s",
+    "iso": 800,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-14"
+  },
+  "dscf0082": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0083": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0086": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0088": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0090": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0091": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/3200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-15"
+  },
+  "dscf0130": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/6.4",
+    "shutter": "1/40s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0133": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/8",
+    "shutter": "1/55s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0138": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/13",
+    "shutter": "1/680s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0142": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/180s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0147": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/250s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0169": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/340s",
+    "iso": 200,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-21"
+  },
+  "dscf0261": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/80s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-29"
+  },
+  "dscf0263": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 160,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-29"
+  },
+  "dscf0267": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/50s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-09-29"
+  },
+  "dscf0305": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 800,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-06"
+  },
+  "dscf0315": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/50s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-06"
+  },
+  "dscf0321": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.5",
+    "shutter": "1/80s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-06"
+  },
+  "dscf0331": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/100s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-06"
+  },
+  "dscf0423": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 5000,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-07"
+  },
+  "dscf0425": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 2500,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-07"
+  },
+  "dscf0426": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 2500,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-07"
+  },
+  "dscf0490": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5.6",
+    "shutter": "1/480s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-08"
+  },
+  "dscf0503": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/45s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-09"
+  },
+  "dscf0530": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/50s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-09"
+  },
+  "dscf0562": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4.5",
+    "shutter": "1/250s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0569": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/160s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0570": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/220s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0579": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/60s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0580": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 320,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0585": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.5",
+    "shutter": "1/100s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0591": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.5",
+    "shutter": "1/110s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0598": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/90s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0671": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/40s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0783": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/60s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0872": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/110s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0876": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4.5",
+    "shutter": "1/240s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-10"
+  },
+  "dscf0936": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/6.4",
+    "shutter": "1/2000s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-11"
+  },
+  "dscf0952": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5",
+    "shutter": "1/350s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-11"
+  },
+  "dscf0960": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5",
+    "shutter": "1/450s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-11"
+  },
+  "dscf1022": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/60s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1029": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/200s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1031": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.2",
+    "shutter": "1/160s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1059": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/220s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1085": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/210s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1119": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/100s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1120": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/70s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1172": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 320,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-12"
+  },
+  "dscf1275": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5.6",
+    "shutter": "1/450s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-13"
+  },
+  "dscf1321": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 800,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-13"
+  },
+  "dscf1332": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/140s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-14"
+  },
+  "dscf1383": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 500,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-15"
+  },
+  "dscf1399": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 800,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-15"
+  },
+  "dscf1414": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/25s",
+    "iso": 12800,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-15"
+  },
+  "dscf1419": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/25s",
+    "iso": 12800,
+    "focalLength": "23mm",
+    "captureDate": "2025-10-15"
+  },
+  "dscf1568": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.2",
+    "shutter": "1/55s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-12-28"
+  },
+  "dscf1573": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/6.4",
+    "shutter": "1/500s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2025-12-28"
+  },
+  "dscf1658": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4.5",
+    "shutter": "1/280s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-01"
+  },
+  "dscf1737": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/5.6",
+    "shutter": "1/850s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-01"
+  },
+  "dscf1792": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/210s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1796": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4.5",
+    "shutter": "1/320s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1829": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/140s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1831": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/240s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1834": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/240s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1844": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/3.6",
+    "shutter": "1/160s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1845": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4",
+    "shutter": "1/220s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1857": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/110s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1866": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/4.5",
+    "shutter": "1/280s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1888": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2.8",
+    "shutter": "1/150s",
+    "iso": 125,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1928": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/35s",
+    "iso": 200,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1941": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/40s",
+    "iso": 1000,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "dscf1944": {
+    "camera": "FUJIFILM X100VI",
+    "aperture": "f/2",
+    "shutter": "1/50s",
+    "iso": 1600,
+    "focalLength": "23mm",
+    "captureDate": "2026-02-02"
+  },
+  "img-0029": {
+    "captureDate": "2024-01-22"
+  },
+  "img-0060": {
+    "captureDate": "2023-09-02"
+  },
+  "img-0061": {
+    "captureDate": "2023-10-17"
+  },
+  "img-0072": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/1800s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-08"
+  },
+  "img-0073": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 15.66mm f/2.8",
+    "aperture": "f/2.8",
+    "shutter": "1/270s",
+    "iso": 50,
+    "focalLength": "16mm",
+    "captureDate": "2024-10-08"
+  },
+  "img-0075": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/3400s",
+    "iso": 100,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-08"
+  },
+  "img-0078": {
+    "captureDate": "2024-10-08",
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/480s",
+    "iso": 64,
+    "focalLength": "7mm"
+  },
+  "img-0079": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/170s",
+    "iso": 80,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-08"
+  },
+  "img-0080": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/180s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-08"
+  },
+  "img-0086": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/10",
+    "shutter": "1/800s",
+    "iso": 200,
+    "focalLength": "50mm",
+    "captureDate": "2015-09-13"
+  },
+  "img-0132": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/120s",
+    "iso": 125,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-19"
+  },
+  "img-0133": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/60s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2024-10-19"
+  },
+  "img-0161": {
+    "captureDate": "2024-11-04"
+  },
+  "img-0229": {
+    "captureDate": "2023-10-16"
+  },
+  "img-0267": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/2800s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0268": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/12800s",
+    "iso": 40,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0274": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/5700s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0276": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/3600s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0278": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/4000s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0286": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/2500s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0288": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/3600s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-06-28"
+  },
+  "img-0336": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 15.66mm f/2.8",
+    "aperture": "f/2.8",
+    "shutter": "1/60s",
+    "iso": 640,
+    "focalLength": "16mm",
+    "captureDate": "2024-11-26"
+  },
+  "img-0364": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 5.1mm f/1.6",
+    "aperture": "f/1.6",
+    "shutter": "1/40s",
+    "iso": 640,
+    "focalLength": "5mm",
+    "captureDate": "2021-03-25"
+  },
+  "img-0367": {
+    "camera": "Apple iPhone X",
+    "lens": "iPhone X back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/560s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2018-03-16"
+  },
+  "img-0410": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/3.5",
+    "shutter": "1/320s",
+    "iso": 250,
+    "focalLength": "18mm",
+    "captureDate": "2019-05-17"
+  },
+  "img-0432": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/120s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2024-12-30"
+  },
+  "img-0450": {
+    "captureDate": "2023-10-17"
+  },
+  "img-0453": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 2.22mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/15s",
+    "iso": 1000,
+    "focalLength": "2mm",
+    "captureDate": "2024-12-31"
+  },
+  "img-0484": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/60s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2017-02-04"
+  },
+  "img-0499": {
+    "captureDate": "2023-10-16"
+  },
+  "img-0521": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/6.3",
+    "shutter": "1/800s",
+    "iso": 100,
+    "focalLength": "55mm",
+    "captureDate": "2019-05-20"
+  },
+  "img-0522": {
+    "captureDate": "2023-12-07"
+  },
+  "img-0524": {
+    "captureDate": "2022-07-09"
+  },
+  "img-0535": {
+    "captureDate": "2023-12-29"
+  },
+  "img-0551": {
+    "captureDate": "2023-12-07"
+  },
+  "img-0563": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/40s",
+    "iso": 640,
+    "focalLength": "7mm",
+    "captureDate": "2025-01-24"
+  },
+  "img-0580": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/120s",
+    "iso": 200,
+    "focalLength": "7mm",
+    "captureDate": "2025-02-01"
+  },
+  "img-0608-2": {
+    "captureDate": "2023-10-16"
+  },
+  "img-0613": {
+    "camera": "NIKON CORPORATION NIKON D5000",
+    "lens": "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G",
+    "aperture": "f/10",
+    "shutter": "1/80s",
+    "iso": 2500,
+    "focalLength": "40mm",
+    "captureDate": "2017-04-01"
+  },
+  "img-0620": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/750s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2017-04-06"
+  },
+  "img-0641": {
+    "camera": "Apple iPhone X",
+    "lens": "iPhone X back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/8000s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2018-05-27"
+  },
+  "img-0643": {
+    "camera": "Apple iPhone X",
+    "lens": "iPhone X back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/4400s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2018-05-27"
+  },
+  "img-0681": {
+    "captureDate": "2024-12-20"
+  },
+  "img-0752": {
+    "captureDate": "2023-09-03"
+  },
+  "img-0768": {
+    "camera": "Apple iPhone X",
+    "lens": "iPhone X back dual camera 4mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/5400s",
+    "iso": 20,
+    "focalLength": "4mm",
+    "captureDate": "2018-06-29"
+  },
+  "img-0809": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/1900s",
+    "iso": 80,
+    "focalLength": "7mm",
+    "captureDate": "2025-03-22"
+  },
+  "img-0906": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/1700s",
+    "iso": 100,
+    "focalLength": "7mm",
+    "captureDate": "2025-04-12"
+  },
+  "img-0962": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/30s",
+    "iso": 640,
+    "focalLength": "7mm",
+    "captureDate": "2025-10-16"
+  },
+  "img-1060": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/120s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-06-12"
+  },
+  "img-1066": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/170s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-06-15"
+  },
+  "img-1120": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/20000s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-07-07"
+  },
+  "img-1121": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 1.54mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/100s",
+    "iso": 25,
+    "focalLength": "2mm",
+    "captureDate": "2022-04-30"
+  },
+  "img-1142": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/11400s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2025-07-12"
+  },
+  "img-1159": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 5.1mm f/1.6",
+    "aperture": "f/1.6",
+    "shutter": "1/320s",
+    "iso": 32,
+    "focalLength": "5mm",
+    "captureDate": "2022-05-12"
+  },
+  "img-1162": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 5.1mm f/1.6",
+    "aperture": "f/1.6",
+    "shutter": "1/30s",
+    "iso": 640,
+    "focalLength": "5mm",
+    "captureDate": "2022-05-13"
+  },
+  "img-1165": {
+    "captureDate": "2023-12-08"
+  },
+  "img-1240": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/800s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2018-11-17"
+  },
+  "img-1254": {
+    "captureDate": "2025-08-20"
+  },
+  "img-1266": {
+    "captureDate": "2023-11-21"
+  },
+  "img-1284": {
+    "captureDate": "2023-11-14"
+  },
+  "img-1356": {
+    "captureDate": "2025-08-23"
+  },
+  "img-1358": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/18000s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-08-22"
+  },
+  "img-1360": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/28000s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-08-22"
+  },
+  "img-1373": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/43000s",
+    "iso": 50,
+    "focalLength": "7mm",
+    "captureDate": "2025-08-22"
+  },
+  "img-1406": {
+    "captureDate": "2024-10-11"
+  },
+  "img-1437": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 1.54mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/100s",
+    "iso": 200,
+    "focalLength": "2mm",
+    "captureDate": "2022-07-15"
+  },
+  "img-1438": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 1.54mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/105s",
+    "iso": 200,
+    "focalLength": "2mm",
+    "captureDate": "2022-07-15"
+  },
+  "img-1480": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/11400s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2025-08-30"
+  },
+  "img-1495": {
+    "captureDate": "2023-09-03"
+  },
+  "img-1502": {
+    "captureDate": "2023-10-16"
+  },
+  "img-1508": {
+    "captureDate": "2023-12-09"
+  },
+  "img-1508-2": {
+    "captureDate": "2023-12-09"
+  },
+  "img-1510": {
+    "captureDate": "2024-01-05"
+  },
+  "img-1532": {
+    "captureDate": "2025-08-18"
+  },
+  "img-1547": {
+    "captureDate": "2024-09-04"
+  },
+  "img-1551": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 1.54mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/180s",
+    "iso": 25,
+    "focalLength": "2mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1572": {
+    "camera": "Apple iPhone 12 Pro Max",
+    "lens": "iPhone 12 Pro Max back triple camera 1.54mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/1600s",
+    "iso": 25,
+    "focalLength": "2mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1575": {
+    "captureDate": "2023-10-12"
+  },
+  "img-1581": {
+    "captureDate": "2023-12-05"
+  },
+  "img-1587": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/8",
+    "shutter": "1/100s",
+    "iso": 100,
+    "focalLength": "33mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1611": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/11",
+    "shutter": "1/250s",
+    "iso": 100,
+    "focalLength": "41mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1662": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/14",
+    "shutter": "1/200s",
+    "iso": 100,
+    "focalLength": "18mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1672": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/5.6",
+    "shutter": "1/40s",
+    "iso": 640,
+    "focalLength": "18mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1677": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/8",
+    "shutter": "1/60s",
+    "iso": 100,
+    "focalLength": "27mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1709": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/8",
+    "shutter": "1/80s",
+    "iso": 100,
+    "focalLength": "27mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1716": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/6.3",
+    "shutter": "1/50s",
+    "iso": 100,
+    "focalLength": "27mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1723": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/10",
+    "shutter": "1/125s",
+    "iso": 100,
+    "focalLength": "18mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1730": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/5.6",
+    "shutter": "1/60s",
+    "iso": 200,
+    "focalLength": "41mm",
+    "captureDate": "2022-07-17"
+  },
+  "img-1732-2": {
+    "captureDate": "2024-09-17"
+  },
+  "img-1754": {
+    "camera": "Apple iPhone 16 Pro Max",
+    "lens": "iPhone 16 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/43000s",
+    "iso": 80,
+    "focalLength": "7mm",
+    "captureDate": "2025-09-13"
+  },
+  "img-1781": {
+    "captureDate": "2023-11-19"
+  },
+  "img-1817": {
+    "captureDate": "2023-12-22"
+  },
+  "img-1826": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/350s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2019-05-16"
+  },
+  "img-1857": {
+    "captureDate": "2023-11-17"
+  },
+  "img-1860": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 4.25mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/370s",
+    "iso": 25,
+    "focalLength": "4mm",
+    "captureDate": "2019-05-18"
+  },
+  "img-1866": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/3400s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2019-05-18"
+  },
+  "img-1867": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/120s",
+    "iso": 64,
+    "focalLength": "6mm",
+    "captureDate": "2019-05-19"
+  },
+  "img-1872": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 4.25mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/120s",
+    "iso": 25,
+    "focalLength": "4mm",
+    "captureDate": "2019-05-21"
+  },
+  "img-1919": {
+    "captureDate": "2023-12-22"
+  },
+  "img-1921": {
+    "captureDate": "2023-11-19"
+  },
+  "img-2053": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/30s",
+    "iso": 800,
+    "focalLength": "6mm",
+    "captureDate": "2019-07-14"
+  },
+  "img-2085": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/350s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2019-07-23"
+  },
+  "img-2086": {
+    "captureDate": "2023-12-05"
+  },
+  "img-2100": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/1700s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2019-07-27"
+  },
+  "img-2101": {
+    "captureDate": "2023-12-04"
+  },
+  "img-2103": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 4.25mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/6000s",
+    "iso": 25,
+    "focalLength": "4mm",
+    "captureDate": "2019-07-27"
+  },
+  "img-2125": {
+    "camera": "Canon Canon EOS Rebel T6",
+    "lens": "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+    "aperture": "f/3.5",
+    "shutter": "1/320s",
+    "iso": 320,
+    "focalLength": "18mm",
+    "captureDate": "2019-05-17"
+  },
+  "img-2126": {
+    "captureDate": "2023-12-07"
+  },
+  "img-2128": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 4.25mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/1100s",
+    "iso": 25,
+    "focalLength": "4mm",
+    "captureDate": "2019-05-18"
+  },
+  "img-2265": {
+    "captureDate": "2023-12-09"
+  },
+  "img-2266": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 4.25mm f/1.8",
+    "aperture": "f/1.8",
+    "shutter": "1/1100s",
+    "iso": 25,
+    "focalLength": "4mm",
+    "captureDate": "2019-09-24"
+  },
+  "img-2348": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/900s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2019-10-30"
+  },
+  "img-2381": {
+    "captureDate": "2023-12-04"
+  },
+  "img-2397": {
+    "captureDate": "2023-09-03"
+  },
+  "img-2438": {
+    "captureDate": "2024-10-05"
+  },
+  "img-2508": {
+    "captureDate": "2023-09-03"
+  },
+  "img-2517": {
+    "captureDate": "2023-10-16"
+  },
+  "img-2524": {
+    "camera": "Canon Canon EOS 7D",
+    "lens": "EF16-35mm f/2.8L II USM",
+    "aperture": "f/22",
+    "shutter": "12s",
+    "iso": 12800,
+    "focalLength": "30mm",
+    "captureDate": "2016-06-04"
+  },
+  "img-2526": {
+    "camera": "Apple iPhone 17 Pro Max",
+    "lens": "iPhone 17 Pro Max back triple camera 16.891mm f/2.8",
+    "aperture": "f/2.8",
+    "shutter": "1/350s",
+    "iso": 40,
+    "focalLength": "17mm",
+    "captureDate": "2025-10-13"
+  },
+  "img-2528": {
+    "captureDate": "2023-10-16"
+  },
+  "img-2532": {
+    "camera": "Apple iPhone 17 Pro Max",
+    "lens": "iPhone 17 Pro Max back triple camera 2.22mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/55s",
+    "iso": 50,
+    "focalLength": "2mm",
+    "captureDate": "2025-10-14"
+  },
+  "img-2675": {
+    "camera": "Apple iPhone 14 Pro Max",
+    "lens": "iPhone 14 Pro Max back triple camera 2.22mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/2500s",
+    "iso": 50,
+    "focalLength": "2mm",
+    "captureDate": "2023-08-12"
+  },
+  "img-2749": {
+    "captureDate": "2023-10-17"
+  },
+  "img-2781": {
+    "camera": "Apple iPhone XS Max",
+    "lens": "iPhone XS Max back dual camera 6mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/290s",
+    "iso": 16,
+    "focalLength": "6mm",
+    "captureDate": "2020-05-29"
+  },
+  "img-2860": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/3.2",
+    "shutter": "1/160s",
+    "iso": 1600,
+    "focalLength": "70mm",
+    "captureDate": "2023-10-14"
+  },
+  "img-2860-2": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/3.2",
+    "shutter": "1/160s",
+    "iso": 1600,
+    "focalLength": "70mm",
+    "captureDate": "2023-10-14"
+  },
+  "img-2883": {
+    "camera": "Canon Canon EOS 7D",
+    "lens": "EF16-35mm f/2.8L II USM",
+    "aperture": "f/22",
+    "shutter": "10s",
+    "iso": 12800,
+    "focalLength": "25mm",
+    "captureDate": "2016-06-04"
+  },
+  "img-2888": {
+    "captureDate": "2023-12-25"
+  },
+  "img-2967": {
+    "captureDate": "2023-10-17"
+  },
+  "img-2972": {
+    "captureDate": "2023-10-16"
+  },
+  "img-2974": {
+    "captureDate": "2023-10-16"
+  },
+  "img-3003": {
+    "captureDate": "2023-11-14"
+  },
+  "img-3058": {
+    "captureDate": "2023-11-17"
+  },
+  "img-3094": {
+    "captureDate": "2023-11-30"
+  },
+  "img-3128-2": {
+    "captureDate": "2023-12-06"
+  },
+  "img-3175": {
+    "camera": "SONY ILCE-7RM5",
+    "lens": "24-70mm F2.8 DG DN | Art 019",
+    "aperture": "f/10",
+    "shutter": "1/250s",
+    "iso": 100,
+    "focalLength": "24mm",
+    "captureDate": "2023-08-12"
+  },
+  "img-3212": {
+    "camera": "Apple iPhone 17 Pro Max",
+    "lens": "iPhone 17 Pro Max back triple camera 6.765mm f/1.78",
+    "aperture": "f/1.8",
+    "shutter": "1/400s",
+    "iso": 64,
+    "focalLength": "7mm",
+    "captureDate": "2026-01-11"
+  },
+  "img-3227": {
+    "captureDate": "2023-12-05"
+  },
+  "img-3472": {
+    "camera": "Apple iPhone 15 Pro Max",
+    "lens": "iPhone 15 Pro Max back triple camera 15.66mm f/2.8",
+    "aperture": "f/2.8",
+    "shutter": "1/125s",
+    "iso": 50,
+    "focalLength": "16mm",
+    "captureDate": "2024-01-18"
+  },
+  "img-3500": {
+    "captureDate": "2024-01-23"
+  },
+  "img-3501": {
+    "captureDate": "2024-01-23"
+  },
+  "img-3549": {
+    "captureDate": "2023-11-21"
+  },
+  "img-4022-2": {
+    "captureDate": "2024-12-25"
+  },
+  "img-4463": {
+    "camera": "Apple iPhone 5",
+    "lens": "iPhone 5 back camera 4.12mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/120s",
+    "iso": 50,
+    "focalLength": "4mm",
+    "captureDate": "2013-10-26"
+  },
+  "img-5178": {
+    "camera": "Apple iPhone 5",
+    "lens": "iPhone 5 back camera 4.12mm f/2.4",
+    "aperture": "f/2.4",
+    "shutter": "1/20s",
+    "iso": 80,
+    "focalLength": "4mm",
+    "captureDate": "2014-06-20"
+  },
+  "img-6376": {
+    "captureDate": "2025-03-04"
+  },
+  "img-6379": {
+    "captureDate": "2025-03-04"
+  },
+  "img-6401": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/210s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-03-10"
+  },
+  "img-6403": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1500s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-03-10"
+  },
+  "img-6436": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1100s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-03-10"
+  },
+  "img-6548": {
+    "captureDate": "2023-12-07"
+  },
+  "img-6549": {
+    "captureDate": "2023-11-14"
+  },
+  "img-6611-2": {
+    "captureDate": "2023-12-03"
+  },
+  "img-6642": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/30s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-03-11"
+  },
+  "img-6662": {
+    "captureDate": "2023-08-31"
+  },
+  "img-7055": {
+    "captureDate": "2023-09-01"
+  },
+  "img-7068": {
+    "captureDate": "2024-10-08"
+  },
+  "img-7177": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/170s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-05-20"
+  },
+  "img-7257": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/430s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-05-24"
+  },
+  "img-7393": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1000s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-08"
+  },
+  "img-7395": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/2200s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-08"
+  },
+  "img-7421": {
+    "captureDate": "2024-01-24"
+  },
+  "img-7461": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1250s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-11"
+  },
+  "img-7474": {
+    "captureDate": "2023-12-09"
+  },
+  "img-7575": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/6400s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-15"
+  },
+  "img-7576": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/6400s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-15"
+  },
+  "img-7598": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/17s",
+    "iso": 250,
+    "focalLength": "4mm",
+    "captureDate": "2015-06-16"
+  },
+  "img-7610": {
+    "captureDate": "2023-10-16"
+  },
+  "img-8255": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/400s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2015-09-21"
+  },
+  "img-9007": {
+    "captureDate": "2023-12-05"
+  },
+  "img-9008": {
+    "captureDate": "2023-12-05"
+  },
+  "img-9307": {
+    "captureDate": "2023-12-04"
+  },
+  "img-9419": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1600s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-03-06"
+  },
+  "img-9576": {
+    "camera": "Apple iPhone 6",
+    "lens": "iPhone 6 back camera 4.15mm f/2.2",
+    "aperture": "f/2.2",
+    "shutter": "1/1600s",
+    "iso": 32,
+    "focalLength": "4mm",
+    "captureDate": "2016-04-03"
+  }
 }

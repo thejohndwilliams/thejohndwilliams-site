@@ -38,8 +38,19 @@ export function inferCameraFromFilename(basename: string): string | undefined {
   return undefined;
 }
 
+/** Strip Lightroom/Topaz suffixes a site basename may carry that the
+    manifest does not (manifest is keyed by camera-original basename). */
+function stripEnhancementSuffix(basename: string): string {
+  return basename.replace(/-enhanced(?:-sr)?(?:-\d+)?$/i, '')
+                 .replace(/-hdr$/i, '')
+                 .replace(/-sr$/i, '');
+}
+
 export function getPhotoMeta(basename: string): ExifEntry {
-  const manifest = (exifManifest as Record<string, ExifEntry>)[basename] ?? {};
+  const m = exifManifest as Record<string, ExifEntry>;
+  // Try literal basename first, then progressively strip enhancement suffixes
+  const stripped = stripEnhancementSuffix(basename);
+  const manifest = m[basename] ?? m[stripped] ?? {};
   return {
     camera: manifest.camera ?? inferCameraFromFilename(basename),
     ...manifest,

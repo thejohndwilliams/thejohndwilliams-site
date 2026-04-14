@@ -69,6 +69,58 @@ def read_exif(path: str) -> dict:
 
     return out
 
+
+def derive_site_basename(filename: str) -> str | None:
+    """Derive the camera-original basename used by the site from a Lightroom
+    export filename. Returns lowercase basename without extension or None if
+    no recognizable camera-original pattern is found.
+
+    Patterns recognized:
+      _7R51108-Enhanced-SR.jpg          -> 7r51108
+      DSCF1022.jpg                      -> dscf1022
+      IMG_1438-Enhanced.jpg             -> img-1438
+      DSC_0009-2-Enhanced-SR.jpg        -> dsc-0009-2
+      magnific-XXX-_7R52231.jpg         -> 7r52231 (extracts embedded camera name)
+      <UUID>_1_105_c-Enhanced.jpg       -> None (no recognizable original)
+    """
+    import re
+    name = os.path.splitext(filename)[0]
+
+    # Strip Topaz / magnific / enhancement noise from end
+    # Iteratively strip trailing tokens until we get to the source
+    suffix_pattern = re.compile(
+        r'-(?:Enhanced(?:-SR)?(?:-\d+)?|HDR|SR|Topaz|Gigapixel(?:-\d+X)?|Upscale|jpg)$',
+        re.I,
+    )
+    while True:
+        new = suffix_pattern.sub('', name)
+        if new == name:
+            break
+        name = new
+
+    # Strip magnific prefixes if present (they wrap the original filename)
+    name = re.sub(r'^magnific[s]?_?upscale-[A-Za-z0-9]+-', '', name)
+    name = re.sub(r'^magnific-[A-Za-z0-9]+-', '', name)
+
+    # Strip leading underscore (Sony exports)
+    name = name.lstrip('_')
+
+    # Recognize the camera-original families
+    cam_patterns = [
+        re.compile(r'^7r5\d{4,5}', re.I),       # Sony A7R V
+        re.compile(r'^dscf\d{4,5}', re.I),       # Fujifilm X
+        re.compile(r'^dsc[-_]\d{4,5}(?:-\d+)?', re.I),  # Sony alpha legacy
+        re.compile(r'^img[-_]\d{4,5}(?:-\d+)?', re.I),  # Generic / Apple
+    ]
+    for pat in cam_patterns:
+        m = pat.match(name)
+        if m:
+            return m.group(0).lower().replace('_', '-')
+
+    # No recognizable camera-original pattern (e.g., UUIDs)
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('archive', help='Path to Lightroom archive root')
@@ -89,15 +141,16 @@ def main() -> int:
                 continue
             path = os.path.join(root, name)
             scanned += 1
-            basename = os.path.splitext(name)[0].lower()
-            # basename in repo uses lowercase; match what thumb/gallery/hero dirs use
+            site_basename = derive_site_basename(name)
+            if site_basename is None:
+                continue
             meta = read_exif(path)
             if not meta:
                 continue
-            existing = manifest.get(basename, {})
+            existing = manifest.get(site_basename, {})
             merged = {**existing, **meta}
-            if merged \!= existing:
-                manifest[basename] = merged
+            if merged != existing:
+                manifest[site_basename] = merged
                 updated += 1
 
     # Preserve _README and _SCHEMA if present
