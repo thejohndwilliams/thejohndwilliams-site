@@ -44,9 +44,11 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
-    <!-- Preload critical fonts — self-hosted, no third-party dependency -->
+    <!-- Preload critical fonts — self-hosted, no third-party dependency.
+         Body font (IBM Plex Sans 400) is critical for LCP; Libre
+         Baskerville display serif is used above the fold on every page. -->
+    <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxMaC82U.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/nwpStKy2OAdR1K-IwhWudF-R3w8aZejf5Hc.woff2" as="font" type="font/woff2" crossorigin />
 
     {lcpImage && (
       <>
@@ -109,11 +111,19 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col pb-20 md:pb-0">
+    <!-- Scroll progress bar — fixed 2px gold accent at top of viewport,
+         width bound to scroll fraction. Signals "this is a composed
+         document." Updated via rAF-throttled scroll listener. -->
+    <div
+      id="scroll-progress"
+      class="fixed top-0 left-0 h-[2px] z-[60] pointer-events-none origin-left"
+      style="width:100%; transform:scaleX(0); background:linear-gradient(90deg, #8a7230 0%, #B8973F 50%, #d4b85a 100%);"
+      aria-hidden="true"
+    ></div>
+
     <!-- Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
-         Referenced via backdrop-filter: url(#glass-lens) behind a
-         @supports gate. Non-rendering (width/height 0), zero layout
-         cost. fractalNoise over a 1.5px scale = subtle refraction,
-         not funhouse-mirror. aria-hidden because it is decorative. -->
+         Kept for future use; currently unreferenced because iOS Safari
+         cannot resolve backdrop-filter: url() at paint time. -->
     <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true" focusable="false">
       <filter id="glass-lens" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="7" result="noise" />
@@ -263,6 +273,27 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         });
       }
 
+      // Scroll progress bar — rAF-throttled transform update. Uses
+      // scaleX so it renders on the compositor; zero layout cost.
+      function initScrollProgress() {
+        const bar = document.getElementById('scroll-progress');
+        if (!bar) return;
+        let pending = false;
+        const update = () => {
+          pending = false;
+          const doc = document.documentElement;
+          const max = doc.scrollHeight - window.innerHeight;
+          const frac = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+          bar.style.transform = `scaleX(${frac})`;
+        };
+        window.addEventListener('scroll', () => {
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(update);
+        }, { passive: true });
+        update();
+      }
+
       // Liquid Glass Tier 1: pointer-tracked specular on glass-card/panel.
       // rAF-throttled, delegated, passive. No-op under prefers-reduced-motion.
       function initGlassSpecular() {
@@ -294,11 +325,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       initReveal();
       initBottomNav();
       initGlassSpecular();
+      initScrollProgress();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {
         initReveal();
         initBottomNav();
+        initScrollProgress();
         // Specular listener is attached to window once; no re-init needed.
       });
     </script>

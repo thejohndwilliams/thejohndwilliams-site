@@ -18,7 +18,7 @@
   body {
     background-color: #0a0a0a;
     color: #FDFCFA;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 1rem;
@@ -445,7 +445,7 @@
     min-height: 2.75rem; /* 44px — Apple HIG touch target */
     padding: 0.75rem 1.5rem; /* Mobile: compact but tappable */
     border-radius: 0.5rem;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     font-weight: 500;
     font-size: 0.875rem;
     letter-spacing: 0.01em;
@@ -488,7 +488,7 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: #B8973F;
-    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     font-weight: 500;
   }
 

@@ -1,0 +1,4 @@
+{
+  "_README": "Populated by scripts/extract-exif.py. Keys are image basenames without extension (e.g. '7r52326'). Values are partial ExifEntry objects. Unknown basenames fall back to filename-pattern camera inference.",
+  "_SCHEMA": "{ camera?: string, lens?: string, aperture?: string, shutter?: string, iso?: number, focalLength?: string, captureDate?: string, location?: string }"
+}

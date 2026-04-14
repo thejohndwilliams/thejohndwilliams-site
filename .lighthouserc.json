@@ -1,0 +1,53 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "numberOfRuns": 3,
+      "url": [
+        "http://localhost/index.html",
+        "http://localhost/about/index.html",
+        "http://localhost/work/index.html",
+        "http://localhost/photography/index.html",
+        "http://localhost/links/index.html"
+      ],
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "simulate"
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance":   ["warn",  { "minScore": 0.90 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices":["warn",  { "minScore": 0.90 }],
+        "categories:seo":           ["error", { "minScore": 0.95 }],
+
+        "largest-contentful-paint": ["warn",  { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift":  ["error", { "maxNumericValue": 0.1  }],
+        "total-blocking-time":      ["warn",  { "maxNumericValue": 300  }],
+        "speed-index":              ["warn",  { "maxNumericValue": 3400 }],
+
+        "uses-long-cache-ttl":            "off",
+        "color-contrast":                 "error",
+        "document-title":                 "error",
+        "meta-description":               "error",
+        "html-has-lang":                  "error",
+        "image-alt":                      "error",
+        "link-name":                      "error",
+        "robots-txt":                     "warn",
+        "tap-targets":                    "warn",
+        "viewport":                       "error",
+
+        "csp-xss":                        "off",
+        "unused-javascript":              "off",
+        "uses-rel-preconnect":            "off",
+        "preload-lcp-image":              "warn",
+        "non-composited-animations":      "warn"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
