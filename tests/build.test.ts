@@ -174,4 +174,50 @@ describe('SEO and Meta Tags', () => {
   it('contains JSON-LD Person schema', () => {
     expect(indexHtml).toContain('"@type":"Person"');
   });
+
+  it('inlines the Liquid Glass Tier 2 SVG displacement filter', () => {
+    expect(indexHtml).toContain('id="glass-lens"');
+    expect(indexHtml).toContain('feDisplacementMap');
+  });
+
+  it('wires the pointer-tracked specular listener in the hoisted bundle', () => {
+    const assetsDir = path.join(distDir, '_assets');
+    const jsFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.js'));
+    const jsBundle = jsFiles
+      .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+      .join('\n');
+    // Minifier rewrites function names; fingerprint on stable string literals.
+    expect(jsBundle).toContain('--mx');
+    expect(jsBundle).toContain('--my');
+    expect(jsBundle).toContain('pointermove');
+    expect(jsBundle).toContain('prefers-reduced-motion: reduce');
+  });
+});
+
+describe('Liquid Glass CSS', () => {
+  let cssBundle: string;
+
+  beforeAll(async () => {
+    await execAsync('npm run build');
+    const assetsDir = path.join(distDir, '_assets');
+    const cssFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.css'));
+    cssBundle = cssFiles
+      .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+      .join('\n');
+  }, 60000);
+
+  it('emits pointer-tracked specular variables on glass surfaces', () => {
+    expect(cssBundle).toContain('var(--mx');
+    expect(cssBundle).toContain('var(--my');
+  });
+
+  it('gates the Tier 2 displacement behind @supports', () => {
+    expect(cssBundle).toContain('backdrop-filter: url(#glass-lens)');
+    // The @supports rule should be emitted, not the unconditional form.
+    expect(cssBundle).toMatch(/@supports[^{]*backdrop-filter:\s*url\(#glass-lens\)/);
+  });
+
+  it('respects prefers-reduced-motion for glass specular', () => {
+    expect(cssBundle).toContain('prefers-reduced-motion');
+  });
 });

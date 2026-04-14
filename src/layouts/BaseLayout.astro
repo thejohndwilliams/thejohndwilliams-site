@@ -81,6 +81,19 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col pb-20 md:pb-0">
+    <!-- Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
+         Referenced via backdrop-filter: url(#glass-lens) behind a
+         @supports gate. Non-rendering (width/height 0), zero layout
+         cost. fractalNoise over a 1.5px scale = subtle refraction,
+         not funhouse-mirror. aria-hidden because it is decorative. -->
+    <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true" focusable="false">
+      <filter id="glass-lens" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="7" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="1.1" result="soft" />
+        <feDisplacementMap in="SourceGraphic" in2="soft" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-gold focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
     <Header />
     <main id="content" class="flex-grow" transition:animate="fade">
@@ -218,14 +231,43 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         });
       }
 
+      // Liquid Glass Tier 1: pointer-tracked specular on glass-card/panel.
+      // rAF-throttled, delegated, passive. No-op under prefers-reduced-motion.
+      function initGlassSpecular() {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) return;
+        const selector = '.glass-card, .glass-panel';
+        let pending = false;
+        let lastX = 0, lastY = 0;
+        const handler = (e) => {
+          lastX = e.clientX;
+          lastY = e.clientY;
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(() => {
+            pending = false;
+            const el = document.elementFromPoint(lastX, lastY)?.closest(selector);
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const mx = ((lastX - rect.left) / rect.width) * 100;
+            const my = ((lastY - rect.top) / rect.height) * 100;
+            el.style.setProperty('--mx', mx + '%');
+            el.style.setProperty('--my', my + '%');
+          });
+        };
+        window.addEventListener('pointermove', handler, { passive: true });
+      }
+
       // Run on initial load
       initReveal();
       initBottomNav();
+      initGlassSpecular();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {
         initReveal();
         initBottomNav();
+        // Specular listener is attached to window once; no re-init needed.
       });
     </script>
   </body>
