@@ -1,4 +1,5 @@
 ---
+import SocialIcon from '../components/SocialIcon.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const socialLinks = [
@@ -156,11 +157,10 @@ const socialLinks = [
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6">
               <div class="flex items-center gap-2 sm:gap-3">
-                <div
-                  class="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 bg-cream group-hover:bg-gold-light transition-colors duration-300"
-                  style={`mask-image:url(${link.icon});-webkit-mask-image:url(${link.icon});mask-size:contain;-webkit-mask-size:contain;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat;mask-position:center;-webkit-mask-position:center;`}
-                  aria-hidden="true"
-                ></div>
+                <SocialIcon
+                  name={link.name.toLowerCase()}
+                  class="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 text-cream group-hover:text-gold-light transition-colors duration-300"
+                />
                 <div>
                   <span class="font-medium text-xs sm:text-sm text-cream">{link.name}</span>
                   <p class="text-[10px] sm:text-xs opacity-60 hidden sm:block">{link.description}</p>
