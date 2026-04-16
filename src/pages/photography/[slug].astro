@@ -1,0 +1,222 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
+import { categories, getAllSlugs, getPhotoBySlug, getRelatedImages } from '../../data/photography';
+
+export function getStaticPaths() {
+  return getAllSlugs().map(slug => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = getPhotoBySlug(slug!);
+
+if (!entry) {
+  return Astro.redirect('/photography');
+}
+
+const { image, category } = entry;
+const meta = getPhotoMeta(image.file);
+const metaLine = formatMetaLine(meta);
+const related = getRelatedImages(image.file, 4);
+
+const SITE = 'https://thejohndwilliams.com';
+
+// JSON-LD for individual image — richer than the gallery entry
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageObject',
+  contentUrl: `${SITE}/images/photography/hero/${image.file}.webp`,
+  thumbnailUrl: `${SITE}/images/photography/thumb/${image.file}.webp`,
+  name: image.alt,
+  description: image.alt,
+  creator: { '@type': 'Person', name: 'John D. Williams', url: SITE },
+  copyrightHolder: { '@type': 'Person', name: 'John D. Williams' },
+  creditText: 'John D. Williams',
+  copyrightNotice: '© John D. Williams',
+  license: `${SITE}/photography`,
+  acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry%20—%20${encodeURIComponent(image.alt)}`,
+  keywords: [category.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
+  ...(meta.captureDate ? { datePublished: meta.captureDate } : {}),
+  ...(meta.location ? { contentLocation: { '@type': 'Place', name: meta.location } } : {}),
+  isPartOf: {
+    '@type': 'ImageGallery',
+    name: `${category.name} — Photography by John D. Williams`,
+    url: `${SITE}/photography#gallery-${category.id}`,
+  },
+};
+
+// Build EXIF detail lines
+const exifDetails: Array<{ label: string; value: string }> = [];
+if (meta.camera) exifDetails.push({ label: 'Camera', value: meta.camera });
+if (meta.lens) exifDetails.push({ label: 'Lens', value: meta.lens });
+if (meta.focalLength) exifDetails.push({ label: 'Focal Length', value: meta.focalLength });
+if (meta.aperture) exifDetails.push({ label: 'Aperture', value: meta.aperture });
+if (meta.shutter) exifDetails.push({ label: 'Shutter', value: meta.shutter });
+if (meta.iso) exifDetails.push({ label: 'ISO', value: String(meta.iso) });
+if (meta.captureDate) {
+  const d = new Date(meta.captureDate);
+  if (!isNaN(d.getTime())) {
+    exifDetails.push({ label: 'Date', value: d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) });
+  }
+}
+if (meta.location) exifDetails.push({ label: 'Location', value: meta.location });
+---
+
+<BaseLayout
+  title={`${image.alt} — Photography`}
+  description={`${image.alt}. Fine art photograph by John D. Williams. ${category.name} series. ${metaLine || ''}`}
+  ogImage={`/images/photography/hero/${image.file}.webp`}
+  lcpImage={image.file}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+  <!-- FULL-BLEED HERO IMAGE -->
+  <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden">
+    <picture>
+      <source
+        type="image/avif"
+        srcset={`/images/photography/thumb/${image.file}.avif 400w, /images/photography/gallery/${image.file}.avif 1200w, /images/photography/hero/${image.file}.avif 2400w`}
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`/images/photography/thumb/${image.file}.webp 400w, /images/photography/gallery/${image.file}.webp 1200w, /images/photography/hero/${image.file}.webp 2400w`}
+        sizes="100vw"
+      />
+      <img
+        src={`/images/photography/hero/${image.file}.webp`}
+        alt={image.alt}
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
+
+    <!-- Back nav -->
+    <a
+      href="/photography"
+      class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+      Gallery
+    </a>
+
+    <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
+      <div class="reveal max-w-2xl">
+        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60 mb-2 sm:mb-3 font-light">
+          <a href={`/photography#gallery-${category.id}`} class="hover:opacity-100 transition-opacity duration-300">{category.name}</a>
+        </p>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight mb-2 sm:mb-3">{image.alt}</h1>
+        {metaLine && (
+          <p class="text-xs sm:text-sm text-mute tracking-[0.05em]">{metaLine}</p>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILS + EXIF + CTA -->
+  <section class="section-light py-10 sm:py-16 md:py-20">
+    <div class="container-narrow">
+      <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
+
+        <!-- EXIF Technical Details -->
+        {exifDetails.length > 0 && (
+          <div>
+            <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
+            <dl class="space-y-3">
+              {exifDetails.map(({ label, value }) => (
+                <div class="flex items-baseline justify-between gap-4">
+                  <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
+                  <dd class="text-sm opacity-80 text-right">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+
+        <!-- Print / Licensing CTA -->
+        <div>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Acquire</p>
+          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+            Available as a limited edition archival print.
+          </p>
+          <p class="text-xs sm:text-sm opacity-40 leading-relaxed mb-6 sm:mb-8">
+            Giclée on Hahnemühle Photo Rag. Signed and numbered. Licensing inquiries welcome.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a
+              href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry%20—%20${encodeURIComponent(image.alt)}`}
+              class="btn btn-primary"
+            >
+              Inquire about this print
+            </a>
+            <a
+              href="https://www.etsy.com/shop/thejohndwilliams"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
+            >
+              Browse all prints
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED IMAGES -->
+  {related.length > 0 && (
+    <section class="py-10 sm:py-16 md:py-20">
+      <div class="container-wide">
+        <div class="reveal">
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-6 sm:mb-8">More from {category.name}</p>
+        </div>
+        <div class="stagger-children grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+          {related.map((rel) => (
+            <a
+              href={`/photography/${rel.file}`}
+              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-stone-light/30 focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:outline-none transition-all duration-500"
+            >
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset={`/images/photography/thumb/${rel.file}.avif 400w, /images/photography/gallery/${rel.file}.avif 1200w`}
+                  sizes="(max-width: 767px) 50vw, 25vw"
+                />
+                <source
+                  type="image/webp"
+                  srcset={`/images/photography/thumb/${rel.file}.webp 400w, /images/photography/gallery/${rel.file}.webp 1200w`}
+                  sizes="(max-width: 767px) 50vw, 25vw"
+                />
+                <img
+                  src={`/images/photography/gallery/${rel.file}.webp`}
+                  alt={rel.alt}
+                  class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                <p class="text-[10px] sm:text-xs opacity-70">{rel.alt}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Back to Gallery CTA -->
+  <section class="pb-12 sm:pb-16 md:pb-20">
+    <div class="container-narrow text-center">
+      <a
+        href="/photography"
+        class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px]"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Back to gallery
+      </a>
+    </div>
+  </section>
+</BaseLayout>

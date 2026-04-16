@@ -1,111 +1,11 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPhotoMeta, formatMetaLine } from '../utils/photo-meta';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
+import { categories, totalImages } from '../../data/photography';
 
 const SITE = 'https://thejohndwilliams.com';
 
-// Gallery data organized by category
-const categories = [
-  {
-    id: 'sky',
-    name: 'Sky',
-    description: 'Looking up.',
-    images: [
-      { file: '7r52326', alt: 'Thunderheads against black sky', orientation: 'landscape', featured: true },
-      { file: '7r52258', alt: 'Cloud mass rising into darkness', orientation: 'portrait' },
-      { file: '7r52256', alt: 'Storm clouds from below', orientation: 'portrait' },
-      { file: '7r52314', alt: 'Backlit dramatic cloudscape', orientation: 'landscape' },
-      { file: 'dscf0088', alt: 'Cumulus formations in deep blue', orientation: 'landscape' },
-      { file: 'dscf0056', alt: 'Lone cloud against cobalt', orientation: 'landscape' },
-      { file: 'dscf0060', alt: 'Cirrus wisps in blue gradient', orientation: 'landscape' },
-      { file: 'dscf1275', alt: 'Cloud dissolving into blue', orientation: 'portrait' },
-      { file: 'dscf0090', alt: 'Cloud layers at altitude', orientation: 'landscape' },
-      { file: 'dscf0091', alt: 'Cloud texture study', orientation: 'landscape' },
-      { file: 'dscf0074', alt: 'Towering cumulus', orientation: 'portrait' },
-      { file: 'dscf0082', alt: 'Cloud illuminated from within', orientation: 'portrait' },
-      { file: 'dscf0086', alt: 'Cloud column against sky', orientation: 'portrait' },
-      { file: 'dscf0069', alt: 'Cloud mass in afternoon light', orientation: 'portrait' },
-      { file: 'dscf0077', alt: 'Sky gradient with clouds', orientation: 'portrait' },
-      { file: 'img-7029-hdr-enhanced', alt: 'Clouds parting over deep blue', orientation: 'landscape' },
-      { file: 'dscf0936', alt: 'Mountain river below cloud cover', orientation: 'portrait' },
-      { file: '7r52322', alt: 'Storm formation detail', orientation: 'portrait' },
-      { file: '7r52355', alt: 'Cloud edge study', orientation: 'portrait' },
-      { file: '7r52352', alt: 'Atmospheric cloud layers', orientation: 'portrait' },
-    ]
-  },
-  {
-    id: 'earth',
-    name: 'Earth',
-    description: 'Looking close.',
-    images: [
-      { file: '7r51025-enhanced-sr', alt: 'Rain-wet leaf in darkness', orientation: 'portrait', featured: true },
-      { file: '7r51024-enhanced-sr', alt: 'Water droplets on dark leaf', orientation: 'landscape' },
-      { file: '7r51018-enhanced-sr', alt: 'Leaf veins with rain', orientation: 'landscape' },
-      { file: '7r50580-enhanced-sr', alt: 'Bougainvillea bloom', orientation: 'landscape' },
-      { file: '7r51505-enhanced-sr', alt: 'Bee on citrus blossom', orientation: 'landscape' },
-      { file: 'dsc-0009-2-enhanced-sr', alt: 'Fern frond macro', orientation: 'landscape' },
-      { file: '7r51108-enhanced-sr', alt: 'Sunlight through tree canopy', orientation: 'portrait' },
-      { file: 'dscf1737', alt: 'Forest canopy light', orientation: 'portrait' },
-      { file: 'dscf1658', alt: 'Tropical garden', orientation: 'portrait' },
-      { file: 'dscf1573', alt: 'Sky through branches', orientation: 'portrait' },
-      { file: 'dscf1845', alt: 'Botanical detail', orientation: 'portrait' },
-      { file: 'dscf1844', alt: 'Plant texture study', orientation: 'portrait' },
-      { file: 'dscf1831', alt: 'Garden flora', orientation: 'portrait' },
-      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait' },
-      { file: '7r51784-enhanced-sr', alt: 'Flowering tree and clouds', orientation: 'portrait' },
-      { file: '7r51911-enhanced-sr', alt: 'Botanical close-up', orientation: 'portrait' },
-    ]
-  },
-  {
-    id: 'water',
-    name: 'Water',
-    description: 'Where land dissolves.',
-    images: [
-      { file: '7r50674-enhanced-sr', alt: 'El Arco de Cabo San Lucas', orientation: 'landscape', featured: true },
-      { file: '7r50680-enhanced-sr', alt: 'Turquoise sea against rock formations', orientation: 'landscape' },
-      { file: '7r50993-enhanced-sr', alt: 'Blue hour over Cabo harbor', orientation: 'landscape' },
-      { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
-      { file: '7r50804-enhanced-sr', alt: 'Ocean at dusk', orientation: 'landscape' },
-      { file: 'dscf0952', alt: 'Traditional boat on Kyoto river', orientation: 'portrait' },
-      { file: 'img-7461-hdr-enhanced-hdr-enhanced', alt: 'Riverboat at pink dusk', orientation: 'landscape' },
-    ]
-  },
-  {
-    id: 'structure',
-    name: 'Structure',
-    description: 'What we build toward the sky.',
-    images: [
-      { file: 'img-7576-enhanced', alt: 'Shanghai Tower from below', orientation: 'portrait', featured: true },
-      { file: 'img-7575-enhanced', alt: 'Glass tower looking up', orientation: 'portrait' },
-      { file: 'img-7598-enhanced-sr', alt: 'Chinese pagoda at night', orientation: 'portrait' },
-      { file: 'img-7610-enhanced-sr', alt: 'Temple reflected in purple water', orientation: 'landscape' },
-      { file: 'img-7395-enhanced-sr', alt: 'Temple gate against blue sky', orientation: 'landscape' },
-      { file: 'dscf0530', alt: 'Night Tokyo street with neon', orientation: 'portrait' },
-      { file: 'dscf0423', alt: 'Japanese alleyway at night', orientation: 'portrait' },
-      { file: 'dscf0261', alt: 'Urban night architecture', orientation: 'portrait' },
-      { file: 'dsc-1076-enhanced', alt: 'Blue glass sculptures in garden', orientation: 'landscape' },
-      { file: 'dsc-1081-enhanced', alt: 'Red glass spires in garden', orientation: 'landscape' },
-      { file: 'dsc-1137-enhanced', alt: 'Chihuly sun sculpture', orientation: 'landscape' },
-      { file: 'dsc-1138-enhanced', alt: 'Glass tower in garden', orientation: 'landscape' },
-    ]
-  },
-  {
-    id: 'light',
-    name: 'Light',
-    description: 'What changes everything.',
-    images: [
-      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset wildflower field', orientation: 'portrait', featured: true },
-      { file: '7r50971-enhanced-sr', alt: 'Golden light over water', orientation: 'landscape' },
-      { file: 'burningcold-enhanced', alt: 'Fire consuming structure', orientation: 'landscape' },
-    ]
-  },
-];
-
-const allCategories = ['all', ...categories.map(c => c.id)];
-
-// JSON-LD ImageGallery schema — photography is John's primary portfolio
-// surface. Google Image Search ranks structured images higher, and
-// sharing on platforms that consume Schema.org gets richer previews.
+// JSON-LD ImageGallery schema
 const allImages = categories.flatMap(cat =>
   cat.images.map(img => {
     const meta = getPhotoMeta(img.file);
@@ -146,8 +46,6 @@ const jsonLd = {
   ogImage="/images/photography/hero/7r52326.webp"
   lcpImage="7r52326"
 >
-  <!-- JSON-LD ImageGallery — structured data for Google Image Search
-       and rich social previews. One entry per photograph. -->
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
   <!-- HERO — Featured image full-bleed -->
@@ -179,6 +77,8 @@ const jsonLd = {
           Where the vast meets the intimate.<br />
           Looking up. Looking close.
         </p>
+        <!-- Archive signal -->
+        <p class="text-xs tracking-[0.15em] uppercase opacity-40 mt-3 sm:mt-4 font-light">{totalImages} selected from an archive of 3,000+</p>
         <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
           <a
             href="https://www.etsy.com/shop/thejohndwilliams"
@@ -234,13 +134,11 @@ const jsonLd = {
       id={`gallery-${cat.id}`}
     >
       <div class="container-wide">
-        <!-- Category header -->
         <div class="reveal mb-6 sm:mb-10 md:mb-14">
           <h2 class="text-xl sm:text-2xl md:text-3xl font-serif mb-1 sm:mb-2 tracking-tight">{cat.name}</h2>
           <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
         </div>
 
-        <!-- Masonry-style grid — 1col phone, 2col phablet, 3col tablet, 4col desktop -->
         <div class="stagger-children grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 min-[480px]:gap-3 md:gap-4">
           {cat.images.map((img, i) => {
             const spanClass = img.featured
@@ -255,8 +153,9 @@ const jsonLd = {
                 : 'aspect-[4/3]';
 
             return (
-              <div
-                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 transition-all duration-500 cursor-pointer ${spanClass}`}
+              <a
+                href={`/photography/${img.file}`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:outline-none transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-meta={formatMetaLine(getPhotoMeta(img.file))}
@@ -288,7 +187,7 @@ const jsonLd = {
                 <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                   <p class="text-[10px] sm:text-xs opacity-60 sm:opacity-60">{img.alt}</p>
                 </div>
-              </div>
+              </a>
             );
           })}
         </div>
@@ -318,7 +217,6 @@ const jsonLd = {
       <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
     </div>
-    <!-- Mobile swipe hint — shows once then fades -->
     <div id="swipe-hint" class="sm:hidden absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-0 transition-opacity duration-500 pointer-events-none">
       <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
       <span class="opacity-60">Swipe</span>
@@ -391,7 +289,7 @@ const jsonLd = {
 
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
-        const cat = btn.dataset.category;
+        const cat = (btn as HTMLElement).dataset.category;
 
         buttons.forEach(b => {
           b.classList.remove('active', 'opacity-90', 'border-gold');
@@ -403,20 +301,21 @@ const jsonLd = {
         btn.setAttribute('aria-selected', 'true');
 
         sections.forEach(s => {
-          if (cat === 'all' || s.dataset.category === cat) {
-            s.removeAttribute('data-hidden');
-            s.style.display = '';
+          const el = s as HTMLElement;
+          if (cat === 'all' || el.dataset.category === cat) {
+            el.removeAttribute('data-hidden');
+            el.style.display = '';
           } else {
-            s.setAttribute('data-hidden', 'true');
-            s.style.display = 'none';
+            el.setAttribute('data-hidden', 'true');
+            el.style.display = 'none';
           }
         });
       });
     });
 
-    // Lightbox
+    // Lightbox — intercept gallery link clicks
     const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
     const items = document.querySelectorAll('.gallery-item');
@@ -434,14 +333,13 @@ const jsonLd = {
       currentIndex = index;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      lightboxImg!.src = item.dataset.src || '';
-      lightboxImg!.alt = item.dataset.alt || '';
-      lightboxCaption!.textContent = item.dataset.alt || '';
+      lightboxImg.src = item.dataset.src || '';
+      lightboxImg.alt = item.dataset.alt || '';
+      if (lightboxCaption) lightboxCaption.textContent = item.dataset.alt || '';
       if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
       lightbox!.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      // Show swipe hint on first mobile open
       if (!swipeHintShown && window.innerWidth < 640) {
         swipeHintShown = true;
         const hint = document.getElementById('swipe-hint');
@@ -462,14 +360,20 @@ const jsonLd = {
       currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      lightboxImg!.src = item.dataset.src || '';
-      lightboxImg!.alt = item.dataset.alt || '';
-      lightboxCaption!.textContent = item.dataset.alt || '';
+      lightboxImg.src = item.dataset.src || '';
+      lightboxImg.alt = item.dataset.alt || '';
+      if (lightboxCaption) lightboxCaption.textContent = item.dataset.alt || '';
       if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
     }
 
-    items.forEach((item, i) => {
-      item.addEventListener('click', () => {
+    // Intercept clicks on gallery links — open lightbox instead of navigating.
+    // Middle-click / Ctrl+click / right-click still follow the link naturally.
+    items.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        // Let modified clicks pass through for "open in new tab"
+        const me = e as MouseEvent;
+        if (me.ctrlKey || me.metaKey || me.shiftKey || me.button !== 0) return;
+        e.preventDefault();
         updateVisibleItems();
         const idx = visibleItems.indexOf(item);
         openLightbox(idx >= 0 ? idx : 0);
@@ -494,7 +398,6 @@ const jsonLd = {
     // Touch/swipe support for mobile lightbox
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchEndX = 0;
 
     lightbox?.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
@@ -502,14 +405,13 @@ const jsonLd = {
     }, { passive: true });
 
     lightbox?.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
+      const touchEndX = e.changedTouches[0].screenX;
       const deltaX = touchEndX - touchStartX;
       const deltaY = e.changedTouches[0].screenY - touchStartY;
 
-      // Only handle horizontal swipes (ignore vertical scroll)
       if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-        if (deltaX < 0) navigate(1);  // Swipe left → next
-        else navigate(-1);             // Swipe right → prev
+        if (deltaX < 0) navigate(1);
+        else navigate(-1);
       }
     }, { passive: true });
   }
