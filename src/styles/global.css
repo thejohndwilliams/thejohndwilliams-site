@@ -133,6 +133,33 @@
     }
   }
 
+  /* Nav shell — wider than body containers so the header reads as a distinct
+     shelf. Fluid clamp(): 1008px min (never narrower than container-narrow),
+     90vw preferred, 1536px max. Keeps the logo and CTA visually anchored to the
+     viewport edges on wide screens without letting the nav sprawl on ultrawide. */
+  .nav-shell {
+    width: 100%;
+    max-width: clamp(56rem, 90vw, 96rem);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .nav-shell {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav-shell {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
   /* Touch press feedback — subtle scale-down on tap */
   @media (hover: none) {
     .press-feedback:active {
