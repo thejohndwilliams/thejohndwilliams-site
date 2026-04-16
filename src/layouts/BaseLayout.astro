@@ -40,7 +40,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Theme color — brand midnight for mobile status bars -->
+    {/* Theme color — brand midnight for mobile status bars */}
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
@@ -50,9 +50,9 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="google-site-verification" content="VERIFICATION_CODE" />
 
 
-    <!-- Preload critical fonts — self-hosted, no third-party dependency.
+    {/* Preload critical fonts — self-hosted, no third-party dependency.
          Body font (IBM Plex Sans 400) is critical for LCP; Libre
-         Baskerville display serif is used above the fold on every page. -->
+         Baskerville display serif is used above the fold on every page. */}
     <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxMaC82U.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -79,7 +79,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       </>
     )}
 
-    <!-- Open Graph -->
+    {/* Open Graph */}
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
@@ -88,7 +88,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1600" />
 
-    <!-- Twitter -->
+    {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
@@ -96,7 +96,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     <title>{fullTitle}</title>
 
-    <!-- JSON-LD Person schema — semantic identity for search engines -->
+    {/* JSON-LD Person schema — semantic identity for search engines */}
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Person",
@@ -113,13 +113,66 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       "knowsAbout": ["Cybersecurity", "Data Analytics", "Photography", "Enterprise Operations"]
     })} />
 
-    <!-- View Transitions — cinematic page-to-page feel -->
+    {/* View Transitions — cinematic page-to-page feel */}
     <ViewTransitions />
+
+    {/* Directional page transitions — pages occupy a spatial strip.
+         Clicking right in the nav slides content left; clicking left
+         slides right. Gives each page a physical address. */}
+    <style is:global>
+      /* Directional dissolve keyframes */
+      @keyframes page-drift-out-left {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0; transform: translateX(-40px); }
+      }
+      @keyframes page-drift-in-right {
+        from { opacity: 0; transform: translateX(40px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes page-drift-out-right {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0; transform: translateX(40px); }
+      }
+      @keyframes page-drift-in-left {
+        from { opacity: 0; transform: translateX(-40px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+
+      /* Default direction: forward (drift left) */
+      ::view-transition-old(page) {
+        animation: page-drift-out-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+      }
+      ::view-transition-new(page) {
+        animation: page-drift-in-right 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+      }
+
+      /* Reverse direction: backward (drift right) */
+      html.nav-back ::view-transition-old(page) {
+        animation: page-drift-out-right 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+      }
+      html.nav-back ::view-transition-new(page) {
+        animation: page-drift-in-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+      }
+
+      /* Reduced motion: crossfade only, no spatial drift */
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-old(page),
+        html.nav-back ::view-transition-old(page) {
+          animation: none;
+          opacity: 0;
+        }
+        ::view-transition-new(page),
+        html.nav-back ::view-transition-new(page) {
+          animation: none;
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
   <body class="min-h-screen flex flex-col pb-20 md:pb-0">
-    <!-- Scroll progress bar — fixed 2px gold accent at top of viewport,
+    {/* Scroll progress bar — fixed 2px gold accent at top of viewport,
          width bound to scroll fraction. Signals "this is a composed
-         document." Updated via rAF-throttled scroll listener. -->
+         document." Updated via rAF-throttled scroll listener. */}
     <div
       id="scroll-progress"
       class="fixed top-0 left-0 h-[2px] z-[60] pointer-events-none origin-left"
@@ -127,9 +180,9 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       aria-hidden="true"
     ></div>
 
-    <!-- Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
+    {/* Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
          Kept for future use; currently unreferenced because iOS Safari
-         cannot resolve backdrop-filter: url() at paint time. -->
+         cannot resolve backdrop-filter: url() at paint time. */}
     <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true" focusable="false">
       <filter id="glass-lens" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="7" result="noise" />
@@ -140,50 +193,50 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-gold focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
     <Header />
-    <main id="content" class="flex-grow" transition:animate="fade">
+    <main id="content" class="flex-grow" transition:name="page">
       <slot />
     </main>
     <Footer />
 
-    <!-- Mobile bottom tab navigation — thumb zone, gallery-grade -->
+    {/* Mobile bottom tab navigation — thumb zone, gallery-grade */}
     <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
-      <!-- Inquire pill — floats above the tab bar -->
+      {/* Inquire pill — floats above the tab bar */}
       <div class="flex justify-center pb-2">
         <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-lg shadow-gold/25 ring-1 ring-gold-light/30 active:scale-95 transition-transform duration-150">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           Inquire
         </a>
       </div>
-      <!-- Tab bar — 4 items, glass bezel (mobile). Uses .glass-tabbar
+      {/* Tab bar — 4 items, glass bezel (mobile). Uses .glass-tabbar
            for parity with .glass-nav on desktop: same blur, saturate,
-           and a bottom-oriented rim highlight via ::before. -->
+           and a bottom-oriented rim highlight via ::before. */}
       <div class="glass-tabbar relative">
         <div class="flex items-center justify-evenly px-6 h-[52px]">
           <a href="/" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/">
             <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /></svg>
             <span class="text-[10px] tracking-wider uppercase">Home</span>
           </a>
-          <a href="/work" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/work">
-            <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-            <span class="text-[10px] tracking-wider uppercase">Work</span>
-          </a>
           <a href="/photography" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/photography">
             <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             <span class="text-[10px] tracking-wider uppercase">Photos</span>
+          </a>
+          <a href="/work" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/work">
+            <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+            <span class="text-[10px] tracking-wider uppercase">Work</span>
           </a>
           <a href="/about" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[4rem] py-2" data-path="/about">
             <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             <span class="text-[10px] tracking-wider uppercase">About</span>
           </a>
         </div>
-        <!-- Safe area padding for notched phones — transparent so
+        {/* Safe area padding for notched phones — transparent so
              the glass tab bar above it reads as one continuous
-             surface when blurring content behind. -->
+             surface when blurring content behind. */}
         <div class="h-[env(safe-area-inset-bottom,0px)]"></div>
       </div>
     </nav>
 
-    <!-- Back to top — desktop only; mobile uses active-tab-tap convention -->
+    {/* Back to top — desktop only; mobile uses active-tab-tap convention */}
     <button
       id="back-to-top"
       class="hidden md:flex fixed bottom-8 right-4 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/8 backdrop-blur-2xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300 hover:bg-white/12 hover:border-white/16"
@@ -194,7 +247,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       </svg>
     </button>
 
-    <!-- Scroll reveal observer — IntersectionObserver, no scroll hijacking -->
+    {/* Scroll reveal observer — IntersectionObserver, no scroll hijacking */}
     <script>
       function initBottomNav() {
         const nav = document.getElementById('bottom-nav');
@@ -360,6 +413,35 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         initBottomNav();
         initScrollProgress();
         // Specular listener is attached to window once; no re-init needed.
+      });
+    </script>
+
+    {/* Transition direction detector — determines spatial relationship
+         between current and target page to set drift direction. */}
+    <script>
+      function getPagePosition(path: string): number {
+        const clean = path.replace(/\/$/, '') || '/';
+        if (clean === '/') return 0;
+        if (clean.startsWith('/photography')) return 1;
+        if (clean === '/work') return 2;
+        if (clean === '/about') return 3;
+        if (clean === '/links') return 4;
+        if (clean === '/privacy') return 5;
+        return 99;
+      }
+
+      document.addEventListener('astro:before-preparation', (ev: any) => {
+        const from = getPagePosition(window.location.pathname);
+        const to = getPagePosition(new URL(ev.to, window.location.origin).pathname);
+        if (to < from) {
+          document.documentElement.classList.add('nav-back');
+        } else {
+          document.documentElement.classList.remove('nav-back');
+        }
+      });
+
+      document.addEventListener('astro:after-swap', () => {
+        document.documentElement.classList.remove('nav-back');
       });
     </script>
   </body>

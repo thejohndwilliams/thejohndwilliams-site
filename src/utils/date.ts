@@ -31,9 +31,9 @@ export function getCurrentYear(): number {
  * and is reachable via the homepage Connect section and footer social links.
  */
 export const navItems = [
-  { name: 'About', href: '/about' },
-  { name: 'Work', href: '/work' },
   { name: 'Photography', href: '/photography' },
+  { name: 'Work', href: '/work' },
+  { name: 'About', href: '/about' },
 ] as const;
 
 /**

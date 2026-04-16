@@ -20,6 +20,11 @@ describe('navItems', () => {
     expect(hrefs).toContain('/photography');
   });
 
+
+  it('nav items are ordered Photography, Work, About', () => {
+    const names = navItems.map((item) => item.name);
+    expect(names).toEqual(['Photography', 'Work', 'About']);
+  });
   it('does not include Links in primary navigation', () => {
     const names = navItems.map((item) => item.name);
     expect(names).not.toContain('Links');
