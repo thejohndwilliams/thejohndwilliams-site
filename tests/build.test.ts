@@ -80,7 +80,7 @@ describe('Generated HTML Content', () => {
       expect(indexHtml).toContain('href="/about"');
       expect(indexHtml).toContain('href="/work"');
       expect(indexHtml).toContain('href="/photography"');
-      expect(indexHtml).toContain('href="/links"');
+      // Links removed from nav — page still exists at /links but not in primary nav
     });
 
     it('contains social links in the footer', () => {

@@ -4,12 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="About"
-  description="John D. Williams — film graduate, cybersecurity MBA, enterprise operations engineer, nature photographer. Liberal arts meets technology."
+  description="John D. Williams — film graduate, cybersecurity MBA, enterprise operations engineer, nature photographer."
   ogImage="/images/photography/hero/john-portrait-bw.webp"
   lcpImage="john-portrait-bw"
 >
   <!-- Scroll progress indicator -->
   <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-gold to-gold-light z-50 pointer-events-none" style="width: 0%; transition: width 0.1s linear;" aria-hidden="true"></div>
+
   <!-- HERO — Portrait with full-bleed image -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <picture>
@@ -30,59 +31,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         fetchpriority="high"
       />
     </picture>
-    <!-- Multi-stop gradient: 6 stops to break up 8-bit banding on dark sRGB -->
     <div
       class="absolute inset-0"
       style="background-image: linear-gradient(to right, #0a0a0a 0%, rgba(10,10,10,0.96) 18%, rgba(10,10,10,0.82) 34%, rgba(10,10,10,0.58) 52%, rgba(10,10,10,0.28) 74%, rgba(10,10,10,0) 100%);"
     ></div>
-    <!-- Local noise dither, scoped to hero — soft-light blend + low
-         opacity keeps the dither imperceptual. The 6-stop gradient
-         above does the heavy lifting on the banding; this is just an
-         insurance layer. -->
     <div
       class="absolute inset-0 pointer-events-none"
       aria-hidden="true"
-      style="opacity:0.025; mix-blend-mode:soft-light; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>&quot;);"
+      style="opacity:0.025; mix-blend-mode:soft-light; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>&quot;);"
     ></div>
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl">
         <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60 mb-3 sm:mb-4 font-light">The Intersection</p>
         <h1 class="mb-5 sm:mb-8">John D. Williams</h1>
         <p class="text-base sm:text-lg md:text-xl leading-relaxed opacity-70">
-          I studied film. I work in cybersecurity. I shoot landscapes with a Sony A7R
-          and build data pipelines in Python. The through-line is not obvious until you
-          see it: I have always been interested in how things are made visible — whether
-          that is a story on screen, a threat on a network, or light on a mountain.
+          I studied film. I work in cybersecurity. I shoot landscapes on a Sony&nbsp;A7R
+          and build data pipelines in Python. The through-line is simple: I make
+          things visible — threats on a network, patterns in data, light on a mountain.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- BACKGROUND — collapsible on mobile -->
+  <!-- BACKGROUND — single merged section, no accordion -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
-        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
-          <h2 class="mb-0">Background</h2>
-          <svg class="accordion-chevron w-5 h-5 opacity-60 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
-          <p class="mt-4 sm:mt-6">
-            I graduated from Baylor University in 2015 with a BA in Film and Digital Media.
-            That degree taught me composition, narrative structure, and how to communicate
-            visually — skills I still use daily, just in different contexts. I went to law
-            school. Life intervened. I left, earned an MBA in Cybersecurity from
-            Baylor University (2024, 3.86 GPA), and found that the analytical rigor of
-            security work suited me better than the courtroom ever would have.
-          </p>
-          <p>
-            For the past two years I have worked in enterprise operations for a satellite
-            communications company. The work is incident command, building forecasting tools
-            from scratch, and designing operational analytics in an environment where downtime
-            is not abstract. I cannot describe customers or systems here; the discipline is
-            the point.
-          </p>
-        </div>
+        <h2>Background</h2>
+        <p>
+          BA in Film and Digital Media from Baylor, 2015. That degree taught me
+          composition, narrative structure, and visual communication — skills I use
+          daily in contexts the film school never imagined. I started law school.
+          Life intervened. I finished an MBA in Cybersecurity at Baylor instead
+          (2024, 3.86 GPA) and found that the analytical discipline of security
+          work suited me better than the courtroom ever would have.
+        </p>
+        <p>
+          For two years I have run enterprise operations for a satellite
+          communications company — incident command, forecasting tools built from
+          scratch, operational analytics where downtime is not abstract. I cannot
+          name the systems or the customers. The discipline is the point.
+        </p>
+        <p>
+          People ask why a film graduate ended up here. The honest answer: I never
+          left the core discipline. Film takes raw material and organizes it so
+          someone else can see what you see. Data engineering is the same problem
+          with different inputs. Security makes the invisible visible before it
+          causes damage. Photography notices what is already there.
+        </p>
       </div>
     </div>
   </section>
@@ -104,48 +100,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- THE INTERSECTION — collapsible on mobile -->
-  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
-    <div class="container-narrow">
-      <div class="reveal prose max-w-2xl">
-        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
-          <h2 class="mb-0">The Intersection</h2>
-          <svg class="accordion-chevron w-5 h-5 opacity-60 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
-          <p class="mt-4 sm:mt-6">
-            People ask why a film graduate ended up in cybersecurity and data engineering.
-            The honest answer is that I never left the core discipline. Film is about
-            taking raw material — footage, sound, light — and organizing it so that someone
-            else can see what you see. Data engineering is the same problem with different
-            inputs. Cybersecurity is about making the invisible visible before it causes
-            damage. Photography is about noticing what is already there.
-          </p>
-          <p>
-            I work at the intersection of these things because that is where I actually
-            live. The liberal arts and technology are not separate tracks for me. They are
-            the same track, and the best work I do happens when both are engaged.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHAT I AM BUILDING — alternating -->
-  <section class="section-light py-10 sm:py-16 md:py-24">
+  <!-- WHAT I AM BUILDING -->
+  <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl">
         <h2>What I Am Building</h2>
         <p>
           Outside of work, I am building Noticing — a venture with three arms.
-          Noticing Solutions handles AI and technology consulting. Noticing Nature is
-          my photography practice: landscape and nature work, shot on a Sony A7R system,
-          with nearly 3,000 images in the archive and print sales on the way. Noticing
-          Scripture is a faith-based content project structured as a nonprofit.
+          Noticing Solutions handles AI and technology consulting. Noticing Nature
+          is my photography practice: landscape and nature work, nearly 3,000 images
+          in the archive, print sales on the way. Noticing Scripture is a
+          faith-based content project structured as a nonprofit.
         </p>
         <p>
-          The name comes from a conviction: most of what matters is already in front of
-          us. The work is learning to see it.
+          The name comes from a conviction: most of what matters is already in front
+          of us. The work is learning to see it.
         </p>
       </div>
     </div>
@@ -179,36 +148,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- CREDENTIALS — collapsible on mobile -->
-  <section class="py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal prose max-w-2xl">
-        <button class="accordion-toggle md:pointer-events-none w-full text-left flex items-center justify-between" aria-expanded="false">
-          <h2 class="mb-0">Credentials</h2>
-          <svg class="accordion-chevron w-5 h-5 opacity-60 transition-transform duration-300 md:hidden flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        <div class="accordion-body overflow-hidden max-h-0 md:max-h-none transition-all duration-500 ease-smooth">
-          <p class="mt-4 sm:mt-6">
-            BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
-            Baylor University (2024, 3.86 GPA). Eagle Scout. CompTIA Security+ (in progress).
-            I am also pursuing an Air Force Reserve commission in cybersecurity operations.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- OUTSIDE WORK — alternating, with image grid -->
+  <!-- CREDENTIALS + OUTSIDE WORK — merged, tight -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal prose max-w-2xl mb-12">
-        <h2>Outside Work</h2>
+        <h2>Credentials &amp; Practice</h2>
         <p>
-          I am a nature photographer. That is not a hobby line on a resume — it is a
-          real practice with commercial intent, and it feeds everything else I do. I am
-          a person of faith. I am an Eagle Scout. I believe in service, in showing up when
-          it is hard, and in doing the work that is in front of you without waiting for
-          applause.
+          BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
+          Baylor University (2024, 3.86 GPA). Eagle Scout. CompTIA Security+ (in progress).
+          Pursuing an Air Force Reserve commission in cybersecurity operations.
+        </p>
+        <p>
+          I am a nature photographer. That is not a hobby line — it is a practice
+          with commercial intent, and it feeds everything else I do. I am a person
+          of faith. I believe in service, in showing up when it is hard, and in
+          doing the work in front of you without waiting for applause.
         </p>
       </div>
       <div class="reveal grid grid-cols-3 gap-2 sm:gap-3">
@@ -253,33 +207,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
-<script>
-  function initAccordions() {
-    // Only enable accordion behavior on mobile
-    if (window.innerWidth >= 768) return;
 
-    document.querySelectorAll('.accordion-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const body = btn.nextElementSibling as HTMLElement;
-        const chevron = btn.querySelector('.accordion-chevron') as HTMLElement;
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-        if (isOpen) {
-          body.style.maxHeight = '0';
-          btn.setAttribute('aria-expanded', 'false');
-          chevron?.style.setProperty('transform', 'rotate(0deg)');
-        } else {
-          body.style.maxHeight = body.scrollHeight + 'px';
-          btn.setAttribute('aria-expanded', 'true');
-          chevron?.style.setProperty('transform', 'rotate(180deg)');
-        }
-      });
-    });
-  }
-
-  initAccordions();
-  document.addEventListener('astro:after-swap', initAccordions);
-</script>
 <script>
   function initScrollProgress() {
     const bar = document.getElementById('scroll-progress');
