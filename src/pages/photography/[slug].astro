@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
-import { categories, getAllSlugs, getPhotoBySlug, getRelatedImages } from '../../data/photography';
+import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages } from '../../data/photography';
 
 export function getStaticPaths() {
   return getAllSlugs().map(slug => ({ params: { slug } }));
@@ -21,7 +21,25 @@ const related = getRelatedImages(image.file, 4);
 
 const SITE = 'https://thejohndwilliams.com';
 
-// JSON-LD for individual image — richer than the gallery entry
+// ─── Ambient Color Bleed: category-driven palette ───
+// Each category maps to a subtle color that bleeds into the page background.
+// These are intentional, not extracted — the semantics drive the atmosphere.
+const categoryColors: Record<string, { glow: string; accent: string }> = {
+  sky:        { glow: 'rgba(70, 100, 160, 0.08)',  accent: 'rgba(70, 100, 160, 0.04)' },
+  earth:      { glow: 'rgba(160, 120, 60, 0.08)',  accent: 'rgba(160, 120, 60, 0.04)' },
+  water:      { glow: 'rgba(50, 130, 140, 0.08)',  accent: 'rgba(50, 130, 140, 0.04)' },
+  structure:  { glow: 'rgba(120, 110, 100, 0.06)', accent: 'rgba(120, 110, 100, 0.03)' },
+  light:      { glow: 'rgba(184, 151, 63, 0.07)',  accent: 'rgba(184, 151, 63, 0.035)' },
+};
+const bleed = categoryColors[category.id] || categoryColors.structure;
+
+// ─── Keyboard navigation: prev/next in sequential order ───
+const allSlugs = getAllSlugsSequential();
+const currentIdx = allSlugs.indexOf(image.file);
+const prevSlug = currentIdx > 0 ? allSlugs[currentIdx - 1] : null;
+const nextSlug = currentIdx < allSlugs.length - 1 ? allSlugs[currentIdx + 1] : null;
+
+// JSON-LD for individual image
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ImageObject',
@@ -70,8 +88,15 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
+  <!-- Ambient Color Bleed — subtle radial glow behind the hero, driven by category -->
+  <div
+    class="fixed inset-0 pointer-events-none z-0"
+    aria-hidden="true"
+    style={`background: radial-gradient(ellipse 80% 60% at 50% 30%, ${bleed.glow}, ${bleed.accent}, transparent 70%);`}
+  ></div>
+
   <!-- FULL-BLEED HERO IMAGE -->
-  <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden">
+  <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10">
     <picture>
       <source
         type="image/avif"
@@ -92,7 +117,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
-    <!-- Back nav -->
+    <!-- Back nav + keyboard hint -->
     <a
       href="/photography"
       class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
@@ -100,6 +125,28 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
       Gallery
     </a>
+
+    <!-- Keyboard nav arrows (desktop only, visible on hover) -->
+    {prevSlug && (
+      <a
+        href={`/photography/${prevSlug}`}
+        id="nav-prev"
+        class="hidden md:flex absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm border border-white/10 opacity-0 hover:opacity-80 transition-opacity duration-300"
+        aria-label="Previous photo"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+      </a>
+    )}
+    {nextSlug && (
+      <a
+        href={`/photography/${nextSlug}`}
+        id="nav-next"
+        class="hidden md:flex absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm border border-white/10 opacity-0 hover:opacity-80 transition-opacity duration-300"
+        aria-label="Next photo"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+      </a>
+    )}
 
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
       <div class="reveal max-w-2xl">
@@ -115,17 +162,20 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
   </section>
 
   <!-- DETAILS + EXIF + CTA -->
-  <section class="section-light py-10 sm:py-16 md:py-20">
+  <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
     <div class="container-narrow">
-      <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
+      <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
 
-        <!-- EXIF Technical Details -->
+        <!-- EXIF Technical Details — staggered reveal on scroll -->
         {exifDetails.length > 0 && (
           <div>
             <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
-            <dl class="space-y-3">
-              {exifDetails.map(({ label, value }) => (
-                <div class="flex items-baseline justify-between gap-4">
+            <dl class="space-y-3" id="exif-list">
+              {exifDetails.map(({ label, value }, i) => (
+                <div
+                  class="exif-row flex items-baseline justify-between gap-4 opacity-0 translate-y-2"
+                  style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
+                >
                   <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
                   <dd class="text-sm opacity-80 text-right">{value}</dd>
                 </div>
@@ -140,8 +190,9 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
             Available as a limited edition archival print.
           </p>
-          <p class="text-xs sm:text-sm opacity-40 leading-relaxed mb-6 sm:mb-8">
-            Giclée on Hahnemühle Photo Rag. Signed and numbered. Licensing inquiries welcome.
+          <!-- Edition of 25 scarcity signal -->
+          <p class="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
+            Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
             <a
@@ -166,7 +217,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
   <!-- RELATED IMAGES -->
   {related.length > 0 && (
-    <section class="py-10 sm:py-16 md:py-20">
+    <section class="py-10 sm:py-16 md:py-20 relative z-10">
       <div class="container-wide">
         <div class="reveal">
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-6 sm:mb-8">More from {category.name}</p>
@@ -208,7 +259,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
   )}
 
   <!-- Back to Gallery CTA -->
-  <section class="pb-12 sm:pb-16 md:pb-20">
+  <section class="pb-12 sm:pb-16 md:pb-20 relative z-10">
     <div class="container-narrow text-center">
       <a
         href="/photography"
@@ -219,4 +270,67 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       </a>
     </div>
   </section>
+
+  <!-- EXIF reveal on scroll — IntersectionObserver, no libraries -->
+  <script>
+    function initExifReveal() {
+      const rows = document.querySelectorAll('.exif-row');
+      if (!rows.length) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).style.opacity = '1';
+            (entry.target as HTMLElement).style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
+
+      rows.forEach(row => observer.observe(row));
+    }
+
+    initExifReveal();
+    document.addEventListener('astro:after-swap', initExifReveal);
+  </script>
+
+  <!-- Keyboard navigation — arrow keys between photo pages -->
+  <script>
+    function initKeyboardNav() {
+      const prev = document.getElementById('nav-prev') as HTMLAnchorElement | null;
+      const next = document.getElementById('nav-next') as HTMLAnchorElement | null;
+
+      function handleKey(e: KeyboardEvent) {
+        // Don't intercept if user is in an input or modifier keys held
+        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+
+        if (e.key === 'ArrowLeft' && prev) {
+          e.preventDefault();
+          prev.click();
+        } else if (e.key === 'ArrowRight' && next) {
+          e.preventDefault();
+          next.click();
+        }
+      }
+
+      document.addEventListener('keydown', handleKey);
+
+      // Show arrows on any mouse movement in hero area (desktop affordance)
+      const hero = document.querySelector('section:first-of-type');
+      if (hero) {
+        hero.addEventListener('mouseenter', () => {
+          if (prev) prev.style.opacity = '0.6';
+          if (next) next.style.opacity = '0.6';
+        });
+        hero.addEventListener('mouseleave', () => {
+          if (prev) prev.style.opacity = '0';
+          if (next) next.style.opacity = '0';
+        });
+      }
+    }
+
+    initKeyboardNav();
+    document.addEventListener('astro:after-swap', initKeyboardNav);
+  </script>
 </BaseLayout>

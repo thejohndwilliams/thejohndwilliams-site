@@ -143,6 +143,13 @@ export function getPhotoBySlug(slug: string): PhotoLookup | undefined {
   return _lookup.get(slug);
 }
 
+/**
+ * Returns all slugs in gallery display order (for sequential keyboard navigation).
+ */
+export function getAllSlugsSequential(): string[] {
+  return categories.flatMap(cat => cat.images.map(img => img.file));
+}
+
 export function getAllSlugs(): string[] {
   return Array.from(_lookup.keys());
 }
