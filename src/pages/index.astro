@@ -87,93 +87,102 @@ const socialLinks = [
     </div>
   </section>
 
-  <!-- NAVIGATION CARDS — progressive disclosure -->
+
+  <!-- NAVIGATION CARDS — bento grid with visual hierarchy -->
   <section class="section-light py-12 sm:py-16 md:py-24">
-    <div class="container-narrow">
+    <div class="container-wide">
       <p class="text-subhead mb-6 sm:mb-8 reveal">The Work</p>
-      <div class="stagger-children grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <a href="/about" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] sm:aspect-[4/3] ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
+      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
+        <!-- Photography — hero card, spans 2 rows on desktop -->
+        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
+          <img
+            src="/images/photography/gallery/dscf0952.webp"
+            srcset="/images/photography/thumb/dscf0952.webp 400w, /images/photography/gallery/dscf0952.webp 1200w, /images/photography/hero/dscf0952.webp 2400w"
+            sizes="(max-width: 767px) 100vw, 58vw"
+            alt="Serene river landscape with traditional wooden boats and forested hills" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
+            <h2 class="text-xl md:text-2xl font-serif mb-1.5 group-hover:text-cream transition-colors duration-300">Photography</h2>
+            <p class="text-xs sm:text-sm opacity-60">Looking up. Looking close.</p>
+          </div>
+        </a>
+        <!-- About -->
+        <a href="/about" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/7r52258.webp"
             srcset="/images/photography/thumb/7r52258.webp 400w, /images/photography/gallery/7r52258.webp 1200w"
-            sizes="(max-width: 639px) 100vw, 33vw"
+            sizes="(max-width: 767px) 100vw, 42vw"
             alt="Cumulus cloud formation rising against a deep blue-black sky" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-            <h2 class="text-lg font-serif mb-1 group-hover:text-cream transition-colors duration-300">About</h2>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+            <h2 class="text-lg sm:text-xl font-serif mb-1 group-hover:text-cream transition-colors duration-300">About</h2>
             <p class="text-xs opacity-60">The intersection of film, security, and light</p>
           </div>
         </a>
-        <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] sm:aspect-[4/3] ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
+        <!-- Work -->
+        <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/dscf0530.webp"
             srcset="/images/photography/thumb/dscf0530.webp 400w, /images/photography/gallery/dscf0530.webp 1200w"
-            sizes="(max-width: 639px) 100vw, 33vw"
+            sizes="(max-width: 767px) 100vw, 42vw"
             alt="Night urban street scene with warm-lit buildings and neon signage" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-            <h2 class="text-lg font-serif mb-1 group-hover:text-cream transition-colors duration-300">Work</h2>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+            <h2 class="text-lg sm:text-xl font-serif mb-1 group-hover:text-cream transition-colors duration-300">Work</h2>
             <p class="text-xs opacity-60">Data, security, and operational systems</p>
-          </div>
-        </a>
-        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] sm:aspect-[4/3] ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
-          <img
-            src="/images/photography/gallery/dscf0952.webp"
-            srcset="/images/photography/thumb/dscf0952.webp 400w, /images/photography/gallery/dscf0952.webp 1200w"
-            sizes="(max-width: 639px) 100vw, 33vw"
-            alt="Serene river landscape with traditional wooden boats and forested hills" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-            <h2 class="text-lg font-serif mb-1 group-hover:text-cream transition-colors duration-300">Photography</h2>
-            <p class="text-xs opacity-60">Looking up. Looking close.</p>
           </div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- SOCIAL TILES — bento grid with hero images -->
+  <!-- SOCIAL TILES — bento grid with alternating spans -->
   <section class="py-12 sm:py-16 md:py-24">
-    <div class="container-narrow">
+    <div class="container-wide">
       <p class="text-subhead mb-6 sm:mb-8 reveal">Connect</p>
-      <div class="stagger-children grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-        {socialLinks.map((link) => (
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="glass-luminous group relative block rounded-card overflow-hidden aspect-square sm:aspect-[16/10] ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500"
-          >
-            <picture>
-              <source srcset={link.hero} type="image/webp" />
-              <img
-                src={link.heroFallback}
-                alt={link.heroAlt}
-                class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6">
-              <div class="flex items-center gap-2 sm:gap-3">
-                <SocialIcon
-                  name={link.name.toLowerCase()}
-                  class="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 text-cream group-hover:text-gold-light transition-colors duration-300"
+      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
+        {socialLinks.map((link, i) => {
+          const isWide = i === 0 || i === 3;
+          const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
+          const mdAspect = isWide ? 'md:aspect-[16/9]' : 'md:aspect-[4/3]';
+          return (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class={`glass-luminous group relative block rounded-card overflow-hidden aspect-square sm:aspect-[16/10] ${mdAspect} ${mdSpan} ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500`}
+            >
+              <picture>
+                <source srcset={link.hero} type="image/webp" />
+                <img
+                  src={link.heroFallback}
+                  alt={link.heroAlt}
+                  class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
+                  loading="lazy"
+                  decoding="async"
                 />
-                <div>
-                  <span class="font-medium text-xs sm:text-sm text-cream">{link.name}</span>
-                  <p class="text-[10px] sm:text-xs opacity-60 hidden sm:block">{link.description}</p>
+              </picture>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6">
+                <div class="flex items-center gap-2 sm:gap-3">
+                  <SocialIcon
+                    name={link.name.toLowerCase()}
+                    class="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0 text-cream group-hover:text-gold-light transition-colors duration-300"
+                  />
+                  <div>
+                    <span class="font-medium text-xs sm:text-sm text-cream">{link.name}</span>
+                    <p class="text-[10px] sm:text-xs opacity-60 hidden sm:block">{link.description}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
-              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
-              </svg>
-            </div>
-          </a>
-        ))}
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+                </svg>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -182,5 +191,6 @@ const socialLinks = [
   <section class="pb-16 text-center">
     <p class="text-sm opacity-60 italic font-serif">John 15:13</p>
   </section>
+
 
 </BaseLayout>
