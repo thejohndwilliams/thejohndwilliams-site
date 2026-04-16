@@ -48,7 +48,10 @@ const jsonLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-  <!-- HERO — Featured image full-bleed -->
+  {/* Scroll-linked atmosphere overlay */}
+  <div id="atmos-overlay" class="fixed inset-0 pointer-events-none z-0 transition-[background-color] duration-1000 ease-out" aria-hidden="true"></div>
+
+  {/* HERO — Featured image full-bleed */}
   <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
     <picture>
       <source
@@ -77,7 +80,7 @@ const jsonLd = {
           Where the vast meets the intimate.<br />
           Looking up. Looking close.
         </p>
-        <!-- Archive signal -->
+        {/* Archive signal */}
         <p class="text-xs tracking-[0.15em] uppercase opacity-40 mt-3 sm:mt-4 font-light">{totalImages} selected from an archive of 3,000+</p>
         <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
           <a
@@ -100,7 +103,7 @@ const jsonLd = {
     </div>
   </section>
 
-  <!-- CATEGORY FILTER -->
+  {/* CATEGORY FILTER */}
   <section class="section-light py-3 sm:py-4 md:py-5 sticky top-0 z-30 glass-nav">
     <div class="container-narrow">
       <nav class="flex items-center gap-1 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide -mx-1 px-1" id="category-nav" role="tablist">
@@ -126,7 +129,7 @@ const jsonLd = {
     </div>
   </section>
 
-  <!-- GALLERY SECTIONS -->
+  {/* GALLERY SECTIONS */}
   {categories.map((cat, catIndex) => (
     <section
       class={`gallery-section py-10 sm:py-16 md:py-24 ${catIndex % 2 === 0 ? '' : 'section-light'}`}
@@ -195,7 +198,7 @@ const jsonLd = {
     </section>
   ))}
 
-  <!-- LIGHTBOX — touch-friendly with swipe support -->
+  {/* LIGHTBOX — touch-friendly with swipe support */}
   <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/92 backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
     <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-60 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,7 +227,7 @@ const jsonLd = {
     </div>
   </div>
 
-  <!-- ABOUT / EQUIPMENT / COLLECTING -->
+  {/* ABOUT / EQUIPMENT / COLLECTING */}
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
@@ -255,12 +258,65 @@ const jsonLd = {
     </div>
   </section>
 
-  <!-- SCRIPTURE -->
+  {/* SCRIPTURE */}
   <section class="py-12">
     <div class="container-narrow text-center">
       <p class="text-sm opacity-60 italic font-serif">John 15:13</p>
     </div>
   </section>
+
+  {/* Scroll-linked category atmosphere */}
+  <script>
+    function initAtmosphere() {
+      const overlay = document.getElementById('atmos-overlay');
+      if (!overlay) return;
+
+      const colors = {
+        sky:        'rgba(70, 100, 160, 0.035)',
+        earth:      'rgba(160, 120, 60, 0.035)',
+        water:      'rgba(50, 130, 140, 0.035)',
+        structure:  'rgba(120, 110, 100, 0.025)',
+        light:      'rgba(184, 151, 63, 0.03)',
+      };
+
+      const sections = document.querySelectorAll('.gallery-section[data-category]');
+      if (!sections.length) return;
+
+      let currentCat = '';
+
+      const observer = new IntersectionObserver((entries) => {
+        let topmost = null;
+        let topY = Infinity;
+
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const rect = entry.boundingClientRect;
+            if (rect.top < topY) {
+              topY = rect.top;
+              topmost = entry.target;
+            }
+          }
+        });
+
+        if (topmost) {
+          const cat = topmost.getAttribute('data-category');
+          if (cat && cat !== currentCat) {
+            currentCat = cat;
+            overlay.style.backgroundColor = colors[cat] || 'transparent';
+          }
+        }
+      }, {
+        threshold: 0.15,
+        rootMargin: '-10% 0px -60% 0px'
+      });
+
+      sections.forEach(s => observer.observe(s));
+    }
+
+    initAtmosphere();
+    document.addEventListener('astro:after-swap', initAtmosphere);
+  </script>
+
 </BaseLayout>
 
 <style>

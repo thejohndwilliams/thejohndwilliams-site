@@ -44,7 +44,7 @@ const socialLinks = [
 
 <BaseLayout title="Home" description="Photography, cybersecurity, and data — the work of John D. Williams." ogImage="/images/photography/hero/7r52326.webp" lcpImage="7r52326">
 
-  <!-- HERO — Full-bleed cloudscape with centered identity -->
+  {/* HERO — Full-bleed cloudscape with centered identity */}
   <section class="relative min-h-[70vh] sm:min-h-[80vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden">
     <picture>
       <source
@@ -62,6 +62,11 @@ const socialLinks = [
         alt="Dramatic cloudscape with towering cumulus clouds illuminated against a dark sky"
         class="absolute inset-0 w-full h-full object-cover opacity-60"
         fetchpriority="high"
+        id="hero-img"
+        data-dawn="/images/photography/hero/dscf0088.webp"
+        data-midday="/images/photography/hero/7r52326.webp"
+        data-golden="/images/photography/hero/7r50971-enhanced-sr.webp"
+        data-night="/images/photography/hero/7r50993-enhanced-sr.webp"
       />
     </picture>
     <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/80 via-[#0a0a0a]/45 to-[#0a0a0a]"></div>
@@ -86,12 +91,12 @@ const socialLinks = [
   </section>
 
 
-  <!-- NAVIGATION CARDS — bento grid with visual hierarchy -->
+  {/* NAVIGATION CARDS — bento grid with visual hierarchy */}
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <p class="text-subhead mb-6 sm:mb-8 reveal">The Work</p>
       <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
-        <!-- Photography — hero card, spans 2 rows on desktop -->
+        {/* Photography — hero card, spans 2 rows on desktop */}
         <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/dscf0952.webp"
@@ -104,7 +109,7 @@ const socialLinks = [
             <p class="text-xs sm:text-sm opacity-60">Sky, earth, water, structure, light.</p>
           </div>
         </a>
-        <!-- About -->
+        {/* About */}
         <a href="/about" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/7r52258.webp"
@@ -117,7 +122,7 @@ const socialLinks = [
             <p class="text-xs opacity-60">Film graduate turned security engineer</p>
           </div>
         </a>
-        <!-- Work -->
+        {/* Work */}
         <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/dscf0530.webp"
@@ -134,7 +139,7 @@ const socialLinks = [
     </div>
   </section>
 
-  <!-- SOCIAL TILES — bento grid with alternating spans -->
+  {/* SOCIAL TILES — bento grid with alternating spans */}
   <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <p class="text-subhead mb-6 sm:mb-8 reveal">Connect</p>
@@ -185,10 +190,47 @@ const socialLinks = [
     </div>
   </section>
 
-  <!-- FOOTER SCRIPTURE -->
+  {/* FOOTER SCRIPTURE */}
   <section class="pb-16 text-center">
     <p class="text-sm opacity-60 italic font-serif">John 15:13</p>
   </section>
 
+
+
+  <script>
+    // Time-aware hero — swaps hero image based on visitor's local time
+    function initTimeHero() {
+      const img = document.getElementById('hero-img');
+      if (!img) return;
+      const h = new Date().getHours();
+      let slot = 'midday';
+      if (h >= 5 && h < 11) slot = 'dawn';
+      else if (h >= 11 && h < 16) slot = 'midday';
+      else if (h >= 16 && h < 20) slot = 'golden';
+      else slot = 'night';
+
+      const src = img.dataset[slot];
+      if (src && img.src !== src) {
+        // Swap the <img> src
+        img.src = src;
+        // Swap the <picture> sources — AVIF first, then WebP
+        const picture = img.closest('picture');
+        if (picture) {
+          const sources = picture.querySelectorAll('source');
+          const base = src.replace('/hero/', '/TIER/').replace('.webp', '');
+          sources.forEach(s => {
+            const type = s.getAttribute('type');
+            const ext = type === 'image/avif' ? '.avif' : '.webp';
+            const thumb = base.replace('/TIER/', '/thumb/') + ext + ' 400w';
+            const gallery = base.replace('/TIER/', '/gallery/') + ext + ' 1200w';
+            const hero = base.replace('/TIER/', '/hero/') + ext + ' 2400w';
+            s.srcset = `${thumb}, ${gallery}, ${hero}`;
+          });
+        }
+      }
+    }
+    initTimeHero();
+    document.addEventListener('astro:after-swap', initTimeHero);
+  </script>
 
 </BaseLayout>

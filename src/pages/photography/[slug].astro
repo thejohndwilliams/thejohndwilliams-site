@@ -88,14 +88,14 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-  <!-- Ambient Color Bleed — subtle radial glow behind the hero, driven by category -->
+  {/* Ambient Color Bleed — subtle radial glow behind the hero, driven by category */}
   <div
     class="fixed inset-0 pointer-events-none z-0"
     aria-hidden="true"
     style={`background: radial-gradient(ellipse 80% 60% at 50% 30%, ${bleed.glow}, ${bleed.accent}, transparent 70%);`}
   ></div>
 
-  <!-- FULL-BLEED HERO IMAGE -->
+  {/* FULL-BLEED HERO IMAGE */}
   <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10">
     <picture>
       <source
@@ -117,7 +117,12 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
-    <!-- Back nav + keyboard hint -->
+    {/* Print preview frame — ghost overlay, visible when CTA is hovered */}
+    <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
+      <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
+    </div>
+
+    {/* Back nav + keyboard hint */}
     <a
       href="/photography"
       class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
@@ -126,7 +131,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       Gallery
     </a>
 
-    <!-- Keyboard nav arrows (desktop only, visible on hover) -->
+    {/* Keyboard nav arrows (desktop only, visible on hover) */}
     {prevSlug && (
       <a
         href={`/photography/${prevSlug}`}
@@ -161,12 +166,12 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  <!-- DETAILS + EXIF + CTA -->
+  {/* DETAILS + EXIF + CTA */}
   <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
     <div class="container-narrow">
       <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
 
-        <!-- EXIF Technical Details — staggered reveal on scroll -->
+        {/* EXIF Technical Details — staggered reveal on scroll */}
         {exifDetails.length > 0 && (
           <div>
             <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
@@ -184,13 +189,13 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           </div>
         )}
 
-        <!-- Print / Licensing CTA -->
+        {/* Print / Licensing CTA */}
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Acquire</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
             Available as a limited edition archival print.
           </p>
-          <!-- Edition of 25 scarcity signal -->
+          {/* Edition of 25 scarcity signal */}
           <p class="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
             Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
           </p>
@@ -215,7 +220,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  <!-- RELATED IMAGES -->
+  {/* RELATED IMAGES */}
   {related.length > 0 && (
     <section class="py-10 sm:py-16 md:py-20 relative z-10">
       <div class="container-wide">
@@ -258,7 +263,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </section>
   )}
 
-  <!-- Back to Gallery CTA -->
+  {/* Back to Gallery CTA */}
   <section class="pb-12 sm:pb-16 md:pb-20 relative z-10">
     <div class="container-narrow text-center">
       <a
@@ -271,7 +276,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  <!-- EXIF reveal on scroll — IntersectionObserver, no libraries -->
+  {/* EXIF reveal on scroll — IntersectionObserver, no libraries */}
   <script>
     function initExifReveal() {
       const rows = document.querySelectorAll('.exif-row');
@@ -294,7 +299,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     document.addEventListener('astro:after-swap', initExifReveal);
   </script>
 
-  <!-- Keyboard navigation — arrow keys between photo pages -->
+  {/* Keyboard navigation — arrow keys between photo pages */}
   <script>
     function initKeyboardNav() {
       const prev = document.getElementById('nav-prev') as HTMLAnchorElement | null;
@@ -333,4 +338,41 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     initKeyboardNav();
     document.addEventListener('astro:after-swap', initKeyboardNav);
   </script>
+
+  {/* Print preview on hover — desktop only, CSS-driven */}
+  <style>
+    @media (hover: hover) {
+      .print-cta-hover:hover ~ #print-frame,
+      .print-cta-hover:focus-visible ~ #print-frame {
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    function initPrintPreview() {
+      const btn = document.querySelector('.btn.btn-primary[href^="mailto:"]');
+      const frame = document.getElementById('print-frame');
+      if (!btn || !frame) return;
+
+      // Only on desktop with hover capability
+      if (!window.matchMedia('(hover: hover)').matches) return;
+
+      btn.addEventListener('mouseenter', () => {
+        frame.style.opacity = '1';
+      });
+      btn.addEventListener('mouseleave', () => {
+        frame.style.opacity = '0';
+      });
+      btn.addEventListener('focus', () => {
+        frame.style.opacity = '1';
+      });
+      btn.addEventListener('blur', () => {
+        frame.style.opacity = '0';
+      });
+    }
+
+    initPrintPreview();
+    document.addEventListener('astro:after-swap', initPrintPreview);
+  </script>
+
 </BaseLayout>
