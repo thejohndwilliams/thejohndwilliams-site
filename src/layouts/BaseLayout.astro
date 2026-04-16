@@ -58,12 +58,16 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     {lcpImage && (
       <>
+        {/* LCP preload ladder. imagesrcset MUST mirror every candidate the
+            <picture> tag can resolve to — including the 400w thumb tier —
+            or Lighthouse flags prioritize-lcp-image for partial coverage when
+            the viewport picks a narrower candidate than the preload offers. */}
         <link
           rel="preload"
           as="image"
           type="image/avif"
           href={`/images/photography/hero/${lcpImage}.avif`}
-          imagesrcset={`/images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
+          imagesrcset={`/images/photography/thumb/${lcpImage}.avif 400w, /images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
           imagesizes="100vw"
           fetchpriority="high"
         />
@@ -72,7 +76,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           as="image"
           type="image/webp"
           href={`/images/photography/hero/${lcpImage}.webp`}
-          imagesrcset={`/images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
+          imagesrcset={`/images/photography/thumb/${lcpImage}.webp 400w, /images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
           imagesizes="100vw"
           fetchpriority="high"
         />

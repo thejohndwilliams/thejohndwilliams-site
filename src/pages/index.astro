@@ -198,10 +198,21 @@ const socialLinks = [
 
 
   <script>
-    // Time-aware hero — swaps hero image based on visitor's local time
+    // Time-aware hero — swaps hero image based on visitor's local time.
+    //
+    // CRITICAL: Runs only AFTER the page has fully loaded so the initial
+    // paint uses the preloaded LCP image (7r52326, midday). Mutating img.src
+    // before LCP fires invalidates the preload and tanks Lighthouse's
+    // lcp-discovery-insight + prioritize-lcp-image scores.
+    //
+    // Also compares getAttribute('src') — the raw relative path —
+    // against dataset values. img.src returns an absolute URL and would
+    // never match a relative dataset path, causing every visit to
+    // re-download the hero at midday (a silent regression we shipped
+    // briefly in #20).
     function initTimeHero() {
       const img = document.getElementById('hero-img');
-      if (!img) return;
+      if (img == null) return;
       const h = new Date().getHours();
       let slot = 'midday';
       if (h >= 5 && h < 11) slot = 'dawn';
@@ -210,10 +221,15 @@ const socialLinks = [
       else slot = 'night';
 
       const src = img.dataset[slot];
-      if (src && img.src !== src) {
-        // Swap the <img> src
+      if (src == null) return;
+
+      // No-op when the slot matches the server-rendered hero.
+      // Relative-path comparison avoids the absolute-URL mismatch bug.
+      const currentAttr = img.getAttribute('src');
+      if (currentAttr === src) return;
+
+      const performSwap = () => {
         img.src = src;
-        // Swap the <picture> sources — AVIF first, then WebP
         const picture = img.closest('picture');
         if (picture) {
           const sources = picture.querySelectorAll('source');
@@ -227,9 +243,23 @@ const socialLinks = [
             s.srcset = `${thumb}, ${gallery}, ${hero}`;
           });
         }
+      };
+
+      // Defer past the LCP measurement window so the preloaded midday
+      // hero earns the paint. requestIdleCallback keeps the fetch off
+      // the critical path; setTimeout is the Safari fallback.
+      if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(performSwap, { timeout: 3000 });
+      } else {
+        setTimeout(performSwap, 2000);
       }
     }
-    initTimeHero();
+
+    if (document.readyState === 'complete') {
+      initTimeHero();
+    } else {
+      window.addEventListener('load', initTimeHero, { once: true });
+    }
     document.addEventListener('astro:after-swap', initTimeHero);
   </script>
 
