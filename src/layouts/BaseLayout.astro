@@ -44,6 +44,12 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
+    {/* Google Search Console verification — replace VERIFICATION_CODE
+        with the content value from Search Console > Settings > Ownership
+        verification > HTML tag method. */}
+    <meta name="google-site-verification" content="VERIFICATION_CODE" />
+
+
     <!-- Preload critical fonts — self-hosted, no third-party dependency.
          Body font (IBM Plex Sans 400) is critical for LCP; Libre
          Baskerville display serif is used above the fold on every page. -->
