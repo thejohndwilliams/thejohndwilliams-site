@@ -56,6 +56,14 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxMaC82U.woff2" as="font" type="font/woff2" crossorigin />
 
+    {/* HDR + wide-gamut palette overrides (Tier 1). Served verbatim from
+         public/ so Astro's CSS build pass doesn't gamut-map color(display-p3)
+         to sRGB hex. The media attribute makes this non-render-blocking on
+         sRGB displays — they still download it at low priority but don't
+         delay first paint. The file itself is scoped under
+         @media (color-gamut: p3) as a belt-and-suspenders gate. */}
+    <link rel="stylesheet" href="/hdr-palette.css" media="(color-gamut: p3)" />
+
     {lcpImage && (
       <>
         {/* LCP preload ladder. imagesrcset MUST mirror every candidate the
