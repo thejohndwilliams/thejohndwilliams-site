@@ -2,14 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialIcon from '../components/SocialIcon.astro';
 
+// Image basenames; thumb/gallery/hero variants exist in both AVIF + WebP.
+// srcset ladder (400/1200/2400w) lets the browser pick the right tier per
+// viewport + DPR -- saves ~600KB on mobile vs always pulling 2400w hero.
 const socialLinks = [
   {
     name: 'LinkedIn',
     url: 'https://www.linkedin.com/in/john-davis-williams/',
     handle: 'john-davis-williams',
     icon: '/images/previews/linkedin.svg',
-    hero: '/images/photography/hero/7r51025-enhanced-sr.webp',
-    heroFallback: '/images/photography/gallery/7r51025-enhanced-sr.webp',
+    basename: '7r51025-enhanced-sr',
     heroAlt: 'Rain-wet leaf in low light',
     size: 'large'
   },
@@ -18,8 +20,7 @@ const socialLinks = [
     url: 'https://github.com/thejohndwilliams',
     handle: 'thejohndwilliams',
     icon: '/images/previews/github.svg',
-    hero: '/images/photography/hero/burningcold-enhanced.webp',
-    heroFallback: '/images/photography/gallery/burningcold-enhanced.webp',
+    basename: 'burningcold-enhanced',
     heroAlt: 'Structure catching evening fire',
     size: 'medium'
   },
@@ -28,8 +29,7 @@ const socialLinks = [
     url: 'https://www.instagram.com/thejohndwilliams/',
     handle: '@thejohndwilliams',
     icon: '/images/previews/instagram.svg',
-    hero: '/images/photography/hero/7r51505-enhanced-sr.webp',
-    heroFallback: '/images/photography/gallery/7r51505-enhanced-sr.webp',
+    basename: '7r51505-enhanced-sr',
     heroAlt: 'Bee on citrus blossom',
     size: 'medium'
   },
@@ -38,15 +38,20 @@ const socialLinks = [
     url: 'https://www.behance.net/killthewizard',
     handle: 'killthewizard',
     icon: '/images/previews/behance.svg',
-    hero: '/images/photography/hero/img-7610-enhanced-sr.webp',
-    heroFallback: '/images/photography/gallery/img-7610-enhanced-sr.webp',
+    basename: 'img-7610-enhanced-sr',
     heroAlt: 'Pagoda reflected in still water',
     size: 'large'
   }
 ];
+
+// Tile sizes: full container (~390px) on mobile, ~50vw on tablet, capped
+// at ~600px on desktop (max-w-5xl container, 7/12 of grid = 597px).
+const TILE_SIZES = '(min-width: 1024px) 600px, (min-width: 768px) 50vw, calc(100vw - 32px)';
+const tierSrcset = (basename, ext) =>
+  `/images/photography/thumb/${basename}.${ext} 400w, /images/photography/gallery/${basename}.${ext} 1200w, /images/photography/hero/${basename}.${ext} 2400w`;
 ---
 
-<BaseLayout title="Links" description="Connect with John D. Williams across platforms." ogImage="/images/photography/hero/7r50804-enhanced-sr.webp" lcpImage="7r51025-enhanced-sr">
+<BaseLayout title="Links" description="Connect with John D. Williams across platforms." ogImage="/images/photography/hero/7r50804-enhanced-sr.webp" lcpImage="7r51025-enhanced-sr" lcpImageSizes={TILE_SIZES}>
   <section class="min-h-screen py-10 sm:py-16 md:py-24">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 w-full">
 
@@ -72,9 +77,18 @@ const socialLinks = [
               class={`group relative block rounded-lg sm:rounded-card overflow-hidden ${mdSpan} aspect-square sm:aspect-[16/10] ${mdAspect} ring-1 ring-white/5 hover:ring-gold/30 active:ring-gold/40 transition-all duration-500`}
             >
               <picture>
-                <source srcset={link.hero} type="image/webp" />
+                <source
+                  type="image/avif"
+                  srcset={tierSrcset(link.basename, 'avif')}
+                  sizes={TILE_SIZES}
+                />
+                <source
+                  type="image/webp"
+                  srcset={tierSrcset(link.basename, 'webp')}
+                  sizes={TILE_SIZES}
+                />
                 <img
-                  src={link.heroFallback}
+                  src={`/images/photography/gallery/${link.basename}.webp`}
                   alt={link.heroAlt}
                   class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
                   loading={priority ? 'eager' : 'lazy'}

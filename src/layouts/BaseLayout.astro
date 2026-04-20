@@ -12,13 +12,17 @@ interface Props {
       Browsers will preload the AVIF tier; WebP fallback is implicit via
       imagesrcset with type negotiation. Leave undefined to skip. */
   lcpImage?: string;
+  /** Override imagesizes for LCP preload. Default "100vw" fits full-bleed
+      heroes; /links overrides since its LCP tile isn't full-viewport. */
+  lcpImageSizes?: string;
 }
 
 const {
   title = 'John D. Williams',
   description = 'Photography, cybersecurity, and data — the work of John D. Williams.',
   ogImage = '/images/photography/hero/john-portrait-bw.webp',
-  lcpImage
+  lcpImage,
+  lcpImageSizes = '100vw'
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -76,7 +80,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           type="image/avif"
           href={`/images/photography/hero/${lcpImage}.avif`}
           imagesrcset={`/images/photography/thumb/${lcpImage}.avif 400w, /images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
-          imagesizes="100vw"
+          imagesizes={lcpImageSizes}
           fetchpriority="high"
         />
         <link
@@ -85,7 +89,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           type="image/webp"
           href={`/images/photography/hero/${lcpImage}.webp`}
           imagesrcset={`/images/photography/thumb/${lcpImage}.webp 400w, /images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
-          imagesizes="100vw"
+          imagesizes={lcpImageSizes}
           fetchpriority="high"
         />
       </>
@@ -214,7 +218,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
       {/* Inquire pill — floats above the tab bar */}
       <div class="flex justify-center pb-2">
-        <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-lg shadow-gold/25 ring-1 ring-gold-light/30 active:scale-95 transition-transform duration-150">
+        <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] bg-gold text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-lg shadow-gold/25 ring-1 ring-gold-light/30 active:scale-95 transition-transform duration-150">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           Inquire
         </a>
