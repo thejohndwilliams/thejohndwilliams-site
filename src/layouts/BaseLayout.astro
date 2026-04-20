@@ -48,10 +48,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
-    {/* Google Search Console verification — replace VERIFICATION_CODE
-        with the content value from Search Console > Settings > Ownership
-        verification > HTML tag method. */}
-    <meta name="google-site-verification" content="VERIFICATION_CODE" />
 
 
     {/* Preload critical fonts — self-hosted, no third-party dependency.
@@ -185,7 +181,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       }
     </style>
   </head>
-  <body class="min-h-screen flex flex-col pb-20 md:pb-0">
+  <body class="min-h-screen flex flex-col pb-32 md:pb-0">
     {/* Scroll progress bar — fixed 2px gold accent at top of viewport,
          width bound to scroll fraction. Signals "this is a composed
          document." Updated via rAF-throttled scroll listener. */}
@@ -374,6 +370,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       function initGlassSpecular() {
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (reduce) return;
+        // Pointer tracking is wasted CPU on touch-only devices -- they can't
+        // hover, so the specular highlight has nothing to anchor to.
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (!canHover) return;
         const selector = '.glass-card, .glass-panel';
         let pending = false;
         let lastX = 0, lastY = 0;
