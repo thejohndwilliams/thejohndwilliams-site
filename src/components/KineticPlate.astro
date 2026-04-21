@@ -1,0 +1,272 @@
+---
+/**
+ * KineticPlate — 4-layer dot projection of a single photograph.
+ *
+ * v5: true layered 3D. Four stacked copies of the same luminance grid,
+ * each at a different opacity (100 / 70 / 40 / 15) and a 1-3 px Z
+ * offset. Layers drift at different rates as the plate traverses the
+ * viewport — scroll-driven parallax between the stacked copies is
+ * what creates the 3D depth. The photograph is immediately legible:
+ * dot radius AND alpha both scale with luminance, so bright pixels
+ * render as bigger brighter dots.
+ *
+ * No wave. No time-based motion. No ripple. The surfaces simply sit
+ * in depth and shift past each other as you scroll — the Praveen
+ * Isomer fish effect, translated to John's cream/midnight palette.
+ *
+ * Build-time derivation only — no runtime image decoding, no new CSP
+ * surface. Decorative (role="img" on figure, canvas aria-hidden).
+ * Respects prefers-reduced-motion by painting a single static frame
+ * at zero parallax. Tears down on astro:before-swap for clean view-
+ * transition handoffs.
+ */
+import signature from '../data/kinetic-signature.json';
+
+export interface Props {
+  category: 'sky' | 'earth' | 'water' | 'structure';
+  /** Optional additional classes on the outer figure. */
+  class?: string;
+}
+
+const { category, class: extraClass = '' } = Astro.props;
+
+const frame = signature.frames.find((f: { id: string }) => f.id === category);
+if (!frame) throw new Error(`KineticPlate: unknown category "${category}"`);
+
+const payload = JSON.stringify({
+  cols: signature.cols,
+  rows: signature.rows,
+  grid: frame.grid,
+  alt: frame.alt,
+});
+---
+
+<figure
+  class={`kinetic-plate ${extraClass}`}
+  role="img"
+  aria-label={`Dot projection of ${frame.alt}`}
+  data-plate={payload}
+>
+  <canvas class="kinetic-plate__canvas" aria-hidden="true"></canvas>
+</figure>
+
+<style>
+  .kinetic-plate {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+  @media (max-width: 767px) {
+    .kinetic-plate {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  }
+  .kinetic-plate__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  type Plate = { cols: number; rows: number; grid: number[]; alt: string };
+
+  /**
+   * Front -> back. Front anchors the photograph at full alpha; back
+   * layers drift progressively further as the plate traverses the
+   * viewport. Z-offset gives each copy a tiny spatial displacement so
+   * the stack has visible thickness even at rest.
+   */
+  const LAYERS = [
+    { opacity: 1.00, zx:  0, zy:  0, parallax: 0.00 }, // front -- crisp anchor
+    { opacity: 0.70, zx:  1, zy:  1, parallax: 0.35 },
+    { opacity: 0.40, zx:  2, zy:  2, parallax: 0.65 },
+    { opacity: 0.15, zx:  3, zy:  3, parallax: 1.00 }, // back -- max drift
+  ];
+
+  // Dot shaping: both radius and alpha scale with luminance so the
+  // photograph is immediately recognizable. The radius range is wide
+  // enough that a bright highlight reads 3x a shadow pixel.
+  const DOT_R_MIN      = 0.50;
+  const DOT_R_MAX      = 1.70;
+  const DOT_R_MOBILE_MIN = 0.40;
+  const DOT_R_MOBILE_MAX = 1.35;
+  const ALPHA_FLOOR    = 0.03;
+  const ALPHA_RANGE    = 0.97;
+  const RGB            = '253,252,250'; // cream token
+  // Furthest layer can drift at most this many pixels when the plate
+  // is at the top or bottom of the viewport. Front layer is anchored.
+  const MAX_PARALLAX_PX = 22;
+
+  function initKineticPlate(fig: HTMLElement): () => void {
+    const raw = fig.getAttribute('data-plate');
+    if (!raw) return () => {};
+    let data: Plate;
+    try { data = JSON.parse(raw); } catch { return () => {}; }
+    if (!data.grid || !data.cols || !data.rows) return () => {};
+
+    const canvas = fig.querySelector('canvas') as HTMLCanvasElement | null;
+    if (!canvas) return () => {};
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return () => {};
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Density: halve on narrow viewports to protect frame budget. Four
+    // layers multiplies per-pixel work by 4.
+    let colStep = 1, rowStep = 1;
+    let narrow = false;
+    const setDensity = () => {
+      narrow = window.innerWidth < 640;
+      colStep = narrow ? 2 : 1;
+      rowStep = narrow ? 2 : 1;
+    };
+    setDensity();
+
+    let dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    let width = 0, height = 0;
+    const resize = () => {
+      const rect = fig.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      setDensity();
+    };
+    resize();
+
+    /**
+     * Scroll-driven parallax signal. Returns a number in roughly
+     * [-1, 1]: -1 when the plate center sits at the top of the
+     * viewport, +1 at the bottom, 0 when centered. This is the only
+     * motion driver -- no timers, no wave, no oscillation.
+     */
+    function viewportProgress(): number {
+      const r = fig.getBoundingClientRect();
+      const vp = window.innerHeight || 1;
+      const center = r.top + r.height / 2;
+      const p = (center - vp / 2) / (vp / 2);
+      // Clamp so layers don't drift past MAX_PARALLAX_PX even when
+      // the plate is far outside the viewport.
+      return Math.max(-1, Math.min(1, p));
+    }
+
+    function drawLayer(progress: number, layerIdx: number): void {
+      if (!ctx) return;
+      const layer = LAYERS[layerIdx];
+
+      // Vertical drift with scroll, subtle horizontal drift as a
+      // fraction. Front layer parallax = 0, so it's anchored regardless
+      // of progress.
+      const parallaxY = reduced ? 0 : progress * layer.parallax * MAX_PARALLAX_PX;
+      const parallaxX = reduced ? 0 : progress * layer.parallax * MAX_PARALLAX_PX * 0.35;
+
+      const effCols = data.cols / colStep;
+      const effRows = data.rows / rowStep;
+      const cellW = width / effCols;
+      const cellH = height / effRows;
+
+      const dotMin = narrow ? DOT_R_MOBILE_MIN : DOT_R_MIN;
+      const dotMax = narrow ? DOT_R_MOBILE_MAX : DOT_R_MAX;
+
+      ctx.globalAlpha = layer.opacity;
+
+      for (let ry = 0, y = 0; ry < data.rows; ry += rowStep, y++) {
+        const cy0 = y * cellH + cellH / 2 + layer.zy + parallaxY;
+        for (let rx = 0, x = 0; rx < data.cols; rx += colStep, x++) {
+          const idx = ry * data.cols + rx;
+          const lum = data.grid[idx];
+
+          const alpha = ALPHA_FLOOR + ALPHA_RANGE * lum;
+          if (alpha < 0.03) continue;
+
+          const r = dotMin + (dotMax - dotMin) * lum;
+          const cx = x * cellW + cellW / 2 + layer.zx + parallaxX;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${RGB},${alpha.toFixed(3)})`;
+          ctx.arc(cx, cy0, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.globalAlpha = 1;
+    }
+
+    function draw(): void {
+      if (!ctx) return;
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, width, height);
+
+      const progress = reduced ? 0 : viewportProgress();
+      // Back -> front so the crisp 100% layer lands on top.
+      for (let i = LAYERS.length - 1; i >= 0; i--) drawLayer(progress, i);
+    }
+
+    // Visibility gate: skip draws while the plate is fully off-screen.
+    // Scroll events still fire but the redraw is cheap to skip.
+    let visible = true;
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => { for (const e of entries) visible = e.isIntersecting; },
+        { rootMargin: '200px' },
+      );
+      io.observe(fig);
+    }
+
+    // rAF-coalesced scroll handler. No autonomous animation loop --
+    // layers only move when the user scrolls. Quiet Power.
+    let scheduled = false;
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        if (visible) draw();
+      });
+    };
+
+    // Initial paint.
+    draw();
+
+    const onScroll = () => schedule();
+    const onResize = () => { resize(); draw(); };
+
+    if (!reduced) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+    } else {
+      window.addEventListener('resize', onResize, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
+  }
+
+  let teardowns: Array<() => void> = [];
+  const mountAll = () => {
+    teardowns.forEach((fn) => fn());
+    teardowns = [];
+    document.querySelectorAll<HTMLElement>('.kinetic-plate').forEach((el) => {
+      teardowns.push(initKineticPlate(el));
+    });
+  };
+  mountAll();
+  document.addEventListener('astro:after-swap', mountAll);
+  document.addEventListener('astro:before-swap', () => {
+    teardowns.forEach((fn) => fn());
+    teardowns = [];
+  });
+</script>
