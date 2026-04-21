@@ -1,20 +1,27 @@
 ---
 /**
- * KineticPlate — split-canvas 3D dot projection of a single photograph.
+ * KineticPlate — luminance-bucketed 3D dot projection of a photograph.
  *
- * v7: four stacked canvases inside a preserve-3d stage. Each canvas
- * paints ONE layer of the same luminance grid at its own opacity and
- * sits at its own translateZ depth in the perspective scene. On
- * hover-capable pointers, the stage rotates toward the cursor on both
- * axes (±10°) and the layers relative-shift against one another —
- * the Praveen Isomer fish effect, now with real CSS 3D instead of
- * painted z-offsets.
+ * v8: four stacked canvases, each rendering ONLY the dots whose
+ * luminance falls in that layer's band, sitting at its own translateZ
+ * in a preserve-3d stage. Bright highlights pop forward (+32px),
+ * dark shadows recede (-32px). The subject — anything with specular
+ * or high-key interest — literally lives on a different depth plane
+ * from the background it sits on. On pointer tilt, the perspective
+ * divide shifts front dots further in screen-space than back dots,
+ * which reads as the SUBJECT moving, not the plate. True holographic
+ * parallax without WebGL.
  *
- * Scroll parallax from v5 is preserved: each layer's grid points are
- * drawn with a per-layer Y-offset that scales with the plate's
- * viewport traversal. Front layer anchored, back layer drifts full
- * MAX_PARALLAX_PX. Stacked on top of the pointer rotation, the two
- * motion drivers reinforce the same illusion from different inputs.
+ * v7 painted every dot on every layer at different opacities; layers
+ * stacked but moved in lockstep on rotation. John correctly noticed
+ * the plate was tilting as a rigid sheet rather than the subject
+ * popping. v8 partitions the dots by luminance so each layer has a
+ * DISTINCT subset of the image, and the perspective divide on tilt
+ * becomes visible as subject-background separation.
+ *
+ * Scroll parallax semantics are inverted to match depth: closer (bright)
+ * layers drift MORE as the plate traverses the viewport, farther (dim)
+ * layers stay anchored. Physically consistent with the tilt parallax.
  *
  * No autonomous animation loops. No time-based motion. Layers move
  * only when the user scrolls or the cursor travels over the plate.
@@ -29,7 +36,10 @@
  * on astro:before-swap for clean view-transition handoffs.
  *
  * Memory: back two layers render at DPR=1 regardless of device DPR
- * to keep per-plate backing-store under ~7 MB at 400px.
+ * to keep per-plate backing-store near ~7 MB even at 560px. Because
+ * each layer now paints a DISJOINT subset of the grid, total draw
+ * calls per frame are equivalent to v7 (one full grid pass distributed
+ * across four canvases) — no runtime regression.
  */
 import signature from '../data/kinetic-signature.json';
 
@@ -70,7 +80,7 @@ const payload = JSON.stringify({
   .kinetic-plate {
     display: block;
     width: 100%;
-    max-width: 400px;
+    max-width: 560px;
     aspect-ratio: 1 / 1;
     margin: 0;
     padding: 0;
@@ -82,7 +92,7 @@ const payload = JSON.stringify({
   }
   @media (max-width: 767px) {
     .kinetic-plate {
-      max-width: 320px;
+      max-width: 400px;
       margin: 0 auto;
     }
   }
@@ -103,12 +113,15 @@ const payload = JSON.stringify({
     pointer-events: none;
     backface-visibility: hidden;
   }
-  /* True Z-depth per layer. Front anchors at 0, back sits 24px deeper.
-     The stage's rotation multiplies these into visible parallax. */
-  .kinetic-plate__canvas[data-layer="0"] { transform: translateZ(0px); }
-  .kinetic-plate__canvas[data-layer="1"] { transform: translateZ(-8px); }
-  .kinetic-plate__canvas[data-layer="2"] { transform: translateZ(-16px); }
-  .kinetic-plate__canvas[data-layer="3"] { transform: translateZ(-24px); }
+  /* True Z-depth per layer, straddling zero. Bright highlights (layer 0)
+     sit +32px closer to the viewer; dark shadows (layer 3) sit -32px
+     away. 64px of depth separation. Perspective divide on tilt then
+     shifts bright dots further in screen space than dim dots, which
+     reads as subject-pop rather than a rigid-sheet tilt. */
+  .kinetic-plate__canvas[data-layer="0"] { transform: translateZ(32px); }
+  .kinetic-plate__canvas[data-layer="1"] { transform: translateZ(12px); }
+  .kinetic-plate__canvas[data-layer="2"] { transform: translateZ(-12px); }
+  .kinetic-plate__canvas[data-layer="3"] { transform: translateZ(-32px); }
 
   @media (prefers-reduced-motion: reduce) {
     .kinetic-plate__stage {
@@ -122,16 +135,29 @@ const payload = JSON.stringify({
   type Plate = { cols: number; rows: number; grid: number[]; alt: string };
 
   /**
-   * Front -> back. Opacity drops, scroll-parallax rises. Front layer
-   * is anchored (parallax 0) so the photograph reads as a clean
-   * anchor; back layer drifts full MAX_PARALLAX_PX as the plate
-   * traverses the viewport.
+   * v8: each layer paints ONLY the dots whose luminance falls inside
+   * its [lumLo, lumHi) band. Brightest layer sits in front (+translateZ
+   * in CSS), darkest sits behind. On tilt, the perspective divide
+   * makes the bright subject shift more than the dim background, which
+   * is the holographic pop effect.
+   *
+   * Buckets are non-overlapping and exhaustive over [0, 1]. Each dot
+   * paints on exactly one layer per frame, so total draw calls per
+   * frame equal a single full grid pass — no regression on v7.
+   *
+   * Scroll parallax: closer (bright) layers drift more per unit of
+   * viewport traversal. Physically consistent with the tilt-driven
+   * parallax so both motion drivers reinforce depth the same way.
    */
   const LAYERS = [
-    { opacity: 1.00, parallax: 0.00, capDpr: false }, // front -- crisp anchor
-    { opacity: 0.70, parallax: 0.35, capDpr: false },
-    { opacity: 0.40, parallax: 0.65, capDpr: true  }, // back two capped to
-    { opacity: 0.15, parallax: 1.00, capDpr: true  }, // DPR=1 for memory budget
+    // 0: brightest highlights — pops forward, drifts most on scroll
+    { lumLo: 0.60, lumHi: 1.01, opacity: 1.00, parallax: 1.00, capDpr: false },
+    // 1: mid-bright — slight forward pop, moderate drift
+    { lumLo: 0.35, lumHi: 0.60, opacity: 0.92, parallax: 0.60, capDpr: false },
+    // 2: mid-dark — slight recession, mild drift
+    { lumLo: 0.15, lumHi: 0.35, opacity: 0.78, parallax: 0.30, capDpr: true  },
+    // 3: darkest shadows — recedes to back, anchored in scroll
+    { lumLo: -0.01, lumHi: 0.15, opacity: 0.62, parallax: 0.00, capDpr: true },
   ];
 
   // Dot shaping: both radius and alpha scale with luminance so the
@@ -237,6 +263,11 @@ const payload = JSON.stringify({
         for (let rx = 0, x = 0; rx < data.cols; rx += colStep, x++) {
           const idx = ry * data.cols + rx;
           const lum = data.grid[idx];
+
+          // v8 partition: this layer owns dots in [lumLo, lumHi).
+          // Every dot lands on exactly one layer per frame; dots
+          // outside the band are skipped — they belong to a sibling.
+          if (lum < layer.lumLo || lum >= layer.lumHi) continue;
 
           const alpha = ALPHA_FLOOR + ALPHA_RANGE * lum;
           if (alpha < 0.03) continue;
