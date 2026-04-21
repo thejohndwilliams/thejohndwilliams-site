@@ -153,15 +153,19 @@ const payload = JSON.stringify({
     transition: transform 140ms ease-out;
     will-change: transform;
   }
+  /* Default offsets are non-zero so the chromatic fringe is VISIBLE
+     at rest — without them the two chroma plates stack perfectly on
+     the cream dots and screen-blend back to neutral. Pointer tilt
+     extends the split further; prefers-reduced-motion kills it. */
   .kinetic-plate__chroma[data-chroma="r"] {
     transform:
       translateZ(32px)
-      translate3d(var(--cx, 0px), var(--cy, 0px), 0);
+      translate3d(var(--cx, 1.5px), var(--cy, 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="b"] {
     transform:
       translateZ(32px)
-      translate3d(calc(var(--cx, 0px) * -1), calc(var(--cy, 0px) * -1), 0);
+      translate3d(calc(var(--cx, 1.5px) * -1), calc(var(--cy, 1px) * -1), 0);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -218,19 +222,31 @@ const payload = JSON.stringify({
    * back toward neutral where they overlap.
    */
   const CHROMA = [
-    { attr: 'r', rgb: '255,68,52',  alpha: 0.55, parallax: 1.00 },
-    { attr: 'b', rgb: '52,160,255', alpha: 0.55, parallax: 1.00 },
+    { attr: 'r', rgb: '255,72,56',  alpha: 0.78, parallax: 1.00 },
+    { attr: 'b', rgb: '56,168,255', alpha: 0.78, parallax: 1.00 },
   ];
 
   // Outline detection threshold. A bright-bucket dot is an outline if
-  // any 4-neighbor luminance sits below this value. Tuned so the fringe
-  // hugs the silhouette without bleeding into the interior.
-  const OUTLINE_NEIGHBOR_MAX = 0.45;
-  // Bright bucket floor for outline candidacy. Matches layer 0's lumLo.
-  const OUTLINE_LUM_MIN = 0.60;
-  // Max CSS offset in pixels when cursor is at a corner of the plate.
-  // Small but perceptible — shimmer, not split.
+  // any 4-neighbor luminance sits below this value. Loosened from the
+  // initial tuning so soft cloud edges (thunderheads, diffuse highlights)
+  // catch fringe, not just specular-on-shadow transitions.
+  const OUTLINE_NEIGHBOR_MAX = 0.52;
+  // Bright bucket floor for outline candidacy. Lowered beneath layer 0's
+  // lumLo so mid-bright edges participate — the fringe otherwise only
+  // lit the very brightest rim which reads as invisible on softer scenes.
+  const OUTLINE_LUM_MIN = 0.48;
+  // Chroma dot radius multiplier. Boosting past 1.0 lets the chroma
+  // dots extend beyond the cream dot beneath them, so even at rest the
+  // baseline CSS offset reveals a visible colored rim.
+  const CHROMA_RADIUS_BOOST = 1.45;
+  // Max additional CSS offset (on top of baseline) when cursor is at a
+  // corner of the plate. Shimmer, not split.
   const MAX_CHROMA_PX = 3.2;
+  // Baseline CSS offset at rest. Matches the CSS default values in
+  // .kinetic-plate__chroma so JS and CSS agree when the pointer hasn't
+  // touched the plate or has left it.
+  const REST_CHROMA_X = 1.5;
+  const REST_CHROMA_Y = 1.0;
 
   // Dot shaping: both radius and alpha scale with luminance so the
   // photograph is immediately recognizable. Range identical to v5.
@@ -429,9 +445,11 @@ const payload = JSON.stringify({
           const minNbr = Math.min(up, dn, lf, rt);
           if (minNbr >= OUTLINE_NEIGHBOR_MAX) continue;
 
-          // Radius tracks luminance the same way the base layer does
-          // so the fringe reads as a chromatic aura on those dots.
-          const r = dotMin + (dotMax - dotMin) * lum;
+          // Radius tracks luminance the same way the base layer does,
+          // boosted so the chroma dot extends beyond the cream dot it
+          // fringes — the baseline CSS offset then exposes a visible
+          // colored rim even before the user tilts the plate.
+          const r = (dotMin + (dotMax - dotMin) * lum) * CHROMA_RADIUS_BOOST;
           const cx = x * cellW + cellW / 2 + parallaxX;
 
           ctx.beginPath();
@@ -475,7 +493,9 @@ const payload = JSON.stringify({
     // offset rides on the same signal as the tilt — same flush, no
     // canvas repaint, just CSS custom-property writes.
     let tiltRx = 0, tiltRy = 0;
-    let chromaCx = 0, chromaCy = 0;
+    // Chroma starts at the CSS baseline so hovering-then-leaving the
+    // plate returns to visible fringe (not to a hidden, zero-offset state).
+    let chromaCx = REST_CHROMA_X, chromaCy = REST_CHROMA_Y;
     let tiltScheduled = false;
     const applyTilt = () => {
       stage.style.setProperty('--rx', tiltRx.toFixed(2) + 'deg');
@@ -502,17 +522,21 @@ const payload = JSON.stringify({
       const clampedNy = Math.max(-1, Math.min(1, ny));
       tiltRy = clampedNx * MAX_TILT_DEG;
       tiltRx = -clampedNy * MAX_TILT_DEG;
-      // Chroma split: scale normalized coords directly to pixels. Red
-      // plate uses +cx/+cy, blue uses the inverse (handled in CSS).
-      chromaCx = clampedNx * MAX_CHROMA_PX;
-      chromaCy = clampedNy * MAX_CHROMA_PX;
+      // Chroma split: baseline offset plus a pointer-driven term that
+      // widens the split as the cursor travels from center to corner.
+      // Red plate uses +cx/+cy, blue uses the inverse (handled in CSS).
+      chromaCx = REST_CHROMA_X + clampedNx * MAX_CHROMA_PX;
+      chromaCy = REST_CHROMA_Y + clampedNy * MAX_CHROMA_PX;
       scheduleTilt();
     };
     const onPointerLeave = () => {
       tiltRx = 0;
       tiltRy = 0;
-      chromaCx = 0;
-      chromaCy = 0;
+      // Return chroma to the baseline so the fringe stays visible when
+      // the cursor leaves — matches the CSS default and keeps the plate
+      // shimmering even without hover.
+      chromaCx = REST_CHROMA_X;
+      chromaCy = REST_CHROMA_Y;
       scheduleTilt();
     };
 
