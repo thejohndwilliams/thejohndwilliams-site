@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate from '../components/KineticPlate.astro';
 ---
 
 <BaseLayout
@@ -55,138 +56,88 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- BACKGROUND — single merged section, no accordion -->
   <section class="section-light py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal prose max-w-2xl">
-        <h2>Background</h2>
-        <p>
-          BA in Film and Digital Media from Baylor, 2015. That degree taught me
-          composition, narrative structure, and visual communication — skills I use
-          daily in contexts the film school never imagined. I started law school.
-          Life intervened. I finished an MBA in Cybersecurity at Baylor instead
-          (2024, 3.86 GPA) and found that the analytical discipline of security
-          work suited me better than the courtroom ever would have.
-        </p>
-        <p>
-          For two years I have run enterprise operations for a satellite
-          communications company — incident command, forecasting tools built from
-          scratch, operational analytics where downtime is not abstract. I cannot
-          name the systems or the customers. The discipline is the point.
-        </p>
-        <p>
-          People ask why a film graduate ended up here. The honest answer: I never
-          left the core discipline. Film takes raw material and organizes it so
-          someone else can see what you see. Data engineering is the same problem
-          with different inputs. Security makes the invisible visible before it
-          causes damage. Photography notices what is already there.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Visual break — editorial image -->
-  <section class="py-0">
     <div class="container-wide">
-      <div class="reveal glass-luminous relative rounded-lg sm:rounded-card overflow-hidden aspect-[21/9] sm:aspect-[3/1]">
-        <img
-          src="/images/photography/gallery/7r50674-enhanced-sr.webp"
-          srcset="/images/photography/thumb/7r50674-enhanced-sr.webp 400w, /images/photography/gallery/7r50674-enhanced-sr.webp 1200w, /images/photography/hero/7r50674-enhanced-sr.webp 2400w"
-          sizes="100vw"
-          alt="El Arco de Cabo San Lucas"
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/40 to-transparent"></div>
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+        <div class="reveal prose max-w-2xl lg:flex-1">
+          <h2>Background</h2>
+          <p>
+            BA in Film and Digital Media from Baylor, 2015. That degree taught me
+            composition, narrative structure, and visual communication — skills I use
+            daily in contexts the film school never imagined. I started law school.
+            Life intervened. I finished an MBA in Cybersecurity at Baylor instead
+            (2024, 3.86 GPA) and found that the analytical discipline of security
+            work suited me better than the courtroom ever would have.
+          </p>
+          <p>
+            For two years I have run enterprise operations for a satellite
+            communications company — incident command, forecasting tools built from
+            scratch, operational analytics where downtime is not abstract. I cannot
+            name the systems or the customers. The discipline is the point.
+          </p>
+          <p>
+            People ask why a film graduate ended up here. The honest answer: I never
+            left the core discipline. Film takes raw material and organizes it so
+            someone else can see what you see. Data engineering is the same problem
+            with different inputs. Security makes the invisible visible before it
+            causes damage. Photography notices what is already there.
+          </p>
+        </div>
+        <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
+          <KineticPlate category="earth" />
+          <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Earth — rain-wet leaf</p>
+        </aside>
       </div>
     </div>
   </section>
 
   <!-- WHAT I AM BUILDING -->
   <section class="py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal prose max-w-2xl">
-        <h2>What I Am Building</h2>
-        <p>
-          Outside of work, I am building Noticing — a venture with three arms.
-          Noticing Solutions handles AI and technology consulting. Noticing Nature
-          is my photography practice: landscape and nature work, nearly 3,000 images
-          in the archive, print sales on the way. Noticing Scripture is a
-          faith-based content project structured as a nonprofit.
-        </p>
-        <p>
-          The name comes from a conviction: most of what matters is already in front
-          of us. The work is learning to see it.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Visual break — diptych -->
-  <section class="py-0">
     <div class="container-wide">
-      <div class="reveal grid grid-cols-2 gap-2 sm:gap-3">
-        <div class="glass-luminous rounded-lg sm:rounded-card overflow-hidden aspect-[4/3]">
-          <img
-            src="/images/photography/gallery/7r51784-enhanced-sr.webp"
-            srcset="/images/photography/thumb/7r51784-enhanced-sr.webp 400w, /images/photography/gallery/7r51784-enhanced-sr.webp 1200w"
-            sizes="50vw"
-            alt="Flowering tree against cumulus clouds"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+        <div class="reveal prose max-w-2xl lg:flex-1 lg:order-2">
+          <h2>What I Am Building</h2>
+          <p>
+            Outside of work, I am building Noticing — a venture with three arms.
+            Noticing Solutions handles AI and technology consulting. Noticing Nature
+            is my photography practice: landscape and nature work, nearly 3,000 images
+            in the archive, print sales on the way. Noticing Scripture is a
+            faith-based content project structured as a nonprofit.
+          </p>
+          <p>
+            The name comes from a conviction: most of what matters is already in front
+            of us. The work is learning to see it.
+          </p>
         </div>
-        <div class="glass-luminous rounded-lg sm:rounded-card overflow-hidden aspect-[4/3]">
-          <img
-            src="/images/photography/gallery/dsc-1081-enhanced.webp"
-            srcset="/images/photography/thumb/dsc-1081-enhanced.webp 400w, /images/photography/gallery/dsc-1081-enhanced.webp 1200w"
-            sizes="50vw"
-            alt="Red glass spires in botanical garden"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
+        <aside class="reveal shrink-0 lg:order-1 lg:w-[560px] lg:pt-2">
+          <KineticPlate category="structure" />
+          <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Structure — Shanghai Tower</p>
+        </aside>
       </div>
     </div>
   </section>
 
   <!-- CREDENTIALS + OUTSIDE WORK — merged, tight -->
   <section class="section-light py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal prose max-w-2xl mb-12">
-        <h2>Credentials &amp; Practice</h2>
-        <p>
-          BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
-          Baylor University (2024, 3.86 GPA). Eagle Scout. CompTIA Security+ (in progress).
-          Pursuing an Air Force Reserve commission in cybersecurity operations.
-        </p>
-        <p>
-          I am a nature photographer. That is not a hobby line — it is a practice
-          with commercial intent, and it feeds everything else I do. I am a person
-          of faith. I believe in service, in showing up when it is hard, and in
-          doing the work in front of you without waiting for applause.
-        </p>
-      </div>
-      <div class="reveal grid grid-cols-3 gap-2 sm:gap-3">
-        <div class="glass-luminous rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/5">
-          <img
-            src="/images/photography/gallery/img-7055-enhanced-enhanced-sr.webp"
-            srcset="/images/photography/thumb/img-7055-enhanced-enhanced-sr.webp 400w, /images/photography/gallery/img-7055-enhanced-enhanced-sr.webp 1200w"
-            sizes="33vw"
-            alt="Sunset over wildflower field" class="w-full h-full object-cover" loading="lazy" />
+    <div class="container-wide">
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+        <div class="reveal prose max-w-2xl lg:flex-1">
+          <h2>Credentials &amp; Practice</h2>
+          <p>
+            BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
+            Baylor University (2024, 3.86 GPA). Eagle Scout. CompTIA Security+ (in progress).
+            Pursuing an Air Force Reserve commission in cybersecurity operations.
+          </p>
+          <p>
+            I am a nature photographer. That is not a hobby line — it is a practice
+            with commercial intent, and it feeds everything else I do. I am a person
+            of faith. I believe in service, in showing up when it is hard, and in
+            doing the work in front of you without waiting for applause.
+          </p>
         </div>
-        <div class="glass-luminous rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/5">
-          <img
-            src="/images/photography/gallery/dscf0936.webp"
-            srcset="/images/photography/thumb/dscf0936.webp 400w, /images/photography/gallery/dscf0936.webp 1200w"
-            sizes="33vw"
-            alt="Mountain landscape with clouds" class="w-full h-full object-cover" loading="lazy" />
-        </div>
-        <div class="glass-luminous rounded-lg sm:rounded-card overflow-hidden aspect-[3/4] ring-1 ring-white/5">
-          <img
-            src="/images/photography/gallery/7r51108-enhanced-sr.webp"
-            srcset="/images/photography/thumb/7r51108-enhanced-sr.webp 400w, /images/photography/gallery/7r51108-enhanced-sr.webp 1200w"
-            sizes="33vw"
-            alt="Sunlight through tree canopy" class="w-full h-full object-cover" loading="lazy" />
-        </div>
+        <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
+          <KineticPlate category="sky" />
+          <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Sky — thunderheads</p>
+        </aside>
       </div>
     </div>
   </section>
