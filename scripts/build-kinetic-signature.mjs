@@ -18,11 +18,12 @@ const ROOT = process.cwd();
 const PHOTO_DIR = path.join(ROOT, 'public/images/photography');
 const OUT_FILE = path.join(ROOT, 'src/data/kinetic-signature.json');
 
-// Square 96x96 grid per plate. At a 280px plate surface this gives
-// ~2.9px cell spacing -- dense enough that individual photographs read
-// as shape rather than abstract noise.
-const COLS = 96;
-const ROWS = 96;
+// Square 128x128 grid per plate. At a 560px plate surface this gives
+// ~4.4px cell spacing -- dense enough for the luminance-partitioned
+// dot painter to resolve silhouette outlines cleanly for the v8.1
+// chromatic fringe (oil-on-water iridescence on edges only).
+const COLS = 128;
+const ROWS = 128;
 const R_W = 0.2126, G_W = 0.7152, B_W = 0.0722;
 
 const FRAMES = [

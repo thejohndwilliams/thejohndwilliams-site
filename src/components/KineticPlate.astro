@@ -1,45 +1,55 @@
 ---
 /**
- * KineticPlate — luminance-bucketed 3D dot projection of a photograph.
+ * KineticPlate — luminance-bucketed 3D dot projection of a photograph
+ * with outline-only chromatic fringe (oil-on-water iridescence).
  *
- * v8: four stacked canvases, each rendering ONLY the dots whose
- * luminance falls in that layer's band, sitting at its own translateZ
- * in a preserve-3d stage. Bright highlights pop forward (+32px),
- * dark shadows recede (-32px). The subject — anything with specular
- * or high-key interest — literally lives on a different depth plane
- * from the background it sits on. On pointer tilt, the perspective
- * divide shifts front dots further in screen-space than back dots,
- * which reads as the SUBJECT moving, not the plate. True holographic
- * parallax without WebGL.
+ * v8 partitioned the grid across four depth-stacked canvases so the
+ * subject pops forward of the background on tilt. v8.1 adds two more
+ * canvases at the same +32px Z as the brightest layer: a red-biased
+ * plate and a blue-biased plate that paint ONLY the outline dots of
+ * the bright bucket. Tilt the plate and the two chroma plates drift
+ * in opposite directions through CSS custom properties --cx/--cy,
+ * screen-blended over the cream highlights. The subject's silhouette
+ * shimmers with technicolor aberration; the interior stays pure.
+ *
+ * Outline detection: 4-neighbor luminance delta. A dot in the bright
+ * bucket is "outline" if any cardinal neighbor sits below a fringe
+ * threshold — the silhouette where subject meets background. Interior
+ * highlight dots have bright neighbors and are excluded.
  *
  * v7 painted every dot on every layer at different opacities; layers
  * stacked but moved in lockstep on rotation. John correctly noticed
  * the plate was tilting as a rigid sheet rather than the subject
- * popping. v8 partitions the dots by luminance so each layer has a
- * DISTINCT subset of the image, and the perspective divide on tilt
- * becomes visible as subject-background separation.
+ * popping. v8 partitioned by luminance for subject-pop. v8.1 closes
+ * the loop on the holographic brief with tilt-responsive iridescence
+ * that lives only on the silhouette.
+ *
+ * Grid density: 128x128 (up from 96 in v7/v8 baseline) to give the
+ * fringe enough perimeter resolution to read cleanly.
  *
  * Scroll parallax semantics are inverted to match depth: closer (bright)
  * layers drift MORE as the plate traverses the viewport, farther (dim)
- * layers stay anchored. Physically consistent with the tilt parallax.
+ * layers stay anchored. Chroma plates inherit layer 0's parallax to
+ * stay locked to the highlight dots they fringe.
  *
  * No autonomous animation loops. No time-based motion. Layers move
  * only when the user scrolls or the cursor travels over the plate.
- * Quiet Power discipline intact.
+ * Chroma separation is driven by CSS custom properties set from the
+ * same pointer handler that drives --rx/--ry; no per-frame repaint
+ * of the chroma canvases on tilt. Quiet Power discipline intact.
  *
  * Build-time derivation only — no runtime image decoding, no new CSP
  * surface. Decorative (role="img" on figure, canvases aria-hidden).
- * Respects prefers-reduced-motion by disabling pointer rotation and
- * scroll parallax and painting a single static frame. Pointer
- * rotation is further gated on (hover: hover) and (pointer: fine) so
- * touch devices never see rogue tilt from taps. Tears down listeners
- * on astro:before-swap for clean view-transition handoffs.
+ * Respects prefers-reduced-motion by disabling pointer rotation,
+ * scroll parallax, and chroma offset and painting a single static
+ * frame. Pointer rotation is further gated on (hover: hover) and
+ * (pointer: fine) so touch devices never see rogue tilt from taps.
+ * Tears down listeners on astro:before-swap for clean view-transition
+ * handoffs.
  *
- * Memory: back two layers render at DPR=1 regardless of device DPR
- * to keep per-plate backing-store near ~7 MB even at 560px. Because
- * each layer now paints a DISJOINT subset of the grid, total draw
- * calls per frame are equivalent to v7 (one full grid pass distributed
- * across four canvases) — no runtime regression.
+ * Memory: back two layers render at DPR=1 regardless of device DPR;
+ * chroma plates also cap at DPR=1 since they paint only sparse
+ * silhouette dots and don't need full-res antialiasing.
  */
 import signature from '../data/kinetic-signature.json';
 
@@ -73,6 +83,8 @@ const payload = JSON.stringify({
     <canvas class="kinetic-plate__canvas" data-layer="2" aria-hidden="true"></canvas>
     <canvas class="kinetic-plate__canvas" data-layer="1" aria-hidden="true"></canvas>
     <canvas class="kinetic-plate__canvas" data-layer="0" aria-hidden="true"></canvas>
+    <canvas class="kinetic-plate__chroma" data-chroma="r" aria-hidden="true"></canvas>
+    <canvas class="kinetic-plate__chroma" data-chroma="b" aria-hidden="true"></canvas>
   </div>
 </figure>
 
@@ -123,10 +135,44 @@ const payload = JSON.stringify({
   .kinetic-plate__canvas[data-layer="2"] { transform: translateZ(-12px); }
   .kinetic-plate__canvas[data-layer="3"] { transform: translateZ(-32px); }
 
+  /* Chromatic fringe: two sparse outline-only plates sitting at the
+     same depth as layer 0, separating on tilt via --cx/--cy custom
+     properties (set by the pointer handler, no canvas repaint). Screen
+     blend adds the biased channels to the cream highlights beneath,
+     producing an oil-on-water iridescent rim that only appears on
+     silhouette edges. Red shifts positive, blue shifts negative —
+     classic channel split. */
+  .kinetic-plate__chroma {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    backface-visibility: hidden;
+    mix-blend-mode: screen;
+    transition: transform 140ms ease-out;
+    will-change: transform;
+  }
+  .kinetic-plate__chroma[data-chroma="r"] {
+    transform:
+      translateZ(32px)
+      translate3d(var(--cx, 0px), var(--cy, 0px), 0);
+  }
+  .kinetic-plate__chroma[data-chroma="b"] {
+    transform:
+      translateZ(32px)
+      translate3d(calc(var(--cx, 0px) * -1), calc(var(--cy, 0px) * -1), 0);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .kinetic-plate__stage {
       transition: none;
       transform: none !important;
+    }
+    .kinetic-plate__chroma {
+      transition: none;
+      /* Kill the split entirely for reduced-motion users. */
+      transform: translateZ(32px) !important;
     }
   }
 </style>
@@ -159,6 +205,32 @@ const payload = JSON.stringify({
     // 3: darkest shadows — recedes to back, anchored in scroll
     { lumLo: -0.01, lumHi: 0.15, opacity: 0.62, parallax: 0.00, capDpr: true },
   ];
+
+  /**
+   * Chromatic fringe channels. Each plate paints only the OUTLINE dots
+   * of the bright bucket — those whose 4-neighbors straddle the fringe
+   * threshold — in a single biased color. Screen-blended on top of
+   * layer 0, they appear only where the subject meets the background.
+   *
+   * Colors chosen to give oil-on-water technicolor without shifting
+   * the interior highlights off their cream token: red-orange and
+   * cyan-blue sit opposite on the color wheel and additively combine
+   * back toward neutral where they overlap.
+   */
+  const CHROMA = [
+    { attr: 'r', rgb: '255,68,52',  alpha: 0.55, parallax: 1.00 },
+    { attr: 'b', rgb: '52,160,255', alpha: 0.55, parallax: 1.00 },
+  ];
+
+  // Outline detection threshold. A bright-bucket dot is an outline if
+  // any 4-neighbor luminance sits below this value. Tuned so the fringe
+  // hugs the silhouette without bleeding into the interior.
+  const OUTLINE_NEIGHBOR_MAX = 0.45;
+  // Bright bucket floor for outline candidacy. Matches layer 0's lumLo.
+  const OUTLINE_LUM_MIN = 0.60;
+  // Max CSS offset in pixels when cursor is at a corner of the plate.
+  // Small but perceptible — shimmer, not split.
+  const MAX_CHROMA_PX = 3.2;
 
   // Dot shaping: both radius and alpha scale with luminance so the
   // photograph is immediately recognizable. Range identical to v5.
@@ -196,6 +268,19 @@ const payload = JSON.stringify({
       ctxs[i] = cx;
     }
 
+    // Chroma plates (red/blue outline fringe). If the DOM is missing
+    // them, proceed without fringe rather than breaking the whole plate.
+    const chromaCanvases: HTMLCanvasElement[] = [];
+    const chromaCtxs: CanvasRenderingContext2D[] = [];
+    for (let i = 0; i < CHROMA.length; i++) {
+      const c = fig.querySelector<HTMLCanvasElement>(`canvas[data-chroma="${CHROMA[i].attr}"]`);
+      if (!c) continue;
+      const cx = c.getContext('2d');
+      if (!cx) continue;
+      chromaCanvases[i] = c;
+      chromaCtxs[i] = cx;
+    }
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -223,6 +308,18 @@ const payload = JSON.stringify({
         c.style.width = width + 'px';
         c.style.height = height + 'px';
         ctxs[i].setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      // Chroma plates cap DPR at 1 — sparse silhouette paints don't
+      // need full-resolution antialiasing and capping keeps per-plate
+      // backing-store growth in check with the two extra canvases.
+      for (let i = 0; i < chromaCanvases.length; i++) {
+        const c = chromaCanvases[i];
+        if (!c) continue;
+        c.width = Math.floor(width);
+        c.height = Math.floor(height);
+        c.style.width = width + 'px';
+        c.style.height = height + 'px';
+        chromaCtxs[i].setTransform(1, 0, 0, 1, 0, 0);
       }
       setDensity();
     };
@@ -285,9 +382,69 @@ const payload = JSON.stringify({
       ctx.globalAlpha = 1;
     }
 
+    /**
+     * Paint a single chromatic fringe plate. Only outline dots in the
+     * bright bucket (layer 0 band) render — the silhouette ring where
+     * subject meets background. Interior highlights are left dark so
+     * the screen blend contributes nothing there and the cream stays
+     * pure. Mirrors layer 0's parallax so the fringe stays locked to
+     * the highlights it traces through scroll.
+     */
+    function drawChroma(progress: number, chromaIdx: number): void {
+      const ctx = chromaCtxs[chromaIdx];
+      if (!ctx) return;
+      const chroma = CHROMA[chromaIdx];
+
+      ctx.clearRect(0, 0, width, height);
+      if (reduced) return;
+
+      const parallaxY = progress * chroma.parallax * MAX_PARALLAX_PX;
+      const parallaxX = progress * chroma.parallax * MAX_PARALLAX_PX * 0.35;
+
+      const cellW = width / (data.cols / colStep);
+      const cellH = height / (data.rows / rowStep);
+
+      const dotMin = narrow ? DOT_R_MOBILE_MIN : DOT_R_MIN;
+      const dotMax = narrow ? DOT_R_MOBILE_MAX : DOT_R_MAX;
+
+      ctx.fillStyle = `rgba(${chroma.rgb},${chroma.alpha.toFixed(3)})`;
+
+      for (let ry = 0, y = 0; ry < data.rows; ry += rowStep, y++) {
+        const cy = y * cellH + cellH / 2 + parallaxY;
+        for (let rx = 0, x = 0; rx < data.cols; rx += colStep, x++) {
+          const idx = ry * data.cols + rx;
+          const lum = data.grid[idx];
+
+          // Bright bucket gate — only highlight dots can be fringed.
+          if (lum < OUTLINE_LUM_MIN) continue;
+
+          // 4-neighbor luminance probe. A dot is an OUTLINE if any
+          // cardinal neighbor sits below the fringe threshold. Edge
+          // cells (no neighbor on one side) treat the missing
+          // neighbor as dark — the plate edge is always a silhouette.
+          const up    = ry > 0                 ? data.grid[idx - data.cols] : 0;
+          const dn    = ry < data.rows - 1     ? data.grid[idx + data.cols] : 0;
+          const lf    = rx > 0                 ? data.grid[idx - 1]         : 0;
+          const rt    = rx < data.cols - 1     ? data.grid[idx + 1]         : 0;
+          const minNbr = Math.min(up, dn, lf, rt);
+          if (minNbr >= OUTLINE_NEIGHBOR_MAX) continue;
+
+          // Radius tracks luminance the same way the base layer does
+          // so the fringe reads as a chromatic aura on those dots.
+          const r = dotMin + (dotMax - dotMin) * lum;
+          const cx = x * cellW + cellW / 2 + parallaxX;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
     function drawAll(): void {
       const progress = reduced ? 0 : viewportProgress();
       for (let i = 0; i < LAYERS.length; i++) drawLayer(progress, i);
+      for (let i = 0; i < CHROMA.length; i++) drawChroma(progress, i);
     }
 
     // Visibility gate: skip redraws while the plate is fully off-screen.
@@ -312,14 +469,19 @@ const payload = JSON.stringify({
       });
     };
 
-    // Pointer-tracked tilt. Per-plate: each plate tracks the cursor
-    // against its own bounding rect, so hovering one plate does not
-    // tilt the others. rAF-coalesced.
+    // Pointer-tracked tilt + chroma separation. Per-plate: each plate
+    // tracks the cursor against its own bounding rect, so hovering one
+    // plate does not affect the others. rAF-coalesced. The chroma
+    // offset rides on the same signal as the tilt — same flush, no
+    // canvas repaint, just CSS custom-property writes.
     let tiltRx = 0, tiltRy = 0;
+    let chromaCx = 0, chromaCy = 0;
     let tiltScheduled = false;
     const applyTilt = () => {
       stage.style.setProperty('--rx', tiltRx.toFixed(2) + 'deg');
       stage.style.setProperty('--ry', tiltRy.toFixed(2) + 'deg');
+      stage.style.setProperty('--cx', chromaCx.toFixed(2) + 'px');
+      stage.style.setProperty('--cy', chromaCy.toFixed(2) + 'px');
     };
     const scheduleTilt = () => {
       if (tiltScheduled) return;
@@ -340,11 +502,17 @@ const payload = JSON.stringify({
       const clampedNy = Math.max(-1, Math.min(1, ny));
       tiltRy = clampedNx * MAX_TILT_DEG;
       tiltRx = -clampedNy * MAX_TILT_DEG;
+      // Chroma split: scale normalized coords directly to pixels. Red
+      // plate uses +cx/+cy, blue uses the inverse (handled in CSS).
+      chromaCx = clampedNx * MAX_CHROMA_PX;
+      chromaCy = clampedNy * MAX_CHROMA_PX;
       scheduleTilt();
     };
     const onPointerLeave = () => {
       tiltRx = 0;
       tiltRy = 0;
+      chromaCx = 0;
+      chromaCy = 0;
       scheduleTilt();
     };
 
