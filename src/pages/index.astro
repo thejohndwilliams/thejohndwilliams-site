@@ -122,50 +122,54 @@ const socialLinks = [
   </section>
 
 
-  {/* IN SERVICE — charitable organizations, quiet 2x2 bento */}
+  {/* IN SERVICE — charitable organizations, staggered bento */}
   <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
-      <p class="text-subhead mb-2 reveal">In Service</p>
-      <p class="text-xs sm:text-sm opacity-60 mb-6 sm:mb-8 reveal max-w-xl">Charitable organizations I love to support.</p>
-      <div class="stagger-children grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-        {charities.map((org) => (
-          <a
-            href={org.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/10] ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/30 transition-all duration-500"
-          >
-            <picture>
-              <source
-                type="image/avif"
-                srcset={`/images/photography/thumb/${org.image}.avif 400w, /images/photography/gallery/${org.image}.avif 1200w`}
-                sizes="(max-width: 639px) 100vw, 50vw"
-              />
-              <source
-                type="image/webp"
-                srcset={`/images/photography/thumb/${org.image}.webp 400w, /images/photography/gallery/${org.image}.webp 1200w`}
-                sizes="(max-width: 639px) 100vw, 50vw"
-              />
-              <img
-                src={`/images/photography/gallery/${org.image}.webp`}
-                alt={org.alt}
-                class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-              <h3 class="text-lg sm:text-xl font-serif mb-1 text-cream">{org.name}</h3>
-              <p class="text-xs sm:text-sm opacity-60">{org.mission}</p>
-            </div>
-            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
-              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cream" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
-              </svg>
-            </div>
-          </a>
-        ))}
+      <p class="text-subhead mb-6 sm:mb-8 reveal">In Service</p>
+      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
+        {charities.map((org, i) => {
+          const isWide = i === 0 || i === 3;
+          const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
+          const mdAspect = isWide ? 'md:aspect-[16/9]' : 'md:aspect-[4/3]';
+          return (
+            <a
+              href={org.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class={`press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-square sm:aspect-[16/10] ${mdAspect} ${mdSpan} ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/30 transition-all duration-500`}
+            >
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset={`/images/photography/thumb/${org.image}.avif 400w, /images/photography/gallery/${org.image}.avif 1200w`}
+                  sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'}
+                />
+                <source
+                  type="image/webp"
+                  srcset={`/images/photography/thumb/${org.image}.webp 400w, /images/photography/gallery/${org.image}.webp 1200w`}
+                  sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'}
+                />
+                <img
+                  src={`/images/photography/gallery/${org.image}.webp`}
+                  alt={org.alt}
+                  class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5 md:p-6">
+                <h3 class="text-sm sm:text-lg md:text-xl font-serif mb-0.5 sm:mb-1 text-cream">{org.name}</h3>
+                <p class="text-[10px] sm:text-xs md:text-sm opacity-60 hidden sm:block">{org.mission}</p>
+              </div>
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-0 group-hover:opacity-60 transition-opacity duration-300">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cream" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7v10" />
+                </svg>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
