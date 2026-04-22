@@ -68,3 +68,29 @@ describe('Slug lookup invariants', () => {
     }
   });
 });
+
+describe('Placeholder coverage', () => {
+  it('every manifest file has a placeholder entry (run npm run build:placeholders if this fails)', async () => {
+    const { getPlaceholder } = await import('../src/data/photography');
+    const missing: string[] = [];
+    for (const cat of categories) {
+      for (const img of cat.images) {
+        if (!getPlaceholder(img.file)) missing.push(img.file);
+      }
+    }
+    expect(missing, `missing placeholders:\n${missing.join('\n')}`).toEqual([]);
+  });
+
+  it('placeholders have plausible dimensions and LQIP data', async () => {
+    const { getPlaceholder } = await import('../src/data/photography');
+    for (const cat of categories) {
+      for (const img of cat.images) {
+        const ph = getPlaceholder(img.file);
+        if (!ph) continue;
+        expect(ph.width, `${img.file} width`).toBeGreaterThan(100);
+        expect(ph.height, `${img.file} height`).toBeGreaterThan(100);
+        expect(ph.lqip, `${img.file} lqip`).toMatch(/^data:image\/webp;base64,/);
+      }
+    }
+  });
+});

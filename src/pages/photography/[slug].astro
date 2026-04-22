@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
-import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages } from '../../data/photography';
+import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages, getPlaceholder } from '../../data/photography';
 
 export function getStaticPaths() {
   return getAllSlugs().map(slug => ({ params: { slug } }));
@@ -96,7 +96,13 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
   ></div>
 
   {/* FULL-BLEED HERO IMAGE */}
-  <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10">
+  <section
+    class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10"
+    style={(() => {
+      const ph = getPlaceholder(image.file);
+      return ph ? `background-image: url('${ph.lqip}'); background-size: cover; background-position: center;` : '';
+    })()}
+  >
     <picture>
       <source
         type="image/avif"
@@ -113,6 +119,8 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         alt={image.alt}
         class="absolute inset-0 w-full h-full object-cover"
         fetchpriority="high"
+        width={getPlaceholder(image.file)?.width}
+        height={getPlaceholder(image.file)?.height}
       />
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>

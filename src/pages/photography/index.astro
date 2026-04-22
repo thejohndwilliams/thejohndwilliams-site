@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
-import { categories, totalImages } from '../../data/photography';
+import { categories, totalImages, getPlaceholder } from '../../data/photography';
 
 const SITE = 'https://thejohndwilliams.com';
 
@@ -162,6 +162,13 @@ const jsonLd = {
                 ? 'aspect-[4/3] min-[480px]:aspect-[3/4]'
                 : 'aspect-[4/3]';
 
+            // LQIP (tiny base64 WebP) renders as a soft blur under the <picture>
+            // while the real image loads. Degrades gracefully if placeholder missing.
+            const ph = getPlaceholder(img.file);
+            const lqipStyle = ph
+              ? `background-image: url('${ph.lqip}'); background-size: cover; background-position: center;`
+              : undefined;
+
             return (
               <a
                 href={`/photography/${img.file}`}
@@ -169,6 +176,7 @@ const jsonLd = {
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-meta={formatMetaLine(getPhotoMeta(img.file))}
+                style={lqipStyle}
               >
                 <picture>
                   <source
@@ -191,6 +199,8 @@ const jsonLd = {
                     class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform ${aspectClass}`}
                     loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
                     decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
+                    width={ph?.width}
+                    height={ph?.height}
                   />
                 </picture>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

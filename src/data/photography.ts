@@ -119,6 +119,27 @@ export const categories: PhotoCategory[] = [
 /** Total image count across all categories */
 export const totalImages = categories.reduce((sum, cat) => sum + cat.images.length, 0);
 
+import placeholders from './photo-placeholders.json';
+
+/** Placeholder: intrinsic dimensions + tiny base64 LQIP for blur-up first paint. */
+export type PhotoPlaceholder = {
+  width: number;
+  height: number;
+  /** data:image/webp;base64,... — ~20px LQIP, ~240 bytes */
+  lqip: string;
+};
+
+const _placeholders = placeholders as Record<string, PhotoPlaceholder>;
+
+/**
+ * Look up the placeholder (width / height / LQIP) for a given image file.
+ * Returns undefined if the image hasn't been run through
+ * `npm run build:placeholders` yet — callers should degrade gracefully.
+ */
+export function getPlaceholder(file: string): PhotoPlaceholder | undefined {
+  return _placeholders[file];
+}
+
 /** Flat lookup: slug → { image, category } */
 export type PhotoLookup = {
   image: PhotoImage;
