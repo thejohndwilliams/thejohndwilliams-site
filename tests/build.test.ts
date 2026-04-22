@@ -39,6 +39,20 @@ describe('Astro Build', () => {
     expect(fs.existsSync(sitemapPath)).toBe(true);
   });
 
+  it('sitemap includes Google Images image:image entries for photography', () => {
+    const sitemapPath = path.join(distDir, 'sitemap-0.xml');
+    expect(fs.existsSync(sitemapPath)).toBe(true);
+    const xml = fs.readFileSync(sitemapPath, 'utf-8');
+    expect(xml).toContain('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"');
+    // 56 canonical photographs × (gallery index + 56 detail pages) = 112 entries.
+    const matches = xml.match(/<image:image>/g) || [];
+    expect(matches.length).toBeGreaterThanOrEqual(112);
+    // Spot-check: hero image URL present with caption.
+    expect(xml).toContain('/images/photography/hero/');
+    expect(xml).toContain('<image:caption>');
+    expect(xml).toContain('<image:license>');
+  });
+
   it('/links renders as a full bento grid page (restored)', () => {
     const linksPath = path.join(distDir, 'links', 'index.html');
     expect(fs.existsSync(linksPath)).toBe(true);
