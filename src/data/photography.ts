@@ -127,9 +127,19 @@ export type PhotoLookup = {
   imageIndex: number;
 };
 
+/**
+ * Slug lookup: `file` → home-category entry.
+ *
+ * First-seen-wins: when a file appears in more than one category (e.g. the
+ * `light` showcase re-displays images from `earth` / `water`), the canonical
+ * detail page at `/photography/<file>` resolves to the image's home category.
+ * Showcase categories may list a file with different alt text for grid-display
+ * context without hijacking the slug.
+ */
 const _lookup = new Map<string, PhotoLookup>();
 categories.forEach((cat, catIdx) => {
   cat.images.forEach((img, imgIdx) => {
+    if (_lookup.has(img.file)) return;
     _lookup.set(img.file, {
       image: img,
       category: cat,
@@ -147,7 +157,18 @@ export function getPhotoBySlug(slug: string): PhotoLookup | undefined {
  * Returns all slugs in gallery display order (for sequential keyboard navigation).
  */
 export function getAllSlugsSequential(): string[] {
-  return categories.flatMap(cat => cat.images.map(img => img.file));
+  // First-seen-wins dedup: preserves home-category order, skips showcase re-listings
+  // (else keyboard prev/next would revisit the same image).
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const cat of categories) {
+    for (const img of cat.images) {
+      if (seen.has(img.file)) continue;
+      seen.add(img.file);
+      out.push(img.file);
+    }
+  }
+  return out;
 }
 
 export function getAllSlugs(): string[] {

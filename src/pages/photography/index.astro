@@ -5,9 +5,16 @@ import { categories, totalImages } from '../../data/photography';
 
 const SITE = 'https://thejohndwilliams.com';
 
-// JSON-LD ImageGallery schema
+// JSON-LD ImageGallery schema — dedup by file so showcase re-listings
+// (e.g. `light` re-displaying images from `earth`/`water`) don't emit duplicate
+// ImageObject entries with conflicting names.
+const seenSchemaFiles = new Set<string>();
 const allImages = categories.flatMap(cat =>
-  cat.images.map(img => {
+  cat.images.filter(img => {
+    if (seenSchemaFiles.has(img.file)) return false;
+    seenSchemaFiles.add(img.file);
+    return true;
+  }).map(img => {
     const meta = getPhotoMeta(img.file);
     const obj: Record<string, unknown> = {
       '@type': 'ImageObject',
