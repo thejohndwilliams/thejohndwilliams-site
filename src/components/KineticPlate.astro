@@ -1,28 +1,37 @@
 ---
 /**
  * KineticPlate — luminance-bucketed 3D dot projection of a photograph
- * with outline-only chromatic fringe (oil-on-water iridescence).
+ * with multi-spectrum chromatic fringe (oil-on-water iridescence).
  *
  * v8 partitioned the grid across four depth-stacked canvases so the
- * subject pops forward of the background on tilt. v8.1 adds two more
- * canvases at the same +32px Z as the brightest layer: a red-biased
- * plate and a blue-biased plate that paint ONLY the outline dots of
- * the bright bucket. Tilt the plate and the two chroma plates drift
- * in opposite directions through CSS custom properties --cx/--cy,
- * screen-blended over the cream highlights. The subject's silhouette
- * shimmers with technicolor aberration; the interior stays pure.
+ * subject pops forward of the background on tilt. v8.1–v8.2 added
+ * two chroma canvases (red-orange, cyan-blue) that paint only the
+ * outline dots of the bright bucket and screen-blend over the cream.
+ *
+ * v8.3 expands the chroma layer from 2 channels to 4: red, green,
+ * blue, violet. Each channel lives on its own canvas at its own Z
+ * depth (r=+40, g=+36, b=+32, v=+28) and sits at its own baseline
+ * offset in a different compass direction at rest. At rest the four
+ * channels form a rainbow ring around every silhouette. On pointer
+ * tilt each channel also drifts in its own direction via CSS calc()
+ * on a shared --cx/--cy, which rotates the ring around the rim.
+ * Screen-blend overlaps produce spectral intermediates (red+green
+ * yellow, blue+violet magenta) giving genuine prismatic depth.
  *
  * Outline detection: 4-neighbor luminance delta. A dot in the bright
  * bucket is "outline" if any cardinal neighbor sits below a fringe
  * threshold — the silhouette where subject meets background. Interior
- * highlight dots have bright neighbors and are excluded.
+ * highlight dots have bright neighbors and are excluded. All four
+ * chroma channels paint the same outline cells; the ring is composed
+ * by color / depth / offset differentiation, not by sparsity.
  *
  * v7 painted every dot on every layer at different opacities; layers
  * stacked but moved in lockstep on rotation. John correctly noticed
  * the plate was tilting as a rigid sheet rather than the subject
- * popping. v8 partitioned by luminance for subject-pop. v8.1 closes
- * the loop on the holographic brief with tilt-responsive iridescence
- * that lives only on the silhouette.
+ * popping. v8 partitioned by luminance for subject-pop. v8.1/8.2
+ * added chromatic fringe. v8.3 turns that fringe into a 4-channel
+ * spectrum with per-channel depth — an extra layer of 3D separation
+ * inside the chroma ring itself.
  *
  * Grid density: 128x128 (up from 96 in v7/v8 baseline) to give the
  * fringe enough perimeter resolution to read cleanly.
@@ -48,8 +57,8 @@
  * handoffs.
  *
  * Memory: back two layers render at DPR=1 regardless of device DPR;
- * chroma plates also cap at DPR=1 since they paint only sparse
- * silhouette dots and don't need full-res antialiasing.
+ * all four chroma plates also cap at DPR=1 since they paint only
+ * sparse silhouette dots and don't need full-res antialiasing.
  */
 import signature from '../data/kinetic-signature.json';
 
@@ -84,7 +93,9 @@ const payload = JSON.stringify({
     <canvas class="kinetic-plate__canvas" data-layer="1" aria-hidden="true"></canvas>
     <canvas class="kinetic-plate__canvas" data-layer="0" aria-hidden="true"></canvas>
     <canvas class="kinetic-plate__chroma" data-chroma="r" aria-hidden="true"></canvas>
+    <canvas class="kinetic-plate__chroma" data-chroma="g" aria-hidden="true"></canvas>
     <canvas class="kinetic-plate__chroma" data-chroma="b" aria-hidden="true"></canvas>
+    <canvas class="kinetic-plate__chroma" data-chroma="v" aria-hidden="true"></canvas>
   </div>
 </figure>
 
@@ -135,13 +146,15 @@ const payload = JSON.stringify({
   .kinetic-plate__canvas[data-layer="2"] { transform: translateZ(-12px); }
   .kinetic-plate__canvas[data-layer="3"] { transform: translateZ(-32px); }
 
-  /* Chromatic fringe: two sparse outline-only plates sitting at the
-     same depth as layer 0, separating on tilt via --cx/--cy custom
-     properties (set by the pointer handler, no canvas repaint). Screen
-     blend adds the biased channels to the cream highlights beneath,
-     producing an oil-on-water iridescent rim that only appears on
-     silhouette edges. Red shifts positive, blue shifts negative —
-     classic channel split. */
+  /* Chromatic fringe — v8.3 four-channel spectrum. Each channel paints
+     the same outline cells with its own color bias, sits at its own
+     Z depth (12px total spread), and rests at its own baseline offset
+     in a different compass direction. Together the four channels form
+     a rainbow ring around every silhouette even at rest. Per-channel
+     pointer coupling uses different sign patterns on --cx/--cy via
+     CSS calc() so on tilt the channels rotate around the rim rather
+     than drifting in lockstep. Screen-blend overlaps produce spectral
+     intermediates (r+g=yellow, b+v=magenta). */
   .kinetic-plate__chroma {
     position: absolute;
     inset: 0;
@@ -153,19 +166,39 @@ const payload = JSON.stringify({
     transition: transform 140ms ease-out;
     will-change: transform;
   }
-  /* Default offsets are non-zero so the chromatic fringe is VISIBLE
-     at rest — without them the two chroma plates stack perfectly on
-     the cream dots and screen-blend back to neutral. Pointer tilt
-     extends the split further; prefers-reduced-motion kills it. */
+  /* Per-channel depth stagger: r in front, v in back. Spans 12px
+     inside the bright layer's depth region (+32px) so the ring reads
+     as a unit but each channel parallaxes at its own rate. Baseline
+     offsets fan out in 4 compass directions (NE, SE, SW, NW) so at
+     rest with --cx/--cy unset the fringe forms a visible ring. */
   .kinetic-plate__chroma[data-chroma="r"] {
+    /* Red-orange, NE baseline, forward-most depth */
     transform:
-      translateZ(32px)
-      translate3d(var(--cx, 1.5px), var(--cy, 1px), 0);
+      translateZ(40px)
+      translate3d(calc( 1.5px + var(--cx, 0px)),
+                  calc(-1.0px + var(--cy, 0px)), 0);
+  }
+  .kinetic-plate__chroma[data-chroma="g"] {
+    /* Emerald green, SE baseline; --cy inverted so g and r rotate
+       against each other on vertical pointer travel */
+    transform:
+      translateZ(36px)
+      translate3d(calc( 1.2px + var(--cx, 0px)),
+                  calc( 1.2px - var(--cy, 0px)), 0);
   }
   .kinetic-plate__chroma[data-chroma="b"] {
+    /* Cyan-blue, SW baseline, sign-inverted from r */
     transform:
       translateZ(32px)
-      translate3d(calc(var(--cx, 1.5px) * -1), calc(var(--cy, 1px) * -1), 0);
+      translate3d(calc(-1.5px - var(--cx, 0px)),
+                  calc( 1.0px - var(--cy, 0px)), 0);
+  }
+  .kinetic-plate__chroma[data-chroma="v"] {
+    /* Violet, NW baseline, back-most depth; sign-inverted from g */
+    transform:
+      translateZ(28px)
+      translate3d(calc(-1.2px - var(--cx, 0px)),
+                  calc(-1.2px + var(--cy, 0px)), 0);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -173,10 +206,24 @@ const payload = JSON.stringify({
       transition: none;
       transform: none !important;
     }
+    /* Reduced motion: freeze the ring at its baseline rest positions.
+       We keep the per-channel Z depth and the compass baseline so the
+       fringe is still visible as a static painting, just without any
+       pointer-driven rotation. */
     .kinetic-plate__chroma {
       transition: none;
-      /* Kill the split entirely for reduced-motion users. */
-      transform: translateZ(32px) !important;
+    }
+    .kinetic-plate__chroma[data-chroma="r"] {
+      transform: translateZ(40px) translate3d( 1.5px, -1.0px, 0) !important;
+    }
+    .kinetic-plate__chroma[data-chroma="g"] {
+      transform: translateZ(36px) translate3d( 1.2px,  1.2px, 0) !important;
+    }
+    .kinetic-plate__chroma[data-chroma="b"] {
+      transform: translateZ(32px) translate3d(-1.5px,  1.0px, 0) !important;
+    }
+    .kinetic-plate__chroma[data-chroma="v"] {
+      transform: translateZ(28px) translate3d(-1.2px, -1.2px, 0) !important;
     }
   }
 </style>
@@ -211,19 +258,26 @@ const payload = JSON.stringify({
   ];
 
   /**
-   * Chromatic fringe channels. Each plate paints only the OUTLINE dots
-   * of the bright bucket — those whose 4-neighbors straddle the fringe
-   * threshold — in a single biased color. Screen-blended on top of
-   * layer 0, they appear only where the subject meets the background.
+   * Chromatic fringe channels — v8.3 four-channel spectrum. Each plate
+   * paints the same OUTLINE dots of the bright bucket (silhouette
+   * where subject meets background) tinted in its own color. The four
+   * channels live at four staggered translateZ depths in CSS (40/36/
+   * 32/28 px) and at four compass baseline offsets (NE/SE/SW/NW) so
+   * the ring is visible at rest and parallaxes at per-channel rates
+   * on tilt. Screen-blended on top of layer 0, they contribute only
+   * where they sit over cream highlights, and overlaps produce
+   * spectral mixes (r+g=yellow, b+v=magenta, r+v=magenta, g+b=cyan).
    *
-   * Colors chosen to give oil-on-water technicolor without shifting
-   * the interior highlights off their cream token: red-orange and
-   * cyan-blue sit opposite on the color wheel and additively combine
-   * back toward neutral where they overlap.
+   * Parallax on scroll is kept equal across channels (1.00) — the
+   * ring should scroll as a cohesive unit, not fan out vertically
+   * during page travel. The per-channel depth/offset handles the
+   * visual differentiation on tilt.
    */
   const CHROMA = [
-    { attr: 'r', rgb: '255,72,56',  alpha: 0.78, parallax: 1.00 },
-    { attr: 'b', rgb: '56,168,255', alpha: 0.78, parallax: 1.00 },
+    { attr: 'r', rgb: '255,72,56',   alpha: 0.72, parallax: 1.00 }, // red-orange
+    { attr: 'g', rgb: '80,255,140',  alpha: 0.60, parallax: 1.00 }, // emerald
+    { attr: 'b', rgb: '56,168,255',  alpha: 0.72, parallax: 1.00 }, // cyan-blue
+    { attr: 'v', rgb: '170,90,255',  alpha: 0.68, parallax: 1.00 }, // violet
   ];
 
   // Outline detection threshold. A bright-bucket dot is an outline if
@@ -237,16 +291,14 @@ const payload = JSON.stringify({
   const OUTLINE_LUM_MIN = 0.48;
   // Chroma dot radius multiplier. Boosting past 1.0 lets the chroma
   // dots extend beyond the cream dot beneath them, so even at rest the
-  // baseline CSS offset reveals a visible colored rim.
+  // baseline CSS offsets reveal a visible colored rim.
   const CHROMA_RADIUS_BOOST = 1.45;
-  // Max additional CSS offset (on top of baseline) when cursor is at a
-  // corner of the plate. Shimmer, not split.
+  // Pointer-driven chroma offset in CSS pixels. JS writes --cx/--cy
+  // in [-MAX_CHROMA_PX, +MAX_CHROMA_PX]; CSS calc() combines that with
+  // each channel's compass baseline. Zero at rest — each channel's
+  // baseline is already non-zero in its own compass direction, so the
+  // ring is visible without any pointer input.
   const MAX_CHROMA_PX = 3.2;
-  // Baseline CSS offset at rest. Matches the CSS default values in
-  // .kinetic-plate__chroma so JS and CSS agree when the pointer hasn't
-  // touched the plate or has left it.
-  const REST_CHROMA_X = 1.5;
-  const REST_CHROMA_Y = 1.0;
 
   // Dot shaping: both radius and alpha scale with luminance so the
   // photograph is immediately recognizable. Range identical to v5.
@@ -493,9 +545,10 @@ const payload = JSON.stringify({
     // offset rides on the same signal as the tilt — same flush, no
     // canvas repaint, just CSS custom-property writes.
     let tiltRx = 0, tiltRy = 0;
-    // Chroma starts at the CSS baseline so hovering-then-leaving the
-    // plate returns to visible fringe (not to a hidden, zero-offset state).
-    let chromaCx = REST_CHROMA_X, chromaCy = REST_CHROMA_Y;
+    // Pointer-driven chroma offset. Zero at rest — each channel's
+    // compass baseline lives in CSS calc() so the ring is visible
+    // whether or not the cursor is over the plate.
+    let chromaCx = 0, chromaCy = 0;
     let tiltScheduled = false;
     const applyTilt = () => {
       stage.style.setProperty('--rx', tiltRx.toFixed(2) + 'deg');
@@ -522,21 +575,22 @@ const payload = JSON.stringify({
       const clampedNy = Math.max(-1, Math.min(1, ny));
       tiltRy = clampedNx * MAX_TILT_DEG;
       tiltRx = -clampedNy * MAX_TILT_DEG;
-      // Chroma split: baseline offset plus a pointer-driven term that
-      // widens the split as the cursor travels from center to corner.
-      // Red plate uses +cx/+cy, blue uses the inverse (handled in CSS).
-      chromaCx = REST_CHROMA_X + clampedNx * MAX_CHROMA_PX;
-      chromaCy = REST_CHROMA_Y + clampedNy * MAX_CHROMA_PX;
+      // Chroma offset: pure pointer-driven term. Each channel's CSS
+      // transform combines this --cx/--cy with its own compass baseline
+      // via calc(), so the same JS writes rotate all four channels
+      // around the silhouette in their respective directions.
+      chromaCx = clampedNx * MAX_CHROMA_PX;
+      chromaCy = clampedNy * MAX_CHROMA_PX;
       scheduleTilt();
     };
     const onPointerLeave = () => {
       tiltRx = 0;
       tiltRy = 0;
-      // Return chroma to the baseline so the fringe stays visible when
-      // the cursor leaves — matches the CSS default and keeps the plate
-      // shimmering even without hover.
-      chromaCx = REST_CHROMA_X;
-      chromaCy = REST_CHROMA_Y;
+      // Return chroma offset to zero — each channel falls back to its
+      // CSS compass baseline, so the ring stays visible when the cursor
+      // leaves the plate.
+      chromaCx = 0;
+      chromaCy = 0;
       scheduleTilt();
     };
 
