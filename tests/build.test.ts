@@ -164,7 +164,10 @@ describe('Generated HTML Content', () => {
     });
 
     it('uses the multi-stop dither-resistant hero gradient', () => {
-      expect(aboutHtml).toContain('linear-gradient(to right, #0a0a0a 0%');
+      // Gradient starts with a semi-transparent scrim (not solid black) so
+      // the portrait reads through on the left, then fades to fully
+      // transparent on the right to let the photograph breathe.
+      expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
       expect(aboutHtml).toContain('rgba(10,10,10,0)');
     });
 
