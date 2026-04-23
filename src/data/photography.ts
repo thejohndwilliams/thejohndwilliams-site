@@ -109,8 +109,8 @@ export const categories: PhotoCategory[] = [
     name: 'Light',
     description: 'What changes everything.',
     images: [
-      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset wildflower field', orientation: 'portrait', featured: true },
-      { file: '7r50971-enhanced-sr', alt: 'Golden light over water', orientation: 'landscape' },
+      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait', featured: true },
+      { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
       { file: 'burningcold-enhanced', alt: 'Fire consuming structure', orientation: 'landscape' },
     ]
   },
