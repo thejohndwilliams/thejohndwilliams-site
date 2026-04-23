@@ -163,9 +163,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (window.scrollY > 40) {
-            header.classList.add('glass-nav');
+            header.classList.add('scrolled');
           } else {
-            header.classList.remove('glass-nav');
+            header.classList.remove('scrolled');
           }
           ticking = false;
         });
@@ -174,7 +174,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     }, { passive: true });
 
     // Set initial state
-    if (window.scrollY > 40) header.classList.add('glass-nav');
+    if (window.scrollY > 40) header.classList.add('scrolled');
   }
 
   initMenu();

@@ -191,16 +191,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     </style>
   </head>
   <body class="min-h-screen flex flex-col pb-32 md:pb-0">
-    {/* Scroll progress bar — fixed 2px gold accent at top of viewport,
-         width bound to scroll fraction. Signals "this is a composed
-         document." Updated via rAF-throttled scroll listener. */}
-    <div
-      id="scroll-progress"
-      class="fixed top-0 left-0 h-[2px] z-[60] pointer-events-none origin-left"
-      style="width:100%; transform:scaleX(0); background:linear-gradient(90deg, #8a7230 0%, #B8973F 50%, #d4b85a 100%);"
-      aria-hidden="true"
-    ></div>
-
     {/* Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
          Kept for future use; currently unreferenced because iOS Safari
          cannot resolve backdrop-filter: url() at paint time. */}
@@ -353,26 +343,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         });
       }
 
-      // Scroll progress bar — rAF-throttled transform update. Uses
-      // scaleX so it renders on the compositor; zero layout cost.
-      function initScrollProgress() {
-        const bar = document.getElementById('scroll-progress');
-        if (!bar) return;
-        let pending = false;
-        const update = () => {
-          pending = false;
-          const doc = document.documentElement;
-          const max = doc.scrollHeight - window.innerHeight;
-          const frac = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-          bar.style.transform = `scaleX(${frac})`;
-        };
-        window.addEventListener('scroll', () => {
-          if (pending) return;
-          pending = true;
-          requestAnimationFrame(update);
-        }, { passive: true });
-        update();
-      }
 
       // Liquid Glass Tier 1: pointer-tracked specular on glass-card/panel.
       // rAF-throttled, delegated, passive. No-op under prefers-reduced-motion.
@@ -429,14 +399,12 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       initReveal();
       initBottomNav();
       initGlassSpecular();
-      initScrollProgress();
       initPhotoProtect();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {
         initReveal();
         initBottomNav();
-        initScrollProgress();
         // Specular listener is attached to window once; no re-init needed.
       });
     </script>

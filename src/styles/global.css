@@ -722,3 +722,17 @@
   .max-h-\[80vh\] { max-height: 80svh; }
   .max-h-\[85vh\] { max-height: 85svh; }
 }
+
+
+/* ============================================================
+   HEADER SCROLLED STATE -- quiet-luxury pass 2026-04-23
+   Replaces .glass-nav on the site header with a solid shelf.
+   Rationale: keep one glass surface per screen. The /photography
+   sticky category filter is the page's glass; the header is the
+   page's shelf. Prevents double-blur stacking confusion and
+   restores quiet gallery voice over SaaS chrome voice.
+   ============================================================ */
+#site-header.scrolled {
+  background: rgba(10, 10, 10, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}

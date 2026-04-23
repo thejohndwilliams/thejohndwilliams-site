@@ -87,9 +87,7 @@ const jsonLd = {
           Where the vast meets the intimate.<br />
           Looking up. Looking close.
         </p>
-        {/* Archive signal */}
-        <p class="text-xs tracking-[0.15em] uppercase opacity-60 mt-3 sm:mt-4">{totalImages} selected from an archive of 3,000+</p>
-        <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
+        <div class="mt-6 sm:mt-8">
           <a
             href="https://www.etsy.com/shop/thejohndwilliams"
             target="_blank"
@@ -99,19 +97,13 @@ const jsonLd = {
             Shop Prints
             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
           </a>
-          <a
-            href="mailto:jndwcreative@gmail.com?subject=Custom%20Print%20Inquiry"
-            class="inline-flex items-center gap-1.5 text-xs sm:text-sm tracking-[0.15em] uppercase font-medium px-4 sm:px-5 py-2 sm:py-2.5 min-h-[44px] rounded-full border border-stone/40 text-stone-light hover:border-stone hover:bg-stone/10 transition-all duration-300"
-          >
-            Commission Custom
-          </a>
         </div>
       </div>
     </div>
   </section>
 
   {/* CATEGORY FILTER */}
-  <section class="section-light py-3 sm:py-4 md:py-5 sticky top-[60px] sm:top-[72px] md:top-[88px] z-30 glass-nav">
+  <section class="section-light py-3 sm:py-4 md:py-5 sticky top-[76px] sm:top-[92px] md:top-[108px] z-30 glass-nav">
     <div class="container-narrow">
       <nav class="flex items-center gap-1 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide -mx-1 px-1" id="category-nav" role="tablist">
         <button
@@ -240,11 +232,6 @@ const jsonLd = {
       <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
     </div>
-    <div id="swipe-hint" class="sm:hidden absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-0 transition-opacity duration-500 pointer-events-none">
-      <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" /></svg>
-      <span class="opacity-60">Swipe</span>
-      <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" /></svg>
-    </div>
   </div>
 
   {/* ABOUT / EQUIPMENT / COLLECTING */}
@@ -254,9 +241,9 @@ const jsonLd = {
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Equipment</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Sony Alpha 7R V</p>
-          <p class="text-xs sm:text-sm opacity-60 mb-4 sm:mb-6">61 megapixels. Landscape, macro, and fine art work.</p>
+          <p class="text-xs sm:text-sm opacity-60 mb-4 sm:mb-6">Landscape, macro, and fine art work.</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Fujifilm X100VI</p>
-          <p class="text-xs sm:text-sm opacity-60">40 megapixels. Street, travel, and night photography.</p>
+          <p class="text-xs sm:text-sm opacity-60">Street, travel, and night photography.</p>
         </div>
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Philosophy</p>
@@ -264,6 +251,7 @@ const jsonLd = {
             A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject — attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
+          <p class="text-xs tracking-[0.15em] uppercase opacity-60 mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
             Available as limited edition archival prints.
           </p>
@@ -402,8 +390,6 @@ const jsonLd = {
       visibleItems = Array.from(document.querySelectorAll('.gallery-section:not([data-hidden]) .gallery-item'));
     }
 
-    let swipeHintShown = false;
-
     function openLightbox(index: number) {
       updateVisibleItems();
       currentIndex = index;
@@ -416,14 +402,6 @@ const jsonLd = {
       lightbox!.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      if (!swipeHintShown && window.innerWidth < 640) {
-        swipeHintShown = true;
-        const hint = document.getElementById('swipe-hint');
-        if (hint) {
-          setTimeout(() => { hint.style.opacity = '1'; }, 400);
-          setTimeout(() => { hint.style.opacity = '0'; }, 2500);
-        }
-      }
     }
 
     function closeLightbox() {

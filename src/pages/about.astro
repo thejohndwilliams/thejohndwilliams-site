@@ -10,7 +10,6 @@ import KineticPlate from '../components/KineticPlate.astro';
   lcpImage="john-portrait-bw"
 >
   <!-- Scroll progress indicator -->
-  <div id="scroll-progress" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-gold to-gold-light z-50 pointer-events-none" style="width: 0%; transition: width 0.1s linear;" aria-hidden="true"></div>
 
   <!-- HERO — Portrait with full-bleed image -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
@@ -160,26 +159,5 @@ import KineticPlate from '../components/KineticPlate.astro';
   </section>
 
 <script>
-  function initScrollProgress() {
-    const bar = document.getElementById('scroll-progress');
-    if (!bar) return;
-    let ticking = false;
-    function updateProgress() {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
-      bar.style.width = progress + '%';
-      ticking = false;
-    }
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateProgress);
-        ticking = true;
-      }
-    }, { passive: true });
-    updateProgress();
-  }
-  initScrollProgress();
-  document.addEventListener('astro:after-swap', initScrollProgress);
 </script>
 </BaseLayout>

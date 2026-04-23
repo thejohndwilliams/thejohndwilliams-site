@@ -39,9 +39,6 @@
    agnostic and left unchanged.
 
    Known gaps (tracked as Phase 2):
-   - Inline scroll-progress gradient in BaseLayout (gold-dark →
-     gold → gold-light) uses hex; would require refactor to CSS
-     custom properties to pick up the P3 override.
    - True HDR photography delivery (PQ/HLG AVIFs) — separate
      session, requires HDR-capable source exports from Lightroom.
    ============================================================ */
