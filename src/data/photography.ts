@@ -11,6 +11,23 @@ export interface PhotoImage {
   alt: string;
   orientation: 'landscape' | 'portrait';
   featured?: boolean;
+  /**
+   * Which image pipeline serves this photograph.
+   *
+   * 'local' — (default, implicit on all existing entries) Pre-rendered
+   *   AVIF/WebP tiers under /public/images/photography/{thumb,gallery,hero}/.
+   *   How the first 58 photographs ship.
+   *
+   * 'r2' — Single original stored in Cloudflare R2; every variant
+   *   negotiated at the edge via Image Resizing. Set `key` to the
+   *   content-addressable R2 object key (from photo-r2-manifest.json).
+   *   Use for NEW uploads going forward.
+   *
+   * See docs/r2-migration-runbook.md for the pipeline.
+   */
+  source?: 'local' | 'r2';
+  /** R2 object key when source === 'r2'. Format: photography/<sha>_<basename>.<ext> */
+  key?: string;
 }
 
 export interface PhotoCategory {

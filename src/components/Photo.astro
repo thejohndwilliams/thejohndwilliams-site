@@ -1,0 +1,158 @@
+---
+/**
+ * <Photo> — Unified photograph renderer.
+ *
+ * Emits a responsive <picture> element with srcset + sizes, handling
+ * both of the site's image serving strategies:
+ *
+ *   1. Local (`source: 'local'`): the legacy pipeline. Pre-rendered
+ *      AVIF/WebP tiers under /public/images/photography/{thumb,gallery,hero}/.
+ *      This is how the first 58 photographs ship — zero regression to
+ *      migrate them.
+ *
+ *   2. R2 + Cloudflare Image Resizing (`source: 'r2'`): the forward
+ *      pipeline. One original in R2; every variant negotiated at the
+ *      edge per request via /cdn-cgi/image/... or a custom hostname.
+ *      Zero egress cost, format auto-negotiation per Accept header.
+ *
+ * Call sites don't know or care which source the image uses — the
+ * component resolves the PhotoImage entry's `source` field (defaults
+ * to 'local' when absent) and emits the appropriate markup.
+ *
+ * Currently unused by the existing gallery / [slug] / home-feature
+ * surfaces, which emit inline <picture> tags for fine-grained control.
+ * Stages this commit so future uploads can use <Photo> directly and
+ * existing surfaces can migrate over time without a forklift.
+ */
+
+import type { PhotoImage } from '../data/photography';
+import { getPlaceholder } from '../data/photography';
+
+export interface PhotoProps {
+  /** The photograph entry from photography.ts */
+  image: PhotoImage;
+  /** CSS sizes attribute for responsive srcset selection */
+  sizes?: string;
+  /** Which tier's src to use as the <img> fallback.
+      local: 'thumb' | 'gallery' | 'hero'
+      r2:    one of the r2Widths below (closest match to a CSS width) */
+  fallbackTier?: 'thumb' | 'gallery' | 'hero';
+  /** Extra classes for the <img> */
+  class?: string;
+  /** fetchpriority — 'high' for LCP tiles, else omit */
+  fetchpriority?: 'high' | 'auto' | 'low';
+  /** eager load? Default is lazy. */
+  loading?: 'eager' | 'lazy';
+  /** decoding strategy */
+  decoding?: 'sync' | 'async' | 'auto';
+  /** alt override (else defaults to image.alt) */
+  alt?: string;
+}
+
+const {
+  image,
+  sizes = '100vw',
+  fallbackTier = 'gallery',
+  class: className = '',
+  fetchpriority,
+  loading = 'lazy',
+  decoding = 'async',
+  alt,
+} = Astro.props as PhotoProps;
+
+const source = (image as any).source ?? 'local';
+const placeholder = getPlaceholder(image.file);
+const altText = alt ?? image.alt;
+
+// ── R2 + Image Resizing URL builder ──────────────────────────────────
+//
+// Two forms supported:
+//
+//   (a) Custom hostname (preferred): if PUBLIC_R2_IMAGE_BASE env var is
+//       set at build time (e.g. https://images.thejohndwilliams.com),
+//       emits   https://images.thejohndwilliams.com/cdn-cgi/image/width=1200,format=auto/<key>
+//
+//   (b) zone-direct fallback: /cdn-cgi/image/width=1200,format=auto/<public-r2-url>
+//       Used when PUBLIC_R2_IMAGE_BASE is unset. Requires the bucket to
+//       have a public r2.dev subdomain or an r2-public binding on the
+//       Cloudflare zone serving the site.
+const R2_IMAGE_BASE = import.meta.env.PUBLIC_R2_IMAGE_BASE || '';
+const R2_KEY: string | undefined = (image as any).key;
+const r2Widths = [400, 800, 1200, 1800, 2400];
+
+function r2Url(width: number, format: 'auto' | 'webp' | 'avif' = 'auto'): string {
+  if (!R2_KEY) return '';
+  const params = [`width=${width}`, `format=${format}`, 'quality=82'].join(',');
+  if (R2_IMAGE_BASE) {
+    return `${R2_IMAGE_BASE}/cdn-cgi/image/${params}/${R2_KEY}`;
+  }
+  // Zone-direct fallback assumes the R2 bucket is exposed via the
+  // same zone as the site. Consumers should set PUBLIC_R2_IMAGE_BASE
+  // once a custom hostname is configured.
+  return `/cdn-cgi/image/${params}/${R2_KEY}`;
+}
+
+// ── Local (legacy) URL builders ──────────────────────────────────────
+const local = {
+  avif: {
+    thumb: `/images/photography/thumb/${image.file}.avif`,
+    gallery: `/images/photography/gallery/${image.file}.avif`,
+    hero: `/images/photography/hero/${image.file}.avif`,
+  },
+  webp: {
+    thumb: `/images/photography/thumb/${image.file}.webp`,
+    gallery: `/images/photography/gallery/${image.file}.webp`,
+    hero: `/images/photography/hero/${image.file}.webp`,
+  },
+};
+---
+
+{source === 'r2' && R2_KEY ? (
+  <picture>
+    <source
+      type="image/avif"
+      srcset={r2Widths.map((w) => `${r2Url(w, 'avif')} ${w}w`).join(', ')}
+      sizes={sizes}
+    />
+    <source
+      type="image/webp"
+      srcset={r2Widths.map((w) => `${r2Url(w, 'webp')} ${w}w`).join(', ')}
+      sizes={sizes}
+    />
+    <img
+      src={r2Url(1200, 'auto')}
+      srcset={r2Widths.map((w) => `${r2Url(w, 'auto')} ${w}w`).join(', ')}
+      sizes={sizes}
+      alt={altText}
+      class={className}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+      width={placeholder?.width}
+      height={placeholder?.height}
+    />
+  </picture>
+) : (
+  <picture>
+    <source
+      type="image/avif"
+      srcset={`${local.avif.thumb} 400w, ${local.avif.gallery} 1200w, ${local.avif.hero} 2400w`}
+      sizes={sizes}
+    />
+    <source
+      type="image/webp"
+      srcset={`${local.webp.thumb} 400w, ${local.webp.gallery} 1200w, ${local.webp.hero} 2400w`}
+      sizes={sizes}
+    />
+    <img
+      src={local.webp[fallbackTier]}
+      alt={altText}
+      class={className}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+      width={placeholder?.width}
+      height={placeholder?.height}
+    />
+  </picture>
+)}
