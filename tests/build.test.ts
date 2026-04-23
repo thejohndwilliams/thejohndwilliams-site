@@ -69,6 +69,52 @@ describe('Astro Build', () => {
     expect(fs.existsSync(writingPath)).toBe(false);
   });
 
+  it('generates per-photo OG images under /og/photography/', () => {
+    // Tier 2 item 3: per-photo dynamic OG so link unfurls on Twitter, iMessage,
+    // LinkedIn, Slack and Discord show the actual photograph rather than the
+    // default portrait. Script: scripts/build-og-images.mjs, invoked by the
+    // `build` npm script after `astro build`.
+    const ogDir = path.join(distDir, 'og', 'photography');
+    expect(fs.existsSync(ogDir)).toBe(true);
+
+    const jpgs = fs.readdirSync(ogDir).filter((f) => f.endsWith('.jpg'));
+    // 56 canonical slugs (first-seen-wins) — same count the sitemap asserts.
+    expect(jpgs.length).toBeGreaterThanOrEqual(56);
+
+    // Spot-check a canonical slug from each category.
+    const spotChecks = [
+      '7r52326.jpg',                      // sky featured
+      '7r51025-enhanced-sr.jpg',          // earth featured
+      '7r50674-enhanced-sr.jpg',          // water featured
+      'img-7576-enhanced.jpg',            // structure featured
+      'burningcold-enhanced.jpg',         // light-only canonical
+    ];
+    for (const f of spotChecks) {
+      expect(fs.existsSync(path.join(ogDir, f))).toBe(true);
+    }
+
+    // File-size sanity: JPEGs should be 20 KB–400 KB each. Anything larger
+    // than 500 KB means overlay compositing regressed; anything <5 KB
+    // means sharp failed silently and produced a stub.
+    for (const f of jpgs) {
+      const size = fs.statSync(path.join(ogDir, f)).size;
+      expect(size).toBeGreaterThan(5_000);
+      expect(size).toBeLessThan(500_000);
+    }
+  });
+
+  it('photo detail pages reference the generated OG JPEG, not the WebP hero', () => {
+    // Verify the [slug].astro wiring survived — an accidental revert to
+    // `/images/photography/hero/<slug>.webp` would silently degrade
+    // LinkedIn/iMessage unfurls (those renderers won't display WebP).
+    const detailPath = path.join(distDir, 'photography', '7r52326', 'index.html');
+    expect(fs.existsSync(detailPath)).toBe(true);
+    const html = fs.readFileSync(detailPath, 'utf-8');
+    expect(html).toContain('/og/photography/7r52326.jpg');
+    expect(html).toContain('property="og:image:width" content="1200"');
+    expect(html).toContain('property="og:image:height" content="630"');
+  });
+
 });
 
 describe('Generated HTML Content', () => {

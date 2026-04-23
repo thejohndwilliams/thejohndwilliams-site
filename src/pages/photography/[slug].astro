@@ -83,7 +83,9 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 <BaseLayout
   title={`${image.alt} — Photography`}
   description={`${image.alt}. Fine art photograph by John D. Williams. ${category.name} series. ${metaLine || ''}`}
-  ogImage={`/images/photography/hero/${image.file}.webp`}
+  ogImage={`/og/photography/${image.file}.jpg`}
+  ogImageWidth={1200}
+  ogImageHeight={630}
   lcpImage={image.file}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
