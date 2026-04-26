@@ -8,6 +8,21 @@
  * two chroma canvases (red-orange, cyan-blue) that paint only the
  * outline dots of the bright bucket and screen-blend over the cream.
  *
+ * v9.0 moves scroll-driven parallax from per-frame canvas repaint to
+ * the GPU compositor. The layer canvases used to be cleared and
+ * repainted on every scroll rAF tick, with each dot's Y position
+ * offset by progress * layer.parallax * MAX_PARALLAX_PX baked in.
+ * That works on Apple Silicon but stutters on weaker CPUs because
+ * Canvas 2D paints are CPU-bound and each plate runs 8 canvases.
+ * In v9.0 the canvases paint exactly once at base position, and a
+ * single scalar custom property --p (range roughly [-22, +22]) is
+ * written on the stage per scroll frame. Each layer's CSS transform
+ * applies its own parallax multiplier via calc(), so the browser
+ * composites the motion on the GPU instead of repainting pixels.
+ * Result: scroll cost drops from O(canvases × dots × DPR²) per frame
+ * to O(1) — a single property write. Headroom restored for adding
+ * more visual layers without regressing frame rate.
+ *
  * v8.3 expands the chroma layer from 2 channels to 4: red, green,
  * blue, violet. Each channel lives on its own canvas at its own Z
  * depth (r=+40, g=+36, b=+32, v=+28) and sits at its own baseline
@@ -135,16 +150,38 @@ const payload = JSON.stringify({
     height: 100%;
     pointer-events: none;
     backface-visibility: hidden;
+    will-change: transform;
   }
   /* True Z-depth per layer, straddling zero. Bright highlights (layer 0)
      sit +32px closer to the viewer; dark shadows (layer 3) sit -32px
      away. 64px of depth separation. Perspective divide on tilt then
      shifts bright dots further in screen space than dim dots, which
-     reads as subject-pop rather than a rigid-sheet tilt. */
-  .kinetic-plate__canvas[data-layer="0"] { transform: translateZ(32px); }
-  .kinetic-plate__canvas[data-layer="1"] { transform: translateZ(12px); }
-  .kinetic-plate__canvas[data-layer="2"] { transform: translateZ(-12px); }
-  .kinetic-plate__canvas[data-layer="3"] { transform: translateZ(-32px); }
+     reads as subject-pop rather than a rigid-sheet tilt.
+
+     v9.0 parallax: --p is a unitless scalar (roughly [-22, +22] px-
+     equivalent) written on the stage per scroll frame. Each layer
+     multiplies it by its own parallax constant via calc() so the
+     translation is GPU-composited — no canvas repaint required.
+     Closer (bright) layers drift more; layer 3 stays anchored. X
+     drift is 0.35 of Y, matching the prior canvas-baked behavior. */
+  .kinetic-plate__canvas[data-layer="0"] {
+    transform: translateZ(32px)
+               translate3d(calc(var(--p, 0) * 0.35 * 1px),
+                           calc(var(--p, 0) * 1.00 * 1px), 0);
+  }
+  .kinetic-plate__canvas[data-layer="1"] {
+    transform: translateZ(12px)
+               translate3d(calc(var(--p, 0) * 0.21 * 1px),
+                           calc(var(--p, 0) * 0.60 * 1px), 0);
+  }
+  .kinetic-plate__canvas[data-layer="2"] {
+    transform: translateZ(-12px)
+               translate3d(calc(var(--p, 0) * 0.105 * 1px),
+                           calc(var(--p, 0) * 0.30 * 1px), 0);
+  }
+  .kinetic-plate__canvas[data-layer="3"] {
+    transform: translateZ(-32px); /* parallax 0 — anchored */
+  }
 
   /* Chromatic fringe — v8.3 four-channel spectrum. Each channel paints
      the same outline cells with its own color bias, sits at its own
@@ -171,34 +208,38 @@ const payload = JSON.stringify({
      as a unit but each channel parallaxes at its own rate. Baseline
      offsets fan out in 4 compass directions (NE, SE, SW, NW) so at
      rest with --cx/--cy unset the fringe forms a visible ring. */
+  /* Chroma channels share parallax 1.00 with layer 0 so the ring
+     stays locked to the highlights it traces during scroll. Each
+     compass baseline + pointer offset is summed with the v9.0 scroll
+     parallax via calc() — single transform, GPU-composited. */
   .kinetic-plate__chroma[data-chroma="r"] {
     /* Red-orange, NE baseline, forward-most depth */
     transform:
       translateZ(40px)
-      translate3d(calc( 1.5px + var(--cx, 0px)),
-                  calc(-1.0px + var(--cy, 0px)), 0);
+      translate3d(calc( 1.5px + var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
+                  calc(-1.0px + var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="g"] {
     /* Emerald green, SE baseline; --cy inverted so g and r rotate
        against each other on vertical pointer travel */
     transform:
       translateZ(36px)
-      translate3d(calc( 1.2px + var(--cx, 0px)),
-                  calc( 1.2px - var(--cy, 0px)), 0);
+      translate3d(calc( 1.2px + var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
+                  calc( 1.2px - var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="b"] {
     /* Cyan-blue, SW baseline, sign-inverted from r */
     transform:
       translateZ(32px)
-      translate3d(calc(-1.5px - var(--cx, 0px)),
-                  calc( 1.0px - var(--cy, 0px)), 0);
+      translate3d(calc(-1.5px - var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
+                  calc( 1.0px - var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="v"] {
     /* Violet, NW baseline, back-most depth; sign-inverted from g */
     transform:
       translateZ(28px)
-      translate3d(calc(-1.2px - var(--cx, 0px)),
-                  calc(-1.2px + var(--cy, 0px)), 0);
+      translate3d(calc(-1.2px - var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
+                  calc(-1.2px + var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -406,14 +447,14 @@ const payload = JSON.stringify({
       return Math.max(-1, Math.min(1, p));
     }
 
-    function drawLayer(progress: number, layerIdx: number): void {
+    function drawLayer(layerIdx: number): void {
       const ctx = ctxs[layerIdx];
       const layer = LAYERS[layerIdx];
 
       ctx.clearRect(0, 0, width, height);
 
-      const parallaxY = reduced ? 0 : progress * layer.parallax * MAX_PARALLAX_PX;
-      const parallaxX = reduced ? 0 : progress * layer.parallax * MAX_PARALLAX_PX * 0.35;
+      // v9.0: paint at base position only. Scroll parallax is applied
+      // by CSS via --p on the stage; canvas content is scroll-invariant.
 
       const cellW = width / (data.cols / colStep);
       const cellH = height / (data.rows / rowStep);
@@ -424,7 +465,7 @@ const payload = JSON.stringify({
       ctx.globalAlpha = layer.opacity;
 
       for (let ry = 0, y = 0; ry < data.rows; ry += rowStep, y++) {
-        const cy = y * cellH + cellH / 2 + parallaxY;
+        const cy = y * cellH + cellH / 2;
         for (let rx = 0, x = 0; rx < data.cols; rx += colStep, x++) {
           const idx = ry * data.cols + rx;
           const lum = data.grid[idx];
@@ -438,7 +479,7 @@ const payload = JSON.stringify({
           if (alpha < 0.03) continue;
 
           const r = dotMin + (dotMax - dotMin) * lum;
-          const cx = x * cellW + cellW / 2 + parallaxX;
+          const cx = x * cellW + cellW / 2;
 
           ctx.beginPath();
           ctx.fillStyle = `rgba(${RGB},${alpha.toFixed(3)})`;
@@ -458,7 +499,7 @@ const payload = JSON.stringify({
      * pure. Mirrors layer 0's parallax so the fringe stays locked to
      * the highlights it traces through scroll.
      */
-    function drawChroma(progress: number, chromaIdx: number): void {
+    function drawChroma(chromaIdx: number): void {
       const ctx = chromaCtxs[chromaIdx];
       if (!ctx) return;
       const chroma = CHROMA[chromaIdx];
@@ -466,8 +507,8 @@ const payload = JSON.stringify({
       ctx.clearRect(0, 0, width, height);
       if (reduced) return;
 
-      const parallaxY = progress * chroma.parallax * MAX_PARALLAX_PX;
-      const parallaxX = progress * chroma.parallax * MAX_PARALLAX_PX * 0.35;
+      // v9.0: chroma also paints at base position. Scroll parallax (1.00,
+      // matching layer 0) is applied via --p in the chroma's CSS transform.
 
       const cellW = width / (data.cols / colStep);
       const cellH = height / (data.rows / rowStep);
@@ -478,7 +519,7 @@ const payload = JSON.stringify({
       ctx.fillStyle = `rgba(${chroma.rgb},${chroma.alpha.toFixed(3)})`;
 
       for (let ry = 0, y = 0; ry < data.rows; ry += rowStep, y++) {
-        const cy = y * cellH + cellH / 2 + parallaxY;
+        const cy = y * cellH + cellH / 2;
         for (let rx = 0, x = 0; rx < data.cols; rx += colStep, x++) {
           const idx = ry * data.cols + rx;
           const lum = data.grid[idx];
@@ -502,7 +543,7 @@ const payload = JSON.stringify({
           // fringes — the baseline CSS offset then exposes a visible
           // colored rim even before the user tilts the plate.
           const r = (dotMin + (dotMax - dotMin) * lum) * CHROMA_RADIUS_BOOST;
-          const cx = x * cellW + cellW / 2 + parallaxX;
+          const cx = x * cellW + cellW / 2;
 
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -512,9 +553,21 @@ const payload = JSON.stringify({
     }
 
     function drawAll(): void {
-      const progress = reduced ? 0 : viewportProgress();
-      for (let i = 0; i < LAYERS.length; i++) drawLayer(progress, i);
-      for (let i = 0; i < CHROMA.length; i++) drawChroma(progress, i);
+      // v9.0: paint canvases at base position. Called only on initial
+      // paint, resize, and visibility re-entry — never on scroll.
+      for (let i = 0; i < LAYERS.length; i++) drawLayer(i);
+      for (let i = 0; i < CHROMA.length; i++) drawChroma(i);
+    }
+
+    // Apply current scroll progress as a single CSS custom property.
+    // Each layer's CSS transform multiplies --p by its own parallax
+    // constant via calc(), so the browser composites the motion on
+    // the GPU. Cost per scroll frame: one getBoundingClientRect (in
+    // viewportProgress) + one setProperty.
+    function applyScroll(): void {
+      if (reduced) return;
+      const p = viewportProgress() * MAX_PARALLAX_PX;
+      stage.style.setProperty('--p', p.toFixed(2));
     }
 
     // Visibility gate: skip redraws while the plate is fully off-screen.
@@ -527,15 +580,16 @@ const payload = JSON.stringify({
       io.observe(fig);
     }
 
-    // rAF-coalesced scroll handler. No autonomous animation loop --
-    // layers only move when the user scrolls or hovers.
+    // rAF-coalesced scroll handler. v9.0: writes --p, does NOT repaint
+    // the canvases. Single property write per scroll frame; the GPU
+    // compositor handles the layer translations.
     let scrollScheduled = false;
     const scheduleScroll = () => {
       if (scrollScheduled) return;
       scrollScheduled = true;
       requestAnimationFrame(() => {
         scrollScheduled = false;
-        if (visible) drawAll();
+        if (visible) applyScroll();
       });
     };
 
@@ -594,11 +648,13 @@ const payload = JSON.stringify({
       scheduleTilt();
     };
 
-    // Initial paint.
+    // Initial paint + seed scroll position so the plate sits at its
+    // current viewport-progress offset before the user scrolls.
     drawAll();
+    applyScroll();
 
     const onScroll = () => scheduleScroll();
-    const onResize = () => { resize(); drawAll(); };
+    const onResize = () => { resize(); drawAll(); applyScroll(); };
 
     window.addEventListener('resize', onResize, { passive: true });
     if (!reduced) {
