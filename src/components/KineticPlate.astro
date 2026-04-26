@@ -200,8 +200,13 @@ const payload = JSON.stringify({
     pointer-events: none;
     backface-visibility: hidden;
     mix-blend-mode: screen;
-    transition: transform 140ms ease-out;
-    will-change: transform;
+    /* v9.1: transition the chroma's tilt-coupled offset (translate
+       property) but NOT scroll parallax (transform property). Without
+       this split, scroll-driven --p updates would smear through 140ms
+       ease-out, desyncing the chroma ring from the base layers during
+       fast scroll on high-refresh displays. */
+    transition: translate 140ms ease-out;
+    will-change: transform, translate;
   }
   /* Per-channel depth stagger: r in front, v in back. Spans 12px
      inside the bright layer's depth region (+32px) so the ring reads
@@ -209,37 +214,48 @@ const payload = JSON.stringify({
      offsets fan out in 4 compass directions (NE, SE, SW, NW) so at
      rest with --cx/--cy unset the fringe forms a visible ring. */
   /* Chroma channels share parallax 1.00 with layer 0 so the ring
-     stays locked to the highlights it traces during scroll. Each
-     compass baseline + pointer offset is summed with the v9.0 scroll
-     parallax via calc() — single transform, GPU-composited. */
+     stays locked to the highlights it traces during scroll. v9.1
+     splits the transform: tilt-coupled compass + --cx/--cy lives on
+     the `translate` property (transitioned for hover smoothness);
+     Z-depth and scroll parallax live on `transform` (snap, no
+     transition). This prevents the 140ms ease-out from smearing the
+     chroma ring during scroll on high-refresh displays. */
   .kinetic-plate__chroma[data-chroma="r"] {
     /* Red-orange, NE baseline, forward-most depth */
+    translate: calc( 1.5px + var(--cx, 0px))
+               calc(-1.0px + var(--cy, 0px));
     transform:
       translateZ(40px)
-      translate3d(calc( 1.5px + var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
-                  calc(-1.0px + var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
+      translate3d(calc(var(--p, 0) * 0.35 * 1px),
+                  calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="g"] {
     /* Emerald green, SE baseline; --cy inverted so g and r rotate
        against each other on vertical pointer travel */
+    translate: calc( 1.2px + var(--cx, 0px))
+               calc( 1.2px - var(--cy, 0px));
     transform:
       translateZ(36px)
-      translate3d(calc( 1.2px + var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
-                  calc( 1.2px - var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
+      translate3d(calc(var(--p, 0) * 0.35 * 1px),
+                  calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="b"] {
     /* Cyan-blue, SW baseline, sign-inverted from r */
+    translate: calc(-1.5px - var(--cx, 0px))
+               calc( 1.0px - var(--cy, 0px));
     transform:
       translateZ(32px)
-      translate3d(calc(-1.5px - var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
-                  calc( 1.0px - var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
+      translate3d(calc(var(--p, 0) * 0.35 * 1px),
+                  calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="v"] {
     /* Violet, NW baseline, back-most depth; sign-inverted from g */
+    translate: calc(-1.2px - var(--cx, 0px))
+               calc(-1.2px + var(--cy, 0px));
     transform:
       translateZ(28px)
-      translate3d(calc(-1.2px - var(--cx, 0px) + var(--p, 0) * 0.35 * 1px),
-                  calc(-1.2px + var(--cy, 0px) + var(--p, 0) * 1.00 * 1px), 0);
+      translate3d(calc(var(--p, 0) * 0.35 * 1px),
+                  calc(var(--p, 0) * 1.00 * 1px), 0);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -255,16 +271,20 @@ const payload = JSON.stringify({
       transition: none;
     }
     .kinetic-plate__chroma[data-chroma="r"] {
-      transform: translateZ(40px) translate3d( 1.5px, -1.0px, 0) !important;
+      translate:  1.5px -1.0px !important;
+      transform: translateZ(40px) !important;
     }
     .kinetic-plate__chroma[data-chroma="g"] {
-      transform: translateZ(36px) translate3d( 1.2px,  1.2px, 0) !important;
+      translate:  1.2px  1.2px !important;
+      transform: translateZ(36px) !important;
     }
     .kinetic-plate__chroma[data-chroma="b"] {
-      transform: translateZ(32px) translate3d(-1.5px,  1.0px, 0) !important;
+      translate: -1.5px  1.0px !important;
+      transform: translateZ(32px) !important;
     }
     .kinetic-plate__chroma[data-chroma="v"] {
-      transform: translateZ(28px) translate3d(-1.2px, -1.2px, 0) !important;
+      translate: -1.2px -1.2px !important;
+      transform: translateZ(28px) !important;
     }
   }
 </style>
@@ -438,11 +458,22 @@ const payload = JSON.stringify({
      * Scroll-driven parallax signal. Returns a number in roughly
      * [-1, 1]: -1 when the plate center sits at the top of the
      * viewport, +1 at the bottom, 0 when centered.
+     *
+     * v9.1: avoids getBoundingClientRect on the hot path. The figure's
+     * absolute Y position is cached at mount, after resize, and on
+     * visibility re-entry. Per-frame cost reduces to two cheap reads
+     * (window.scrollY, window.innerHeight) and arithmetic — no forced
+     * layout flush. With 4+ plates on a page this used to mean 4
+     * synchronous layout queries per scroll frame.
      */
-    function viewportProgress(): number {
+    let cachedFigCenterY = 0;  // absolute Y of figure center in document
+    function refreshFigCache(): void {
       const r = fig.getBoundingClientRect();
+      cachedFigCenterY = r.top + window.scrollY + r.height / 2;
+    }
+    function viewportProgress(): number {
       const vp = window.innerHeight || 1;
-      const center = r.top + r.height / 2;
+      const center = cachedFigCenterY - window.scrollY;
       const p = (center - vp / 2) / (vp / 2);
       return Math.max(-1, Math.min(1, p));
     }
@@ -571,10 +602,19 @@ const payload = JSON.stringify({
     }
 
     // Visibility gate: skip redraws while the plate is fully off-screen.
+    // v9.1: also refresh the figure cache on visibility re-entry so any
+    // layout shift that happened off-screen (images loading, etc.) is
+    // picked up before the next scroll frame uses the stale Y.
     let visible = true;
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(
-        (entries) => { for (const e of entries) visible = e.isIntersecting; },
+        (entries) => {
+          for (const e of entries) {
+            const wasVisible = visible;
+            visible = e.isIntersecting;
+            if (visible && !wasVisible) refreshFigCache();
+          }
+        },
         { rootMargin: '200px' },
       );
       io.observe(fig);
@@ -650,11 +690,12 @@ const payload = JSON.stringify({
 
     // Initial paint + seed scroll position so the plate sits at its
     // current viewport-progress offset before the user scrolls.
+    refreshFigCache();
     drawAll();
     applyScroll();
 
     const onScroll = () => scheduleScroll();
-    const onResize = () => { resize(); drawAll(); applyScroll(); };
+    const onResize = () => { resize(); refreshFigCache(); drawAll(); applyScroll(); };
 
     window.addEventListener('resize', onResize, { passive: true });
     if (!reduced) {
