@@ -8,6 +8,33 @@
  * two chroma canvases (red-orange, cyan-blue) that paint only the
  * outline dots of the bright bucket and screen-blend over the cream.
  *
+ * v9.2 layers cursor-coupled color and depth modulation on top of the
+ * scroll/tilt foundation. Three new effects, all CSS-variable driven
+ * from the existing pointer rAF (no new event listeners, no new
+ * canvases, no per-frame paint):
+ *   A) Cursor X drives --hue (±30deg). The chroma canvases apply
+ *      filter: hue-rotate(var(--hue)) so the rainbow ring shifts
+ *      through the spectrum as the cursor sweeps left-to-right.
+ *   B) Cursor distance from plate center drives --sat (1.40→0.85).
+ *      filter: saturate(var(--sat)) brightens the chroma when the
+ *      cursor approaches the subject and softens it at the rim.
+ *   D) Cursor distance from plate center drives --depth-scale
+ *      (1.30→1.00). Every layer's translateZ multiplies by this
+ *      scalar, so the perspective volume expands when the user
+ *      examines the plate and settles when they look away.
+ *
+ * The depth Z moves from `transform` onto the `translate` property
+ * so it can transition independently of scroll-driven parallax (which
+ * still lives on `transform` and must snap). The chroma layers also
+ * gain `filter` to the transitioned property list. Scroll parallax
+ * remains a single setProperty per frame.
+ *
+ * E (subject-locked rotation) is not implemented in v9.2 but is
+ * signposted: each LAYERS entry now carries a rotScale field, and
+ * the CSS layer rules note where per-layer rotation differentiation
+ * would slot in. Cost to add E later: replace stage's rotateX/Y with
+ * per-canvas rotateX/Y multiplied by rotScale. No data restructure.
+ *
  * v9.0 moves scroll-driven parallax from per-frame canvas repaint to
  * the GPU compositor. The layer canvases used to be cleared and
  * repainted on every scroll rAF tick, with each dot's Y position
@@ -150,37 +177,50 @@ const payload = JSON.stringify({
     height: 100%;
     pointer-events: none;
     backface-visibility: hidden;
-    will-change: transform;
+    /* v9.2: depth Z lives on `translate` so it can transition
+       independently of scroll parallax (which stays on `transform`
+       and must snap). 140ms ease-out smooths the cursor-driven
+       depth-scale expansion without smearing scroll. */
+    transition: translate 140ms ease-out;
+    will-change: transform, translate;
   }
   /* True Z-depth per layer, straddling zero. Bright highlights (layer 0)
      sit +32px closer to the viewer; dark shadows (layer 3) sit -32px
-     away. 64px of depth separation. Perspective divide on tilt then
-     shifts bright dots further in screen space than dim dots, which
-     reads as subject-pop rather than a rigid-sheet tilt.
+     away. 64px of depth separation. v9.2: each Z multiplies by
+     --depth-scale (default 1, peaks at ~1.30 when cursor is at plate
+     center) — perspective volume breathes with cursor proximity.
 
      v9.0 parallax: --p is a unitless scalar (roughly [-22, +22] px-
      equivalent) written on the stage per scroll frame. Each layer
      multiplies it by its own parallax constant via calc() so the
      translation is GPU-composited — no canvas repaint required.
      Closer (bright) layers drift more; layer 3 stays anchored. X
-     drift is 0.35 of Y, matching the prior canvas-baked behavior. */
+     drift is 0.35 of Y, matching the prior canvas-baked behavior.
+
+     E-prep (future): per-layer rotation differentiation would land
+     here. The stage rotateX/rotateY would move onto each canvas as
+     rotateX(calc(var(--rx, 0deg) * <rotScale>)) — bright bucket gets
+     a small rotScale (e.g. 0.7), dark bucket a large one (e.g. 1.3),
+     creating a diorama "subject-locked" effect on tilt. rotScale
+     values live in the JS LAYERS array. */
   .kinetic-plate__canvas[data-layer="0"] {
-    transform: translateZ(32px)
-               translate3d(calc(var(--p, 0) * 0.35 * 1px),
+    translate: 0 0 calc(var(--depth-scale, 1) * 32px);
+    transform: translate3d(calc(var(--p, 0) * 0.35 * 1px),
                            calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__canvas[data-layer="1"] {
-    transform: translateZ(12px)
-               translate3d(calc(var(--p, 0) * 0.21 * 1px),
+    translate: 0 0 calc(var(--depth-scale, 1) * 12px);
+    transform: translate3d(calc(var(--p, 0) * 0.21 * 1px),
                            calc(var(--p, 0) * 0.60 * 1px), 0);
   }
   .kinetic-plate__canvas[data-layer="2"] {
-    transform: translateZ(-12px)
-               translate3d(calc(var(--p, 0) * 0.105 * 1px),
+    translate: 0 0 calc(var(--depth-scale, 1) * -12px);
+    transform: translate3d(calc(var(--p, 0) * 0.105 * 1px),
                            calc(var(--p, 0) * 0.30 * 1px), 0);
   }
   .kinetic-plate__canvas[data-layer="3"] {
-    transform: translateZ(-32px); /* parallax 0 — anchored */
+    translate: 0 0 calc(var(--depth-scale, 1) * -32px);
+    transform: none; /* parallax 0 — anchored */
   }
 
   /* Chromatic fringe — v8.3 four-channel spectrum. Each channel paints
@@ -200,13 +240,17 @@ const payload = JSON.stringify({
     pointer-events: none;
     backface-visibility: hidden;
     mix-blend-mode: screen;
-    /* v9.1: transition the chroma's tilt-coupled offset (translate
-       property) but NOT scroll parallax (transform property). Without
-       this split, scroll-driven --p updates would smear through 140ms
-       ease-out, desyncing the chroma ring from the base layers during
-       fast scroll on high-refresh displays. */
-    transition: translate 140ms ease-out;
-    will-change: transform, translate;
+    /* v9.2: cursor X drives --hue (±30deg) for spectrum rotation;
+       cursor distance from center drives --sat (1.40 peak, 0.85
+       floor) for proximity-coupled iridescence. Both default to
+       neutral (0deg / 1.0) so the rest state is unchanged. */
+    filter: hue-rotate(var(--hue, 0deg)) saturate(var(--sat, 1));
+    /* v9.1/v9.2: transition tilt-coupled translate AND filter, NOT
+       transform. Scroll parallax lives on transform and must snap —
+       transitioning it would desync the chroma ring from the base
+       layers during fast scroll on high-refresh displays. */
+    transition: translate 140ms ease-out, filter 140ms ease-out;
+    will-change: transform, translate, filter;
   }
   /* Per-channel depth stagger: r in front, v in back. Spans 12px
      inside the bright layer's depth region (+32px) so the ring reads
@@ -215,17 +259,18 @@ const payload = JSON.stringify({
      rest with --cx/--cy unset the fringe forms a visible ring. */
   /* Chroma channels share parallax 1.00 with layer 0 so the ring
      stays locked to the highlights it traces during scroll. v9.1
-     splits the transform: tilt-coupled compass + --cx/--cy lives on
-     the `translate` property (transitioned for hover smoothness);
-     Z-depth and scroll parallax live on `transform` (snap, no
-     transition). This prevents the 140ms ease-out from smearing the
-     chroma ring during scroll on high-refresh displays. */
+     split the transform: tilt-coupled compass + --cx/--cy lives on
+     `translate` (transitioned for hover smoothness); scroll parallax
+     lives on `transform` (snap, no transition). v9.2 folds the Z
+     depth onto `translate` so it shares the smoothing path with
+     --depth-scale, keeping the ring locked to layer 0 as the volume
+     expands. */
   .kinetic-plate__chroma[data-chroma="r"] {
     /* Red-orange, NE baseline, forward-most depth */
     translate: calc( 1.5px + var(--cx, 0px))
-               calc(-1.0px + var(--cy, 0px));
+               calc(-1.0px + var(--cy, 0px))
+               calc(var(--depth-scale, 1) * 40px);
     transform:
-      translateZ(40px)
       translate3d(calc(var(--p, 0) * 0.35 * 1px),
                   calc(var(--p, 0) * 1.00 * 1px), 0);
   }
@@ -233,27 +278,27 @@ const payload = JSON.stringify({
     /* Emerald green, SE baseline; --cy inverted so g and r rotate
        against each other on vertical pointer travel */
     translate: calc( 1.2px + var(--cx, 0px))
-               calc( 1.2px - var(--cy, 0px));
+               calc( 1.2px - var(--cy, 0px))
+               calc(var(--depth-scale, 1) * 36px);
     transform:
-      translateZ(36px)
       translate3d(calc(var(--p, 0) * 0.35 * 1px),
                   calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="b"] {
     /* Cyan-blue, SW baseline, sign-inverted from r */
     translate: calc(-1.5px - var(--cx, 0px))
-               calc( 1.0px - var(--cy, 0px));
+               calc( 1.0px - var(--cy, 0px))
+               calc(var(--depth-scale, 1) * 32px);
     transform:
-      translateZ(32px)
       translate3d(calc(var(--p, 0) * 0.35 * 1px),
                   calc(var(--p, 0) * 1.00 * 1px), 0);
   }
   .kinetic-plate__chroma[data-chroma="v"] {
     /* Violet, NW baseline, back-most depth; sign-inverted from g */
     translate: calc(-1.2px - var(--cx, 0px))
-               calc(-1.2px + var(--cy, 0px));
+               calc(-1.2px + var(--cy, 0px))
+               calc(var(--depth-scale, 1) * 28px);
     transform:
-      translateZ(28px)
       translate3d(calc(var(--p, 0) * 0.35 * 1px),
                   calc(var(--p, 0) * 1.00 * 1px), 0);
   }
@@ -271,20 +316,20 @@ const payload = JSON.stringify({
       transition: none;
     }
     .kinetic-plate__chroma[data-chroma="r"] {
-      translate:  1.5px -1.0px !important;
-      transform: translateZ(40px) !important;
+      translate:  1.5px -1.0px 40px !important;
+      transform: none !important;
     }
     .kinetic-plate__chroma[data-chroma="g"] {
-      translate:  1.2px  1.2px !important;
-      transform: translateZ(36px) !important;
+      translate:  1.2px  1.2px 36px !important;
+      transform: none !important;
     }
     .kinetic-plate__chroma[data-chroma="b"] {
-      translate: -1.5px  1.0px !important;
-      transform: translateZ(32px) !important;
+      translate: -1.5px  1.0px 32px !important;
+      transform: none !important;
     }
     .kinetic-plate__chroma[data-chroma="v"] {
-      translate: -1.2px -1.2px !important;
-      transform: translateZ(28px) !important;
+      translate: -1.2px -1.2px 28px !important;
+      transform: none !important;
     }
   }
 </style>
@@ -307,15 +352,21 @@ const payload = JSON.stringify({
    * viewport traversal. Physically consistent with the tilt-driven
    * parallax so both motion drivers reinforce depth the same way.
    */
+  // rotScale (E-prep, unused in v9.2): when subject-locked rotation
+  // ships, each layer's rotateX/rotateY will multiply the stage tilt
+  // by its rotScale. Bright bucket (subject) gets a small value so
+  // it stays anchored; dark bucket (background) gets a large value
+  // so it swings around the subject. Currently all 1.0 — uniform
+  // tilt, identical to v9.1 behavior.
   const LAYERS = [
     // 0: brightest highlights — pops forward, drifts most on scroll
-    { lumLo: 0.60, lumHi: 1.01, opacity: 1.00, parallax: 1.00, capDpr: false },
+    { lumLo: 0.60, lumHi: 1.01, opacity: 1.00, parallax: 1.00, capDpr: false, rotScale: 1.0 },
     // 1: mid-bright — slight forward pop, moderate drift
-    { lumLo: 0.35, lumHi: 0.60, opacity: 0.92, parallax: 0.60, capDpr: false },
+    { lumLo: 0.35, lumHi: 0.60, opacity: 0.92, parallax: 0.60, capDpr: false, rotScale: 1.0 },
     // 2: mid-dark — slight recession, mild drift
-    { lumLo: 0.15, lumHi: 0.35, opacity: 0.78, parallax: 0.30, capDpr: true  },
+    { lumLo: 0.15, lumHi: 0.35, opacity: 0.78, parallax: 0.30, capDpr: true,  rotScale: 1.0 },
     // 3: darkest shadows — recedes to back, anchored in scroll
-    { lumLo: -0.01, lumHi: 0.15, opacity: 0.62, parallax: 0.00, capDpr: true },
+    { lumLo: -0.01, lumHi: 0.15, opacity: 0.62, parallax: 0.00, capDpr: true, rotScale: 1.0 },
   ];
 
   /**
@@ -375,6 +426,23 @@ const payload = JSON.stringify({
   const MAX_PARALLAX_PX    = 22;
   // Pointer tilt bound. Symmetric on both axes.
   const MAX_TILT_DEG       = 10;
+
+  // v9.2 cursor-coupling bounds.
+  // A: hue rotation. Cursor X drives ±MAX_HUE_DEG. 30° feels like
+  // "the light source moved"; larger values rotate the rainbow
+  // identity past recognizability.
+  const MAX_HUE_DEG        = 30;
+  // B: saturation pump. Cursor at plate center -> SAT_PEAK (vivid);
+  // cursor at rim -> SAT_FLOOR (subdued). Pointer-leave -> 1.0.
+  const SAT_PEAK           = 1.40;
+  const SAT_FLOOR          = 0.85;
+  // D: depth volume expansion. Cursor at center -> DEPTH_PEAK,
+  // cursor at rim -> DEPTH_FLOOR. Pointer-leave -> 1.0.
+  const DEPTH_PEAK         = 1.30;
+  const DEPTH_FLOOR        = 1.00;
+  // sqrt(2) — max possible distance for clamped normalized cursor
+  // coords [-1,1]; pre-computed so we can map distance to [0,1].
+  const NORM_MAX_DIST      = 1.4142135623730951;
 
   function initKineticPlate(fig: HTMLElement): () => void {
     const raw = fig.getAttribute('data-plate');
@@ -643,12 +711,23 @@ const payload = JSON.stringify({
     // compass baseline lives in CSS calc() so the ring is visible
     // whether or not the cursor is over the plate.
     let chromaCx = 0, chromaCy = 0;
+    // v9.2 cursor-coupling state: hue rotation (deg), saturation
+    // multiplier, depth-volume scalar. All neutral at rest so the
+    // figure is unchanged when the cursor is off-plate.
+    let hueShift = 0;
+    let satScale = 1;
+    let depthScale = 1;
     let tiltScheduled = false;
     const applyTilt = () => {
       stage.style.setProperty('--rx', tiltRx.toFixed(2) + 'deg');
       stage.style.setProperty('--ry', tiltRy.toFixed(2) + 'deg');
       stage.style.setProperty('--cx', chromaCx.toFixed(2) + 'px');
       stage.style.setProperty('--cy', chromaCy.toFixed(2) + 'px');
+      // v9.2 cursor-coupling: written on the same rAF as tilt so all
+      // pointer-driven properties commit in a single style flush.
+      stage.style.setProperty('--hue', hueShift.toFixed(2) + 'deg');
+      stage.style.setProperty('--sat', satScale.toFixed(3));
+      stage.style.setProperty('--depth-scale', depthScale.toFixed(3));
     };
     const scheduleTilt = () => {
       if (tiltScheduled) return;
@@ -675,6 +754,22 @@ const payload = JSON.stringify({
       // around the silhouette in their respective directions.
       chromaCx = clampedNx * MAX_CHROMA_PX;
       chromaCy = clampedNy * MAX_CHROMA_PX;
+      // v9.2 cursor-coupling computations.
+      // A) Hue rotation: cursor X maps linearly to ±MAX_HUE_DEG so
+      // a left-to-right sweep rotates the rainbow ring through the
+      // spectrum.
+      hueShift = clampedNx * MAX_HUE_DEG;
+      // Cursor distance from plate center, normalized to [0, 1].
+      // Used by both saturation and depth scale below.
+      const dist = Math.min(1,
+        Math.sqrt(clampedNx * clampedNx + clampedNy * clampedNy) / NORM_MAX_DIST);
+      // B) Saturation pump: vivid at center, subdued at rim. Linear
+      // interp between SAT_PEAK and SAT_FLOOR.
+      satScale = SAT_PEAK - (SAT_PEAK - SAT_FLOOR) * dist;
+      // D) Depth volume expansion: full volume at center, base
+      // volume at rim. Linear interp between DEPTH_PEAK and
+      // DEPTH_FLOOR.
+      depthScale = DEPTH_PEAK - (DEPTH_PEAK - DEPTH_FLOOR) * dist;
       scheduleTilt();
     };
     const onPointerLeave = () => {
@@ -685,6 +780,12 @@ const payload = JSON.stringify({
       // leaves the plate.
       chromaCx = 0;
       chromaCy = 0;
+      // v9.2: reset cursor-coupled properties to neutral so the plate
+      // settles back to its rest expression (zero hue shift, default
+      // saturation, base depth volume).
+      hueShift = 0;
+      satScale = 1;
+      depthScale = 1;
       scheduleTilt();
     };
 
