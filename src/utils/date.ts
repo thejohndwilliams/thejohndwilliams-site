@@ -27,8 +27,6 @@ export function getCurrentYear(): number {
 
 /**
  * Navigation items for the header component.
- * Links page removed from nav — content lives at /links for direct access
- * and is reachable via the homepage Connect section and footer social links.
  */
 export const navItems = [
   { name: 'Photography', href: '/photography' },

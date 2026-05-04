@@ -25,12 +25,6 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL('/writing');
   });
 
-  test('can navigate to Links page', async ({ page }) => {
-    await page.goto('/');
-    await page.click('header a[href="/links"]');
-    await expect(page).toHaveURL('/links');
-  });
-
   test('header logo links to homepage', async ({ page }) => {
     await page.goto('/about');
     await page.click('a:has-text("JW")');

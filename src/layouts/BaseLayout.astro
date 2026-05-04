@@ -20,7 +20,7 @@ interface Props {
       imagesrcset with type negotiation. Leave undefined to skip. */
   lcpImage?: string;
   /** Override imagesizes for LCP preload. Default "100vw" fits full-bleed
-      heroes; /links overrides since its LCP tile isn't full-viewport. */
+      heroes. */
   lcpImageSizes?: string;
 }
 
@@ -418,8 +418,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         if (clean.startsWith('/photography')) return 1;
         if (clean === '/work') return 2;
         if (clean === '/about') return 3;
-        if (clean === '/links') return 4;
-        if (clean === '/privacy') return 5;
+        if (clean === '/privacy') return 4;
         return 99;
       }
 

@@ -7,8 +7,7 @@
         "http://localhost/index.html",
         "http://localhost/about/index.html",
         "http://localhost/work/index.html",
-        "http://localhost/photography/index.html",
-        "http://localhost/links/index.html"
+        "http://localhost/photography/index.html"
       ],
       "settings": {
         "preset": "desktop",
