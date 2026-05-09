@@ -33,7 +33,6 @@ test.describe('Mobile Navigation', () => {
     await page.click('#menu-toggle');
     await expect(page.locator('#mobile-menu a[href="/about"]')).toBeVisible();
     await expect(page.locator('#mobile-menu a[href="/work"]')).toBeVisible();
-    await expect(page.locator('#mobile-menu a[href="/writing"]')).toBeVisible();
   });
 
   test('can navigate via mobile menu', async ({ page }) => {

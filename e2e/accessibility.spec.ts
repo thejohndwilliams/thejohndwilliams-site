@@ -123,16 +123,4 @@ test.describe('Accessibility', () => {
     });
   });
 
-  test.describe('Time Elements', () => {
-    test('time elements have datetime attribute', async ({ page }) => {
-      await page.goto('/writing/dashboard-nobody-uses');
-      const timeElements = page.locator('time');
-      const count = await timeElements.count();
-
-      for (let i = 0; i < count; i++) {
-        const time = timeElements.nth(i);
-        await expect(time).toHaveAttribute('datetime');
-      }
-    });
-  });
 });

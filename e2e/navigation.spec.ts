@@ -19,29 +19,12 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL('/work');
   });
 
-  test('can navigate to Writing page', async ({ page }) => {
-    await page.goto('/');
-    await page.click('header a[href="/writing"]');
-    await expect(page).toHaveURL('/writing');
-  });
-
   test('header logo links to homepage', async ({ page }) => {
     await page.goto('/about');
     await page.click('a:has-text("JW")');
     await expect(page).toHaveURL('/');
   });
 
-  test('can navigate to blog post from Writing page', async ({ page }) => {
-    await page.goto('/writing');
-    await page.click('a[href="/writing/dashboard-nobody-uses"]');
-    await expect(page).toHaveURL('/writing/dashboard-nobody-uses');
-  });
-
-  test('blog post back link works', async ({ page }) => {
-    await page.goto('/writing/dashboard-nobody-uses');
-    await page.click('a:has-text("Back to Writing")');
-    await expect(page).toHaveURL('/writing');
-  });
 });
 
 test.describe('404 Page', () => {

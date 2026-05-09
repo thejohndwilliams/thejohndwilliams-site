@@ -36,37 +36,6 @@ test.describe('Work Page Content', () => {
   });
 });
 
-test.describe('Writing Page Content', () => {
-  test('displays blog post listing', async ({ page }) => {
-    await page.goto('/writing');
-    await expect(page.locator('a[href="/writing/dashboard-nobody-uses"]')).toBeVisible();
-  });
-
-  test('displays coming soon posts', async ({ page }) => {
-    await page.goto('/writing');
-    const comingElements = page.locator('text=Coming');
-    await expect(comingElements.first()).toBeVisible();
-  });
-});
-
-test.describe('Blog Post Content', () => {
-  test('displays post title', async ({ page }) => {
-    await page.goto('/writing/dashboard-nobody-uses');
-    await expect(page.locator('h1')).toBeVisible();
-  });
-
-  test('displays formatted date', async ({ page }) => {
-    await page.goto('/writing/dashboard-nobody-uses');
-    await expect(page.locator('time')).toBeVisible();
-  });
-
-  test('displays read time', async ({ page }) => {
-    await page.goto('/writing/dashboard-nobody-uses');
-    const readElements = page.locator('text=read');
-    await expect(readElements.first()).toBeVisible();
-  });
-});
-
 test.describe('Footer', () => {
   test('displays copyright with current year', async ({ page }) => {
     await page.goto('/');

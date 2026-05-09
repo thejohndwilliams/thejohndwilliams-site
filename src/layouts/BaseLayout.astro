@@ -57,6 +57,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
+    {/* iOS standalone-mode (Add to Home Screen) — matches theme-color
+         so the status bar blends with the page; black-translucent
+         lets the hero photograph extend behind it. */}
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="John D. Williams" />
+
 
 
     {/* Preload critical fonts — self-hosted, no third-party dependency.
