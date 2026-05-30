@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/build-og-images.mjs",
+    "build": "node scripts/emit-kinetic-frames.mjs && astro build && node scripts/build-og-images.mjs",
     "build:og": "node scripts/build-og-images.mjs",
     "preview": "astro preview",
     "astro": "astro",

@@ -115,19 +115,18 @@ const { category, class: extraClass = '' } = Astro.props;
 const frame = signature.frames.find((f: { id: string }) => f.id === category);
 if (!frame) throw new Error(`KineticPlate: unknown category "${category}"`);
 
-const payload = JSON.stringify({
-  cols: signature.cols,
-  rows: signature.rows,
-  grid: frame.grid,
-  alt: frame.alt,
-});
+// v10: geometry is no longer inlined. scripts/emit-kinetic-frames.mjs writes
+// each frame's grid to public/data/kinetic/<id>.json at build time; the
+// hydration script fetches it at low priority. Removes ~80-130 KB of inline
+// data-plate payload per plate from the HTML (/about renders three plates).
+const plateSrc = `/data/kinetic/${category}.json`;
 ---
 
 <figure
   class={`kinetic-plate ${extraClass}`}
   role="img"
   aria-label={`Dot projection of ${frame.alt}`}
-  data-plate={payload}
+  data-plate-src={plateSrc}
 >
   <div class="kinetic-plate__stage">
     <canvas class="kinetic-plate__canvas" data-layer="3" aria-hidden="true"></canvas>
@@ -444,13 +443,27 @@ const payload = JSON.stringify({
   // coords [-1,1]; pre-computed so we can map distance to [0,1].
   const NORM_MAX_DIST      = 1.4142135623730951;
 
+  // v10: fetch geometry from public/data/kinetic/<id>.json rather than an
+  // inline data-plate attribute. Returns a teardown synchronously so the mount
+  // loop is unchanged; real listeners attach once the JSON resolves. The cancel
+  // flag guards against a fast view-transition swap tearing down mid-fetch.
   function initKineticPlate(fig: HTMLElement): () => void {
-    const raw = fig.getAttribute('data-plate');
-    if (!raw) return () => {};
-    let data: Plate;
-    try { data = JSON.parse(raw); } catch { return () => {}; }
-    if (!data.grid || !data.cols || !data.rows) return () => {};
+    const src = fig.getAttribute('data-plate-src');
+    if (!src) return () => {};
+    let cancelled = false;
+    let teardown: () => void = () => {};
+    fetch(src, { priority: 'low' } as any)
+      .then((r) => r.json())
+      .then((data: Plate) => {
+        if (cancelled) return;
+        if (!data || !data.grid || !data.cols || !data.rows) return;
+        teardown = setupPlate(fig, data);
+      })
+      .catch(() => { /* network/parse fail: leave canvases empty, never throw */ });
+    return () => { cancelled = true; teardown(); };
+  }
 
+  function setupPlate(fig: HTMLElement, data: Plate): () => void {
     const stage = fig.querySelector('.kinetic-plate__stage') as HTMLElement | null;
     if (!stage) return () => {};
 

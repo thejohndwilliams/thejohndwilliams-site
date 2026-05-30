@@ -104,6 +104,19 @@ describe('Astro Build', () => {
     expect(html).toContain('property="og:image:height" content="630"');
   });
 
+  it('emits per-frame KineticPlate geometry and keeps /about lean (no inline grids)', () => {
+    // v10: KineticPlate fetches geometry from /data/kinetic/<id>.json instead of
+    // inlining a ~80-130 KB data-plate attribute per plate. /about renders three
+    // plates; before extraction its HTML was ~336 KB.
+    const earthGeom = path.join(distDir, 'data', 'kinetic', 'earth.json');
+    expect(fs.existsSync(earthGeom)).toBe(true);
+    const parsed = JSON.parse(fs.readFileSync(earthGeom, 'utf-8'));
+    expect(parsed.grid.length).toBe(parsed.cols * parsed.rows);
+    const aboutHtml = fs.readFileSync(path.join(distDir, 'about', 'index.html'), 'utf-8');
+    expect(aboutHtml).not.toContain('data-plate=');
+    expect(aboutHtml.length).toBeLessThan(80_000);
+  });
+
 });
 
 describe('Generated HTML Content', () => {
