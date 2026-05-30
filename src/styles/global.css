@@ -1,6 +1,19 @@
 /* Self-hosted fonts — no Google CDN dependency */
 @import url('/fonts/fonts.css');
 
+/* Background tone tokens — dim (brand default) vs true-black (OLED).
+   Only the solid background LEVELS shift between modes; palette hues and the
+   glass system are unchanged. data-theme is set pre-paint by an inline script
+   in BaseLayout so there is no flash. */
+:root {
+  --bg-base: #0a0a0a;
+  --bg-elevated: #141414;
+}
+html[data-theme="black"] {
+  --bg-base: #000000;
+  --bg-elevated: #0a0a0a;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,7 +29,7 @@
   }
 
   body {
-    background-color: #0a0a0a;
+    background-color: var(--bg-base);
     color: #FDFCFA;
     font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -647,15 +660,15 @@
      SECTION PACING — Apple-style alternating dark/light
      ============================================================ */
   .section-dark {
-    background-color: #0a0a0a;
+    background-color: var(--bg-base);
   }
 
   .section-light {
-    background-color: #141414;
+    background-color: var(--bg-elevated);
   }
 
   .section-elevated {
-    background-color: #141414;
+    background-color: var(--bg-elevated);
   }
 
   /* ============================================================
@@ -737,4 +750,14 @@
 #site-header.scrolled {
   background: rgba(10, 10, 10, 0.92);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+/* Dim <-> true-black: smooth the solid-surface swap. The global
+   prefers-reduced-motion rule neutralizes this transition. */
+body,
+.section-dark,
+.section-light,
+.section-elevated {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
