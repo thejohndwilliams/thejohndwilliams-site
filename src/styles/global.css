@@ -715,7 +715,9 @@
 @supports (min-height: 1svh) {
   .min-h-\[50vh\] { min-height: 50svh; }
   .min-h-\[60vh\] { min-height: 60svh; }
+  .min-h-\[65vh\] { min-height: 65svh; }
   .min-h-\[70vh\] { min-height: 70svh; }
+  .min-h-\[75vh\] { min-height: 75svh; }
   .min-h-\[80vh\] { min-height: 80svh; }
   .min-h-\[85vh\] { min-height: 85svh; }
   .min-h-\[90vh\] { min-height: 90svh; }

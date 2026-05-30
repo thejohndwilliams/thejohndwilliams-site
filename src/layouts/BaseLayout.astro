@@ -289,7 +289,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
         // Show nav after scrolling past hero, hide near footer
         let ticking = false;
-        let lastScrollY = 0;
 
         window.addEventListener('scroll', () => {
           if (!ticking) {
@@ -319,7 +318,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
                 }
               }
 
-              lastScrollY = scrollY;
               ticking = false;
             });
             ticking = true;
