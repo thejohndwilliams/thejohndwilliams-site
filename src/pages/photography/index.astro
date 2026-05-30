@@ -163,6 +163,7 @@ const jsonLd = {
                 class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:outline-none transition-all duration-500 cursor-pointer ${spanClass}`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
+                data-file={img.file}
                 data-meta={formatMetaLine(getPhotoMeta(img.file))}
                 style={lqipStyle}
               >
@@ -223,7 +224,7 @@ const jsonLd = {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
       </svg>
     </button>
-    <img id="lightbox-img" src="" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
+    <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
     <div class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
       <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
@@ -379,8 +380,38 @@ const jsonLd = {
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
     const items = document.querySelectorAll('.gallery-item');
+    const closeBtn = document.getElementById('lightbox-close');
     let currentIndex = 0;
     let visibleItems: Element[] = [];
+    let lastFocused: HTMLElement | null = null;
+
+    // Set the lightbox image from a gallery item. Serves the 1200px gallery
+    // tier on phones and the 2400px hero on retina desktop (native sizes
+    // selection) — previously every open fetched the full 2400px hero.
+    function setLightboxImage(item: HTMLElement) {
+      const file = item.dataset.file || '';
+      const alt = item.dataset.alt || '';
+      if (file) {
+        lightboxImg.srcset = `/images/photography/gallery/${file}.webp 1200w, /images/photography/hero/${file}.webp 2400w`;
+        lightboxImg.src = `/images/photography/hero/${file}.webp`;
+      } else {
+        lightboxImg.removeAttribute('srcset');
+        lightboxImg.src = item.dataset.src || '';
+      }
+      lightboxImg.alt = alt;
+      if (lightboxCaption) lightboxCaption.textContent = alt;
+      if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
+    }
+
+    // Warm the next/prev gallery-tier image so navigation feels instant.
+    function prefetchNeighbors() {
+      if (!visibleItems.length) return;
+      for (const d of [-1, 1]) {
+        const n = (currentIndex + d + visibleItems.length) % visibleItems.length;
+        const f = (visibleItems[n] as HTMLElement)?.dataset.file;
+        if (f) { const im = new Image(); im.src = `/images/photography/gallery/${f}.webp`; }
+      }
+    }
 
     function updateVisibleItems() {
       visibleItems = Array.from(document.querySelectorAll('.gallery-section:not([data-hidden]) .gallery-item'));
@@ -391,18 +422,18 @@ const jsonLd = {
       currentIndex = index;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      lightboxImg.src = item.dataset.src || '';
-      lightboxImg.alt = item.dataset.alt || '';
-      if (lightboxCaption) lightboxCaption.textContent = item.dataset.alt || '';
-      if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
+      lastFocused = document.activeElement as HTMLElement;
+      setLightboxImage(item);
       lightbox!.classList.add('active');
       document.body.style.overflow = 'hidden';
-
+      (closeBtn as HTMLElement | null)?.focus();
+      prefetchNeighbors();
     }
 
     function closeLightbox() {
       lightbox!.classList.remove('active');
       document.body.style.overflow = '';
+      lastFocused?.focus();
     }
 
     function navigate(dir: number) {
@@ -410,10 +441,8 @@ const jsonLd = {
       currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      lightboxImg.src = item.dataset.src || '';
-      lightboxImg.alt = item.dataset.alt || '';
-      if (lightboxCaption) lightboxCaption.textContent = item.dataset.alt || '';
-      if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
+      setLightboxImage(item);
+      prefetchNeighbors();
     }
 
     // Intercept clicks on gallery links — open lightbox instead of navigating.
@@ -443,6 +472,16 @@ const jsonLd = {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') navigate(-1);
       if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'Tab') {
+        // Focus trap: keep Tab within the dialog's visible controls.
+        const f = (Array.from(lightbox!.querySelectorAll('button')) as HTMLElement[])
+          .filter((b) => b.offsetParent !== null);
+        if (f.length) {
+          const first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
     });
 
     // Touch/swipe support for mobile lightbox
