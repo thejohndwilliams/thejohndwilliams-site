@@ -98,36 +98,32 @@ const jsonLd = {
     </div>
   </section>
 
-  {/* CATEGORY FILTER */}
-  <section class="section-light py-3 sm:py-4 md:py-5 sticky top-[76px] sm:top-[92px] md:top-[108px] z-30 glass-nav">
+  {/* CATEGORY CONTENTS — quiet, non-sticky wayfinding (not a persistent
+      filter). Scrolls away with the page so no chrome follows the work; each
+      link smooth-scrolls to its section via the global scroll-behavior. The
+      sticky glass filter bar was retired here 2026-05-30. */}
+  <nav class="border-y border-white/5 py-4 sm:py-5" aria-label="Browse by category">
     <div class="container-narrow">
-      <nav class="flex items-center gap-1 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide -mx-1 px-1" id="category-nav" role="tablist">
-        <button
-          class="category-btn active text-sm opacity-90 whitespace-nowrap py-2 px-3 sm:px-2 sm:pb-2 sm:pt-0 border-b-2 border-gold transition-all duration-300 min-h-[44px] flex items-center"
-          data-category="all"
-          role="tab"
-          aria-selected="true"
-        >
-          All
-        </button>
+      <ul class="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto scrollbar-hide -mx-1 px-1">
         {categories.map((cat) => (
-          <button
-            class="category-btn text-sm opacity-60 hover:opacity-70 whitespace-nowrap py-2 px-3 sm:px-2 sm:pb-2 sm:pt-0 border-b-2 border-transparent transition-all duration-300 min-h-[44px] flex items-center"
-            data-category={cat.id}
-            role="tab"
-            aria-selected="false"
-          >
-            {cat.name}
-          </button>
+          <li>
+            <a
+              href={`#gallery-${cat.id}`}
+              class="cat-link text-xs sm:text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 whitespace-nowrap py-2 min-h-[44px] flex items-center"
+              data-cat={cat.id}
+            >
+              {cat.name}
+            </a>
+          </li>
         ))}
-      </nav>
+      </ul>
     </div>
-  </section>
+  </nav>
 
   {/* GALLERY SECTIONS */}
   {categories.map((cat, catIndex) => (
     <section
-      class={`gallery-section py-10 sm:py-16 md:py-24 ${catIndex % 2 === 0 ? '' : 'section-light'}`}
+      class={`gallery-section scroll-mt-[84px] md:scroll-mt-[120px] py-10 sm:py-16 md:py-24 ${catIndex % 2 === 0 ? '' : 'section-light'}`}
       data-category={cat.id}
       id={`gallery-${cat.id}`}
     >
@@ -287,6 +283,7 @@ const jsonLd = {
       const sections = document.querySelectorAll('.gallery-section[data-category]');
       if (!sections.length) return;
 
+      const catLinks = document.querySelectorAll('.cat-link');
       let currentCat = '';
 
       const observer = new IntersectionObserver((entries) => {
@@ -308,6 +305,14 @@ const jsonLd = {
           if (cat && cat !== currentCat) {
             currentCat = cat;
             overlay.style.backgroundColor = colors[cat] || 'transparent';
+            // Reflect scroll position in the contents row.
+            catLinks.forEach((l) => {
+              const on = (l as HTMLElement).dataset.cat === cat;
+              l.classList.toggle('text-cream', on);
+              l.classList.toggle('text-mute', !on);
+              if (on) l.setAttribute('aria-current', 'true');
+              else l.removeAttribute('aria-current');
+            });
           }
         }
       }, {
@@ -344,35 +349,8 @@ const jsonLd = {
 
 <script>
   function initGallery() {
-    // Category filtering
-    const buttons = document.querySelectorAll('.category-btn');
-    const sections = document.querySelectorAll('.gallery-section');
-
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const cat = (btn as HTMLElement).dataset.category;
-
-        buttons.forEach(b => {
-          b.classList.remove('active', 'opacity-90', 'border-gold');
-          b.classList.add('opacity-60', 'border-transparent');
-          b.setAttribute('aria-selected', 'false');
-        });
-        btn.classList.add('active', 'opacity-90', 'border-gold');
-        btn.classList.remove('opacity-60', 'border-transparent');
-        btn.setAttribute('aria-selected', 'true');
-
-        sections.forEach(s => {
-          const el = s as HTMLElement;
-          if (cat === 'all' || el.dataset.category === cat) {
-            el.removeAttribute('data-hidden');
-            el.style.display = '';
-          } else {
-            el.setAttribute('data-hidden', 'true');
-            el.style.display = 'none';
-          }
-        });
-      });
-    });
+    // Category wayfinding is now plain anchor links (.cat-link) + native
+    // smooth scroll — no JS filter/hide. The lightbox cycles the full gallery.
 
     // Lightbox — intercept gallery link clicks
     const lightbox = document.getElementById('lightbox');

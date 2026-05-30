@@ -11,7 +11,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         JW
       </a>
 
-      <!-- Desktop Navigation + Inquire CTA -->
+      {/* Desktop navigation + Inquire CTA. On mobile the header is just the
+          wordmark — navigation lives in the bottom tab bar (BaseLayout), in
+          the thumb zone, so there is no hamburger menu. */}
       <div class="hidden md:flex items-center gap-8">
         <ul class="flex items-center gap-8">
           {navItems.map((item) => {
@@ -37,115 +39,20 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
           <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </a>
       </div>
-
-      <!-- Mobile Menu Button — 44px touch target -->
-      <button
-        id="menu-toggle"
-        class="md:hidden w-11 h-11 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300 -mr-2"
-        aria-label="Toggle menu"
-        aria-expanded="false"
-      >
-        <svg id="menu-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-        <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
     </nav>
-
-    <!-- Mobile Navigation — slide-down with fade -->
-    <div id="mobile-menu" class="mobile-menu-closed md:hidden overflow-hidden">
-      <div class="pt-4 pb-2 border-t border-white/10 mt-4">
-        <ul class="space-y-1">
-          {navItems.map((item) => {
-            const isActive = currentPath === item.href;
-            return (
-              <li>
-                <a
-                  href={item.href}
-                  class={`block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-70 hover:opacity-100 active:opacity-100'}`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  {item.name}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
   </div>
 </header>
 
-<style>
-  .mobile-menu-closed {
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .mobile-menu-open {
-    max-height: 500px;
-    opacity: 1;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
-  }
-</style>
-
 <script>
-  function initMenu() {
-    const toggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('mobile-menu');
-    const iconOpen = document.getElementById('menu-icon-open');
-    const iconClose = document.getElementById('menu-icon-close');
-    let isOpen = false;
-
-    function setMenuState(open: boolean) {
-      isOpen = open;
-      if (open) {
-        menu?.classList.remove('mobile-menu-closed');
-        menu?.classList.add('mobile-menu-open');
-        iconOpen?.classList.add('hidden');
-        iconClose?.classList.remove('hidden');
-      } else {
-        menu?.classList.remove('mobile-menu-open');
-        menu?.classList.add('mobile-menu-closed');
-        iconOpen?.classList.remove('hidden');
-        iconClose?.classList.add('hidden');
-      }
-      toggle?.setAttribute('aria-expanded', String(open));
-    }
-
-    toggle?.addEventListener('click', () => setMenuState(!isOpen));
-
-    // Close menu on navigation
-    menu?.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => setMenuState(false));
-    });
-  }
-
+  // Desktop nav active-state sync after View Transitions + the solid
+  // "scrolled" shelf state. Mobile navigation is the bottom tab bar in
+  // BaseLayout; the header carries no mobile menu.
   function updateActiveNav() {
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-
-    // Update desktop nav — selector matches the new div.hidden wrapper
     document.querySelectorAll('header nav > div.hidden ul a').forEach(link => {
       const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
       const isActive = href === currentPath;
       link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-gold' : 'text-mute hover:opacity-100 hover:text-cream'}`;
-      if (isActive) {
-        link.setAttribute('aria-current', 'page');
-      } else {
-        link.removeAttribute('aria-current');
-      }
-    });
-
-    // Update mobile nav
-    document.querySelectorAll('#mobile-menu a').forEach(link => {
-      const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
-      const isActive = href === currentPath;
-      link.className = `block py-3 px-3 transition-all duration-300 text-base min-h-[44px] flex items-center rounded-lg ${isActive ? 'opacity-100 text-gold bg-white/5 border-l-2 border-gold pl-4' : 'opacity-70 hover:opacity-100 active:opacity-100'}`;
       if (isActive) {
         link.setAttribute('aria-current', 'page');
       } else {
@@ -173,15 +80,12 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       }
     }, { passive: true });
 
-    // Set initial state
     if (window.scrollY > 40) header.classList.add('scrolled');
   }
 
-  initMenu();
   updateActiveNav();
   initGlassHeader();
   document.addEventListener('astro:after-swap', () => {
-    initMenu();
     updateActiveNav();
     initGlassHeader();
   });

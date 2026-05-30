@@ -740,12 +740,11 @@ html[data-theme="black"] {
 
 
 /* ============================================================
-   HEADER SCROLLED STATE -- quiet-luxury pass 2026-04-23
-   Replaces .glass-nav on the site header with a solid shelf.
-   Rationale: keep one glass surface per screen. The /photography
-   sticky category filter is the page's glass; the header is the
-   page's shelf. Prevents double-blur stacking confusion and
-   restores quiet gallery voice over SaaS chrome voice.
+   HEADER SCROLLED STATE -- quiet-luxury pass
+   The site header is a solid shelf (not glass) when scrolled. As of
+   2026-05-30 the /photography category bar is non-sticky editorial
+   wayfinding (anchor links, no glass, scrolls away with the page), so
+   the header is the only persistent chrome — no double-blur stacking.
    ============================================================ */
 #site-header.scrolled {
   background: rgba(10, 10, 10, 0.92);
