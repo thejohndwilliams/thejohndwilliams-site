@@ -354,6 +354,16 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       }
 
       function initReveal() {
+        // Tell the inline failsafe the bundle executed.
+        window.__revealReady = true;
+        const els = document.querySelectorAll('.reveal, .stagger-children');
+        // Reduced-motion or no IntersectionObserver: reveal immediately.
+        // Content must never be stuck at opacity:0.
+        if (!('IntersectionObserver' in window) ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          els.forEach((el) => el.classList.add('visible'));
+          return;
+        }
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -365,10 +375,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           },
           { threshold: 0.1, rootMargin: '0px 0px -48px 0px' }
         );
-
-        document.querySelectorAll('.reveal, .stagger-children').forEach((el) => {
-          observer.observe(el);
-        });
+        els.forEach((el) => observer.observe(el));
       }
 
 
@@ -434,6 +441,21 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         initReveal();
         initBottomNav();
         // Specular listener is attached to window once; no re-init needed.
+      });
+    </script>
+
+    {/* Reveal failsafe — inline (NOT bundled), so it runs even if the main
+        module fails to load/parse on older mobile Safari or a flaky chunk.
+        If the bundle never set __revealReady, force all reveal content
+        visible so images can never be stuck invisible. */}
+    <script is:inline>
+      addEventListener('load', function () {
+        setTimeout(function () {
+          if (window.__revealReady) return;
+          document.querySelectorAll('.reveal, .stagger-children').forEach(function (el) {
+            el.classList.add('visible');
+          });
+        }, 1500);
       });
     </script>
 

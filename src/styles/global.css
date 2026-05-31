@@ -725,6 +725,19 @@ html[data-theme="black"] {
     transform: translateY(0);
     filter: none;
   }
+
+  /* Resilience + a11y: scroll-reveal must never hide content. Under
+     reduced-motion the animation is skipped entirely (content shown). A JS
+     failsafe in BaseLayout covers a main-bundle load failure on mobile. */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .stagger-children > * {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+      transition: none !important;
+    }
+  }
 }
 
 
