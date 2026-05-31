@@ -82,10 +82,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
 
     {/* Preload critical fonts — self-hosted, no third-party dependency.
-         Body font (IBM Plex Sans 400) is critical for LCP; Libre
-         Baskerville display serif is used above the fold on every page. */}
+         Body font (IBM Plex Sans 400) is critical for LCP; EB Garamond
+         display serif is used above the fold on every page. */}
     <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/fraunces/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/eb-garamond/eb-garamond-normal.woff2" as="font" type="font/woff2" crossorigin />
 
     {/* HDR + wide-gamut palette overrides (Tier 1). Served verbatim from
          public/ so Astro's CSS build pass doesn't gamut-map color(display-p3)
@@ -300,7 +300,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         nav.querySelectorAll('.bottom-nav-item').forEach((item) => {
           const el = item as HTMLElement;
           if (el.dataset.path === currentPath) {
-            el.classList.add('text-cream');
+            el.classList.add('text-navy-hour');
             el.addEventListener('click', (e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });

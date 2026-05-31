@@ -20,13 +20,9 @@ export default {
           600: '#9A8D76',
           700: '#776B57',
         },
-        gold: {
-          DEFAULT: '#A37E2C',
-          light: '#C2974A',
-          dark: '#6E5526',
-        },
         navy: {
           DEFAULT: '#001F3F',
+          hour: '#7E9CB8', // blue-hour — accent for active states + fine lines (replaces gold)
           deep: '#00121F',
         },
         charcoal: {
@@ -38,10 +34,8 @@ export default {
         /* Muted text — WCAG AA pass on midnight (#0a0a0a): 5.1:1.
            Use in place of opacity-40 for any prose or functional text. */
         mute: '#787878',
-        /* Secondary accent — warm stone. Cool counterpoint to the
-           gold. Use for secondary actions, hover states, subtle
-           highlights. Leaves gold free to mean "primary / most
-           important" per surface. */
+        /* Secondary accent — warm stone. Use for secondary actions,
+           hover states, and subtle highlights. */
         stone: {
           DEFAULT: '#A89F8C',
           light: '#C7C0AF',
@@ -49,7 +43,7 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['Fraunces', 'Georgia', 'serif'],
+        serif: ['EB Garamond', 'Georgia', 'serif'],
         sans: ['IBM Plex Sans', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },

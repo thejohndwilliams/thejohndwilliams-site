@@ -57,7 +57,7 @@ html[data-theme="black"] {
 
   /* Typography scale — Apple-inspired letter-spacing precision */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'EB Garamond', Georgia, serif;
     font-weight: 400;
     font-optical-sizing: auto;
     letter-spacing: -0.01em;
@@ -402,7 +402,7 @@ html[data-theme="black"] {
     }
   }
 
-  /* Luminous border — gold glow on hover for image cards */
+  /* Luminous border — ivory glow on hover for image cards */
   .glass-luminous {
     position: relative;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -509,14 +509,7 @@ html[data-theme="black"] {
       0 8px 32px rgba(0, 0, 0, 0.25);
   }
 
-  /* Gold accent */
-  .text-gold {
-    color: #A37E2C;
-  }
-
-  .text-gold:hover {
-    color: #C2974A;
-  }
+  /* Gold retired 2026-05-31 — tonal ivory mark + blue-hour accent. */
 
   /* Buttons — 44px min touch target on mobile, 8pt grid aligned */
   .btn {
@@ -559,8 +552,8 @@ html[data-theme="black"] {
   }
 
   .btn-outline:hover {
-    border-color: #A37E2C;
-    color: #A37E2C;
+    border-color: #7E9CB8;
+    color: #7E9CB8;
   }
 
   /* Subhead utility */
@@ -590,7 +583,7 @@ html[data-theme="black"] {
     margin-top: 3rem;
     margin-bottom: 1rem;
     font-size: 1.333rem;
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'EB Garamond', Georgia, serif;
     font-weight: 400;
   }
 

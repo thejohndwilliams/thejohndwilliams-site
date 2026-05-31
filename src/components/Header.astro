@@ -7,7 +7,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 <header id="site-header" class="py-4 sm:py-6 md:py-8 sticky top-0 z-40 transition-all duration-500" transition:persist>
   <div class="nav-shell">
     <nav class="flex items-center justify-between">
-      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-gold min-h-[44px] flex items-center" transition:name="logo">
+      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] flex items-center" transition:name="logo">
         JW
       </a>
 
@@ -22,7 +22,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
               <li>
                 <a
                   href={item.href}
-                  class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-cream' : 'text-mute hover:opacity-100 hover:text-cream'}`}
+                  class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-cream'}`}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   {item.name}
@@ -52,7 +52,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     document.querySelectorAll('header nav > div.hidden ul a').forEach(link => {
       const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
       const isActive = href === currentPath;
-      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-cream' : 'text-mute hover:opacity-100 hover:text-cream'}`;
+      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-cream'}`;
       if (isActive) {
         link.setAttribute('aria-current', 'page');
       } else {

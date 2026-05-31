@@ -71,7 +71,8 @@
   src: url(/fonts/plex/plex-600.woff2) format('woff2');
 }
 
-/* Fraunces — high-contrast film serif (display voice), self-hosted variable
-   (weight + optical-size axes), latin. Replaces Libre Baskerville. */
-@font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:100 900;src:url('/fonts/fraunces/fraunces-normal.woff2') format('woff2');}
-@font-face{font-family:'Fraunces';font-style:italic;font-display:swap;font-weight:100 900;src:url('/fonts/fraunces/fraunces-italic.woff2') format('woff2');}
+/* EB Garamond — humanist old-style serif (display voice), self-hosted
+   variable (weight axis), latin. Replaces Fraunces: warmer, lighter, old-money,
+   clean unswashed J. UI stays IBM Plex Sans. */
+@font-face{font-family:'EB Garamond';font-style:normal;font-display:swap;font-weight:400 800;src:url('/fonts/eb-garamond/eb-garamond-normal.woff2') format('woff2');}
+@font-face{font-family:'EB Garamond';font-style:italic;font-display:swap;font-weight:400 800;src:url('/fonts/eb-garamond/eb-garamond-italic.woff2') format('woff2');}
