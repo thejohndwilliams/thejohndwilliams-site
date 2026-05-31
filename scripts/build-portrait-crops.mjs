@@ -12,7 +12,7 @@ const srcDir = join(root, 'public/images/photography/hero');
 const outDir = join(root, 'public/images/photography/portrait');
 mkdirSync(outDir, { recursive: true });
 
-const HEROES = ['7r52326', 'john-portrait-bw'];
+const HEROES = ['7r52326', 'john-portrait-bw', 'img-1066'];
 const W = 1080, H = 1440; // 3:4 portrait, full-bleed phone hero
 
 for (const f of HEROES) {
