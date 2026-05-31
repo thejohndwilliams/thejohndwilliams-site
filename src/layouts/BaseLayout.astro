@@ -80,7 +80,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
          Body font (IBM Plex Sans 400) is critical for LCP; Libre
          Baskerville display serif is used above the fold on every page. */}
     <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/kmKnZrc3Hgbbcjq75U4uslyuy4kn0qNZaxMaC82U.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/fraunces/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
 
     {/* HDR + wide-gamut palette overrides (Tier 1). Served verbatim from
          public/ so Astro's CSS build pass doesn't gamut-map color(display-p3)
@@ -219,7 +219,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       </filter>
     </svg>
 
-    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-gold focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
+    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-cream focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
     <Header />
     <main id="content" class="flex-grow" transition:name="page">
       <slot />
@@ -230,7 +230,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
       {/* Inquire pill — floats above the tab bar */}
       <div class="flex justify-center pb-2">
-        <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] bg-gold text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-lg shadow-gold/25 ring-1 ring-gold-light/30 active:scale-95 transition-transform duration-150">
+        <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] bg-cream text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-lg shadow-black/40 ring-1 ring-cream/30 active:scale-95 transition-transform duration-150">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           Inquire
         </a>
@@ -287,7 +287,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         nav.querySelectorAll('.bottom-nav-item').forEach((item) => {
           const el = item as HTMLElement;
           if (el.dataset.path === currentPath) {
-            el.classList.add('text-gold');
+            el.classList.add('text-cream');
             el.addEventListener('click', (e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
