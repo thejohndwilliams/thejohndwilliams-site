@@ -8,12 +8,15 @@ import KineticPlate from '../components/KineticPlate.astro';
   description="Making visible. The through-line across film, cybersecurity, data, and photography. John D. Williams."
   ogImage="/images/photography/hero/john-portrait-bw.webp"
   lcpImage="john-portrait-bw"
+  lcpImagePortrait="john-portrait-bw"
 >
   <!-- Scroll progress indicator -->
 
   <!-- HERO — Portrait with full-bleed image -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <picture>
+      <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/john-portrait-bw.avif" />
+      <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/john-portrait-bw.webp" />
       <source
         type="image/avif"
         srcset="/images/photography/thumb/john-portrait-bw.avif 400w, /images/photography/gallery/john-portrait-bw.avif 1200w, /images/photography/hero/john-portrait-bw.avif 2400w"

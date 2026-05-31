@@ -52,6 +52,7 @@ const jsonLd = {
   description="Fine art photography by John D. Williams. Sky, earth, water, structure, and light — shot on Sony Alpha and Fujifilm X-Series."
   ogImage="/images/photography/hero/7r52326.webp"
   lcpImage="7r52326"
+  lcpImagePortrait="7r52326"
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
@@ -61,6 +62,8 @@ const jsonLd = {
   {/* HERO — Featured image full-bleed */}
   <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
     <picture>
+      <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/7r52326.avif" />
+      <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/7r52326.webp" />
       <source
         type="image/avif"
         srcset="/images/photography/thumb/7r52326.avif 400w, /images/photography/gallery/7r52326.avif 1200w, /images/photography/hero/7r52326.avif 2400w"

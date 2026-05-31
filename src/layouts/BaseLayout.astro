@@ -22,6 +22,10 @@ interface Props {
   /** Override imagesizes for LCP preload. Default "100vw" fits full-bleed
       heroes. */
   lcpImageSizes?: string;
+  /** Portrait crop basename in /images/photography/portrait/ for <=640px.
+      When set, the LCP preload is split media-wise so phones preload the
+      portrait art-direction, not the landscape they won't paint. */
+  lcpImagePortrait?: string;
 }
 
 const {
@@ -31,7 +35,8 @@ const {
   ogImageWidth = 2400,
   ogImageHeight = 1600,
   lcpImage,
-  lcpImageSizes = '100vw'
+  lcpImageSizes = '100vw',
+  lcpImagePortrait
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -103,6 +108,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           href={`/images/photography/hero/${lcpImage}.avif`}
           imagesrcset={`/images/photography/thumb/${lcpImage}.avif 400w, /images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
           imagesizes={lcpImageSizes}
+          media={lcpImagePortrait ? '(min-width: 641px)' : undefined}
           fetchpriority="high"
         />
         <link
@@ -112,8 +118,15 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           href={`/images/photography/hero/${lcpImage}.webp`}
           imagesrcset={`/images/photography/thumb/${lcpImage}.webp 400w, /images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
           imagesizes={lcpImageSizes}
+          media={lcpImagePortrait ? '(min-width: 641px)' : undefined}
           fetchpriority="high"
         />
+        {lcpImagePortrait && (
+          <>
+            <link rel="preload" as="image" type="image/avif" href={`/images/photography/portrait/${lcpImagePortrait}.avif`} media="(max-width: 640px)" fetchpriority="high" />
+            <link rel="preload" as="image" type="image/webp" href={`/images/photography/portrait/${lcpImagePortrait}.webp`} media="(max-width: 640px)" fetchpriority="high" />
+          </>
+        )}
       </>
     )}
 
