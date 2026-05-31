@@ -451,5 +451,18 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         document.documentElement.classList.remove('nav-back');
       });
     </script>
+    {/* Lenis — patient smooth scroll (Reverent Dark "slowness is the brand").
+         Desktop wheel; touch stays native. Off under reduced-motion. Exposed as
+         window.__lenis so in-page anchors can scrollTo past the sticky header. */}
+    <script>
+      import Lenis from 'lenis';
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        (window as any).__lenis = lenis;
+        const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
+        requestAnimationFrame(raf);
+        document.addEventListener('astro:after-swap', () => lenis.scrollTo(0, { immediate: true }));
+      }
+    </script>
   </body>
 </html>

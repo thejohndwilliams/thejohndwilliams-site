@@ -96,7 +96,7 @@ html[data-theme="black"] {
   }
 
   ::selection {
-    background-color: rgba(163, 126, 44, 0.3);
+    background-color: rgba(244, 234, 222, 0.18);
     color: #F4EADE;
   }
 
@@ -601,17 +601,17 @@ html[data-theme="black"] {
   }
 
   .prose a {
-    color: #A37E2C;
+    color: #F4EADE;
     text-decoration: none;
-    border-bottom: 1px solid rgba(163, 126, 44, 0.3);
+    border-bottom: 1px solid rgba(244, 234, 222, 0.3);
   }
 
   .prose a:hover {
-    border-bottom-color: #A37E2C;
+    border-bottom-color: #F4EADE;
   }
 
   .prose blockquote {
-    border-left: 2px solid rgba(163, 126, 44, 0.5);
+    border-left: 2px solid rgba(244, 234, 222, 0.25);
     padding-left: 1.5rem;
     margin: 2rem 0;
     font-style: italic;
@@ -634,7 +634,7 @@ html[data-theme="black"] {
     background-color: rgba(255, 255, 255, 0.08);
     padding: 0.125rem 0.5rem;
     border-radius: 0.25rem;
-    color: #C2974A;
+    color: #C7C0AF;
   }
 
   .prose pre {
@@ -768,3 +768,14 @@ body,
 .section-elevated {
   transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* ============================================================
+   LENIS SMOOTH SCROLL — patient scroll ("slowness is the brand").
+   Desktop wheel smoothed; touch uses native scroll; disabled under
+   prefers-reduced-motion (Lenis simply isn't instantiated).
+   ============================================================ */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }

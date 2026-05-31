@@ -323,8 +323,24 @@ const jsonLd = {
       sections.forEach(s => observer.observe(s));
     }
 
+    function initCatScroll() {
+      document.querySelectorAll('.cat-link').forEach((a) => {
+        const el = a as HTMLElement;
+        if (el.dataset.lenisBound) return;
+        el.dataset.lenisBound = '1';
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href') || '';
+          if (!href.startsWith('#')) return;
+          const target = document.querySelector(href);
+          const lenis = (window as any).__lenis;
+          if (target && lenis) { e.preventDefault(); lenis.scrollTo(target, { offset: -100 }); }
+        });
+      });
+    }
+
     initAtmosphere();
-    document.addEventListener('astro:after-swap', initAtmosphere);
+    initCatScroll();
+    document.addEventListener('astro:after-swap', () => { initAtmosphere(); initCatScroll(); });
   </script>
 
 </BaseLayout>
