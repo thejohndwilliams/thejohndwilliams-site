@@ -136,7 +136,7 @@ const jsonLd = {
           <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
         </div>
 
-        <div class="photo-grid grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+        <div class="photo-grid columns-2 md:columns-3 gap-2 sm:gap-3 md:gap-4">
           {cat.images.map((img, i) => {
             // Tile takes the photograph's true aspect ratio (no crop) + LQIP blur
             // underneath. Triptych rows; framing preserved.
@@ -150,7 +150,7 @@ const jsonLd = {
             return (
               <a
                 href={`/photography/${img.file}`}
-                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden block w-full break-inside-avoid mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-file={img.file}
