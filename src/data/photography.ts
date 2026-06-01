@@ -153,7 +153,6 @@ export const categories: PhotoCategory[] = [
       { file: 'dsc-0101', alt: 'City skyline burning blue at night', orientation: 'landscape' },
       { file: 'dsc-0329', alt: 'Light through a derelict hall', orientation: 'landscape' },
       { file: 'img-0161', alt: 'Stairs descending into low light', orientation: 'portrait' },
-      { file: 'img-7598', alt: 'A temple lit red after dark', orientation: 'portrait' },
       { file: 'img-7462', alt: 'Harbor city glowing at dusk', orientation: 'landscape' },
     ]
   },
@@ -165,7 +164,6 @@ export const categories: PhotoCategory[] = [
       { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait', featured: true },
       { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
       { file: 'burningcold-enhanced', alt: 'Fire consuming structure', orientation: 'landscape' },
-      { file: 'burningcold', alt: 'Cold light folding through the dark', orientation: 'landscape' },
       { file: 'dscf0331', alt: 'Daylight pressed through shutters', orientation: 'portrait' },
       { file: 'dscf1419', alt: 'A globe of light held in shadow', orientation: 'portrait' },
       { file: 'dsc-0014', alt: 'A carved ram emerging from black', orientation: 'landscape', featured: true },

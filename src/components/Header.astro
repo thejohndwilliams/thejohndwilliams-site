@@ -22,7 +22,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
               <li>
                 <a
                   href={item.href}
-                  class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-cream'}`}
+                  class={`text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-navy-hour'}`}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   {item.name}
@@ -52,7 +52,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     document.querySelectorAll('header nav > div.hidden ul a').forEach(link => {
       const href = new URL(link.getAttribute('href') || '', window.location.origin).pathname.replace(/\/$/, '');
       const isActive = href === currentPath;
-      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-cream'}`;
+      link.className = `text-sm transition-opacity duration-300 py-2 ${isActive ? 'opacity-100 text-navy-hour' : 'text-mute hover:opacity-100 hover:text-navy-hour'}`;
       if (isActive) {
         link.setAttribute('aria-current', 'page');
       } else {

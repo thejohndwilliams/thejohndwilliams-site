@@ -117,7 +117,7 @@ const expertise = [
       <div class="stagger-children space-y-4 sm:space-y-6 mb-10 sm:mb-16">
         {projects.map((project) => (
           <div class="glass-card p-5 sm:p-8 md:p-10">
-            <h2 class="text-lg sm:text-xl font-serif mb-3 sm:mb-4">{project.title}</h2>
+            <h2 class="t-sub font-serif mb-3 sm:mb-4">{project.title}</h2>
             <p class="text-sm sm:text-base opacity-55 mb-4 sm:mb-6 leading-relaxed">{project.description}</p>
             <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
               {project.tags.map((tag: string) => (
@@ -129,7 +129,7 @@ const expertise = [
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
               <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
               {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-60 hover:opacity-80 hover:text-cream transition-all duration-300 min-h-[44px] flex items-center">
+                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-60 hover:opacity-80 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
                   View on GitHub →
                 </a>
               )}
@@ -177,7 +177,7 @@ const expertise = [
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
-        <h2 class="text-lg sm:text-xl font-serif mb-3 sm:mb-4">Have a project in mind?</h2>
+        <h2 class="t-sub font-serif mb-3 sm:mb-4">Have a project in mind?</h2>
         <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
           I take on consulting work in data engineering,
           cybersecurity, and operational analytics.

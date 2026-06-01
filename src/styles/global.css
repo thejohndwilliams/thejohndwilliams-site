@@ -67,21 +67,21 @@ html[data-theme="black"] {
 
   h1 {
     /* Fluid: 36px at 320w → 56px at 1200w */
-    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem);
     line-height: 1.1;
     letter-spacing: -0.025em;
   }
 
   h2 {
     /* Fluid: 24px at 320w → 32px at 1200w */
-    font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+    font-size: clamp(1.5rem, 1.25rem + 1.4vw, 2.5rem);
     line-height: 1.25;
     letter-spacing: -0.015em;
   }
 
   h3 {
     /* Fluid: 20px at 320w → 24px at 1200w */
-    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.65rem);
     line-height: 1.3;
     letter-spacing: -0.01em;
   }
@@ -115,6 +115,14 @@ html[data-theme="black"] {
    COMPONENT STYLES
    ============================================================ */
 @layer components {
+  /* Fluid type scale — clamp() so headings resize on ANY screen (core site
+     principle). Replaces fixed text-xl/2xl/3xl steps that capped at the md
+     breakpoint and stopped growing on large monitors. */
+  .t-display { font-size: clamp(2.5rem, 1.55rem + 4.2vw, 5rem); line-height: 1.04; }
+  .t-title   { font-size: clamp(2rem, 1.45rem + 2.6vw, 3.75rem); line-height: 1.08; }
+  .t-section { font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem); line-height: 1.15; }
+  .t-sub     { font-size: clamp(1.125rem, 0.98rem + 0.7vw, 1.6rem); line-height: 1.25; }
+
   /* Containers — wider for expansive feel */
   .container-narrow {
     max-width: 56rem; /* 1008px — up from 768px */
@@ -600,7 +608,8 @@ html[data-theme="black"] {
   }
 
   .prose a:hover {
-    border-bottom-color: #F4EADE;
+    color: #7E9CB8;
+    border-bottom-color: #7E9CB8;
   }
 
   .prose blockquote {
