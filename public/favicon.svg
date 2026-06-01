@@ -7,5 +7,5 @@
     </style>
   </defs>
   <rect class="bg" width="64" height="64" rx="14" fill="#0a0a0a"/>
-  <text x="32" y="45" font-family="Georgia, 'Libre Baskerville', 'Times New Roman', serif" font-size="30" font-weight="400" fill="#B8973F" text-anchor="middle" letter-spacing="-1.5" style="font-variant-ligatures: none;">JW</text>
+  <text x="32" y="45" font-family="Georgia, 'Libre Baskerville', 'Times New Roman', serif" font-size="30" font-weight="400" fill="#F4EADE" text-anchor="middle" letter-spacing="-1.5" style="font-variant-ligatures: none;">JW</text>
 </svg>
