@@ -205,8 +205,8 @@ html[data-theme="black"] {
       rgba(255, 255, 255, 0.01) 50%,
       rgba(255, 255, 255, 0.03) 100%
     );
-    backdrop-filter: blur(26px) saturate(1.7);
-    -webkit-backdrop-filter: blur(26px) saturate(1.7);
+    backdrop-filter: blur(28px) saturate(1.8);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     box-shadow:
@@ -260,7 +260,7 @@ html[data-theme="black"] {
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
       0 8px 40px rgba(0, 0, 0, 0.35),
-      0 0 0 1px rgba(163, 126, 44, 0.06);
+      0 0 0 1px rgba(126, 156, 184, 0.06);
   }
 
   /* Glass panel — larger translucent surfaces (sections, overlays) */
@@ -271,9 +271,9 @@ html[data-theme="black"] {
       rgba(255, 255, 255, 0.03) 0%,
       rgba(255, 255, 255, 0.01) 100%
     );
-    backdrop-filter: blur(34px) saturate(1.8);
-    -webkit-backdrop-filter: blur(34px) saturate(1.8);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(28px) saturate(1.8);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
       0 2px 16px rgba(0, 0, 0, 0.15);
@@ -310,8 +310,8 @@ html[data-theme="black"] {
   /* Glass tag — pills, badges, expertise tags */
   .glass-tag {
     background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -328,10 +328,10 @@ html[data-theme="black"] {
   /* Glass nav — header and navigation surfaces */
   .glass-nav {
     position: relative;
-    background: rgba(10, 10, 10, 0.75);
-    backdrop-filter: blur(44px) saturate(1.85);
-    -webkit-backdrop-filter: blur(44px) saturate(1.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(40px) saturate(1.8);
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03);
   }
 
@@ -370,8 +370,8 @@ html[data-theme="black"] {
   .glass-tabbar {
     position: relative;
     background: rgba(10, 10, 10, 0.72);
-    backdrop-filter: blur(44px) saturate(1.85);
-    -webkit-backdrop-filter: blur(44px) saturate(1.85);
+    backdrop-filter: blur(40px) saturate(1.8);
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04);
   }
@@ -439,8 +439,8 @@ html[data-theme="black"] {
     padding: 1px;
     background: linear-gradient(
       135deg,
-      rgba(163, 126, 44, 0) 0%,
-      rgba(163, 126, 44, 0.15) 50%,
+      rgba(126, 156, 184, 0) 0%,
+      rgba(126, 156, 184, 0.15) 50%,
       rgba(255, 255, 255, 0.1) 100%
     );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -458,8 +458,8 @@ html[data-theme="black"] {
 
   .glass-luminous:hover {
     box-shadow:
-      0 8px 40px rgba(163, 126, 44, 0.08),
-      0 0 80px rgba(163, 126, 44, 0.03);
+      0 8px 40px rgba(126, 156, 184, 0.08),
+      0 0 80px rgba(126, 156, 184, 0.03);
   }
 
 
@@ -511,9 +511,9 @@ html[data-theme="black"] {
       rgba(255, 255, 255, 0.04) 0%,
       rgba(255, 255, 255, 0.01) 100%
     );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -656,7 +656,7 @@ html[data-theme="black"] {
 
   .prose pre {
     background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     padding: 1.5rem;
     overflow-x: auto;
