@@ -136,30 +136,21 @@ const jsonLd = {
           <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
         </div>
 
-        <div class="stagger-children grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 min-[480px]:gap-3 md:gap-4">
+        <div class="photo-grid grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
           {cat.images.map((img, i) => {
-            const spanClass = img.featured
-              ? 'min-[480px]:col-span-2 min-[480px]:row-span-2'
-              : img.orientation === 'portrait'
-                ? 'min-[480px]:row-span-2'
-                : '';
-            const aspectClass = img.featured
-              ? 'aspect-[16/9] min-[480px]:aspect-square md:aspect-auto md:h-full'
-              : img.orientation === 'portrait'
-                ? 'aspect-[4/3] min-[480px]:aspect-[3/4]'
-                : 'aspect-[4/3]';
-
-            // LQIP (tiny base64 WebP) renders as a soft blur under the <picture>
-            // while the real image loads. Degrades gracefully if placeholder missing.
+            // Tile takes the photograph's true aspect ratio (no crop) + LQIP blur
+            // underneath. Triptych rows; framing preserved.
             const ph = getPlaceholder(img.file);
-            const lqipStyle = ph
-              ? `background-image: url('${ph.lqip}'); background-size: cover; background-position: center;`
-              : undefined;
+            const ratio = ph && ph.width && ph.height
+              ? (ph.width / ph.height).toFixed(4)
+              : (img.orientation === 'portrait' ? '0.75' : '1.5');
+            const lqipStyle = `aspect-ratio: ${ratio};`
+              + (ph ? ` background-image: url('${ph.lqip}'); background-size: cover; background-position: center;` : '');
 
             return (
               <a
                 href={`/photography/${img.file}`}
-                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer ${spanClass}`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-stone-light/30 active:ring-stone-light/40 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-file={img.file}
@@ -170,21 +161,17 @@ const jsonLd = {
                   <source
                     type="image/avif"
                     srcset={`/images/photography/thumb/${img.file}.avif 400w, /images/photography/gallery/${img.file}.avif 1200w`}
-                    sizes={img.featured
-                      ? '(max-width: 479px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 66vw, 50vw'
-                      : '(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'}
+                    sizes="(max-width: 767px) 50vw, 33vw"
                   />
                   <source
                     type="image/webp"
                     srcset={`/images/photography/thumb/${img.file}.webp 400w, /images/photography/gallery/${img.file}.webp 1200w`}
-                    sizes={img.featured
-                      ? '(max-width: 479px) 100vw, (max-width: 767px) 100vw, (max-width: 1023px) 66vw, 50vw'
-                      : '(max-width: 479px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw'}
+                    sizes="(max-width: 767px) 50vw, 33vw"
                   />
                   <img
                     src={`/images/photography/gallery/${img.file}.webp`}
                     alt={img.alt}
-                    class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform ${aspectClass}`}
+                    class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform`}
                     loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
                     decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
                     width={ph?.width}
@@ -358,14 +345,17 @@ const jsonLd = {
 
   #lightbox.active { display: flex; }
 
-  #lightbox img {
-    animation: lightbox-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  /* Develop-from-black: photos settle up out of shadow as they load. JS adds
+     .developing only to not-yet-loaded imgs and removes on load — a JS failure
+     can never hide them (visible by default). */
+  .photo-grid img { transition: filter 1.1s cubic-bezier(.22,.61,.36,1), opacity 1.1s cubic-bezier(.22,.61,.36,1); }
+  .photo-grid img.developing { filter: brightness(.5) saturate(.9); opacity: .55; }
+  @media (prefers-reduced-motion: reduce) { .photo-grid img.developing { filter: none; opacity: 1; } }
 
-  @keyframes lightbox-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
+  /* Immersive viewer: shared-element morph (tile <-> full photo) + idle chrome fade. */
+  ::view-transition-old(lb-photo), ::view-transition-new(lb-photo) { animation-duration: .5s; mix-blend-mode: normal; }
+  #lightbox button, #lightbox #lightbox-caption, #lightbox #lightbox-meta { transition: opacity .6s ease; }
+  #lightbox.idle button, #lightbox.idle #lightbox-caption, #lightbox.idle #lightbox-meta { opacity: 0; pointer-events: none; }
 </style>
 
 <script>
@@ -383,6 +373,11 @@ const jsonLd = {
     let currentIndex = 0;
     let visibleItems: Element[] = [];
     let lastFocused: HTMLElement | null = null;
+    let idleT: ReturnType<typeof setTimeout>;
+    const reduceMo = matchMedia('(prefers-reduced-motion: reduce)');
+    const canVT = () => typeof (document as any).startViewTransition === 'function' && !reduceMo.matches;
+    const tileImg = (item: any): HTMLElement | null => item ? item.querySelector('img') : null;
+    function armIdle() { lightbox?.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => lightbox?.classList.add('idle'), 2000); }
 
     // Set the lightbox image from a gallery item. Serves the 1200px gallery
     // tier on phones and the 2400px hero on retina desktop (native sizes
@@ -422,17 +417,31 @@ const jsonLd = {
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
       lastFocused = document.activeElement as HTMLElement;
-      setLightboxImage(item);
-      lightbox!.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      (closeBtn as HTMLElement | null)?.focus();
-      prefetchNeighbors();
+      const src = tileImg(item);
+      const reveal = () => {
+        setLightboxImage(item);
+        lightbox!.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        (closeBtn as HTMLElement | null)?.focus();
+        prefetchNeighbors();
+        armIdle();
+      };
+      if (canVT() && src) {
+        src.style.viewTransitionName = 'lb-photo';
+        lightboxImg.style.viewTransitionName = 'lb-photo';
+        const t = (document as any).startViewTransition(reveal);
+        t.finished.finally(() => { src.style.viewTransitionName = ''; lightboxImg.style.viewTransitionName = ''; });
+      } else reveal();
     }
 
     function closeLightbox() {
-      lightbox!.classList.remove('active');
-      document.body.style.overflow = '';
-      lastFocused?.focus();
+      const src = tileImg(visibleItems[currentIndex] as HTMLElement);
+      const hide = () => { lightbox!.classList.remove('active'); document.body.style.overflow = ''; lastFocused?.focus(); };
+      if (canVT() && src) {
+        lightboxImg.style.viewTransitionName = 'lb-photo';
+        const t = (document as any).startViewTransition(() => { hide(); src.style.viewTransitionName = 'lb-photo'; });
+        t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; src.style.viewTransitionName = ''; });
+      } else hide();
     }
 
     function navigate(dir: number) {
@@ -440,8 +449,13 @@ const jsonLd = {
       currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      setLightboxImage(item);
-      prefetchNeighbors();
+      const swap = () => { setLightboxImage(item); prefetchNeighbors(); };
+      if (canVT()) {
+        lightboxImg.style.viewTransitionName = 'lb-photo';
+        const t = (document as any).startViewTransition(swap);
+        t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; });
+      } else swap();
+      armIdle();
     }
 
     // Intercept clicks on gallery links — open lightbox instead of navigating.
@@ -465,6 +479,18 @@ const jsonLd = {
     lightbox?.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
+
+    // Develop-from-black: dim not-yet-loaded gallery photos, restore on load.
+    if (!reduceMo.matches) {
+      items.forEach((item) => {
+        const im = (item as HTMLElement).querySelector('img');
+        if (!im || (im as HTMLImageElement).complete) return;
+        im.classList.add('developing');
+        im.addEventListener('load', () => im.classList.remove('developing'), { once: true });
+      });
+    }
+    lightbox?.addEventListener('mousemove', armIdle);
+    lightbox?.addEventListener('touchstart', armIdle, { passive: true });
 
     document.addEventListener('keydown', (e) => {
       if (!lightbox?.classList.contains('active')) return;
