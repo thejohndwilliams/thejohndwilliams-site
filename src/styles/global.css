@@ -395,6 +395,21 @@ html[data-theme="black"] {
     z-index: 1;
   }
 
+  /* Mobile tab items — premium active state: blue-hour lift + glow + dot.
+     Inactive items sit muted; the active tab rises and warms with the sky note. */
+  .bottom-nav-item { position: relative; transition: color .35s ease, opacity .35s ease; }
+  .bottom-nav-item svg { transition: transform .4s cubic-bezier(.22,.61,.36,1), filter .4s ease; }
+  .bottom-nav-item.text-navy-hour { opacity: 1; }
+  .bottom-nav-item.text-navy-hour svg { transform: translateY(-2px) scale(1.08); filter: drop-shadow(0 2px 9px rgba(126,156,184,.45)); }
+  .bottom-nav-item.text-navy-hour::after {
+    content: ''; position: absolute; bottom: 2px; left: 50%; width: 4px; height: 4px;
+    margin-left: -2px; border-radius: 999px; background: #7E9CB8; box-shadow: 0 0 6px rgba(126,156,184,.85);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bottom-nav-item svg { transition: none; }
+    .bottom-nav-item.text-navy-hour svg { transform: none; }
+  }
+
   /* Reduced-motion — disable pointer-tracked specular animation by
      pinning the variables to the default idle position. The static
      rim highlight remains. */
