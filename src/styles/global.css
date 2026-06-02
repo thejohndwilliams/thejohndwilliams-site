@@ -915,3 +915,62 @@ html.lenis body { height: auto; }
   55%  { transform: translateX(120%); }
   100% { transform: translateX(120%); }
 }
+
+/* ============================================================
+   LIQUID GLASS v2.3 — footer + mobile complications get the material
+   Desktop footer: flat navy slab -> dimensional blue-hour glass (kept
+   "to a degree" — retains blue identity, no longer flat). Mobile bottom
+   nav: each tab complication becomes a subtle glass key, the active one a
+   blue-hour glass pill; Inquire stays the ivory CTA ("the light") but now
+   a glossy, dimensional glass key. Unlayered; cross-browser safe
+   (no backdrop-filter:url(), no mask-image). Bounds: blur<=44, sat<=1.85.
+   ============================================================ */
+.glass-footer {
+  position: relative;
+  background: linear-gradient(180deg, rgba(126,156,184,0.12) 0%, rgba(126,156,184,0.04) 38%, rgba(0,18,31,0.55) 100%);
+  backdrop-filter: blur(30px) saturate(1.7);
+  -webkit-backdrop-filter: blur(30px) saturate(1.7);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.16),
+    inset 0 0 48px 0 rgba(126,156,184,0.06);
+}
+.glass-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 28%);
+}
+.glass-footer > * { position: relative; z-index: 1; }
+
+/* Mobile complications — each a glass key */
+.bottom-nav-item {
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 0 rgba(0,0,0,0.18);
+  transition: color .35s ease, opacity .35s ease, background .35s ease, border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+}
+.bottom-nav-item.text-navy-hour {
+  background: rgba(126,156,184,0.16);
+  border-color: rgba(126,156,184,0.32);
+  box-shadow:
+    inset 1px 1px 0 0 rgba(255,255,255,0.22),
+    inset -1px -1px 0 0 rgba(0,0,0,0.22),
+    0 6px 18px rgba(0,0,0,0.32),
+    0 0 20px rgba(126,156,184,0.20);
+}
+
+/* Inquire — glossy ivory glass CTA (stays the warm "light", now dimensional) */
+.inquire-pill {
+  background: linear-gradient(180deg, #FBF6EE 0%, #F4EADE 52%, #ECDFCB 100%);
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.85),
+    inset 0 -2px 2px 0 rgba(0,0,0,0.08),
+    0 10px 24px rgba(0,0,0,0.45),
+    0 0 22px rgba(244,234,222,0.16);
+}
