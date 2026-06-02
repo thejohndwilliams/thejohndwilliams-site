@@ -19,7 +19,7 @@
    On displays capable of rendering the Display P3 color space
    (most Apple screens 2016+, iPhone 7+, modern OLEDs, HDR
    panels in either HDR or SDR mode), redefine the warm palette
-   using color(display-p3 ...) so gold and stone render with
+   using color(display-p3 ...) so stone renders with
    their full chromatic range instead of clipping to the sRGB
    subset.
 
@@ -43,35 +43,6 @@
      session, requires HDR-capable source exports from Lightroom.
    ============================================================ */
 @media (color-gamut: p3) {
-  /* gold (base #B8973F) */
-  .text-gold { color: color(display-p3 0.7216 0.5922 0.2471); }
-  .hover\:text-gold:hover { color: color(display-p3 0.7216 0.5922 0.2471); }
-  .bg-gold { background-color: color(display-p3 0.7216 0.5922 0.2471); }
-  .focus\:bg-gold:focus { background-color: color(display-p3 0.7216 0.5922 0.2471); }
-  .bg-gold\/10 { background-color: color(display-p3 0.7216 0.5922 0.2471 / 0.1); }
-  .hover\:bg-gold\/10:hover { background-color: color(display-p3 0.7216 0.5922 0.2471 / 0.1); }
-  .border-gold { border-color: color(display-p3 0.7216 0.5922 0.2471); }
-  .hover\:border-gold:hover { border-color: color(display-p3 0.7216 0.5922 0.2471); }
-  .border-gold\/40 { border-color: color(display-p3 0.7216 0.5922 0.2471 / 0.4); }
-  .ring-gold\/30 { --tw-ring-color: color(display-p3 0.7216 0.5922 0.2471 / 0.3); }
-  .hover\:ring-gold\/30:hover { --tw-ring-color: color(display-p3 0.7216 0.5922 0.2471 / 0.3); }
-  .ring-gold\/40 { --tw-ring-color: color(display-p3 0.7216 0.5922 0.2471 / 0.4); }
-  .active\:ring-gold\/40:active { --tw-ring-color: color(display-p3 0.7216 0.5922 0.2471 / 0.4); }
-  .ring-gold\/60 { --tw-ring-color: color(display-p3 0.7216 0.5922 0.2471 / 0.6); }
-  .from-gold {
-    --tw-gradient-from: color(display-p3 0.7216 0.5922 0.2471) var(--tw-gradient-from-position);
-    --tw-gradient-to: color(display-p3 0.7216 0.5922 0.2471 / 0);
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-  }
-
-  /* gold-light (#d4b85a) */
-  .text-gold-light { color: color(display-p3 0.8314 0.7216 0.3529); }
-  .group:hover .group-hover\:text-gold-light { color: color(display-p3 0.8314 0.7216 0.3529); }
-  .bg-gold-light { background-color: color(display-p3 0.8314 0.7216 0.3529); }
-  .hover\:bg-gold-light:hover { background-color: color(display-p3 0.8314 0.7216 0.3529); }
-  .ring-gold-light\/30 { --tw-ring-color: color(display-p3 0.8314 0.7216 0.3529 / 0.3); }
-  .to-gold-light { --tw-gradient-to: color(display-p3 0.8314 0.7216 0.3529); }
-
   /* stone (#A89F8C) */
   .border-stone { border-color: color(display-p3 0.6588 0.6235 0.5490); }
   .hover\:border-stone:hover { border-color: color(display-p3 0.6588 0.6235 0.5490); }
