@@ -1,5 +1,5 @@
 ---
-import { getCurrentYear, socialLinks } from '../utils/date';
+import { getCurrentYear } from '../utils/date';
 
 const currentYear = getCurrentYear();
 ---
@@ -13,7 +13,7 @@ const currentYear = getCurrentYear();
           <a href="/privacy" class="hover:text-navy-hour transition-colors duration-300">Privacy</a>
         </p>
         <p class="text-xs sm:text-sm opacity-50 italic font-serif">
-          John 15:13
+          <a href="https://www.biblegateway.com/passage/?search=John%2015%3A13&amp;version=KJV" target="_blank" rel="noopener noreferrer" class="hover:text-navy-hour transition-colors duration-300">John 15:13</a>
         </p>
         <button
           id="theme-toggle"
@@ -29,17 +29,13 @@ const currentYear = getCurrentYear();
         </button>
       </div>
 
-      <div class="flex items-center gap-6 sm:gap-8">
-        {socialLinks.map((link) => (
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs sm:text-sm text-mute hover:text-navy-hour transition-colors duration-300 min-h-[44px] flex items-center"
-          >
-            {link.name}
-          </a>
-        ))}
+      <div class="flex items-center">
+        <a
+          href="/llms.txt"
+          class="text-xs sm:text-sm text-mute hover:text-navy-hour transition-colors duration-300 min-h-[44px] flex items-center"
+        >
+          For AI agents
+        </a>
       </div>
     </div>
   </div>
