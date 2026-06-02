@@ -239,17 +239,15 @@ describe('SEO and Meta Tags', () => {
     expect(indexHtml).toContain('feDisplacementMap');
   });
 
-  it('wires the pointer-tracked specular listener in the hoisted bundle', () => {
+  it('no longer ships the pointer-tracked specular listener (spotlight removed)', () => {
     const assetsDir = path.join(distDir, '_assets');
     const jsFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.js'));
     const jsBundle = jsFiles
       .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
       .join('\n');
-    // Minifier rewrites function names; fingerprint on stable string literals.
-    expect(jsBundle).toContain('--mx');
-    expect(jsBundle).toContain('--my');
-    expect(jsBundle).toContain('pointermove');
-    expect(jsBundle).toContain('prefers-reduced-motion: reduce');
+    // Spotlight removed by design — the pointermove specular driver is gone.
+    expect(jsBundle).not.toContain('--mx');
+    expect(jsBundle).not.toContain('--my');
   });
 });
 
@@ -265,9 +263,8 @@ describe('Liquid Glass CSS', () => {
       .join('\n');
   }, 60000);
 
-  it('emits pointer-tracked specular variables on glass surfaces', () => {
-    expect(cssBundle).toContain('var(--mx');
-    expect(cssBundle).toContain('var(--my');
+  it('has no pointer-tracked specular spotlight (removed by design)', () => {
+    expect(cssBundle).not.toContain('var(--mx');
   });
 
   it('does NOT apply backdrop-filter: url(#glass-lens) — iOS Safari breaks on it', () => {

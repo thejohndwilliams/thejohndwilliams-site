@@ -224,11 +224,6 @@ html[data-theme="black"] {
     border-radius: inherit;
     pointer-events: none;
     background:
-      radial-gradient(
-        200px 140px at var(--mx, 50%) var(--my, -20%),
-        rgba(255, 255, 255, 0.12),
-        transparent 60%
-      ),
       linear-gradient(
         180deg,
         rgba(255, 255, 255, 0.11) 0%,
@@ -286,11 +281,6 @@ html[data-theme="black"] {
     border-radius: inherit;
     pointer-events: none;
     background:
-      radial-gradient(
-        260px 180px at var(--mx, 50%) var(--my, -15%),
-        rgba(255, 255, 255, 0.09),
-        transparent 65%
-      ),
       linear-gradient(
         180deg,
         rgba(255, 255, 255, 0.08) 0%,
@@ -842,13 +832,11 @@ html.lenis body { height: auto; }
 .glass-card::before {
   opacity: 1;
   background:
-    radial-gradient(240px 160px at var(--mx, 50%) var(--my, -20%), rgba(255,255,255,0.30), transparent 60%),
     linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 20%, transparent 46%);
 }
 .glass-panel::before {
   opacity: 1;
   background:
-    radial-gradient(320px 210px at var(--mx, 50%) var(--my, -15%), rgba(255,255,255,0.24), transparent 65%),
     linear-gradient(180deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.05) 24%, transparent 52%);
 }
 .glass-card:hover {
@@ -884,15 +872,9 @@ html.lenis body { height: auto; }
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* Registered so the specular position can be animated (interpolated). */
-@property --mx { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
-@property --my { syntax: "<percentage>"; inherits: true; initial-value: -20%; }
 
 /* Touch sheen — only where there is no pointer; calm periods, low alpha. */
 @media (hover: none) and (prefers-reduced-motion: no-preference) {
-  .glass-card,
-  .glass-panel { animation: glass-drift 8s ease-in-out infinite; }
-  .glass-card:nth-of-type(even) { animation-delay: -4s; }
   .glass-tabbar { overflow: hidden; }
   .glass-tabbar::after {
     content: "";
@@ -904,11 +886,6 @@ html.lenis body { height: auto; }
     transform: translateX(-120%);
     animation: glass-sweep 9s ease-in-out infinite;
   }
-}
-@keyframes glass-drift {
-  0%   { --mx: 14%; --my: -6%; }
-  50%  { --mx: 86%; --my: 20%; }
-  100% { --mx: 14%; --my: -6%; }
 }
 @keyframes glass-sweep {
   0%   { transform: translateX(-120%); }
