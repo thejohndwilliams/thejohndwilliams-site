@@ -811,75 +811,107 @@ html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 /* ============================================================
-   LIQUID GLASS v2.1 — Signature+ (one degree toward Statement)
-   Brighter chamfer + specular, a touch more tint, a resting
-   blue-hour edge glow so glass reads "alive" without hover, and a
-   slightly lower nav tint floor for more refraction. Unlayered;
-   cross-browser identical (NO backdrop-filter:url(), NO mask-image).
-   --mx/--my, .glass-tabbar, reduced-motion preserved.
-   Bounds: blur<=44, saturate<=1.85.
+   LIQUID GLASS v2.2 — Signature++ (another notch; still disciplined)
+   Stronger chamfer + brighter specular + a touch more tint and chrome
+   refraction. Adds a TOUCH SHEEN: the specular drifts on its own where
+   there is no pointer, and the mobile tab bar gets a slow sweep — motion
+   parity with the desktop pointer-specular. Off under reduced-motion.
+   Unlayered; cross-browser identical (NO backdrop-filter:url(), NO
+   mask-image). Bounds: blur<=44, saturate<=1.85.
    ============================================================ */
 .glass-card,
 .glass-panel {
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.20);
   box-shadow:
-    inset 1px 1px 0 0 rgba(255, 255, 255, 0.40),
-    inset -1px -1px 0 0 rgba(0, 0, 0, 0.26),
-    inset 0 0 20px 0 rgba(255, 255, 255, 0.06),
-    0 14px 42px rgba(0, 0, 0, 0.48),
-    0 0 30px rgba(126, 156, 184, 0.07);
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.46),
+    inset -1px -1px 0 0 rgba(0, 0, 0, 0.28),
+    inset 0 0 22px 0 rgba(255, 255, 255, 0.08),
+    0 16px 46px rgba(0, 0, 0, 0.50),
+    0 0 36px rgba(126, 156, 184, 0.10);
 }
 .glass-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 52%, rgba(255,255,255,0.09) 100%);
-  backdrop-filter: blur(28px) saturate(1.85);
-  -webkit-backdrop-filter: blur(28px) saturate(1.85);
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 52%, rgba(255,255,255,0.11) 100%);
+  backdrop-filter: blur(30px) saturate(1.85);
+  -webkit-backdrop-filter: blur(30px) saturate(1.85);
 }
 .glass-panel {
-  background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%);
-  backdrop-filter: blur(32px) saturate(1.85);
-  -webkit-backdrop-filter: blur(32px) saturate(1.85);
+  background: linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(34px) saturate(1.85);
+  -webkit-backdrop-filter: blur(34px) saturate(1.85);
 }
 .glass-card::before {
   opacity: 1;
   background:
-    radial-gradient(230px 155px at var(--mx, 50%) var(--my, -20%), rgba(255,255,255,0.26), transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 20%, transparent 46%);
+    radial-gradient(240px 160px at var(--mx, 50%) var(--my, -20%), rgba(255,255,255,0.30), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 20%, transparent 46%);
 }
 .glass-panel::before {
   opacity: 1;
   background:
-    radial-gradient(300px 200px at var(--mx, 50%) var(--my, -15%), rgba(255,255,255,0.20), transparent 65%),
-    linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.04) 24%, transparent 52%);
+    radial-gradient(320px 210px at var(--mx, 50%) var(--my, -15%), rgba(255,255,255,0.24), transparent 65%),
+    linear-gradient(180deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.05) 24%, transparent 52%);
 }
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.26);
+  border-color: rgba(255, 255, 255, 0.30);
   box-shadow:
-    inset 1px 1px 0 0 rgba(255, 255, 255, 0.46),
-    inset -1px -1px 0 0 rgba(0, 0, 0, 0.28),
-    inset 0 0 26px 0 rgba(255, 255, 255, 0.09),
-    0 20px 56px rgba(0, 0, 0, 0.52),
-    0 0 52px rgba(126, 156, 184, 0.14);
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.52),
+    inset -1px -1px 0 0 rgba(0, 0, 0, 0.30),
+    inset 0 0 30px 0 rgba(255, 255, 255, 0.10),
+    0 22px 60px rgba(0, 0, 0, 0.54),
+    0 0 60px rgba(126, 156, 184, 0.18);
 }
 .glass-nav,
 .glass-tabbar,
 #site-header {
-  background: rgba(10, 10, 10, 0.46);
-  backdrop-filter: blur(42px) saturate(1.85);
-  -webkit-backdrop-filter: blur(42px) saturate(1.85);
+  background: rgba(10, 10, 10, 0.44);
+  backdrop-filter: blur(44px) saturate(1.85);
+  -webkit-backdrop-filter: blur(44px) saturate(1.85);
 }
-.glass-nav { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
-.glass-tabbar { border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.glass-nav { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+.glass-tabbar { border-top: 1px solid rgba(255, 255, 255, 0.16); }
 .glass-nav::before,
 .glass-tabbar::before {
-  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 38%, transparent 72%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 38%, transparent 72%);
 }
 #site-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-    0 8px 28px rgba(0, 0, 0, 0.30);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 8px 30px rgba(0, 0, 0, 0.32);
 }
 #site-header.scrolled {
-  background: rgba(10, 10, 10, 0.58);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 10, 0.56);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* Registered so the specular position can be animated (interpolated). */
+@property --mx { syntax: "<percentage>"; inherits: true; initial-value: 50%; }
+@property --my { syntax: "<percentage>"; inherits: true; initial-value: -20%; }
+
+/* Touch sheen — only where there is no pointer; calm periods, low alpha. */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .glass-card,
+  .glass-panel { animation: glass-drift 8s ease-in-out infinite; }
+  .glass-card:nth-of-type(even) { animation-delay: -4s; }
+  .glass-tabbar { overflow: hidden; }
+  .glass-tabbar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.12) 50%, transparent 62%);
+    transform: translateX(-120%);
+    animation: glass-sweep 9s ease-in-out infinite;
+  }
+}
+@keyframes glass-drift {
+  0%   { --mx: 14%; --my: -6%; }
+  50%  { --mx: 86%; --my: 20%; }
+  100% { --mx: 14%; --my: -6%; }
+}
+@keyframes glass-sweep {
+  0%   { transform: translateX(-120%); }
+  55%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
 }
