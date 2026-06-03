@@ -973,3 +973,21 @@ html.lenis body { height: auto; }
   transition: background .3s, border-color .3s, box-shadow .3s, opacity .3s, transform .3s;
 }
 .glass-control:hover { background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.22); }
+
+/* ============================================================
+   EYEBROW — page kicker over hero photos. Legible-by-default:
+   brighter ivory + a dark text-shadow so it reads on bright photo
+   areas (e.g. a sunset), slightly tighter tracking + larger than the
+   old 10px/0.3em/opacity-60, which washed out. Aesthetic kept:
+   small, uppercase, airy. (Quiet plate captions keep their own style.)
+   ============================================================ */
+.eyebrow {
+  display: block;
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 222, 0.9);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.5);
+}
