@@ -49,8 +49,7 @@ html[data-theme="black"] {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0.018;
-    mix-blend-mode: soft-light;
+    opacity: 0.02; /* perf: soft-light blend removed (full-viewport composite every scroll frame); plain alpha dithers the same here */
     z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
@@ -823,13 +822,13 @@ html.lenis body { height: auto; }
 }
 .glass-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 52%, rgba(255,255,255,0.11) 100%);
-  backdrop-filter: blur(30px) saturate(1.85);
-  -webkit-backdrop-filter: blur(30px) saturate(1.85);
+  backdrop-filter: blur(22px) saturate(1.85);
+  -webkit-backdrop-filter: blur(22px) saturate(1.85);
 }
 .glass-panel {
   background: linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.05) 100%);
-  backdrop-filter: blur(34px) saturate(1.85);
-  -webkit-backdrop-filter: blur(34px) saturate(1.85);
+  backdrop-filter: blur(26px) saturate(1.85);
+  -webkit-backdrop-filter: blur(26px) saturate(1.85);
 }
 .glass-card::before {
   opacity: 1;
@@ -854,8 +853,8 @@ html.lenis body { height: auto; }
 .glass-tabbar,
 #site-header {
   background: rgba(10, 10, 10, 0.44);
-  backdrop-filter: blur(44px) saturate(1.85);
-  -webkit-backdrop-filter: blur(44px) saturate(1.85);
+  backdrop-filter: blur(28px) saturate(1.85);
+  -webkit-backdrop-filter: blur(28px) saturate(1.85);
 }
 .glass-nav { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
 .glass-tabbar { border-top: 1px solid rgba(255, 255, 255, 0.16); }
@@ -907,8 +906,8 @@ html.lenis body { height: auto; }
 .glass-footer {
   position: relative;
   background: linear-gradient(180deg, rgba(126,156,184,0.12) 0%, rgba(126,156,184,0.04) 38%, rgba(0,18,31,0.55) 100%);
-  backdrop-filter: blur(30px) saturate(1.85);
-  -webkit-backdrop-filter: blur(30px) saturate(1.85);
+  backdrop-filter: blur(24px) saturate(1.85);
+  -webkit-backdrop-filter: blur(24px) saturate(1.85);
   border-top: 1px solid rgba(255,255,255,0.12);
   box-shadow:
     inset 0 1px 0 0 rgba(255,255,255,0.16),
@@ -963,8 +962,8 @@ html.lenis body { height: auto; }
 .glass-control {
   color: #F4EADE;
   background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px) saturate(1.85);
-  -webkit-backdrop-filter: blur(20px) saturate(1.85);
+  backdrop-filter: blur(16px) saturate(1.85);
+  -webkit-backdrop-filter: blur(16px) saturate(1.85);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
     inset 1px 1px 0 0 rgba(255, 255, 255, 0.20),
