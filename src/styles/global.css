@@ -924,24 +924,8 @@ html.lenis body { height: auto; }
 .glass-footer > * { position: relative; z-index: 1; }
 
 /* Mobile complications - each a glass key */
-.bottom-nav-item {
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255,255,255,0.12),
-    inset 0 -1px 0 0 rgba(0,0,0,0.18);
-  transition: color .35s ease, opacity .35s ease, background .35s ease, border-color .35s ease, box-shadow .35s ease, transform .35s ease;
-}
-.bottom-nav-item.text-navy-hour {
-  background: rgba(126,156,184,0.16);
-  border-color: rgba(126,156,184,0.32);
-  box-shadow:
-    inset 1px 1px 0 0 rgba(255,255,255,0.22),
-    inset -1px -1px 0 0 rgba(0,0,0,0.22),
-    0 6px 18px rgba(0,0,0,0.32),
-    0 0 20px rgba(126,156,184,0.20);
-}
+/* (removed: v2.3 per-item nav key) */
+/* (removed: v2.3 active nav box) */
 
 /* Inquire - glossy ivory glass CTA (stays the warm "light", now dimensional) */
 .inquire-pill {
@@ -993,14 +977,14 @@ html.lenis body { height: auto; }
 }
 
 /* ============================================================
-   TAB BAR REFINEMENT (2026-06-06): quieter chrome.
-   Active tab is simply the blue icon (and label). No bubble, no
-   dot, no sweep, no lift. The keys jingle from the work, not the
-   navigation.
+   MOBILE TAB BAR (2026-06-06): single source of truth.
+   The bar is glass. Items are bare: icon + label, muted when
+   inactive, blue (navy-hour) when active. No box, bubble, dot,
+   lift, glow, or sweep. The decorative v2.3 nav rules above were
+   removed; this is the only nav-item styling.
    ============================================================ */
 .glass-tabbar { overflow: visible; }
-.glass-tabbar::after { display: none !important; }
-.bottom-nav-item { position: relative; background: transparent; border: 0; box-shadow: none; }
-.bottom-nav-item.text-navy-hour::before { content: none; }
-.bottom-nav-item.text-navy-hour::after { display: none; }
+.glass-tabbar::after { content: none; }
+.bottom-nav-item { position: relative; background: transparent; border: 0; box-shadow: none; border-radius: 0; }
+.bottom-nav-item.text-navy-hour::after { content: none; }
 .bottom-nav-item.text-navy-hour svg { transform: none; filter: none; }
