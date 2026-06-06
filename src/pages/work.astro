@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LiquidPlate from '../components/LiquidPlate.astro';
 
 const projects = [
   {
@@ -107,6 +108,32 @@ const expertise = [
             loading="lazy"
           />
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEYOND PHOTOGRAPHY — liquid plates (building now) -->
+  <section class="py-10 sm:py-16 md:py-20">
+    <div class="container-narrow">
+      <div class="reveal mb-6 sm:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-6">
+        <div>
+          <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">Building now</p>
+          <h2 class="t-sub font-serif">Beyond Photography</h2>
+        </div>
+        <p class="text-xs sm:text-sm opacity-55 max-w-md">
+          Ever wanted to lift a color straight out of a photograph? Pick a frame —
+          here you go: its palette as hex or CSS now, its wallpaper soon.
+        </p>
+      </div>
+      <div class="stagger-children grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+        <LiquidPlate src="7r52326" alt="Cumulus cloud against a deep blue sky" label="Sky" index={0} />
+        <LiquidPlate src="7r51108-enhanced-sr" alt="Sunlight through a green canopy" label="Earth" index={1} />
+        <LiquidPlate src="7r50993-enhanced-sr" alt="Blue hour over the harbor" label="Water" index={2} />
+      </div>
+      <div class="reveal mt-3 sm:mt-4 flex flex-wrap gap-1.5 sm:gap-2">
+        <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">Wallpaper — soon</span>
+        <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">Texture — soon</span>
+        <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">SVG refraction</span>
       </div>
     </div>
   </section>

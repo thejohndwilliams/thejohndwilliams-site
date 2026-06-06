@@ -1,0 +1,216 @@
+---
+/**
+ * LiquidPlate — a whole photograph seen through the site's glass system,
+ * with a copyable palette extracted from the image at build time.
+ *
+ * Base layer: a crisp <picture> (AVIF/WebP tiers) that works with zero JS.
+ * Enhancement (fine-pointer, non-reduced-motion, filter-capable only):
+ *   - feDisplacementMap refraction (only `scale` animates — one attribute
+ *     write/frame, not a turbulence rebuild) + pointer-tracked specular.
+ *   - a single gold depth-scan that sweeps once when the plate reveals,
+ *     staggered by `index` so a row reads as one gesture (the section's
+ *     one permitted gold).
+ * Palette: build-time swatches (src/data/plate-palettes.json). Click a
+ * swatch to copy its hex; the CSS button copies the whole palette as
+ * custom properties. Always available, no pointer/motion gating.
+ * Everything tears down on astro:before-swap for clean view transitions.
+ */
+import palettesData from '../data/plate-palettes.json';
+
+export interface Props {
+  src: string;
+  alt: string;
+  label: string;
+  index?: number;
+}
+const { src, alt, label, index = 0 } = Astro.props;
+const tier = (t: string, e: string) => `/images/photography/${t}/${src}.${e}`;
+const fid = `lq-${src.replace(/[^a-zA-Z0-9]/g, '')}`;
+const palette: string[] = (palettesData as Record<string, string[]>)[src] ?? [];
+const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`).join(' ');
+---
+
+<div class="lp-wrap" data-delay={index * 180}>
+  <figure class="liquid-plate" data-liquid-plate>
+    <svg class="liquid-plate__defs" aria-hidden="true" focusable="false" width="0" height="0">
+      <filter id={fid} x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="7" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+
+    <picture>
+      <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 768px) 100vw, 33vw" />
+      <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 768px) 100vw, 33vw" />
+      <img class="liquid-plate__img" src={tier('gallery','webp')} alt={alt} loading="lazy" decoding="async" data-fid={fid} />
+    </picture>
+
+    <span class="liquid-plate__sheen" aria-hidden="true"></span>
+    <span class="liquid-plate__rim" aria-hidden="true"></span>
+    <span class="liquid-plate__scan" aria-hidden="true"></span>
+    <figcaption class="liquid-plate__label">{label}</figcaption>
+  </figure>
+
+  {palette.length > 0 && (
+    <div class="lp-palette" role="group" aria-label={`Color palette from ${label}`}>
+      {palette.map((hex) => (
+        <button type="button" class="lp-sw" style={`--sw: ${hex}`} data-hex={hex} title={hex} aria-label={`Copy ${hex}`}></button>
+      ))}
+      <button type="button" class="lp-css" data-css={cssVars} aria-label="Copy palette as CSS custom properties">CSS</button>
+      <span class="lp-toast" aria-live="polite"></span>
+    </div>
+  )}
+</div>
+
+<style>
+  .lp-wrap { display: block; }
+  .liquid-plate {
+    position: relative; display: block; margin: 0;
+    aspect-ratio: 16 / 10; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
+  }
+  .liquid-plate__defs { position: absolute; width: 0; height: 0; }
+  .liquid-plate__img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: filter; }
+  .liquid-plate__sheen {
+    position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: radial-gradient(40% 55% at var(--lx,50%) var(--ly,28%), rgba(253,252,250,0.22), rgba(253,252,250,0) 62%);
+    opacity: 0; transition: opacity 0.35s ease;
+  }
+  .liquid-plate__rim {
+    position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .liquid-plate__scan {
+    position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; opacity: 0;
+    background: linear-gradient(90deg, rgba(184,151,63,0), rgba(184,151,63,0.85) 50%, rgba(184,151,63,0));
+  }
+  .liquid-plate__scan.is-scanning { animation: lpScan 1.5s cubic-bezier(0.4,0,0.2,1) both; }
+  @keyframes lpScan { 0% { top: -2%; opacity: 0; } 12% { opacity: 0.9; } 88% { opacity: 0.9; } 100% { top: 102%; opacity: 0; } }
+  .liquid-plate__label {
+    position: absolute; left: 0.7rem; bottom: 0.55rem; font-size: 0.7rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #fdfcfa; background: rgba(10,10,10,0.42); padding: 0.15rem 0.55rem; border-radius: 6px;
+  }
+  .liquid-plate.is-fine:hover .liquid-plate__sheen { opacity: 1; }
+
+  .lp-palette { display: flex; align-items: center; gap: 5px; margin-top: 8px; position: relative; }
+  .lp-sw {
+    width: 26px; height: 18px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
+    background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease;
+  }
+  .lp-sw:hover { transform: translateY(-2px); }
+  .lp-css {
+    margin-left: 4px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
+    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 2px 7px; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .lp-css:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
+  .lp-toast {
+    position: absolute; right: 0; bottom: 100%; margin-bottom: 6px; font-size: 11px; color: #0a0a0a;
+    background: #fdfcfa; padding: 2px 8px; border-radius: 6px; opacity: 0; transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; white-space: nowrap;
+  }
+  .lp-toast.show { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .liquid-plate__sheen, .lp-sw, .lp-css, .lp-toast { transition: none; }
+    .liquid-plate__scan { display: none; }
+  }
+</style>
+
+<script>
+  function mountWrap(wrap: HTMLElement): () => void {
+    const fig = wrap.querySelector('.liquid-plate') as HTMLElement | null;
+    if (!fig) return () => {};
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const supports = !!(window.CSS && CSS.supports && CSS.supports('filter', 'url(#x)'));
+    const cleanups: Array<() => void> = [];
+
+    const img = fig.querySelector('.liquid-plate__img') as HTMLImageElement | null;
+    const fe = fig.querySelector('feDisplacementMap');
+    const sheen = fig.querySelector('.liquid-plate__sheen') as HTMLElement | null;
+    if (img && fe && sheen && fine && !reduce && supports) {
+      const fidAttr = img.getAttribute('data-fid');
+      if (fidAttr) {
+        img.style.filter = 'url(#' + fidAttr + ')';
+        fig.classList.add('is-fine');
+        let raf = 0, t = Math.random() * 6, cur = 0, hover = false;
+        const loop = () => {
+          t += 0.025;
+          const idle = 1.6 + Math.sin(t) * 1.0;
+          const aim = hover ? 9 : idle;
+          cur += (aim - cur) * 0.08;
+          fe.setAttribute('scale', cur.toFixed(2));
+          raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        const onMove = (e: PointerEvent) => {
+          const r = fig.getBoundingClientRect();
+          sheen.style.setProperty('--lx', (((e.clientX - r.left) / r.width) * 100).toFixed(1) + '%');
+          sheen.style.setProperty('--ly', (((e.clientY - r.top) / r.height) * 100).toFixed(1) + '%');
+          hover = true;
+        };
+        const onLeave = () => { hover = false; };
+        fig.addEventListener('pointermove', onMove, { passive: true });
+        fig.addEventListener('pointerleave', onLeave, { passive: true });
+        cleanups.push(() => {
+          cancelAnimationFrame(raf);
+          fig.removeEventListener('pointermove', onMove);
+          fig.removeEventListener('pointerleave', onLeave);
+          img.style.filter = '';
+          fig.classList.remove('is-fine');
+        });
+      }
+    }
+
+    const scan = fig.querySelector('.liquid-plate__scan') as HTMLElement | null;
+    if (scan && !reduce && 'IntersectionObserver' in window) {
+      const delay = parseInt(wrap.getAttribute('data-delay') || '0', 10);
+      const onEnd = () => scan.classList.remove('is-scanning');
+      scan.addEventListener('animationend', onEnd);
+      let tid = 0;
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            tid = window.setTimeout(() => scan.classList.add('is-scanning'), delay);
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.35 });
+      io.observe(fig);
+      cleanups.push(() => { clearTimeout(tid); io.disconnect(); scan.removeEventListener('animationend', onEnd); });
+    }
+
+    const pal = wrap.querySelector('.lp-palette') as HTMLElement | null;
+    const toast = wrap.querySelector('.lp-toast') as HTMLElement | null;
+    if (pal) {
+      let tt = 0;
+      const onClick = (e: Event) => {
+        const target = e.target as HTMLElement;
+        const sw = target.closest('.lp-sw') as HTMLElement | null;
+        const css = target.closest('.lp-css') as HTMLElement | null;
+        let text = '', msg = '';
+        if (sw) { text = sw.getAttribute('data-hex') || ''; msg = 'copied ' + text; }
+        else if (css) { text = ':root {\n  ' + (css.getAttribute('data-css') || '').split(' ').join('\n  ') + '\n}'; msg = 'copied CSS'; }
+        else return;
+        try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (_) {}
+        if (toast) {
+          toast.textContent = msg; toast.classList.add('show');
+          clearTimeout(tt); tt = window.setTimeout(() => toast.classList.remove('show'), 1200);
+        }
+      };
+      pal.addEventListener('click', onClick);
+      cleanups.push(() => { clearTimeout(tt); pal.removeEventListener('click', onClick); });
+    }
+
+    return () => cleanups.forEach((fn) => fn());
+  }
+
+  let teardowns: Array<() => void> = [];
+  const mountAll = () => {
+    teardowns.forEach((fn) => fn());
+    teardowns = [];
+    document.querySelectorAll<HTMLElement>('.lp-wrap').forEach((el) => teardowns.push(mountWrap(el)));
+  };
+  mountAll();
+  document.addEventListener('astro:after-swap', mountAll);
+  document.addEventListener('astro:before-swap', () => { teardowns.forEach((fn) => fn()); teardowns = []; });
+</script>
