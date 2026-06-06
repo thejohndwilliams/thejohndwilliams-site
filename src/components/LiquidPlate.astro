@@ -1,20 +1,16 @@
 ---
 /**
- * LiquidPlate — a whole photograph seen through the site's glass system,
- * with a copyable palette and downloadable wallpapers, both derived from
- * the image (palette at build time, wallpapers in-browser on demand).
+ * LiquidPlate — an editorial feature row: a photograph seen through the
+ * site's glass system, beside a roomy "atelier" panel that hands the
+ * image back as colors, wallpaper, and texture. Alternates left/right
+ * via `reverse`, matching the About page's grammar.
  *
- * Base: a crisp <picture> (AVIF/WebP tiers), zero-JS safe.
- * Enhancement (fine-pointer, non-reduced-motion, filter-capable only):
- *   feDisplacementMap refraction (scale-only) + specular; one staggered
- *   gold depth-scan on reveal (the section's one gold).
- * Palette: build-time swatches (plate-palettes.json) — click to copy hex,
- *   CSS copies the whole palette as custom properties.
- * Wallpaper: a Framed|Full fit toggle + device buttons (phone / tablet /
- *   desktop / square) crop the hero tier on a <canvas> and download a
- *   JPEG. Framed mats the photo on midnight (composition preserved); Full
- *   is edge-to-edge (center crop). Desktop is always full-bleed. No files.
- * Everything tears down on astro:before-swap for clean view transitions.
+ * Plate: crisp <picture> base (zero-JS safe) + enhancement on capable
+ *   devices (feDisplacementMap refraction, specular, one gold depth-scan).
+ * Atelier take-aways (all client-side, no new files):
+ *   Colors   — build-time palette; click to copy hex, CSS copies the set.
+ *   Wallpaper— Framed|Full toggle + phone/tablet/desktop/square crops.
+ *   Texture  — Normal map (Sobel) + seamless Tile (mirror), for 3D/makers.
  */
 import palettesData from '../data/plate-palettes.json';
 
@@ -22,16 +18,19 @@ export interface Props {
   src: string;
   alt: string;
   label: string;
+  note?: string;
   index?: number;
+  reverse?: boolean;
 }
-const { src, alt, label, index = 0 } = Astro.props;
+const { src, alt, label, note = '', index = 0, reverse = false } = Astro.props;
 const tier = (t: string, e: string) => `/images/photography/${t}/${src}.${e}`;
 const fid = `lq-${src.replace(/[^a-zA-Z0-9]/g, '')}`;
 const palette: string[] = (palettesData as Record<string, string[]>)[src] ?? [];
 const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`).join(' ');
+const hero = tier('hero', 'webp');
 ---
 
-<div class="lp-wrap" data-delay={index * 180}>
+<div class={`lp-feature${reverse ? ' lp-feature--rev' : ''}`} data-delay={index * 160}>
   <figure class="liquid-plate" data-liquid-plate>
     <svg class="liquid-plate__defs" aria-hidden="true" focusable="false" width="0" height="0">
       <filter id={fid} x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
@@ -39,153 +38,204 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
       </filter>
     </svg>
-
     <picture>
-      <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 768px) 100vw, 33vw" />
-      <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 768px) 100vw, 33vw" />
+      <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
+      <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
       <img class="liquid-plate__img" src={tier('gallery','webp')} alt={alt} loading="lazy" decoding="async" data-fid={fid} />
     </picture>
-
     <span class="liquid-plate__sheen" aria-hidden="true"></span>
     <span class="liquid-plate__rim" aria-hidden="true"></span>
     <span class="liquid-plate__scan" aria-hidden="true"></span>
     <figcaption class="liquid-plate__label">{label}</figcaption>
   </figure>
 
-  {palette.length > 0 && (
-    <div class="lp-palette" role="group" aria-label={`Color palette from ${label}`}>
-      {palette.map((hex) => (
-        <button type="button" class="lp-sw" style={`--sw: ${hex}`} data-hex={hex} title={hex} aria-label={`Copy ${hex}`}></button>
-      ))}
-      <button type="button" class="lp-css" data-css={cssVars} aria-label="Copy palette as CSS custom properties">CSS</button>
-      <span class="lp-toast" aria-live="polite"></span>
-    </div>
-  )}
+  <div class="lp-atelier">
+    <p class="lp-atelier__label">{label}</p>
+    {note && <p class="lp-atelier__note">{note}</p>}
 
-  <div class="lp-wall" data-hero={tier('hero', 'webp')} data-label={label}>
-    <span class="lp-wall__t">Wallpaper</span>
-    <span class="lp-fitgroup" role="group" aria-label="Wallpaper fit">
-      <button type="button" class="lp-fit on" data-fit="framed" aria-pressed="true">Framed</button>
-      <button type="button" class="lp-fit" data-fit="full" aria-pressed="false">Full</button>
-    </span>
-    <span class="lp-devs">
-      <button type="button" class="lp-dev" data-fmt="phone" title="Phone" aria-label={`Download ${label} phone wallpaper`}><svg viewBox="0 0 14 20" width="13" height="18" aria-hidden="true"><rect x="2" y="1" width="10" height="18" rx="2.2" /></svg></button>
-      <button type="button" class="lp-dev" data-fmt="tablet" title="Tablet" aria-label={`Download ${label} tablet wallpaper`}><svg viewBox="0 0 18 20" width="15" height="17" aria-hidden="true"><rect x="1.5" y="2" width="15" height="16" rx="2" /></svg></button>
-      <button type="button" class="lp-dev" data-fmt="desktop" title="Desktop" aria-label={`Download ${label} desktop wallpaper`}><svg viewBox="0 0 20 17" width="18" height="15" aria-hidden="true"><rect x="1" y="1.5" width="18" height="11.5" rx="1.5" /><path d="M7 15.5h6" /></svg></button>
-      <button type="button" class="lp-dev" data-fmt="square" title="Square" aria-label={`Download ${label} square wallpaper`}><svg viewBox="0 0 18 18" width="15" height="15" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2.2" /></svg></button>
-    </span>
-    <span class="lp-wall__msg" aria-live="polite"></span>
+    {palette.length > 0 && (
+      <div class="lp-grp">
+        <span class="lp-grp__k">Colors</span>
+        <div class="lp-grp__v lp-palette" role="group" aria-label={`Color palette from ${label}`}>
+          {palette.map((hex) => (
+            <button type="button" class="lp-sw" style={`--sw: ${hex}`} data-hex={hex} title={hex} aria-label={`Copy ${hex}`}></button>
+          ))}
+          <button type="button" class="lp-ctl" data-css={cssVars} aria-label="Copy palette as CSS">CSS</button>
+          <span class="lp-toast" aria-live="polite"></span>
+        </div>
+      </div>
+    )}
+
+    <div class="lp-grp">
+      <span class="lp-grp__k">Wallpaper</span>
+      <div class="lp-grp__v lp-wall" data-hero={hero} data-label={label}>
+        <span class="lp-fitgroup" role="group" aria-label="Wallpaper fit">
+          <button type="button" class="lp-fit on" data-fit="framed" aria-pressed="true">Framed</button>
+          <button type="button" class="lp-fit" data-fit="full" aria-pressed="false">Full</button>
+        </span>
+        <span class="lp-devs">
+          <button type="button" class="lp-dev" data-fmt="phone" title="Phone" aria-label={`Download ${label} phone wallpaper`}><svg viewBox="0 0 14 20" width="13" height="18" aria-hidden="true"><rect x="2" y="1" width="10" height="18" rx="2.2" /></svg></button>
+          <button type="button" class="lp-dev" data-fmt="tablet" title="Tablet" aria-label={`Download ${label} tablet wallpaper`}><svg viewBox="0 0 18 20" width="15" height="17" aria-hidden="true"><rect x="1.5" y="2" width="15" height="16" rx="2" /></svg></button>
+          <button type="button" class="lp-dev" data-fmt="desktop" title="Desktop" aria-label={`Download ${label} desktop wallpaper`}><svg viewBox="0 0 20 17" width="18" height="15" aria-hidden="true"><rect x="1" y="1.5" width="18" height="11.5" rx="1.5" /><path d="M7 15.5h6" /></svg></button>
+          <button type="button" class="lp-dev" data-fmt="square" title="Square" aria-label={`Download ${label} square wallpaper`}><svg viewBox="0 0 18 18" width="15" height="15" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2.2" /></svg></button>
+        </span>
+        <span class="lp-msg lp-wall__msg" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <div class="lp-grp">
+      <span class="lp-grp__k">Texture</span>
+      <div class="lp-grp__v lp-tex" data-hero={hero} data-label={label}>
+        <button type="button" class="lp-ctl" data-kind="normal" aria-label={`Download ${label} normal map`}>Normal map</button>
+        <button type="button" class="lp-ctl" data-kind="tile" aria-label={`Download ${label} seamless tile`}>Tile</button>
+        <span class="lp-msg lp-tex__msg" aria-live="polite"></span>
+      </div>
+    </div>
   </div>
 </div>
 
 <style>
-  .lp-wrap { display: block; }
+  .lp-feature { display: flex; flex-direction: column; gap: 1.5rem; }
+  @media (min-width: 1024px) {
+    .lp-feature { flex-direction: row; align-items: center; gap: 3rem; }
+    .lp-feature--rev { flex-direction: row-reverse; }
+    .liquid-plate { flex: 0 0 auto; width: 520px; }
+    .lp-atelier { flex: 1; min-width: 0; }
+  }
   .liquid-plate {
-    position: relative; display: block; margin: 0;
+    position: relative; display: block; margin: 0; width: 100%;
     aspect-ratio: 16 / 10; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
   }
   .liquid-plate__defs { position: absolute; width: 0; height: 0; }
   .liquid-plate__img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: filter; }
-  .liquid-plate__sheen {
-    position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  .liquid-plate__sheen { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
     background: radial-gradient(40% 55% at var(--lx,50%) var(--ly,28%), rgba(253,252,250,0.22), rgba(253,252,250,0) 62%);
-    opacity: 0; transition: opacity 0.35s ease;
-  }
-  .liquid-plate__rim {
-    position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.05);
-  }
-  .liquid-plate__scan {
-    position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; opacity: 0;
-    background: linear-gradient(90deg, rgba(184,151,63,0), rgba(184,151,63,0.85) 50%, rgba(184,151,63,0));
-  }
+    opacity: 0; transition: opacity 0.35s ease; }
+  .liquid-plate__rim { position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.05); }
+  .liquid-plate__scan { position: absolute; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; opacity: 0;
+    background: linear-gradient(90deg, rgba(184,151,63,0), rgba(184,151,63,0.85) 50%, rgba(184,151,63,0)); }
   .liquid-plate__scan.is-scanning { animation: lpScan 1.5s cubic-bezier(0.4,0,0.2,1) both; }
   @keyframes lpScan { 0% { top: -2%; opacity: 0; } 12% { opacity: 0.9; } 88% { opacity: 0.9; } 100% { top: 102%; opacity: 0; } }
-  .liquid-plate__label {
-    position: absolute; left: 0.7rem; bottom: 0.55rem; font-size: 0.7rem; letter-spacing: 0.06em;
-    text-transform: uppercase; color: #fdfcfa; background: rgba(10,10,10,0.42); padding: 0.15rem 0.55rem; border-radius: 6px;
-  }
+  .liquid-plate__label { position: absolute; left: 0.7rem; bottom: 0.55rem; font-size: 0.7rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #fdfcfa; background: rgba(10,10,10,0.42); padding: 0.15rem 0.55rem; border-radius: 6px; }
   .liquid-plate.is-fine:hover .liquid-plate__sheen { opacity: 1; }
 
-  .lp-palette { display: flex; align-items: center; gap: 5px; margin-top: 8px; position: relative; }
-  .lp-sw {
-    width: 26px; height: 18px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
-    background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease;
-  }
-  .lp-sw:hover { transform: translateY(-2px); }
-  .lp-css {
-    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c; margin-left: 4px;
-    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 2px 7px; cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
-  .lp-css:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
-  .lp-toast {
-    position: absolute; right: 0; bottom: 100%; margin-bottom: 6px; font-size: 11px; color: #0a0a0a;
-    background: #fdfcfa; padding: 2px 8px; border-radius: 6px; opacity: 0; transform: translateY(4px);
-    transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; white-space: nowrap;
-  }
-  .lp-toast.show { opacity: 1; transform: translateY(0); }
+  .lp-atelier__label { font-family: var(--font-serif, Georgia, serif); font-size: 1.5rem; color: #fdfcfa; margin: 0 0 0.4rem; }
+  .lp-atelier__note { font-size: 0.95rem; line-height: 1.6; color: #9a958c; margin: 0 0 1.4rem; max-width: 32ch; }
+  .lp-grp { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-top: 0.5px solid rgba(168,159,140,0.18); }
+  .lp-grp__k { flex: 0 0 78px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a89f8c; opacity: 0.85; padding-top: 5px; }
+  .lp-grp__v { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; position: relative; min-width: 0; }
 
-  .lp-wall { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 7px; position: relative; }
-  .lp-wall__t { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c; opacity: 0.8; }
+  .lp-sw { width: 28px; height: 20px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
+    background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
+  .lp-sw:hover { transform: translateY(-2px); }
+  .lp-ctl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
+    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 8px; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease; }
+  .lp-ctl:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
+  .lp-ctl:disabled { opacity: 0.45; cursor: default; }
   .lp-fitgroup { display: inline-flex; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; overflow: hidden; }
-  .lp-fit {
-    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #a89f8c;
-    background: transparent; border: 0; padding: 2px 7px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease;
-  }
+  .lp-fit { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #a89f8c;
+    background: transparent; border: 0; padding: 3px 8px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease; }
   .lp-fit + .lp-fit { border-left: 0.5px solid rgba(168,159,140,0.4); }
   .lp-fit.on { color: #0a0a0a; background: #a89f8c; }
   .lp-devs { display: inline-flex; gap: 4px; }
-  .lp-dev {
-    display: inline-flex; align-items: center; justify-content: center; color: #a89f8c;
+  .lp-dev { display: inline-flex; align-items: center; justify-content: center; color: #a89f8c;
     background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 6px; cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
+    transition: color 0.2s ease, border-color 0.2s ease; }
   .lp-dev svg { stroke: currentColor; fill: none; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; display: block; }
   .lp-dev:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
   .lp-dev:disabled { opacity: 0.45; cursor: default; }
-  .lp-wall__msg { font-size: 10px; color: #9a958c; opacity: 0; transition: opacity 0.2s ease; }
-  .lp-wall__msg.show { opacity: 1; }
+  .lp-toast { position: absolute; left: 0; bottom: 100%; margin-bottom: 6px; font-size: 11px; color: #0a0a0a;
+    background: #fdfcfa; padding: 2px 8px; border-radius: 6px; opacity: 0; transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; white-space: nowrap; }
+  .lp-toast.show { opacity: 1; transform: translateY(0); }
+  .lp-msg { font-size: 10px; color: #9a958c; opacity: 0; transition: opacity 0.2s ease; }
+  .lp-msg.show { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .liquid-plate__sheen, .lp-sw, .lp-css, .lp-fit, .lp-dev, .lp-toast, .lp-wall__msg { transition: none; }
+    .liquid-plate__sheen, .lp-sw, .lp-ctl, .lp-fit, .lp-dev, .lp-toast, .lp-msg { transition: none; }
     .liquid-plate__scan { display: none; }
   }
 </style>
 
 <script>
+  function dl(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
   function makeWallpaper(src: string, fmt: string, fit: string, filename: string, done?: (ok: boolean) => void): void {
     const img = new Image();
     img.onload = () => {
-      const dims = fmt === 'phone' ? [1290, 2796]
-        : fmt === 'tablet' ? [2048, 2732]
-        : fmt === 'square' ? [1440, 1440]
-        : [2560, 1440];
+      const dims = fmt === 'phone' ? [1290, 2796] : fmt === 'tablet' ? [2048, 2732] : fmt === 'square' ? [1440, 1440] : [2560, 1440];
       const W = dims[0], H = dims[1];
-      const c = document.createElement('canvas');
-      c.width = W; c.height = H;
-      const ctx = c.getContext('2d');
-      if (!ctx) { if (done) done(false); return; }
-      ctx.fillStyle = '#0a0a0a';
-      ctx.fillRect(0, 0, W, H);
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const ctx = c.getContext('2d'); if (!ctx) { if (done) done(false); return; }
+      ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
       const iw = img.naturalWidth, ih = img.naturalHeight;
       const cover = fmt === 'desktop' || fit === 'full';
       const s = cover ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih);
       const dw = iw * s, dh = ih * s;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
-      c.toBlob((blob) => {
-        if (!blob) { if (done) done(false); return; }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = filename;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1500);
-        if (done) done(true);
-      }, 'image/jpeg', 0.92);
+      c.toBlob((b) => { if (!b) { if (done) done(false); return; } dl(b, filename); if (done) done(true); }, 'image/jpeg', 0.92);
     };
     img.onerror = () => { if (done) done(false); };
     img.src = src;
+  }
+
+  function makeNormalMap(src: string, filename: string, done?: (ok: boolean) => void): void {
+    const img = new Image();
+    img.onload = () => {
+      const W = Math.min(1024, img.naturalWidth), H = Math.round(img.naturalHeight * W / img.naturalWidth);
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const ctx = c.getContext('2d'); if (!ctx) { if (done) done(false); return; }
+      ctx.drawImage(img, 0, 0, W, H);
+      const id = ctx.getImageData(0, 0, W, H), d = id.data;
+      const g = new Float32Array(W * H);
+      for (let i = 0, p = 0; i < d.length; i += 4, p++) g[p] = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+      const out = ctx.createImageData(W, H), o = out.data, strength = 2.2;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const xl = x > 0 ? x - 1 : x, xr = x < W - 1 ? x + 1 : x, yt = y > 0 ? y - 1 : y, yb = y < H - 1 ? y + 1 : y;
+        const gx = (g[y * W + xr] - g[y * W + xl]) * strength;
+        const gy = (g[yb * W + x] - g[yt * W + x]) * strength;
+        let nx = -gx, ny = -gy, nz = 1; const l = Math.hypot(nx, ny, nz); nx /= l; ny /= l; nz /= l;
+        const k = (y * W + x) * 4;
+        o[k] = (nx * 0.5 + 0.5) * 255; o[k + 1] = (ny * 0.5 + 0.5) * 255; o[k + 2] = (nz * 0.5 + 0.5) * 255; o[k + 3] = 255;
+      }
+      ctx.putImageData(out, 0, 0);
+      c.toBlob((b) => { if (!b) { if (done) done(false); return; } dl(b, filename); if (done) done(true); }, 'image/png');
+    };
+    img.onerror = () => { if (done) done(false); };
+    img.src = src;
+  }
+
+  function makeTile(src: string, filename: string, done?: (ok: boolean) => void): void {
+    const img = new Image();
+    img.onload = () => {
+      const N = 512; const c = document.createElement('canvas'); c.width = 2 * N; c.height = 2 * N;
+      const ctx = c.getContext('2d'); if (!ctx) { if (done) done(false); return; }
+      const m = Math.min(img.naturalWidth, img.naturalHeight), sx = (img.naturalWidth - m) / 2, sy = (img.naturalHeight - m) / 2;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, sx, sy, m, m, 0, 0, N, N);
+      ctx.save(); ctx.translate(2 * N, 0); ctx.scale(-1, 1); ctx.drawImage(img, sx, sy, m, m, 0, 0, N, N); ctx.restore();
+      ctx.save(); ctx.translate(0, 2 * N); ctx.scale(1, -1); ctx.drawImage(img, sx, sy, m, m, 0, 0, N, N); ctx.restore();
+      ctx.save(); ctx.translate(2 * N, 2 * N); ctx.scale(-1, -1); ctx.drawImage(img, sx, sy, m, m, 0, 0, N, N); ctx.restore();
+      c.toBlob((b) => { if (!b) { if (done) done(false); return; } dl(b, filename); if (done) done(true); }, 'image/jpeg', 0.92);
+    };
+    img.onerror = () => { if (done) done(false); };
+    img.src = src;
+  }
+
+  function flash(el: HTMLElement | null, ok: boolean, store: { t: number }) {
+    if (!el) return;
+    el.textContent = ok ? 'saved' : 'try again'; el.classList.add('show');
+    clearTimeout(store.t); store.t = window.setTimeout(() => el.classList.remove('show'), 1600);
   }
 
   function mountWrap(wrap: HTMLElement): () => void {
@@ -205,31 +255,17 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
         img.style.filter = 'url(#' + fidAttr + ')';
         fig.classList.add('is-fine');
         let raf = 0, t = Math.random() * 6, cur = 0, hover = false;
-        const loop = () => {
-          t += 0.025;
-          const idle = 1.6 + Math.sin(t) * 1.0;
-          const aim = hover ? 9 : idle;
-          cur += (aim - cur) * 0.08;
-          fe.setAttribute('scale', cur.toFixed(2));
-          raf = requestAnimationFrame(loop);
-        };
+        const loop = () => { t += 0.025; const idle = 1.6 + Math.sin(t) * 1.0; const aim = hover ? 9 : idle;
+          cur += (aim - cur) * 0.08; fe.setAttribute('scale', cur.toFixed(2)); raf = requestAnimationFrame(loop); };
         raf = requestAnimationFrame(loop);
-        const onMove = (e: PointerEvent) => {
-          const r = fig.getBoundingClientRect();
+        const onMove = (e: PointerEvent) => { const r = fig.getBoundingClientRect();
           sheen.style.setProperty('--lx', (((e.clientX - r.left) / r.width) * 100).toFixed(1) + '%');
-          sheen.style.setProperty('--ly', (((e.clientY - r.top) / r.height) * 100).toFixed(1) + '%');
-          hover = true;
-        };
+          sheen.style.setProperty('--ly', (((e.clientY - r.top) / r.height) * 100).toFixed(1) + '%'); hover = true; };
         const onLeave = () => { hover = false; };
         fig.addEventListener('pointermove', onMove, { passive: true });
         fig.addEventListener('pointerleave', onLeave, { passive: true });
-        cleanups.push(() => {
-          cancelAnimationFrame(raf);
-          fig.removeEventListener('pointermove', onMove);
-          fig.removeEventListener('pointerleave', onLeave);
-          img.style.filter = '';
-          fig.classList.remove('is-fine');
-        });
+        cleanups.push(() => { cancelAnimationFrame(raf); fig.removeEventListener('pointermove', onMove);
+          fig.removeEventListener('pointerleave', onLeave); img.style.filter = ''; fig.classList.remove('is-fine'); });
       }
     }
 
@@ -239,14 +275,9 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
       const onEnd = () => scan.classList.remove('is-scanning');
       scan.addEventListener('animationend', onEnd);
       let tid = 0;
-      const io = new IntersectionObserver((entries, obs) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            tid = window.setTimeout(() => scan.classList.add('is-scanning'), delay);
-            obs.disconnect();
-          }
-        });
-      }, { threshold: 0.35 });
+      const io = new IntersectionObserver((entries, obs) => { entries.forEach((e) => {
+        if (e.isIntersecting) { tid = window.setTimeout(() => scan.classList.add('is-scanning'), delay); obs.disconnect(); } });
+      }, { threshold: 0.3 });
       io.observe(fig);
       cleanups.push(() => { clearTimeout(tid); io.disconnect(); scan.removeEventListener('animationend', onEnd); });
     }
@@ -258,16 +289,13 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
       const onClick = (e: Event) => {
         const target = e.target as HTMLElement;
         const sw = target.closest('.lp-sw') as HTMLElement | null;
-        const css = target.closest('.lp-css') as HTMLElement | null;
+        const css = target.closest('.lp-ctl') as HTMLElement | null;
         let text = '', msg = '';
         if (sw) { text = sw.getAttribute('data-hex') || ''; msg = 'copied ' + text; }
-        else if (css) { text = ':root {\n  ' + (css.getAttribute('data-css') || '').split(' ').join('\n  ') + '\n}'; msg = 'copied CSS'; }
+        else if (css && css.hasAttribute('data-css')) { text = ':root {\n  ' + (css.getAttribute('data-css') || '').split(' ').join('\n  ') + '\n}'; msg = 'copied CSS'; }
         else return;
         try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (_) {}
-        if (toast) {
-          toast.textContent = msg; toast.classList.add('show');
-          clearTimeout(tt); tt = window.setTimeout(() => toast.classList.remove('show'), 1200);
-        }
+        if (toast) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(tt); tt = window.setTimeout(() => toast.classList.remove('show'), 1200); }
       };
       pal.addEventListener('click', onClick);
       cleanups.push(() => { clearTimeout(tt); pal.removeEventListener('click', onClick); });
@@ -278,38 +306,43 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
       const hero = wall.getAttribute('data-hero') || '';
       const lab = (wall.getAttribute('data-label') || 'wallpaper').toLowerCase();
       const msg = wall.querySelector('.lp-wall__msg') as HTMLElement | null;
-      let fit = 'framed';
-      let mt = 0;
+      const store = { t: 0 }; let fit = 'framed';
       const onWall = (e: Event) => {
         const target = e.target as HTMLElement;
         const fitBtn = target.closest('.lp-fit') as HTMLElement | null;
         const dev = target.closest('.lp-dev') as HTMLButtonElement | null;
-        if (fitBtn) {
-          fit = fitBtn.getAttribute('data-fit') || 'framed';
-          wall.querySelectorAll('.lp-fit').forEach((x) => {
-            const on = x === fitBtn;
-            x.classList.toggle('on', on);
-            x.setAttribute('aria-pressed', on ? 'true' : 'false');
-          });
-          return;
-        }
+        if (fitBtn) { fit = fitBtn.getAttribute('data-fit') || 'framed';
+          wall.querySelectorAll('.lp-fit').forEach((x) => { const on = x === fitBtn; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }); return; }
         if (dev && hero) {
           const fmt = dev.getAttribute('data-fmt') || 'desktop';
           const useFit = fmt === 'desktop' ? 'full' : fit;
           const tag = (useFit === 'full' && fmt !== 'desktop') ? '-full' : '';
           dev.disabled = true;
-          makeWallpaper(hero, fmt, useFit, 'jdw-' + lab + '-' + fmt + tag + '.jpg', (ok) => {
-            dev.disabled = false;
-            if (msg) {
-              msg.textContent = ok ? 'saved' : 'try again';
-              msg.classList.add('show');
-              clearTimeout(mt); mt = window.setTimeout(() => msg.classList.remove('show'), 1600);
-            }
-          });
+          makeWallpaper(hero, fmt, useFit, 'jdw-' + lab + '-' + fmt + tag + '.jpg', (ok) => { dev.disabled = false; flash(msg, ok, store); });
         }
       };
       wall.addEventListener('click', onWall);
-      cleanups.push(() => { clearTimeout(mt); wall.removeEventListener('click', onWall); });
+      cleanups.push(() => { clearTimeout(store.t); wall.removeEventListener('click', onWall); });
+    }
+
+    const tex = wrap.querySelector('.lp-tex') as HTMLElement | null;
+    if (tex) {
+      const hero = tex.getAttribute('data-hero') || '';
+      const lab = (tex.getAttribute('data-label') || 'texture').toLowerCase();
+      const msg = tex.querySelector('.lp-tex__msg') as HTMLElement | null;
+      const store = { t: 0 };
+      const onTex = (e: Event) => {
+        const b = (e.target as HTMLElement).closest('.lp-ctl') as HTMLButtonElement | null;
+        if (!b || !hero) return;
+        const kind = b.getAttribute('data-kind');
+        b.disabled = true;
+        const after = (ok: boolean) => { b.disabled = false; flash(msg, ok, store); };
+        if (kind === 'normal') makeNormalMap(hero, 'jdw-' + lab + '-normal.png', after);
+        else if (kind === 'tile') makeTile(hero, 'jdw-' + lab + '-tile.jpg', after);
+        else b.disabled = false;
+      };
+      tex.addEventListener('click', onTex);
+      cleanups.push(() => { clearTimeout(store.t); tex.removeEventListener('click', onTex); });
     }
 
     return () => cleanups.forEach((fn) => fn());
@@ -317,9 +350,8 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
 
   let teardowns: Array<() => void> = [];
   const mountAll = () => {
-    teardowns.forEach((fn) => fn());
-    teardowns = [];
-    document.querySelectorAll<HTMLElement>('.lp-wrap').forEach((el) => teardowns.push(mountWrap(el)));
+    teardowns.forEach((fn) => fn()); teardowns = [];
+    document.querySelectorAll<HTMLElement>('.lp-feature').forEach((el) => teardowns.push(mountWrap(el)));
   };
   mountAll();
   document.addEventListener('astro:after-swap', mountAll);

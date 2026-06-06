@@ -34,25 +34,18 @@ const projects = [
 ];
 
 const expertise = [
-  'Data Engineering',
-  'Cybersecurity',
-  'Incident Command',
-  'Python',
-  'Power BI',
-  'SQL',
-  'Operations Analytics',
-  'Forecasting',
-  'Photography'
+  'Data Engineering', 'Cybersecurity', 'Incident Command', 'Python',
+  'Power BI', 'SQL', 'Operations Analytics', 'Forecasting', 'Photography'
 ];
 ---
 
 <BaseLayout
   title="Work"
-  description="Selected projects by John D. Williams — data engineering, cybersecurity, and operations."
+  description="Selected projects by John D. Williams — data engineering, cybersecurity, and operations — and Beyond Photography, an experiment turning his photographs into palettes, wallpapers, and textures."
   ogImage="/images/photography/hero/img-7576-enhanced.webp"
   lcpImage="img-7576-enhanced"
 >
-  <!-- HERO — with architectural accent -->
+  <!-- HERO -->
   <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
     <img
       src="/images/photography/gallery/img-7576-enhanced.webp"
@@ -62,10 +55,7 @@ const expertise = [
       class="absolute inset-0 w-full h-full object-cover"
       fetchpriority="high"
     />
-    <div
-      class="absolute inset-0"
-      style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"
-    ></div>
+    <div class="absolute inset-0" style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"></div>
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl mb-10 sm:mb-16">
         <p class="eyebrow mb-3 sm:mb-4">Building</p>
@@ -74,85 +64,27 @@ const expertise = [
     </div>
   </section>
 
-  <!-- Visual accent — horizontal image strip between hero and projects -->
-  <section class="py-0 -mt-4 sm:-mt-8 relative z-10">
-    <div class="container-wide">
-      <div class="reveal grid grid-cols-3 gap-1.5 sm:gap-2">
-        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
-          <img
-            src="/images/photography/gallery/7r50993-enhanced-sr.webp"
-            srcset="/images/photography/thumb/7r50993-enhanced-sr.webp 400w, /images/photography/gallery/7r50993-enhanced-sr.webp 1200w"
-            sizes="33vw"
-            alt="Blue hour over harbor"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
-          <img
-            src="/images/photography/gallery/img-7598-enhanced-sr.webp"
-            srcset="/images/photography/thumb/img-7598-enhanced-sr.webp 400w, /images/photography/gallery/img-7598-enhanced-sr.webp 1200w"
-            sizes="33vw"
-            alt="Chinese pagoda at night"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-        <div class="glass-luminous rounded-lg overflow-hidden aspect-[16/9]">
-          <img
-            src="/images/photography/gallery/dscf0261.webp"
-            srcset="/images/photography/thumb/dscf0261.webp 400w, /images/photography/gallery/dscf0261.webp 1200w"
-            sizes="33vw"
-            alt="Urban night architecture"
-            class="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BEYOND PHOTOGRAPHY — liquid plates (building now) -->
-  <section class="py-10 sm:py-16 md:py-20">
+  <!-- ACT I — THE WORK (professional) -->
+  <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal mb-6 sm:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-6">
-        <div>
-          <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">Building now</p>
-          <h2 class="t-sub font-serif">Beyond Photography</h2>
-        </div>
-        <p class="text-xs sm:text-sm opacity-55 max-w-md">
-          Ever wanted to lift a color straight out of a photograph? Pick a frame —
-          here you go: its palette as hex or CSS now, its wallpaper soon.
+      <div class="reveal max-w-2xl mb-8 sm:mb-12">
+        <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">The work I can show</p>
+        <p class="text-sm sm:text-base opacity-55">
+          Data, security, and operations — sanitized for the public web. The
+          discipline, not the details.
         </p>
       </div>
-      <div class="stagger-children grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-        <LiquidPlate src="7r52326" alt="Cumulus cloud against a deep blue sky" label="Sky" index={0} />
-        <LiquidPlate src="7r51108-enhanced-sr" alt="Sunlight through a green canopy" label="Earth" index={1} />
-        <LiquidPlate src="7r50993-enhanced-sr" alt="Blue hour over the harbor" label="Water" index={2} />
-      </div>
-      <div class="reveal mt-3 sm:mt-4 flex flex-wrap gap-1.5 sm:gap-2">
-        <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">Texture — soon</span>
-        <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">SVG refraction</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS — alternating section -->
-  <section class="section-light py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="stagger-children space-y-4 sm:space-y-6 mb-10 sm:mb-16">
+      <div class="stagger-children grid sm:grid-cols-2 gap-4 sm:gap-6">
         {projects.map((project) => (
-          <div class="glass-card p-5 sm:p-8 md:p-10">
-            <h2 class="t-sub font-serif mb-3 sm:mb-4">{project.title}</h2>
-            <p class="text-sm sm:text-base opacity-55 mb-4 sm:mb-6 leading-relaxed">{project.description}</p>
-            <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+          <div class="glass-card p-5 sm:p-7 md:p-8 flex flex-col">
+            <h2 class="t-sub font-serif mb-3">{project.title}</h2>
+            <p class="text-sm opacity-55 mb-4 sm:mb-5 leading-relaxed flex-1">{project.description}</p>
+            <div class="flex flex-wrap gap-1.5 mb-4 sm:mb-5">
               {project.tags.map((tag: string) => (
-                <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">
-                  {tag}
-                </span>
+                <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">{tag}</span>
               ))}
             </div>
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-auto">
               <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
               {project.github && (
                 <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-60 hover:opacity-80 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
@@ -163,50 +95,58 @@ const expertise = [
           </div>
         ))}
       </div>
-    </div>
-  </section>
-
-  <!-- EXPERTISE -->
-  <section class="py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal">
-        <h2 class="text-subhead mb-5 sm:mb-8">Expertise</h2>
-        <div class="flex flex-wrap gap-2 sm:gap-3">
+      <div class="reveal mt-8 sm:mt-12">
+        <div class="flex flex-wrap gap-2">
           {expertise.map((skill) => (
-            <span class="glass-tag px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm opacity-60 rounded-md sm:rounded-lg">
-              {skill}
-            </span>
+            <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm opacity-60 rounded-md sm:rounded-lg">{skill}</span>
           ))}
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Visual break — cinematic landscape -->
-  <section class="py-0">
-    <div class="container-wide">
-      <div class="reveal relative rounded-lg sm:rounded-card overflow-hidden aspect-[21/9] sm:aspect-[3/1]">
-        <img
-          src="/images/photography/gallery/7r52314.webp"
-          srcset="/images/photography/thumb/7r52314.webp 400w, /images/photography/gallery/7r52314.webp 1200w, /images/photography/hero/7r52314.webp 2400w"
-          sizes="100vw"
-          alt="Backlit dramatic cloudscape"
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#111111]/60 to-transparent"></div>
-      </div>
+  <!-- DIVIDER — the turn from professional to personal -->
+  <section class="relative h-[42vh] sm:h-[52vh] overflow-hidden">
+    <img
+      src="/images/photography/gallery/dsc-0014.webp"
+      srcset="/images/photography/thumb/dsc-0014.webp 400w, /images/photography/gallery/dsc-0014.webp 1200w, /images/photography/hero/dsc-0014.webp 2400w"
+      sizes="100vw"
+      alt="A ram skull, stark against shadow"
+      class="absolute inset-0 w-full h-full object-cover"
+      loading="lazy"
+    />
+    <div class="absolute inset-0" style="background-image: linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.15) 40%, rgba(10,10,10,0.55) 100%);"></div>
+    <div class="absolute inset-0 flex items-end justify-center pb-8 sm:pb-12">
+      <p class="text-[11px] sm:text-xs tracking-[0.3em] uppercase text-cream/85" style="text-shadow: 0 1px 4px rgba(0,0,0,0.6);">and the work I make for its own sake</p>
     </div>
   </section>
 
-  <!-- CTA — alternating -->
-  <section class="section-light py-10 sm:py-16 md:py-24">
+  <!-- ACT II — BEYOND PHOTOGRAPHY (creative / maker) -->
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow mb-10 sm:mb-16">
+      <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">Building now</p>
+      <h2 class="t-sub font-serif mb-4">Beyond Photography</h2>
+      <p class="text-sm sm:text-base opacity-55 max-w-xl">
+        Ever wanted to lift a color straight out of a photograph — or your phone
+        wearing one? Each frame gives back its palette, its wallpaper, and its
+        texture. Take what you like.
+      </p>
+    </div>
+    <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
+      <div class="reveal"><LiquidPlate src="img-6552" alt="A single cumulus cloud against deep blue" label="Sky" note="A single cloud, held against the dark." index={0} /></div>
+      <div class="reveal"><LiquidPlate src="7r51018-enhanced-sr" alt="Rain beaded across a dark green leaf" label="Earth" note="Rain on a leaf — the surface, up close." index={1} reverse /></div>
+      <div class="reveal"><LiquidPlate src="dscf1022" alt="Long-exposure water turned to silk" label="Water" note="Water, slowed until it turns to silk." index={2} /></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-narrow">
       <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
         <h2 class="t-sub font-serif mb-3 sm:mb-4">Have a project in mind?</h2>
         <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
-          I take on consulting work in data engineering,
-          cybersecurity, and operational analytics.
+          I take on consulting work in data engineering, cybersecurity, and
+          operational analytics.
         </p>
         <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary w-full sm:w-auto">
           Inquire
