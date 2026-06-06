@@ -1,18 +1,19 @@
 ---
 /**
  * LiquidPlate — a whole photograph seen through the site's glass system,
- * with a copyable palette extracted from the image at build time.
+ * with a copyable palette and downloadable wallpapers, both derived from
+ * the image (palette at build time, wallpapers in-browser on demand).
  *
- * Base layer: a crisp <picture> (AVIF/WebP tiers) that works with zero JS.
+ * Base: a crisp <picture> (AVIF/WebP tiers), zero-JS safe.
  * Enhancement (fine-pointer, non-reduced-motion, filter-capable only):
- *   - feDisplacementMap refraction (only `scale` animates — one attribute
- *     write/frame, not a turbulence rebuild) + pointer-tracked specular.
- *   - a single gold depth-scan that sweeps once when the plate reveals,
- *     staggered by `index` so a row reads as one gesture (the section's
- *     one permitted gold).
- * Palette: build-time swatches (src/data/plate-palettes.json). Click a
- * swatch to copy its hex; the CSS button copies the whole palette as
- * custom properties. Always available, no pointer/motion gating.
+ *   feDisplacementMap refraction (scale-only) + specular; one staggered
+ *   gold depth-scan on reveal (the section's one gold).
+ * Palette: build-time swatches (plate-palettes.json) — click to copy hex,
+ *   CSS copies the whole palette as custom properties.
+ * Wallpaper: a Framed|Full fit toggle + device buttons (phone / tablet /
+ *   desktop / square) crop the hero tier on a <canvas> and download a
+ *   JPEG. Framed mats the photo on midnight (composition preserved); Full
+ *   is edge-to-edge (center crop). Desktop is always full-bleed. No files.
  * Everything tears down on astro:before-swap for clean view transitions.
  */
 import palettesData from '../data/plate-palettes.json';
@@ -60,6 +61,21 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
       <span class="lp-toast" aria-live="polite"></span>
     </div>
   )}
+
+  <div class="lp-wall" data-hero={tier('hero', 'webp')} data-label={label}>
+    <span class="lp-wall__t">Wallpaper</span>
+    <span class="lp-fitgroup" role="group" aria-label="Wallpaper fit">
+      <button type="button" class="lp-fit on" data-fit="framed" aria-pressed="true">Framed</button>
+      <button type="button" class="lp-fit" data-fit="full" aria-pressed="false">Full</button>
+    </span>
+    <span class="lp-devs">
+      <button type="button" class="lp-dev" data-fmt="phone" title="Phone" aria-label={`Download ${label} phone wallpaper`}><svg viewBox="0 0 14 20" width="13" height="18" aria-hidden="true"><rect x="2" y="1" width="10" height="18" rx="2.2" /></svg></button>
+      <button type="button" class="lp-dev" data-fmt="tablet" title="Tablet" aria-label={`Download ${label} tablet wallpaper`}><svg viewBox="0 0 18 20" width="15" height="17" aria-hidden="true"><rect x="1.5" y="2" width="15" height="16" rx="2" /></svg></button>
+      <button type="button" class="lp-dev" data-fmt="desktop" title="Desktop" aria-label={`Download ${label} desktop wallpaper`}><svg viewBox="0 0 20 17" width="18" height="15" aria-hidden="true"><rect x="1" y="1.5" width="18" height="11.5" rx="1.5" /><path d="M7 15.5h6" /></svg></button>
+      <button type="button" class="lp-dev" data-fmt="square" title="Square" aria-label={`Download ${label} square wallpaper`}><svg viewBox="0 0 18 18" width="15" height="15" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2.2" /></svg></button>
+    </span>
+    <span class="lp-wall__msg" aria-live="polite"></span>
+  </div>
 </div>
 
 <style>
@@ -98,7 +114,7 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
   }
   .lp-sw:hover { transform: translateY(-2px); }
   .lp-css {
-    margin-left: 4px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c; margin-left: 4px;
     background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 2px 7px; cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
   }
@@ -109,13 +125,69 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
     transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; white-space: nowrap;
   }
   .lp-toast.show { opacity: 1; transform: translateY(0); }
+
+  .lp-wall { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 7px; position: relative; }
+  .lp-wall__t { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c; opacity: 0.8; }
+  .lp-fitgroup { display: inline-flex; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; overflow: hidden; }
+  .lp-fit {
+    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #a89f8c;
+    background: transparent; border: 0; padding: 2px 7px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease;
+  }
+  .lp-fit + .lp-fit { border-left: 0.5px solid rgba(168,159,140,0.4); }
+  .lp-fit.on { color: #0a0a0a; background: #a89f8c; }
+  .lp-devs { display: inline-flex; gap: 4px; }
+  .lp-dev {
+    display: inline-flex; align-items: center; justify-content: center; color: #a89f8c;
+    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 6px; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .lp-dev svg { stroke: currentColor; fill: none; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; display: block; }
+  .lp-dev:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
+  .lp-dev:disabled { opacity: 0.45; cursor: default; }
+  .lp-wall__msg { font-size: 10px; color: #9a958c; opacity: 0; transition: opacity 0.2s ease; }
+  .lp-wall__msg.show { opacity: 1; }
+
   @media (prefers-reduced-motion: reduce) {
-    .liquid-plate__sheen, .lp-sw, .lp-css, .lp-toast { transition: none; }
+    .liquid-plate__sheen, .lp-sw, .lp-css, .lp-fit, .lp-dev, .lp-toast, .lp-wall__msg { transition: none; }
     .liquid-plate__scan { display: none; }
   }
 </style>
 
 <script>
+  function makeWallpaper(src: string, fmt: string, fit: string, filename: string, done?: (ok: boolean) => void): void {
+    const img = new Image();
+    img.onload = () => {
+      const dims = fmt === 'phone' ? [1290, 2796]
+        : fmt === 'tablet' ? [2048, 2732]
+        : fmt === 'square' ? [1440, 1440]
+        : [2560, 1440];
+      const W = dims[0], H = dims[1];
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const ctx = c.getContext('2d');
+      if (!ctx) { if (done) done(false); return; }
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, W, H);
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      const cover = fmt === 'desktop' || fit === 'full';
+      const s = cover ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih);
+      const dw = iw * s, dh = ih * s;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      c.toBlob((blob) => {
+        if (!blob) { if (done) done(false); return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        if (done) done(true);
+      }, 'image/jpeg', 0.92);
+    };
+    img.onerror = () => { if (done) done(false); };
+    img.src = src;
+  }
+
   function mountWrap(wrap: HTMLElement): () => void {
     const fig = wrap.querySelector('.liquid-plate') as HTMLElement | null;
     if (!fig) return () => {};
@@ -199,6 +271,45 @@ const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`
       };
       pal.addEventListener('click', onClick);
       cleanups.push(() => { clearTimeout(tt); pal.removeEventListener('click', onClick); });
+    }
+
+    const wall = wrap.querySelector('.lp-wall') as HTMLElement | null;
+    if (wall) {
+      const hero = wall.getAttribute('data-hero') || '';
+      const lab = (wall.getAttribute('data-label') || 'wallpaper').toLowerCase();
+      const msg = wall.querySelector('.lp-wall__msg') as HTMLElement | null;
+      let fit = 'framed';
+      let mt = 0;
+      const onWall = (e: Event) => {
+        const target = e.target as HTMLElement;
+        const fitBtn = target.closest('.lp-fit') as HTMLElement | null;
+        const dev = target.closest('.lp-dev') as HTMLButtonElement | null;
+        if (fitBtn) {
+          fit = fitBtn.getAttribute('data-fit') || 'framed';
+          wall.querySelectorAll('.lp-fit').forEach((x) => {
+            const on = x === fitBtn;
+            x.classList.toggle('on', on);
+            x.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          return;
+        }
+        if (dev && hero) {
+          const fmt = dev.getAttribute('data-fmt') || 'desktop';
+          const useFit = fmt === 'desktop' ? 'full' : fit;
+          const tag = (useFit === 'full' && fmt !== 'desktop') ? '-full' : '';
+          dev.disabled = true;
+          makeWallpaper(hero, fmt, useFit, 'jdw-' + lab + '-' + fmt + tag + '.jpg', (ok) => {
+            dev.disabled = false;
+            if (msg) {
+              msg.textContent = ok ? 'saved' : 'try again';
+              msg.classList.add('show');
+              clearTimeout(mt); mt = window.setTimeout(() => msg.classList.remove('show'), 1600);
+            }
+          });
+        }
+      };
+      wall.addEventListener('click', onWall);
+      cleanups.push(() => { clearTimeout(mt); wall.removeEventListener('click', onWall); });
     }
 
     return () => cleanups.forEach((fn) => fn());
