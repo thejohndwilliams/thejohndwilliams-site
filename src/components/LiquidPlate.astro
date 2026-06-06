@@ -99,8 +99,8 @@ const hero = tier('hero', 'webp');
   @media (min-width: 1024px) {
     .lp-feature { flex-direction: row; align-items: center; gap: 3rem; }
     .lp-feature--rev { flex-direction: row-reverse; }
-    .liquid-plate { flex: 0 0 auto; width: 520px; }
-    .lp-atelier { flex: 1; min-width: 0; }
+    .lp-feature .liquid-plate { flex: 0 0 auto; width: 520px; }
+    .lp-feature .lp-atelier { flex: 1; min-width: 0; }
   }
   .liquid-plate {
     position: relative; display: block; margin: 0; width: 100%;
@@ -128,7 +128,7 @@ const hero = tier('hero', 'webp');
   .lp-grp__v { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; position: relative; min-width: 0; }
 
   .lp-sw { width: 28px; height: 20px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
-    background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
+    flex-shrink: 0; background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
   .lp-sw:hover { transform: translateY(-2px); }
   .lp-ctl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
     background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 8px; cursor: pointer;

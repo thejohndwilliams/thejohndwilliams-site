@@ -8,28 +8,32 @@ const projects = [
     description: 'Forecasting tool for enterprise support operations. Holt-Winters exponential smoothing predicts queue demand across time windows. Sanitized and open-sourced with proportions-only output to respect operational security.',
     tags: ['Python', 'Forecasting', 'Holt-Winters', 'Operations'],
     outcome: 'Used in production for workforce planning',
-    github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard'
+    github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard',
+    image: 'gv-1fd48bd9'
   },
   {
     title: 'Job Application Analytics',
     description: 'Analysis of 580+ job applications over two years. Predictive models for rejection patterns, anomaly detection on response rates, isolation of which variables actually move hiring outcomes. Python, full statistical methodology.',
     tags: ['Python', 'Machine Learning', 'Data Analysis', 'Statistics'],
     outcome: 'Identified actionable patterns across 580+ applications',
-    github: 'https://github.com/thejohndwilliams/jobappanalysis'
+    github: 'https://github.com/thejohndwilliams/jobappanalysis',
+    image: 'dscf1059'
   },
   {
     title: 'Government Cybersecurity Assessment',
     description: 'NIST-framework risk assessment for government sector organizations. Threat analysis, control mapping, and remediation planning against NIST CSF and 800-53 Rev 5.',
     tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Cybersecurity'],
     outcome: 'Full threat model with prioritized remediation roadmap',
-    github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment'
+    github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment',
+    image: 'dsc-0329'
   },
   {
     title: 'Healthcare Security Strategy',
     description: 'MBA capstone at Baylor. Security framework for a healthcare organization: NIST CSF and 800-53 Rev 5 controls, risk assessment methodology, compliance mapping, implementation roadmap.',
     tags: ['NIST CSF', 'NIST 800-53', 'Capstone', 'Compliance'],
     outcome: 'Baylor University MBA Cybersecurity Capstone',
-    github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha'
+    github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
+    image: 'dscf0423'
   }
 ];
 
@@ -64,9 +68,9 @@ const expertise = [
     </div>
   </section>
 
-  <!-- ACT I — THE WORK (professional) -->
+  <!-- ACT I — THE WORK (professional) · image-backed bento -->
   <section class="section-light py-12 sm:py-16 md:py-24">
-    <div class="container-narrow">
+    <div class="container-wide">
       <div class="reveal max-w-2xl mb-8 sm:mb-12">
         <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">The work I can show</p>
         <p class="text-sm sm:text-base opacity-55">
@@ -74,26 +78,38 @@ const expertise = [
           discipline, not the details.
         </p>
       </div>
-      <div class="stagger-children grid sm:grid-cols-2 gap-4 sm:gap-6">
-        {projects.map((project) => (
-          <div class="glass-card p-5 sm:p-7 md:p-8 flex flex-col">
-            <h2 class="t-sub font-serif mb-3">{project.title}</h2>
-            <p class="text-sm opacity-55 mb-4 sm:mb-5 leading-relaxed flex-1">{project.description}</p>
-            <div class="flex flex-wrap gap-1.5 mb-4 sm:mb-5">
-              {project.tags.map((tag: string) => (
-                <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg opacity-70">{tag}</span>
-              ))}
+      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
+        {projects.map((project, i) => {
+          const isWide = i === 0 || i === 3;
+          const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
+          return (
+            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-navy-hour/30 transition-all duration-500 min-h-[300px] sm:min-h-[340px] flex ${mdSpan}`}>
+              <picture>
+                <source type="image/avif" srcset={`/images/photography/thumb/${project.image}.avif 400w, /images/photography/gallery/${project.image}.avif 1200w`} sizes="(max-width: 767px) 100vw, 50vw" />
+                <source type="image/webp" srcset={`/images/photography/thumb/${project.image}.webp 400w, /images/photography/gallery/${project.image}.webp 1200w`} sizes="(max-width: 767px) 100vw, 50vw" />
+                <img src={`/images/photography/gallery/${project.image}.webp`} alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+              </picture>
+              <div class="absolute inset-0" style="background-image: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.84) 36%, rgba(10,10,10,0.52) 70%, rgba(10,10,10,0.22) 100%);"></div>
+              <div class="relative z-10 w-full flex flex-col justify-end p-5 sm:p-6 md:p-7">
+                <h2 class="t-sub font-serif mb-2 sm:mb-3 text-cream">{project.title}</h2>
+                <p class="text-sm opacity-70 mb-3 sm:mb-4 leading-relaxed">{project.description}</p>
+                <div class="flex flex-wrap gap-1.5 mb-3 sm:mb-4">
+                  {project.tags.map((tag: string) => (
+                    <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 rounded-md sm:rounded-lg opacity-80">{tag}</span>
+                  ))}
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
+                  {project.github && (
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
+                      View on GitHub →
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-auto">
-              <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
-              {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-60 hover:opacity-80 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
-                  View on GitHub →
-                </a>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div class="reveal mt-8 sm:mt-12">
         <div class="flex flex-wrap gap-2">
@@ -105,7 +121,7 @@ const expertise = [
     </div>
   </section>
 
-  <!-- DIVIDER — the turn from professional to personal -->
+  <!-- DIVIDER -->
   <section class="relative h-[42vh] sm:h-[52vh] overflow-hidden">
     <img
       src="/images/photography/gallery/dsc-0014.webp"
@@ -121,7 +137,7 @@ const expertise = [
     </div>
   </section>
 
-  <!-- ACT II — BEYOND PHOTOGRAPHY (creative / maker) -->
+  <!-- ACT II — BEYOND PHOTOGRAPHY -->
   <section class="py-12 sm:py-16 md:py-24">
     <div class="container-narrow mb-10 sm:mb-16">
       <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">Building now</p>
@@ -133,9 +149,9 @@ const expertise = [
       </p>
     </div>
     <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
-      <div class="reveal"><LiquidPlate src="img-6552" alt="A single cumulus cloud against deep blue" label="Sky" note="A single cloud, held against the dark." index={0} /></div>
+      <div class="reveal"><LiquidPlate src="img-6552" alt="Last light over a ridge at dusk" label="Sky" note="Last light, going down behind the ridge." index={0} /></div>
       <div class="reveal"><LiquidPlate src="7r51018-enhanced-sr" alt="Rain beaded across a dark green leaf" label="Earth" note="Rain on a leaf — the surface, up close." index={1} reverse /></div>
-      <div class="reveal"><LiquidPlate src="dscf1022" alt="Long-exposure water turned to silk" label="Water" note="Water, slowed until it turns to silk." index={2} /></div>
+      <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
     </div>
   </section>
 
