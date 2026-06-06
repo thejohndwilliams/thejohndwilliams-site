@@ -833,12 +833,18 @@ html.lenis body { height: auto; }
 }
 .glass-card::before {
   opacity: 1;
+  /* Pointer-tracked specular (radial) over the static top rim. --mx/--my are
+     written per-element by initGlassSpecular() in BaseLayout; they fall back to
+     a centered idle position when there is no pointer or under reduced-motion.
+     Restored 2026-06-06 (prior 'spotlight removed' decision reversed). */
   background:
+    radial-gradient(180px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 38%, transparent 64%),
     linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 20%, transparent 46%);
 }
 .glass-panel::before {
   opacity: 1;
   background:
+    radial-gradient(300px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.04) 40%, transparent 66%),
     linear-gradient(180deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.05) 24%, transparent 52%);
 }
 .glass-card:hover {

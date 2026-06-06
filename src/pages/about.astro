@@ -38,11 +38,7 @@ import KineticPlate from '../components/KineticPlate.astro';
       class="absolute inset-0"
       style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"
     ></div>
-    <div
-      class="absolute inset-0 pointer-events-none"
-      aria-hidden="true"
-      style="opacity:0.025; mix-blend-mode:soft-light; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>&quot;);"
-    ></div>
+    <!-- (removed) duplicate hero grain: global body::before already supplies film grain across the whole site -->
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Rising</p>

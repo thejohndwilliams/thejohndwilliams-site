@@ -360,6 +360,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       initReveal();
       initBottomNav();
       initPhotoProtect();
+      initGlassSpecular();
 
       // Re-run after View Transitions navigate
       document.addEventListener('astro:after-swap', () => {

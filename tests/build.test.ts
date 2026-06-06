@@ -239,15 +239,16 @@ describe('SEO and Meta Tags', () => {
     expect(indexHtml).toContain('feDisplacementMap');
   });
 
-  it('no longer ships the pointer-tracked specular listener (spotlight removed)', () => {
+  it('ships the pointer-tracked specular listener (spotlight restored 2026-06-06)', () => {
     const assetsDir = path.join(distDir, '_assets');
     const jsFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.js'));
     const jsBundle = jsFiles
       .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
       .join('\n');
-    // Spotlight removed by design — the pointermove specular driver is gone.
-    expect(jsBundle).not.toContain('--mx');
-    expect(jsBundle).not.toContain('--my');
+    // Spotlight restored by design (2026-06-06): pointermove specular driver
+    // writes --mx/--my for the radial highlight on glass-card and glass-panel.
+    expect(jsBundle).toContain('--mx');
+    expect(jsBundle).toContain('--my');
   });
 });
 
@@ -263,8 +264,8 @@ describe('Liquid Glass CSS', () => {
       .join('\n');
   }, 60000);
 
-  it('has no pointer-tracked specular spotlight (removed by design)', () => {
-    expect(cssBundle).not.toContain('var(--mx');
+  it('has the pointer-tracked specular spotlight (restored 2026-06-06)', () => {
+    expect(cssBundle).toContain('var(--mx');
   });
 
   it('does NOT apply backdrop-filter: url(#glass-lens) — iOS Safari breaks on it', () => {
