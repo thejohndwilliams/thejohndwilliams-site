@@ -15,18 +15,6 @@ const currentYear = getCurrentYear();
         <p class="text-xs sm:text-sm opacity-50 italic font-serif">
           <a href="https://www.biblegateway.com/passage/?search=John%2015%3A13&amp;version=KJV" target="_blank" rel="noopener noreferrer" class="hover:text-navy-hour transition-colors duration-300">John 15:13</a>
         </p>
-        <button
-          id="theme-toggle"
-          type="button"
-          aria-pressed="false"
-          class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-mute hover:text-navy-hour transition-colors duration-300 min-h-[44px]"
-        >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" />
-          </svg>
-          <span id="theme-toggle-label">Dim</span><span class="sr-only"> background</span>
-        </button>
       </div>
 
       <div class="flex items-center">
@@ -40,34 +28,3 @@ const currentYear = getCurrentYear();
     </div>
   </div>
 </footer>
-
-<script>
-  // Dim <-> true-black toggle. The pre-paint script in BaseLayout has already
-  // applied any saved preference; this only wires the control and keeps the
-  // label / theme-color meta in sync. The footer persists across View
-  // Transitions (transition:persist), so guard against double-binding.
-  function initThemeToggle() {
-    const btn = document.getElementById('theme-toggle');
-    const label = document.getElementById('theme-toggle-label');
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (!btn) return;
-    const sync = () => {
-      const black = document.documentElement.getAttribute('data-theme') === 'black';
-      if (label) label.textContent = black ? 'True black' : 'Dim';
-      btn.setAttribute('aria-pressed', String(black));
-      if (meta) meta.setAttribute('content', black ? '#000000' : '#0a0a0a');
-    };
-    sync();
-    if ((btn as HTMLElement).dataset.bound) return;
-    (btn as HTMLElement).dataset.bound = '1';
-    btn.addEventListener('click', () => {
-      const black = document.documentElement.getAttribute('data-theme') === 'black';
-      if (black) document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', 'black');
-      try { localStorage.setItem('jw-theme', black ? 'dim' : 'black'); } catch (e) {}
-      sync();
-    });
-  }
-  initThemeToggle();
-  document.addEventListener('astro:after-swap', initThemeToggle);
-</script>

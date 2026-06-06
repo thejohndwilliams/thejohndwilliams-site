@@ -31,6 +31,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
             );
           })}
         </ul>
+        <button type="button" class="theme-toggle inline-flex items-center justify-center text-mute hover:text-cream transition-colors duration-300 py-2 min-h-[44px]" aria-pressed="false" aria-label="Switch to true black background">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
+        </button>
         <a
           href="mailto:jndwcreative@gmail.com"
           class="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border border-cream/25 text-cream hover:border-cream/50 hover:bg-cream/5 transition-all duration-300"
@@ -51,6 +54,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         <a href="/about" data-path="/about" aria-label="About" class={`m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full transition-colors duration-300 ${currentPath === '/about' ? 'text-navy-hour' : 'text-mute'}`} aria-current={currentPath === '/about' ? 'page' : undefined}>
           <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.7" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M5.6 19.8a6.4 6.4 0 0 1 12.8 0" /></svg>
         </a>
+        <button type="button" class="theme-toggle flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute hover:text-cream transition-colors duration-300" aria-pressed="false" aria-label="Switch to true black background">
+          <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
+        </button>
       </div>
     </nav>
   </div>
@@ -103,10 +109,43 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     if (window.scrollY > 40) header.classList.add('scrolled');
   }
 
+  // Dim / true-black toggle. Pre-paint script in BaseLayout applied the saved
+  // preference; this wires every .theme-toggle control (header has more than
+  // one across breakpoints) and keeps aria + theme-color meta in sync. The
+  // header persists across View Transitions, so guard against double-binding.
+  function initThemeToggle() {
+    const btns = document.querySelectorAll('.theme-toggle');
+    if (!btns.length) return;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const sync = () => {
+      const black = document.documentElement.getAttribute('data-theme') === 'black';
+      btns.forEach((b) => {
+        b.setAttribute('aria-pressed', String(black));
+        b.setAttribute('aria-label', black ? 'Switch to dim background' : 'Switch to true black background');
+      });
+      if (meta) meta.setAttribute('content', black ? '#000000' : '#0a0a0a');
+    };
+    sync();
+    btns.forEach((b) => {
+      const el = b as HTMLElement;
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('click', () => {
+        const black = document.documentElement.getAttribute('data-theme') === 'black';
+        if (black) document.documentElement.removeAttribute('data-theme');
+        else document.documentElement.setAttribute('data-theme', 'black');
+        try { localStorage.setItem('jw-theme', black ? 'dim' : 'black'); } catch (e) {}
+        sync();
+      });
+    });
+  }
+
   updateActiveNav();
   initGlassHeader();
+  initThemeToggle();
   document.addEventListener('astro:after-swap', () => {
     updateActiveNav();
     initGlassHeader();
+    initThemeToggle();
   });
 </script>

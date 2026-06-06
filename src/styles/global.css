@@ -1012,3 +1012,10 @@ html.lenis body { height: auto; }
     box-shadow: 0 10px 34px rgba(0, 0, 0, 0.34);
   }
 }
+
+/* Theme toggle (header complication): contrast-circle icon brightens to cream
+   when true black is engaged, so the control reads on/off at a glance. Future
+   home for the Dark-Solitude to Summer theme switch. */
+.theme-toggle[aria-pressed="true"] {
+  color: #FDFCFA;
+}
