@@ -991,3 +991,25 @@ html.lenis body { height: auto; }
   color: rgba(244, 234, 222, 0.9);
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.5);
 }
+
+
+/* ============================================================
+   TAB BAR REFINEMENT (2026-06-06): quieter chrome.
+   Drops the per-item glass keys and the touch sweep. The active
+   tab is ONE complete rounded pill (not a clipped U), no dot.
+   The keys jingle from the work, not the navigation.
+   ============================================================ */
+.glass-tabbar { overflow: visible; }
+.glass-tabbar::after { display: none !important; }
+.bottom-nav-item {
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.bottom-nav-item.text-navy-hour::after { display: none; }
+.bottom-nav-item.text-navy-hour {
+  background: rgba(126, 156, 184, 0.14);
+  border: 1px solid rgba(126, 156, 184, 0.26);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+}

@@ -68,7 +68,7 @@ const expertise = [
     </div>
   </section>
 
-  <!-- ACT I - THE WORK (professional) · image-backed bento -->
+  <!-- ACT I - THE WORK · image-backed bento -->
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <div class="reveal max-w-2xl mb-8 sm:mb-12">
@@ -91,14 +91,14 @@ const expertise = [
               </picture>
               <div class="absolute inset-0" style="background-image: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.84) 36%, rgba(10,10,10,0.52) 70%, rgba(10,10,10,0.22) 100%);"></div>
               <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
-                <h2 class="t-sub font-serif mb-2 sm:mb-3 text-cream">{project.title}</h2>
-                <p class={`text-sm opacity-70 mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
-                <div class="flex flex-wrap gap-1.5 mb-3 sm:mb-4">
-                  {project.tags.map((tag: string) => (
+                <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  {project.tags.slice(0, 3).map((tag: string) => (
                     <span class="glass-tag text-[10px] sm:text-xs px-2 sm:px-3 py-1 rounded-md sm:rounded-lg opacity-80">{tag}</span>
                   ))}
                 </div>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <p class={`text-sm opacity-70 mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
                   <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
                   {project.github && (
                     <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
@@ -117,6 +117,16 @@ const expertise = [
             <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm opacity-60 rounded-md sm:rounded-lg">{skill}</span>
           ))}
         </div>
+      </div>
+      <div class="reveal mt-10 sm:mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+        <p class="text-sm sm:text-base opacity-55 flex-1">
+          Have a project in mind? I take on consulting in data engineering,
+          cybersecurity, and operational analytics.
+        </p>
+        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary shrink-0 w-full sm:w-auto justify-center">
+          Inquire
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -144,7 +154,7 @@ const expertise = [
       <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Lift each experience from its frame.</p>
       <p class="text-sm sm:text-base opacity-55 max-w-xl">
         Download custom wallpapers, textures, and color palettes from any frame below, free to take.
-        <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography%20%E2%80%94%20prints%20%26%20licensing" class="text-cream/80 underline underline-offset-4 hover:text-navy-hour transition-colors duration-300">Inquire</a>
+        <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-navy-hour transition-colors duration-300">Inquire</a>
         for prints, licensing, or the full-resolution files.
       </p>
     </div>
@@ -152,23 +162,6 @@ const expertise = [
       <div class="reveal"><LiquidPlate src="img-6552" alt="Last light over a ridge at dusk" label="Sky" note="Last light, going down behind the ridge." index={0} /></div>
       <div class="reveal"><LiquidPlate src="7r51018-enhanced-sr" alt="Rain beaded across a dark green leaf" label="Earth" note="Rain on a leaf. The surface, up close." index={1} reverse /></div>
       <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="section-light py-12 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
-        <h2 class="t-sub font-serif mb-3 sm:mb-4">Have a project in mind?</h2>
-        <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
-          I take on consulting work in data engineering, cybersecurity, and
-          operational analytics.
-        </p>
-        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary w-full sm:w-auto">
-          Inquire
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
-      </div>
     </div>
   </section>
 </BaseLayout>
