@@ -988,3 +988,27 @@ html.lenis body { height: auto; }
 .bottom-nav-item { position: relative; background: transparent; border: 0; box-shadow: none; border-radius: 0; }
 .bottom-nav-item.text-navy-hour::after { content: none; }
 .bottom-nav-item.text-navy-hour svg { transform: none; filter: none; }
+
+/* ---------------------------------------------------------------------------
+   Mobile top nav (the section icons live in the header beside JW; there is no
+   bottom bar anymore - it collided with the browser's own toolbar). At the top
+   of the page the header is clean over the hero with just a whisper of scrim
+   for legibility. Once you scroll, it resolves into pure liquid glass so the
+   content flows underneath and is never interrupted (Instagram / X behaviour).
+--------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  #site-header {
+    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.55), rgba(10, 10, 10, 0));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom-color: transparent;
+    box-shadow: none;
+  }
+  #site-header.scrolled {
+    background: rgba(10, 10, 10, 0.42);
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    backdrop-filter: blur(40px) saturate(1.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.34);
+  }
+}

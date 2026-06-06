@@ -239,36 +239,6 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     </main>
     <Footer />
 
-    {/* Mobile bottom tab navigation - thumb zone, gallery-grade */}
-    <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
-      {/* Tab bar - 4 items, glass bezel (mobile). Uses .glass-tabbar
-           for parity with .glass-nav on desktop: same blur, saturate,
-           and a bottom-oriented rim highlight via ::before. */}
-      <div class="glass-tabbar relative">
-        <div class="flex items-center justify-evenly px-4 h-[54px]">
-          <a href="/" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[3.5rem] py-1.5" data-path="/">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M3.5 11.5 12 4.5l8.5 7M6 9.7V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.7" /></svg>
-            <span class="text-[10px] tracking-[0.14em] uppercase">Home</span>
-          </a>
-          <a href="/photography" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[3.5rem] py-1.5" data-path="/photography">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M4 8.6A1.6 1.6 0 0 1 5.6 7h1.9l1-1.5h7l1 1.5h1.9A1.6 1.6 0 0 1 20 8.6v8.8a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 17.4V8.6Z" /><circle cx="12" cy="13" r="3.3" stroke-width="1.25" /></svg>
-            <span class="text-[10px] tracking-[0.14em] uppercase">Photos</span>
-          </a>
-          <a href="/work" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[3.5rem] py-1.5" data-path="/work">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M9.7 19 14.3 5M16.8 8.5 20.5 12l-3.7 3.5M7.2 15.5 3.5 12l3.7-3.5" /></svg>
-            <span class="text-[10px] tracking-[0.14em] uppercase">Work</span>
-          </a>
-          <a href="/about" class="bottom-nav-item flex flex-col items-center justify-center gap-1 min-w-[3.5rem] py-1.5" data-path="/about">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.7" stroke-width="1.25" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M5.6 19.8a6.4 6.4 0 0 1 12.8 0" /></svg>
-            <span class="text-[10px] tracking-[0.14em] uppercase">About</span>
-          </a>
-        </div>
-        {/* Safe area padding for notched phones - transparent so
-             the glass tab bar above it reads as one continuous
-             surface when blurring content behind. */}
-        <div class="h-[env(safe-area-inset-bottom,0px)]"></div>
-      </div>
-    </nav>
 
     {/* Back to top - desktop only; mobile uses active-tab-tap convention */}
     <button
@@ -284,46 +254,14 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     {/* Scroll reveal observer - IntersectionObserver, no scroll hijacking */}
     <script>
       function initBottomNav() {
-        const nav = document.getElementById('bottom-nav');
         const btn = document.getElementById('back-to-top');
-        if (!nav) return;
-
-        // Highlight active tab + scroll-to-top on active tap
-        const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-        nav.querySelectorAll('.bottom-nav-item').forEach((item) => {
-          const el = item as HTMLElement;
-          if (el.dataset.path === currentPath) {
-            el.classList.add('text-navy-hour');
-            el.addEventListener('click', (e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-          } else {
-            el.classList.add('opacity-60');
-          }
-        });
-
-        // Show nav after scrolling past hero, hide near footer
+        if (!btn) return;
         let ticking = false;
-
         window.addEventListener('scroll', () => {
           if (!ticking) {
             window.requestAnimationFrame(() => {
-              const scrollY = window.scrollY;
-              const docHeight = document.documentElement.scrollHeight;
-              const winHeight = window.innerHeight;
-              const nearBottom = scrollY + winHeight > docHeight - 200;
-
-              // Show bottom nav after 300px scroll
-              if (scrollY > 300 && !nearBottom) {
-                nav.style.transform = 'translateY(0)';
-              } else if (scrollY <= 300) {
-                nav.style.transform = 'translateY(100%)';
-              }
-
-              // Back to top button - desktop only
-              if (btn && window.innerWidth >= 768) {
-                if (scrollY > 600) {
+              if (window.innerWidth >= 768) {
+                if (window.scrollY > 600) {
                   btn.style.opacity = '1';
                   btn.style.pointerEvents = 'auto';
                   btn.style.transform = 'translateY(0)';
@@ -333,17 +271,12 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
                   btn.style.transform = 'translateY(1rem)';
                 }
               }
-
               ticking = false;
             });
             ticking = true;
           }
         }, { passive: true });
-
-        // Back to top click
-        btn?.addEventListener('click', () => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
       }
 
       function initReveal() {
