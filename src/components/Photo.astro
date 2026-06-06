@@ -1,13 +1,13 @@
 ---
 /**
- * <Photo> — Unified photograph renderer.
+ * <Photo> - Unified photograph renderer.
  *
  * Emits a responsive <picture> element with srcset + sizes, handling
  * both of the site's image serving strategies:
  *
  *   1. Local (`source: 'local'`): the legacy pipeline. Pre-rendered
  *      AVIF/WebP tiers under /public/images/photography/{thumb,gallery,hero}/.
- *      This is how the first 58 photographs ship — zero regression to
+ *      This is how the first 58 photographs ship - zero regression to
  *      migrate them.
  *
  *   2. R2 + Cloudflare Image Resizing (`source: 'r2'`): the forward
@@ -15,7 +15,7 @@
  *      edge per request via /cdn-cgi/image/... or a custom hostname.
  *      Zero egress cost, format auto-negotiation per Accept header.
  *
- * Call sites don't know or care which source the image uses — the
+ * Call sites don't know or care which source the image uses - the
  * component resolves the PhotoImage entry's `source` field (defaults
  * to 'local' when absent) and emits the appropriate markup.
  *
@@ -39,7 +39,7 @@ export interface PhotoProps {
   fallbackTier?: 'thumb' | 'gallery' | 'hero';
   /** Extra classes for the <img> */
   class?: string;
-  /** fetchpriority — 'high' for LCP tiles, else omit */
+  /** fetchpriority - 'high' for LCP tiles, else omit */
   fetchpriority?: 'high' | 'auto' | 'low';
   /** eager load? Default is lazy. */
   loading?: 'eager' | 'lazy';

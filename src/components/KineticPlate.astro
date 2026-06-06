@@ -1,6 +1,6 @@
 ---
 /**
- * KineticPlate — luminance-bucketed 3D dot projection of a photograph
+ * KineticPlate - luminance-bucketed 3D dot projection of a photograph
  * with multi-spectrum chromatic fringe (oil-on-water iridescence).
  *
  * v8 partitioned the grid across four depth-stacked canvases so the
@@ -47,7 +47,7 @@
  * applies its own parallax multiplier via calc(), so the browser
  * composites the motion on the GPU instead of repainting pixels.
  * Result: scroll cost drops from O(canvases × dots × DPR²) per frame
- * to O(1) — a single property write. Headroom restored for adding
+ * to O(1) - a single property write. Headroom restored for adding
  * more visual layers without regressing frame rate.
  *
  * v8.3 expands the chroma layer from 2 channels to 4: red, green,
@@ -62,7 +62,7 @@
  *
  * Outline detection: 4-neighbor luminance delta. A dot in the bright
  * bucket is "outline" if any cardinal neighbor sits below a fringe
- * threshold — the silhouette where subject meets background. Interior
+ * threshold - the silhouette where subject meets background. Interior
  * highlight dots have bright neighbors and are excluded. All four
  * chroma channels paint the same outline cells; the ring is composed
  * by color / depth / offset differentiation, not by sparsity.
@@ -72,7 +72,7 @@
  * the plate was tilting as a rigid sheet rather than the subject
  * popping. v8 partitioned by luminance for subject-pop. v8.1/8.2
  * added chromatic fringe. v8.3 turns that fringe into a 4-channel
- * spectrum with per-channel depth — an extra layer of 3D separation
+ * spectrum with per-channel depth - an extra layer of 3D separation
  * inside the chroma ring itself.
  *
  * Grid density: 128x128 (up from 96 in v7/v8 baseline) to give the
@@ -89,7 +89,7 @@
  * same pointer handler that drives --rx/--ry; no per-frame repaint
  * of the chroma canvases on tilt. Quiet Power discipline intact.
  *
- * Build-time derivation only — no runtime image decoding, no new CSP
+ * Build-time derivation only - no runtime image decoding, no new CSP
  * surface. Decorative (role="img" on figure, canvases aria-hidden).
  * Respects prefers-reduced-motion by disabling pointer rotation,
  * scroll parallax, and chroma offset and painting a single static
@@ -149,7 +149,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
     margin: 0;
     padding: 0;
     background: transparent;
-    /* perspective on the figure, preserve-3d on the stage — the
+    /* perspective on the figure, preserve-3d on the stage - the
        canvases then parallax correctly against each other on rotate. */
     perspective: 900px;
     perspective-origin: 50% 50%;
@@ -187,18 +187,18 @@ const plateSrc = `/data/kinetic/${category}.json`;
      sit +32px closer to the viewer; dark shadows (layer 3) sit -32px
      away. 64px of depth separation. v9.2: each Z multiplies by
      --depth-scale (default 1, peaks at ~1.30 when cursor is at plate
-     center) — perspective volume breathes with cursor proximity.
+     center) - perspective volume breathes with cursor proximity.
 
      v9.0 parallax: --p is a unitless scalar (roughly [-22, +22] px-
      equivalent) written on the stage per scroll frame. Each layer
      multiplies it by its own parallax constant via calc() so the
-     translation is GPU-composited — no canvas repaint required.
+     translation is GPU-composited - no canvas repaint required.
      Closer (bright) layers drift more; layer 3 stays anchored. X
      drift is 0.35 of Y, matching the prior canvas-baked behavior.
 
      E-prep (future): per-layer rotation differentiation would land
      here. The stage rotateX/rotateY would move onto each canvas as
-     rotateX(calc(var(--rx, 0deg) * <rotScale>)) — bright bucket gets
+     rotateX(calc(var(--rx, 0deg) * <rotScale>)) - bright bucket gets
      a small rotScale (e.g. 0.7), dark bucket a large one (e.g. 1.3),
      creating a diorama "subject-locked" effect on tilt. rotScale
      values live in the JS LAYERS array. */
@@ -219,10 +219,10 @@ const plateSrc = `/data/kinetic/${category}.json`;
   }
   .kinetic-plate__canvas[data-layer="3"] {
     translate: 0 0 calc(var(--depth-scale, 1) * -32px);
-    transform: none; /* parallax 0 — anchored */
+    transform: none; /* parallax 0 - anchored */
   }
 
-  /* Chromatic fringe — v8.3 four-channel spectrum. Each channel paints
+  /* Chromatic fringe - v8.3 four-channel spectrum. Each channel paints
      the same outline cells with its own color bias, sits at its own
      Z depth (12px total spread), and rests at its own baseline offset
      in a different compass direction. Together the four channels form
@@ -245,7 +245,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
        neutral (0deg / 1.0) so the rest state is unchanged. */
     filter: hue-rotate(var(--hue, 0deg)) saturate(var(--sat, 1));
     /* v9.1/v9.2: transition tilt-coupled translate AND filter, NOT
-       transform. Scroll parallax lives on transform and must snap —
+       transform. Scroll parallax lives on transform and must snap -
        transitioning it would desync the chroma ring from the base
        layers during fast scroll on high-refresh displays. */
     transition: translate 140ms ease-out, filter 140ms ease-out;
@@ -345,7 +345,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
    *
    * Buckets are non-overlapping and exhaustive over [0, 1]. Each dot
    * paints on exactly one layer per frame, so total draw calls per
-   * frame equal a single full grid pass — no regression on v7.
+   * frame equal a single full grid pass - no regression on v7.
    *
    * Scroll parallax: closer (bright) layers drift more per unit of
    * viewport traversal. Physically consistent with the tilt-driven
@@ -355,21 +355,21 @@ const plateSrc = `/data/kinetic/${category}.json`;
   // ships, each layer's rotateX/rotateY will multiply the stage tilt
   // by its rotScale. Bright bucket (subject) gets a small value so
   // it stays anchored; dark bucket (background) gets a large value
-  // so it swings around the subject. Currently all 1.0 — uniform
+  // so it swings around the subject. Currently all 1.0 - uniform
   // tilt, identical to v9.1 behavior.
   const LAYERS = [
-    // 0: brightest highlights — pops forward, drifts most on scroll
+    // 0: brightest highlights - pops forward, drifts most on scroll
     { lumLo: 0.60, lumHi: 1.01, opacity: 1.00, parallax: 1.00, capDpr: false, rotScale: 1.0 },
-    // 1: mid-bright — slight forward pop, moderate drift
+    // 1: mid-bright - slight forward pop, moderate drift
     { lumLo: 0.35, lumHi: 0.60, opacity: 0.92, parallax: 0.60, capDpr: false, rotScale: 1.0 },
-    // 2: mid-dark — slight recession, mild drift
+    // 2: mid-dark - slight recession, mild drift
     { lumLo: 0.15, lumHi: 0.35, opacity: 0.78, parallax: 0.30, capDpr: true,  rotScale: 1.0 },
-    // 3: darkest shadows — recedes to back, anchored in scroll
+    // 3: darkest shadows - recedes to back, anchored in scroll
     { lumLo: -0.01, lumHi: 0.15, opacity: 0.62, parallax: 0.00, capDpr: true, rotScale: 1.0 },
   ];
 
   /**
-   * Chromatic fringe channels — v8.3 four-channel spectrum. Each plate
+   * Chromatic fringe channels - v8.3 four-channel spectrum. Each plate
    * paints the same OUTLINE dots of the bright bucket (silhouette
    * where subject meets background) tinted in its own color. The four
    * channels live at four staggered translateZ depths in CSS (40/36/
@@ -379,7 +379,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
    * where they sit over cream highlights, and overlaps produce
    * spectral mixes (r+g=yellow, b+v=magenta, r+v=magenta, g+b=cyan).
    *
-   * Parallax on scroll is kept equal across channels (1.00) — the
+   * Parallax on scroll is kept equal across channels (1.00) - the
    * ring should scroll as a cohesive unit, not fan out vertically
    * during page travel. The per-channel depth/offset handles the
    * visual differentiation on tilt.
@@ -397,7 +397,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
   // catch fringe, not just specular-on-shadow transitions.
   const OUTLINE_NEIGHBOR_MAX = 0.52;
   // Bright bucket floor for outline candidacy. Lowered beneath layer 0's
-  // lumLo so mid-bright edges participate — the fringe otherwise only
+  // lumLo so mid-bright edges participate - the fringe otherwise only
   // lit the very brightest rim which reads as invisible on softer scenes.
   const OUTLINE_LUM_MIN = 0.48;
   // Chroma dot radius multiplier. Boosting past 1.0 lets the chroma
@@ -406,7 +406,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
   const CHROMA_RADIUS_BOOST = 1.45;
   // Pointer-driven chroma offset in CSS pixels. JS writes --cx/--cy
   // in [-MAX_CHROMA_PX, +MAX_CHROMA_PX]; CSS calc() combines that with
-  // each channel's compass baseline. Zero at rest — each channel's
+  // each channel's compass baseline. Zero at rest - each channel's
   // baseline is already non-zero in its own compass direction, so the
   // ring is visible without any pointer input.
   const MAX_CHROMA_PX = 3.2;
@@ -439,7 +439,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
   // cursor at rim -> DEPTH_FLOOR. Pointer-leave -> 1.0.
   const DEPTH_PEAK         = 1.30;
   const DEPTH_FLOOR        = 1.00;
-  // sqrt(2) — max possible distance for clamped normalized cursor
+  // sqrt(2) - max possible distance for clamped normalized cursor
   // coords [-1,1]; pre-computed so we can map distance to [0,1].
   const NORM_MAX_DIST      = 1.4142135623730951;
 
@@ -519,7 +519,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
         c.style.height = height + 'px';
         ctxs[i].setTransform(dpr, 0, 0, dpr, 0, 0);
       }
-      // Chroma plates cap DPR at 1 — sparse silhouette paints don't
+      // Chroma plates cap DPR at 1 - sparse silhouette paints don't
       // need full-resolution antialiasing and capping keeps per-plate
       // backing-store growth in check with the two extra canvases.
       for (let i = 0; i < chromaCanvases.length; i++) {
@@ -543,7 +543,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
      * v9.1: avoids getBoundingClientRect on the hot path. The figure's
      * absolute Y position is cached at mount, after resize, and on
      * visibility re-entry. Per-frame cost reduces to two cheap reads
-     * (window.scrollY, window.innerHeight) and arithmetic — no forced
+     * (window.scrollY, window.innerHeight) and arithmetic - no forced
      * layout flush. With 4+ plates on a page this used to mean 4
      * synchronous layout queries per scroll frame.
      */
@@ -584,7 +584,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
 
           // v8 partition: this layer owns dots in [lumLo, lumHi).
           // Every dot lands on exactly one layer per frame; dots
-          // outside the band are skipped — they belong to a sibling.
+          // outside the band are skipped - they belong to a sibling.
           if (lum < layer.lumLo || lum >= layer.lumHi) continue;
 
           const alpha = ALPHA_FLOOR + ALPHA_RANGE * lum;
@@ -605,7 +605,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
 
     /**
      * Paint a single chromatic fringe plate. Only outline dots in the
-     * bright bucket (layer 0 band) render — the silhouette ring where
+     * bright bucket (layer 0 band) render - the silhouette ring where
      * subject meets background. Interior highlights are left dark so
      * the screen blend contributes nothing there and the cream stays
      * pure. Mirrors layer 0's parallax so the fringe stays locked to
@@ -636,13 +636,13 @@ const plateSrc = `/data/kinetic/${category}.json`;
           const idx = ry * data.cols + rx;
           const lum = data.grid[idx];
 
-          // Bright bucket gate — only highlight dots can be fringed.
+          // Bright bucket gate - only highlight dots can be fringed.
           if (lum < OUTLINE_LUM_MIN) continue;
 
           // 4-neighbor luminance probe. A dot is an OUTLINE if any
           // cardinal neighbor sits below the fringe threshold. Edge
           // cells (no neighbor on one side) treat the missing
-          // neighbor as dark — the plate edge is always a silhouette.
+          // neighbor as dark - the plate edge is always a silhouette.
           const up    = ry > 0                 ? data.grid[idx - data.cols] : 0;
           const dn    = ry < data.rows - 1     ? data.grid[idx + data.cols] : 0;
           const lf    = rx > 0                 ? data.grid[idx - 1]         : 0;
@@ -652,7 +652,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
 
           // Radius tracks luminance the same way the base layer does,
           // boosted so the chroma dot extends beyond the cream dot it
-          // fringes — the baseline CSS offset then exposes a visible
+          // fringes - the baseline CSS offset then exposes a visible
           // colored rim even before the user tilts the plate.
           const r = (dotMin + (dotMax - dotMin) * lum) * CHROMA_RADIUS_BOOST;
           const cx = x * cellW + cellW / 2;
@@ -666,7 +666,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
 
     function drawAll(): void {
       // v9.0: paint canvases at base position. Called only on initial
-      // paint, resize, and visibility re-entry — never on scroll.
+      // paint, resize, and visibility re-entry - never on scroll.
       for (let i = 0; i < LAYERS.length; i++) drawLayer(i);
       for (let i = 0; i < CHROMA.length; i++) drawChroma(i);
     }
@@ -717,10 +717,10 @@ const plateSrc = `/data/kinetic/${category}.json`;
     // Pointer-tracked tilt + chroma separation. Per-plate: each plate
     // tracks the cursor against its own bounding rect, so hovering one
     // plate does not affect the others. rAF-coalesced. The chroma
-    // offset rides on the same signal as the tilt — same flush, no
+    // offset rides on the same signal as the tilt - same flush, no
     // canvas repaint, just CSS custom-property writes.
     let tiltRx = 0, tiltRy = 0;
-    // Pointer-driven chroma offset. Zero at rest — each channel's
+    // Pointer-driven chroma offset. Zero at rest - each channel's
     // compass baseline lives in CSS calc() so the ring is visible
     // whether or not the cursor is over the plate.
     let chromaCx = 0, chromaCy = 0;
@@ -788,7 +788,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
     const onPointerLeave = () => {
       tiltRx = 0;
       tiltRy = 0;
-      // Return chroma offset to zero — each channel falls back to its
+      // Return chroma offset to zero - each channel falls back to its
       // CSS compass baseline, so the ring stays visible when the cursor
       // leaves the plate.
       chromaCx = 0;

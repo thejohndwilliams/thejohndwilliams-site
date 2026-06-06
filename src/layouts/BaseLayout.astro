@@ -30,7 +30,7 @@ interface Props {
 
 const {
   title = 'John D. Williams',
-  description = 'Photography, cybersecurity, and data — the work of John D. Williams.',
+  description = 'Photography, cybersecurity, and data - the work of John D. Williams.',
   ogImage = '/images/photography/hero/john-portrait-bw.webp',
   ogImageWidth = 2400,
   ogImageHeight = 1600,
@@ -58,7 +58,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    {/* Theme color — brand midnight for mobile status bars */}
+    {/* Theme color - brand midnight for mobile status bars */}
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
@@ -72,7 +72,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       } catch (e) {}
     </script>
 
-    {/* iOS standalone-mode (Add to Home Screen) — matches theme-color
+    {/* iOS standalone-mode (Add to Home Screen) - matches theme-color
          so the status bar blends with the page; black-translucent
          lets the hero photograph extend behind it. */}
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -81,7 +81,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
 
 
-    {/* Preload critical fonts — self-hosted, no third-party dependency.
+    {/* Preload critical fonts - self-hosted, no third-party dependency.
          Body font (IBM Plex Sans 400) is critical for LCP; EB Garamond
          display serif is used above the fold on every page. */}
     <link rel="preload" href="/fonts/plex/plex-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -90,7 +90,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     {/* HDR + wide-gamut palette overrides (Tier 1). Served verbatim from
          public/ so Astro's CSS build pass doesn't gamut-map color(display-p3)
          to sRGB hex. The media attribute makes this non-render-blocking on
-         sRGB displays — they still download it at low priority but don't
+         sRGB displays - they still download it at low priority but don't
          delay first paint. The file itself is scoped under
          @media (color-gamut: p3) as a belt-and-suspenders gate. */}
     <link rel="stylesheet" href="/hdr-palette.css" media="(color-gamut: p3)" />
@@ -98,7 +98,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     {lcpImage && (
       <>
         {/* LCP preload ladder. imagesrcset MUST mirror every candidate the
-            <picture> tag can resolve to — including the 400w thumb tier —
+            <picture> tag can resolve to - including the 400w thumb tier -
             or Lighthouse flags prioritize-lcp-image for partial coverage when
             the viewport picks a narrower candidate than the preload offers. */}
         <link
@@ -147,7 +147,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     <title>{fullTitle}</title>
 
-    {/* JSON-LD Person schema — semantic identity for search engines */}
+    {/* JSON-LD Person schema - semantic identity for search engines */}
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Person",
@@ -155,7 +155,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       "url": "https://thejohndwilliams.com",
       "image": "https://thejohndwilliams.com/favicon-512.png",
       "jobTitle": "Cybersecurity & Data Professional",
-      "description": "Photography, cybersecurity, and data — the work of John D. Williams.",
+      "description": "Photography, cybersecurity, and data - the work of John D. Williams.",
       "sameAs": [
         "https://www.linkedin.com/in/john-davis-williams/",
         "https://github.com/thejohndwilliams",
@@ -164,10 +164,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       "knowsAbout": ["Cybersecurity", "Data Analytics", "Photography", "Enterprise Operations"]
     })} />
 
-    {/* View Transitions — cinematic page-to-page feel */}
+    {/* View Transitions - cinematic page-to-page feel */}
     <ViewTransitions />
 
-    {/* Directional page transitions — pages occupy a spatial strip.
+    {/* Directional page transitions - pages occupy a spatial strip.
          Clicking right in the nav slides content left; clicking left
          slides right. Gives each page a physical address. */}
     <style is:global>
@@ -239,16 +239,16 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     </main>
     <Footer />
 
-    {/* Mobile bottom tab navigation — thumb zone, gallery-grade */}
+    {/* Mobile bottom tab navigation - thumb zone, gallery-grade */}
     <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-transform duration-300" aria-label="Mobile navigation">
-      {/* Inquire pill — floats above the tab bar */}
+      {/* Inquire pill - floats above the tab bar */}
       <div class="flex justify-center pb-2">
         <a href="mailto:jndwcreative@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] inquire-pill text-[#0a0a0a] rounded-full text-[11px] font-semibold tracking-wide uppercase active:scale-95 transition-transform duration-150">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           Inquire
         </a>
       </div>
-      {/* Tab bar — 4 items, glass bezel (mobile). Uses .glass-tabbar
+      {/* Tab bar - 4 items, glass bezel (mobile). Uses .glass-tabbar
            for parity with .glass-nav on desktop: same blur, saturate,
            and a bottom-oriented rim highlight via ::before. */}
       <div class="glass-tabbar relative">
@@ -270,14 +270,14 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
             <span class="text-[10px] tracking-[0.14em] uppercase">About</span>
           </a>
         </div>
-        {/* Safe area padding for notched phones — transparent so
+        {/* Safe area padding for notched phones - transparent so
              the glass tab bar above it reads as one continuous
              surface when blurring content behind. */}
         <div class="h-[env(safe-area-inset-bottom,0px)]"></div>
       </div>
     </nav>
 
-    {/* Back to top — desktop only; mobile uses active-tab-tap convention */}
+    {/* Back to top - desktop only; mobile uses active-tab-tap convention */}
     <button
       id="back-to-top"
       class="hidden md:flex fixed bottom-8 right-4 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full glass-control items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-all duration-300"
@@ -288,7 +288,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       </svg>
     </button>
 
-    {/* Scroll reveal observer — IntersectionObserver, no scroll hijacking */}
+    {/* Scroll reveal observer - IntersectionObserver, no scroll hijacking */}
     <script>
       function initBottomNav() {
         const nav = document.getElementById('bottom-nav');
@@ -328,7 +328,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
                 nav.style.transform = 'translateY(100%)';
               }
 
-              // Back to top button — desktop only
+              // Back to top button - desktop only
               if (btn && window.innerWidth >= 768) {
                 if (scrollY > 600) {
                   btn.style.opacity = '1';
@@ -411,7 +411,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       }
 
 
-      // Photo-theft friction — block native context menu on protected
+      // Photo-theft friction - block native context menu on protected
       // photos and drag. Honest: this does not prevent screenshots
       // (browsers cannot intercept OS-level screen capture). It only
       // raises the floor against casual save-as and drag-to-desktop.
@@ -443,7 +443,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       });
     </script>
 
-    {/* Reveal failsafe — inline (NOT bundled), so it runs even if the main
+    {/* Reveal failsafe - inline (NOT bundled), so it runs even if the main
         module fails to load/parse on older mobile Safari or a flaky chunk.
         If the bundle never set __revealReady, force all reveal content
         visible so images can never be stuck invisible. */}
@@ -458,7 +458,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       });
     </script>
 
-    {/* Transition direction detector — determines spatial relationship
+    {/* Transition direction detector - determines spatial relationship
          between current and target page to set drift direction. */}
     <script>
       function getPagePosition(path: string): number {
@@ -485,7 +485,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         document.documentElement.classList.remove('nav-back');
       });
     </script>
-    {/* Lenis — patient smooth scroll (Reverent Dark "slowness is the brand").
+    {/* Lenis - patient smooth scroll (Reverent Dark "slowness is the brand").
          Desktop wheel; touch stays native. Off under reduced-motion. Exposed as
          window.__lenis so in-page anchors can scrollTo past the sticky header. */}
     <script>

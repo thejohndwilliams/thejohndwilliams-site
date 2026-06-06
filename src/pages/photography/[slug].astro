@@ -23,7 +23,7 @@ const SITE = 'https://thejohndwilliams.com';
 
 // ─── Ambient Color Bleed: category-driven palette ───
 // Each category maps to a subtle color that bleeds into the page background.
-// These are intentional, not extracted — the semantics drive the atmosphere.
+// These are intentional, not extracted - the semantics drive the atmosphere.
 const categoryColors: Record<string, { glow: string; accent: string }> = {
   sky:        { glow: 'rgba(70, 100, 160, 0.08)',  accent: 'rgba(70, 100, 160, 0.04)' },
   earth:      { glow: 'rgba(160, 120, 60, 0.08)',  accent: 'rgba(160, 120, 60, 0.04)' },
@@ -52,13 +52,13 @@ const jsonLd = {
   creditText: 'John D. Williams',
   copyrightNotice: '© John D. Williams',
   license: `${SITE}/photography`,
-  acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry%20—%20${encodeURIComponent(image.alt)}`,
+  acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`,
   keywords: [category.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
   ...(meta.captureDate ? { datePublished: meta.captureDate } : {}),
   ...(meta.location ? { contentLocation: { '@type': 'Place', name: meta.location } } : {}),
   isPartOf: {
     '@type': 'ImageGallery',
-    name: `${category.name} — Photography by John D. Williams`,
+    name: `${category.name} · Photography by John D. Williams`,
     url: `${SITE}/photography#gallery-${category.id}`,
   },
 };
@@ -81,7 +81,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 ---
 
 <BaseLayout
-  title={`${image.alt} — Photography`}
+  title={`${image.alt} · Photography`}
   description={`${image.alt}. Fine art photograph by John D. Williams. ${category.name} series. ${metaLine || ''}`}
   ogImage={`/og/photography/${image.file}.jpg`}
   ogImageWidth={1200}
@@ -90,7 +90,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-  {/* Ambient Color Bleed — subtle radial glow behind the hero, driven by category */}
+  {/* Ambient Color Bleed - subtle radial glow behind the hero, driven by category */}
   <div
     class="fixed inset-0 pointer-events-none z-0"
     aria-hidden="true"
@@ -127,7 +127,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
-    {/* Print preview frame — ghost overlay, visible when CTA is hovered */}
+    {/* Print preview frame - ghost overlay, visible when CTA is hovered */}
     <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
       <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
     </div>
@@ -181,7 +181,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="container-narrow">
       <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
 
-        {/* EXIF Technical Details — staggered reveal on scroll */}
+        {/* EXIF Technical Details - staggered reveal on scroll */}
         {exifDetails.length > 0 && (
           <div>
             <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
@@ -211,7 +211,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
             <a
-              href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry%20—%20${encodeURIComponent(image.alt)}`}
+              href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`}
               class="btn btn-primary"
             >
               Inquire about this print
@@ -284,7 +284,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  {/* EXIF reveal on scroll — IntersectionObserver, no libraries */}
+  {/* EXIF reveal on scroll - IntersectionObserver, no libraries */}
   <script>
     function initExifReveal() {
       const rows = document.querySelectorAll('.exif-row');
@@ -307,7 +307,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     document.addEventListener('astro:after-swap', initExifReveal);
   </script>
 
-  {/* Keyboard navigation — arrow keys between photo pages */}
+  {/* Keyboard navigation - arrow keys between photo pages */}
   <script>
     function initKeyboardNav() {
       const prev = document.getElementById('nav-prev') as HTMLAnchorElement | null;
@@ -347,7 +347,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     document.addEventListener('astro:after-swap', initKeyboardNav);
   </script>
 
-  {/* Print preview on hover — desktop only, CSS-driven */}
+  {/* Print preview on hover - desktop only, CSS-driven */}
   <style>
     @media (hover: hover) {
       .print-cta-hover:hover ~ #print-frame,

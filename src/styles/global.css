@@ -1,7 +1,7 @@
-/* Self-hosted fonts — no Google CDN dependency */
+/* Self-hosted fonts - no Google CDN dependency */
 @import url('/fonts/fonts.css');
 
-/* Background tone tokens — dim (brand default) vs true-black (OLED).
+/* Background tone tokens - dim (brand default) vs true-black (OLED).
    Only the solid background LEVELS shift between modes; palette hues and the
    glass system are unchanged. data-theme is set pre-paint by an inline script
    in BaseLayout so there is no flash. */
@@ -19,7 +19,7 @@ html[data-theme="black"] {
 @tailwind utilities;
 
 /* ============================================================
-   BASE STYLES — Dark theme, 8pt grid, research-grade typography
+   BASE STYLES - Dark theme, 8pt grid, research-grade typography
    ============================================================ */
 @layer base {
   html {
@@ -35,10 +35,10 @@ html[data-theme="black"] {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 1rem;
-    line-height: 1.667; /* 30px / 18px — generous for readability */
+    line-height: 1.667; /* 30px / 18px - generous for readability */
   }
 
-  /* Subtle noise texture — imperceptible dither to break sRGB banding
+  /* Subtle noise texture - imperceptible dither to break sRGB banding
      on large dark gradients. Opacity tuned to just-below-conscious-
      perception on a calibrated display. If you can SEE it, it is wrong. */
   body::before {
@@ -55,7 +55,7 @@ html[data-theme="black"] {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 
-  /* Typography scale — Apple-inspired letter-spacing precision */
+  /* Typography scale - Apple-inspired letter-spacing precision */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'EB Garamond', Georgia, serif;
     font-weight: 400;
@@ -115,7 +115,7 @@ html[data-theme="black"] {
    COMPONENT STYLES
    ============================================================ */
 @layer components {
-  /* Fluid type scale — clamp() so headings resize on ANY screen (core site
+  /* Fluid type scale - clamp() so headings resize on ANY screen (core site
      principle). Replaces fixed text-xl/2xl/3xl steps that capped at the md
      breakpoint and stopped growing on large monitors. */
   .t-display { font-size: clamp(2.5rem, 1.55rem + 4.2vw, 5rem); line-height: 1.04; }
@@ -123,9 +123,9 @@ html[data-theme="black"] {
   .t-section { font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem); line-height: 1.15; }
   .t-sub     { font-size: clamp(1.125rem, 0.98rem + 0.7vw, 1.6rem); line-height: 1.25; }
 
-  /* Containers — wider for expansive feel */
+  /* Containers - wider for expansive feel */
   .container-narrow {
-    max-width: 56rem; /* 1008px — up from 768px */
+    max-width: 56rem; /* 1008px - up from 768px */
     margin-left: auto;
     margin-right: auto;
     padding-left: 1rem;
@@ -133,7 +133,7 @@ html[data-theme="black"] {
   }
 
   .container-wide {
-    max-width: 72rem; /* 1296px — for full-bleed sections */
+    max-width: 72rem; /* 1296px - for full-bleed sections */
     margin-left: auto;
     margin-right: auto;
     padding-left: 1rem;
@@ -156,7 +156,7 @@ html[data-theme="black"] {
     }
   }
 
-  /* Nav shell — wider than body containers so the header reads as a distinct
+  /* Nav shell - wider than body containers so the header reads as a distinct
      shelf. Fluid clamp(): 1008px min (never narrower than container-narrow),
      90vw preferred, 1536px max. Keeps the logo and CTA visually anchored to the
      viewport edges on wide screens without letting the nav sprawl on ultrawide. */
@@ -183,7 +183,7 @@ html[data-theme="black"] {
     }
   }
 
-  /* Touch press feedback — subtle scale-down on tap */
+  /* Touch press feedback - subtle scale-down on tap */
   @media (hover: none) {
     .press-feedback:active {
       transform: scale(0.98);
@@ -196,7 +196,7 @@ html[data-theme="black"] {
      Glassmorphism with luminous gradient borders and inner glows
      ============================================================ */
 
-  /* Glass card — primary container with luminous edge */
+  /* Glass card - primary container with luminous edge */
   .glass-card {
     position: relative;
     background: linear-gradient(
@@ -258,7 +258,7 @@ html[data-theme="black"] {
       0 0 0 1px rgba(126, 156, 184, 0.06);
   }
 
-  /* Glass panel — larger translucent surfaces (sections, overlays) */
+  /* Glass panel - larger translucent surfaces (sections, overlays) */
   .glass-panel {
     position: relative;
     background: linear-gradient(
@@ -297,7 +297,7 @@ html[data-theme="black"] {
     z-index: 1;
   }
 
-  /* Glass tag — pills, badges, expertise tags */
+  /* Glass tag - pills, badges, expertise tags */
   .glass-tag {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(14px);
@@ -315,7 +315,7 @@ html[data-theme="black"] {
       0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
-  /* Glass nav — header and navigation surfaces */
+  /* Glass nav - header and navigation surfaces */
   .glass-nav {
     position: relative;
     background: rgba(10, 10, 10, 0.72);
@@ -325,7 +325,7 @@ html[data-theme="black"] {
     box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03);
   }
 
-  /* Tier 1: top-edge rim for .glass-nav — static, no pointer tracking
+  /* Tier 1: top-edge rim for .glass-nav - static, no pointer tracking
      (nav is too wide for localized specular to read well). */
   .glass-nav::before {
     content: '';
@@ -346,14 +346,14 @@ html[data-theme="black"] {
     z-index: 1;
   }
 
-  /* Tier 2 refraction was removed — iOS Safari reports @supports for
+  /* Tier 2 refraction was removed - iOS Safari reports @supports for
      backdrop-filter: url(#id) as true, but then fails to resolve the
      filter at paint time, breaking the entire backdrop-filter
      declaration. Net effect: nav goes transparent on iPhone. Not worth
      the Chrome-only flair at the cost of mobile breakage. If re-added
      later, gate on runtime JS feature-detection, not @supports. */
 
-  /* Mobile bottom tab bar — glass parity with .glass-nav. Same blur
+  /* Mobile bottom tab bar - glass parity with .glass-nav. Same blur
      and saturate; border-top instead of border-bottom; rim highlight
      at the top edge (light-from-above convention reads the same on a
      surface above or below content). */
@@ -385,7 +385,7 @@ html[data-theme="black"] {
     z-index: 1;
   }
 
-  /* Mobile tab items — premium active state: blue-hour lift + glow + dot.
+  /* Mobile tab items - premium active state: blue-hour lift + glow + dot.
      Inactive items sit muted; the active tab rises and warms with the sky note. */
   .bottom-nav-item { position: relative; transition: color .35s ease, opacity .35s ease; }
   .bottom-nav-item svg { transition: transform .4s cubic-bezier(.22,.61,.36,1), filter .4s ease; }
@@ -400,7 +400,7 @@ html[data-theme="black"] {
     .bottom-nav-item.text-navy-hour svg { transform: none; }
   }
 
-  /* Reduced-motion — disable pointer-tracked specular animation by
+  /* Reduced-motion - disable pointer-tracked specular animation by
      pinning the variables to the default idle position. The static
      rim highlight remains. */
   @media (prefers-reduced-motion: reduce) {
@@ -415,7 +415,7 @@ html[data-theme="black"] {
     }
   }
 
-  /* Luminous border — ivory glow on hover for image cards */
+  /* Luminous border - ivory glow on hover for image cards */
   .glass-luminous {
     position: relative;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -455,7 +455,7 @@ html[data-theme="black"] {
 
   /* ============================================================
      PHOTO THEFT FRICTION
-     Not DRM — there is no web-standard equivalent of Apple TV's
+     Not DRM - there is no web-standard equivalent of Apple TV's
      HDCP-enforced screenshot blocking. The OS-level black-screenshot
      trick only works because Apple's compositor cooperates with the
      screen-capture pipeline; browsers do not expose that hook for
@@ -492,7 +492,7 @@ html[data-theme="black"] {
   .photo-protect::selection { background: transparent; }
   .photo-protect::-moz-selection { background: transparent; }
 
-  /* Link cards — glass-infused */
+  /* Link cards - glass-infused */
   .link-card {
     display: block;
     padding: 1rem 1.5rem;
@@ -522,15 +522,15 @@ html[data-theme="black"] {
       0 8px 32px rgba(0, 0, 0, 0.25);
   }
 
-  /* Gold retired 2026-05-31 — tonal ivory mark + blue-hour accent. */
+  /* Gold retired 2026-05-31 - tonal ivory mark + blue-hour accent. */
 
-  /* Buttons — 44px min touch target on mobile, 8pt grid aligned */
+  /* Buttons - 44px min touch target on mobile, 8pt grid aligned */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 2.75rem; /* 44px — Apple HIG touch target */
+    min-height: 2.75rem; /* 44px - Apple HIG touch target */
     padding: 0.75rem 1.5rem; /* Mobile: compact but tappable */
     border-radius: 999px;
     font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -589,7 +589,7 @@ html[data-theme="black"] {
     font-weight: 500;
   }
 
-  /* Prose — refined for 18px base */
+  /* Prose - refined for 18px base */
   .prose {
     max-width: none;
   }
@@ -668,7 +668,7 @@ html[data-theme="black"] {
   }
 
   /* ============================================================
-     SECTION PACING — Apple-style alternating dark/light
+     SECTION PACING - Apple-style alternating dark/light
      ============================================================ */
   .section-dark {
     background-color: var(--bg-base);
@@ -683,7 +683,7 @@ html[data-theme="black"] {
   }
 
   /* ============================================================
-     SCROLL ANIMATIONS — CSS scroll-driven, no JS required
+     SCROLL ANIMATIONS - CSS scroll-driven, no JS required
      ============================================================ */
   .reveal {
     opacity: 0;
@@ -774,7 +774,7 @@ html[data-theme="black"] {
    The site header is a solid shelf (not glass) when scrolled. As of
    2026-05-30 the /photography category bar is non-sticky editorial
    wayfinding (anchor links, no glass, scrolls away with the page), so
-   the header is the only persistent chrome — no double-blur stacking.
+   the header is the only persistent chrome - no double-blur stacking.
    ============================================================ */
 #site-header.scrolled {
   background: rgba(10, 10, 10, 0.92);
@@ -792,7 +792,7 @@ body,
 }
 
 /* ============================================================
-   LENIS SMOOTH SCROLL — patient scroll ("slowness is the brand").
+   LENIS SMOOTH SCROLL - patient scroll ("slowness is the brand").
    Desktop wheel smoothed; touch uses native scroll; disabled under
    prefers-reduced-motion (Lenis simply isn't instantiated).
    ============================================================ */
@@ -803,10 +803,10 @@ html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 /* ============================================================
-   LIQUID GLASS v2.2 — Signature++ (another notch; still disciplined)
+   LIQUID GLASS v2.2 - Signature++ (another notch; still disciplined)
    Stronger chamfer + brighter specular + a touch more tint and chrome
    refraction. Adds a TOUCH SHEEN: the specular drifts on its own where
-   there is no pointer, and the mobile tab bar gets a slow sweep — motion
+   there is no pointer, and the mobile tab bar gets a slow sweep - motion
    parity with the desktop pointer-specular. Off under reduced-motion.
    Unlayered; cross-browser identical (NO backdrop-filter:url(), NO
    mask-image). Bounds: blur<=44, saturate<=1.85.
@@ -875,7 +875,7 @@ html.lenis body { height: auto; }
 }
 
 
-/* Touch sheen — only where there is no pointer; calm periods, low alpha. */
+/* Touch sheen - only where there is no pointer; calm periods, low alpha. */
 @media (hover: none) and (prefers-reduced-motion: no-preference) {
   .glass-tabbar { overflow: hidden; }
   .glass-tabbar::after {
@@ -896,9 +896,9 @@ html.lenis body { height: auto; }
 }
 
 /* ============================================================
-   LIQUID GLASS v2.3 — footer + mobile complications get the material
+   LIQUID GLASS v2.3 - footer + mobile complications get the material
    Desktop footer: flat navy slab -> dimensional blue-hour glass (kept
-   "to a degree" — retains blue identity, no longer flat). Mobile bottom
+   "to a degree" - retains blue identity, no longer flat). Mobile bottom
    nav: each tab complication becomes a subtle glass key, the active one a
    blue-hour glass pill; Inquire stays the ivory CTA ("the light") but now
    a glossy, dimensional glass key. Unlayered; cross-browser safe
@@ -923,7 +923,7 @@ html.lenis body { height: auto; }
 }
 .glass-footer > * { position: relative; z-index: 1; }
 
-/* Mobile complications — each a glass key */
+/* Mobile complications - each a glass key */
 .bottom-nav-item {
   border-radius: 16px;
   background: rgba(255,255,255,0.05);
@@ -943,7 +943,7 @@ html.lenis body { height: auto; }
     0 0 20px rgba(126,156,184,0.20);
 }
 
-/* Inquire — glossy ivory glass CTA (stays the warm "light", now dimensional) */
+/* Inquire - glossy ivory glass CTA (stays the warm "light", now dimensional) */
 .inquire-pill {
   background: linear-gradient(180deg, #FBF6EE 0%, #F4EADE 52%, #ECDFCB 100%);
   border: 1px solid rgba(255,255,255,0.55);
@@ -955,7 +955,7 @@ html.lenis body { height: auto; }
 }
 
 /* ============================================================
-   UNIFIED CONTROLS — small glass icon buttons (back-to-top,
+   UNIFIED CONTROLS - small glass icon buttons (back-to-top,
    lightbox prev/next) now share one beveled glass recipe instead
    of ad-hoc bg-white/8 or bg-black/30. Cross-browser safe.
    ============================================================ */
@@ -975,7 +975,7 @@ html.lenis body { height: auto; }
 .glass-control:hover { background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.22); }
 
 /* ============================================================
-   EYEBROW — page kicker over hero photos. Legible-by-default:
+   EYEBROW - page kicker over hero photos. Legible-by-default:
    brighter ivory + a dark text-shadow so it reads on bright photo
    areas (e.g. a sunset), slightly tighter tracking + larger than the
    old 10px/0.3em/opacity-60, which washed out. Aesthetic kept:

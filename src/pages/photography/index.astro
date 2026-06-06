@@ -5,7 +5,7 @@ import { categories, totalImages, getPlaceholder } from '../../data/photography'
 
 const SITE = 'https://thejohndwilliams.com';
 
-// JSON-LD ImageGallery schema — dedup by file so showcase re-listings
+// JSON-LD ImageGallery schema - dedup by file so showcase re-listings
 // (e.g. `light` re-displaying images from `earth`/`water`) don't emit duplicate
 // ImageObject entries with conflicting names.
 const seenSchemaFiles = new Set<string>();
@@ -39,8 +39,8 @@ const allImages = categories.flatMap(cat =>
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ImageGallery',
-  name: 'Photography — John D. Williams',
-  description: 'Fine art photography by John D. Williams. Sky, earth, water, structure, and light — shot on Sony Alpha and Fujifilm X-Series.',
+  name: 'Photography · John D. Williams',
+  description: 'Fine art photography by John D. Williams. Sky, earth, water, structure, and light, shot on Sony Alpha and Fujifilm X-Series.',
   url: `${SITE}/photography`,
   author: { '@type': 'Person', name: 'John D. Williams', url: SITE },
   image: allImages,
@@ -49,7 +49,7 @@ const jsonLd = {
 
 <BaseLayout
   title="Photography"
-  description="Fine art photography by John D. Williams. Sky, earth, water, structure, and light — shot on Sony Alpha and Fujifilm X-Series."
+  description="Fine art photography by John D. Williams. Sky, earth, water, structure, and light, shot on Sony Alpha and Fujifilm X-Series."
   ogImage="/images/photography/hero/img-1066.webp"
   lcpImage="img-1066"
   lcpImagePortrait="img-1066"
@@ -59,7 +59,7 @@ const jsonLd = {
   {/* Scroll-linked atmosphere overlay */}
   <div id="atmos-overlay" class="fixed inset-0 pointer-events-none z-0 transition-[background-color] duration-1000 ease-out" aria-hidden="true"></div>
 
-  {/* HERO — Featured image full-bleed */}
+  {/* HERO - Featured image full-bleed */}
   <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/img-1066.avif" />
@@ -99,7 +99,7 @@ const jsonLd = {
     </div>
   </section>
 
-  {/* CATEGORY CONTENTS — quiet, non-sticky wayfinding (not a persistent
+  {/* CATEGORY CONTENTS - quiet, non-sticky wayfinding (not a persistent
       filter). Scrolls away with the page so no chrome follows the work; each
       link smooth-scrolls to its section via the global scroll-behavior. The
       sticky glass filter bar was retired here 2026-05-30. */}
@@ -191,7 +191,7 @@ const jsonLd = {
     </section>
   ))}
 
-  {/* LIGHTBOX — touch-friendly with swipe support */}
+  {/* LIGHTBOX - touch-friendly with swipe support */}
   <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/92 backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
     <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-60 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,7 +229,7 @@ const jsonLd = {
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Philosophy</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
-            A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject — attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
+            A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject; attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
           <p class="text-xs tracking-[0.15em] uppercase opacity-60 mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
@@ -247,7 +247,7 @@ const jsonLd = {
     </div>
   </section>
 
-  {/* SCRIPTURE — the full verse as an intentional moment; the footer carries the short citation */}
+  {/* SCRIPTURE - the full verse as an intentional moment; the footer carries the short citation */}
   <section class="py-16 sm:py-20 md:py-24">
     <div class="container-narrow text-center reveal">
       <p class="font-serif italic text-cream opacity-80 text-xl sm:text-2xl md:text-[2rem] leading-relaxed max-w-2xl mx-auto">
@@ -344,7 +344,7 @@ const jsonLd = {
   #lightbox.active { display: flex; }
 
   /* Develop-from-black: photos settle up out of shadow as they load. JS adds
-     .developing only to not-yet-loaded imgs and removes on load — a JS failure
+     .developing only to not-yet-loaded imgs and removes on load - a JS failure
      can never hide them (visible by default). */
   .photo-grid img { transition: filter 1.1s cubic-bezier(.22,.61,.36,1), opacity 1.1s cubic-bezier(.22,.61,.36,1); }
   .photo-grid img.developing { filter: brightness(.5) saturate(.9); opacity: .55; }
@@ -359,9 +359,9 @@ const jsonLd = {
 <script>
   function initGallery() {
     // Category wayfinding is now plain anchor links (.cat-link) + native
-    // smooth scroll — no JS filter/hide. The lightbox cycles the full gallery.
+    // smooth scroll - no JS filter/hide. The lightbox cycles the full gallery.
 
-    // Lightbox — intercept gallery link clicks
+    // Lightbox - intercept gallery link clicks
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
     const lightboxCaption = document.getElementById('lightbox-caption');
@@ -379,7 +379,7 @@ const jsonLd = {
 
     // Set the lightbox image from a gallery item. Serves the 1200px gallery
     // tier on phones and the 2400px hero on retina desktop (native sizes
-    // selection) — previously every open fetched the full 2400px hero.
+    // selection) - previously every open fetched the full 2400px hero.
     function setLightboxImage(item: HTMLElement) {
       const file = item.dataset.file || '';
       const alt = item.dataset.alt || '';
@@ -456,7 +456,7 @@ const jsonLd = {
       armIdle();
     }
 
-    // Intercept clicks on gallery links — open lightbox instead of navigating.
+    // Intercept clicks on gallery links - open lightbox instead of navigating.
     // Middle-click / Ctrl+click / right-click still follow the link naturally.
     items.forEach((item) => {
       item.addEventListener('click', (e) => {

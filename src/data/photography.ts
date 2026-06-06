@@ -1,5 +1,5 @@
 /**
- * Shared photography data — categories, images, and helpers.
+ * Shared photography data - categories, images, and helpers.
  *
  * Single source of truth consumed by:
  *   - /photography        (gallery index)
@@ -14,11 +14,11 @@ export interface PhotoImage {
   /**
    * Which image pipeline serves this photograph.
    *
-   * 'local' — (default, implicit on all existing entries) Pre-rendered
+   * 'local' - (default, implicit on all existing entries) Pre-rendered
    *   AVIF/WebP tiers under /public/images/photography/{thumb,gallery,hero}/.
    *   How the first 58 photographs ship.
    *
-   * 'r2' — Single original stored in Cloudflare R2; every variant
+   * 'r2' - Single original stored in Cloudflare R2; every variant
    *   negotiated at the edge via Image Resizing. Set `key` to the
    *   content-addressable R2 object key (from photo-r2-manifest.json).
    *   Use for NEW uploads going forward.
@@ -185,7 +185,7 @@ import placeholders from './photo-placeholders.json';
 export type PhotoPlaceholder = {
   width: number;
   height: number;
-  /** data:image/webp;base64,... — ~20px LQIP, ~240 bytes */
+  /** data:image/webp;base64,... - ~20px LQIP, ~240 bytes */
   lqip: string;
 };
 
@@ -194,7 +194,7 @@ const _placeholders = placeholders as Record<string, PhotoPlaceholder>;
 /**
  * Look up the placeholder (width / height / LQIP) for a given image file.
  * Returns undefined if the image hasn't been run through
- * `npm run build:placeholders` yet — callers should degrade gracefully.
+ * `npm run build:placeholders` yet - callers should degrade gracefully.
  */
 export function getPlaceholder(file: string): PhotoPlaceholder | undefined {
   return _placeholders[file];

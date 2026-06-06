@@ -73,9 +73,9 @@ const socialLinks = [
 ];
 ---
 
-<BaseLayout title="Home" description="Making visible — threats on a network, patterns in data, light on a moment. Photography, cybersecurity, and data by John D. Williams." ogImage="/images/photography/hero/7r52326.webp" lcpImage="7r52326" lcpImagePortrait="7r52326">
+<BaseLayout title="Home" description="Making visible: threats on a network, patterns in data, light on a moment. Photography, cybersecurity, and data by John D. Williams." ogImage="/images/photography/hero/7r52326.webp" lcpImage="7r52326" lcpImagePortrait="7r52326">
 
-  {/* HERO — Full-bleed cloudscape with left-aligned identity */}
+  {/* HERO - Full-bleed cloudscape with left-aligned identity */}
   <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-center overflow-hidden">
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/7r52326.avif" />
@@ -126,7 +126,7 @@ const socialLinks = [
   </section>
 
 
-  {/* IN SERVICE — charitable organizations, staggered bento */}
+  {/* IN SERVICE - charitable organizations, staggered bento */}
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">In Service</h2>
@@ -178,12 +178,12 @@ const socialLinks = [
     </div>
   </section>
 
-  {/* NAVIGATION CARDS — bento grid with visual hierarchy */}
+  {/* NAVIGATION CARDS - bento grid with visual hierarchy */}
   <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
       <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
-        {/* Photography — hero card, spans 2 rows on desktop */}
+        {/* Photography - hero card, spans 2 rows on desktop */}
         <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
           <img
             src="/images/photography/gallery/dscf0952.webp"
@@ -226,7 +226,7 @@ const socialLinks = [
     </div>
   </section>
 
-  {/* SOCIAL TILES — bento grid with alternating spans */}
+  {/* SOCIAL TILES - bento grid with alternating spans */}
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">Connect</h2>
@@ -278,14 +278,14 @@ const socialLinks = [
   </section>
 
   <script>
-    // Time-aware hero — swaps hero image based on visitor's local time.
+    // Time-aware hero - swaps hero image based on visitor's local time.
     //
     // CRITICAL: Runs only AFTER the page has fully loaded so the initial
     // paint uses the preloaded LCP image (7r52326, midday). Mutating img.src
     // before LCP fires invalidates the preload and tanks Lighthouse's
     // lcp-discovery-insight + prioritize-lcp-image scores.
     //
-    // Also compares getAttribute('src') — the raw relative path —
+    // Also compares getAttribute('src') - the raw relative path -
     // against dataset values. img.src returns an absolute URL and would
     // never match a relative dataset path, causing every visit to
     // re-download the hero at midday (a silent regression we shipped

@@ -69,5 +69,5 @@ export function formatMetaLine(meta: ExifEntry): string {
   if (meta.iso) tech.push(`ISO ${meta.iso}`);
   if (tech.length) parts.push(tech.join(' · '));
   if (meta.location) parts.push(meta.location);
-  return parts.join(' — ');
+  return parts.join(' · ');
 }
