@@ -566,16 +566,22 @@ html[data-theme="black"] {
   }
 
   .btn-outline {
-    border: 1px solid rgba(244, 234, 222, 0.3);
     color: #F4EADE;
-    background: transparent;
+    background: linear-gradient(180deg, rgba(42, 44, 50, 0.60) 0%, rgba(16, 17, 21, 0.72) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.26),
+      inset 0 -2px 3px 0 rgba(0, 0, 0, 0.35),
+      0 8px 22px rgba(0, 0, 0, 0.42);
   }
 
   .btn-outline:hover {
     transform: translateY(-2px);
-    border-color: rgba(244, 234, 222, 0.6);
-    background: rgba(244, 234, 222, 0.06);
-    color: #F4EADE;
+    border-color: rgba(255, 255, 255, 0.30);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
+      0 12px 30px rgba(0, 0, 0, 0.50),
+      0 0 30px rgba(126, 156, 184, 0.18);
   }
 
   /* Subhead utility */
@@ -980,6 +986,12 @@ html.lenis body { height: auto; }
   text-transform: uppercase;
   color: rgba(244, 234, 222, 0.9);
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Hero lockup: bottom-left editorial placement sits the headline in each
+   photo's dark scrim zone. Title shadow guarantees legibility over any image. */
+.hero-lockup h1 {
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 0 3px rgba(0, 0, 0, 0.40);
 }
 
 /* ============================================================
