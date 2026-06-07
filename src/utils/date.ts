@@ -14,6 +14,9 @@ export function formatDate(dateString: string): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    // Parse-as-UTC dates ('2025-03-05' = UTC midnight) must format in UTC too,
+    // or negative-offset timezones roll back a day. Keeps output TZ-stable.
+    timeZone: 'UTC',
   });
 }
 
