@@ -1003,6 +1003,12 @@ html.lenis body { height: auto; }
     0 10px 28px rgba(0,0,0,0.45),
     0 0 30px rgba(126,156,184,0.16);
 }
+/* Heavy below-the-fold grids skip render + paint while off-screen (perf).
+   The 'auto' keyword remembers real size after first render, avoiding jump. */
+.gallery-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
 
 /* ============================================================
    EYEBROW - page kicker over hero photos. Legible-by-default:
