@@ -557,6 +557,18 @@ html[data-theme="black"] {
       0 10px 24px rgba(0, 0, 0, 0.40);
   }
 
+  .btn-primary { position: relative; overflow: hidden; }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-primary:hover::after { transform: translateX(130%); }
+
   .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow:
@@ -1091,6 +1103,50 @@ html.lenis body { height: auto; }
 main > section:not(:first-of-type):not([id]) {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
+}
+
+/* ============================================================
+   GLASS COMPLICATIONS — SITE-WIDE EXTENSION (2026-06-09)
+   Carries the photography vocabulary (pointer caustic, lens-ring,
+   light sweep) onto the persistent header/footer and CTA surfaces.
+   Discipline: matches photography exactly — CONTROLS and PANELS get
+   glass life; image tiles stay clean (as the gallery tiles do). Same
+   bounds, same iOS safety, same reduced-motion freeze.
+   ============================================================ */
+
+/* Persistent bars feel alive: a soft caustic pools under the cursor.
+   Gated to the scrolled (glassy) header so it never paints over the
+   bare-hero header. --mx/--my come from the BaseLayout rAF tracker. */
+#site-header { position: sticky; }
+#site-header .nav-shell { position: relative; z-index: 1; }
+#site-header.scrolled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(220px 120px at var(--mx, 50%) var(--my, 50%),
+    rgba(253,252,250,0.10), rgba(126,156,184,0.05) 45%, transparent 72%);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+#site-header.scrolled:hover::after { opacity: 1; }
+
+footer.glass-footer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(260px 150px at var(--mx, 50%) var(--my, 50%),
+    rgba(253,252,250,0.09), rgba(126,156,184,0.05) 45%, transparent 72%);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+footer.glass-footer:hover::after { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after { display: none; }
 }
 
 /* ============================================================

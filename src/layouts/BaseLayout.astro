@@ -314,7 +314,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         // hover, so the specular highlight has nothing to anchor to.
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         if (!canHover) return;
-        const selector = '.glass-card, .glass-panel, .glass-chip-rail, .glass-disc';
+        const selector = '.glass-card, .glass-panel, .glass-chip-rail, .glass-disc, #site-header, footer.glass-footer';
         let pending = false;
         let lastX = 0, lastY = 0;
         const handler = (e) => {
