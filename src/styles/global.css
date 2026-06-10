@@ -1025,3 +1025,51 @@ html.lenis body { height: auto; }
 .theme-toggle[aria-pressed="true"] {
   color: #FDFCFA;
 }
+
+/* ---------------------------------------------------------------------------
+   iOS safe areas. viewport-fit=cover + apple-mobile-web-app-capable are set in
+   BaseLayout, so without these env() pads the sticky header collides with the
+   status bar in standalone mode, text containers clip under the notch in
+   landscape, and the footer sits under the home indicator. Every value is
+   breakpoint-matched to the padding it extends so non-notched devices stay
+   pixel-identical at all widths. (Audit 2026-06-09, D5.)
+   --------------------------------------------------------------------------- */
+@supports (padding: max(0px)) {
+  .container-narrow,
+  .container-wide {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  @media (min-width: 640px) {
+    .container-narrow,
+    .container-wide {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+  }
+  @media (min-width: 1024px) {
+    .container-narrow,
+    .container-wide {
+      padding-left: max(2rem, env(safe-area-inset-left));
+      padding-right: max(2rem, env(safe-area-inset-right));
+    }
+  }
+  #site-header {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  footer.glass-footer {
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 640px) {
+    footer.glass-footer { padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)); }
+  }
+  @media (min-width: 768px) {
+    footer.glass-footer { padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
+  }
+  @media (display-mode: standalone) {
+    #site-header {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    }
+  }
+}

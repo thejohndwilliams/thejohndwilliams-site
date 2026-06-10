@@ -6,7 +6,7 @@
  * via `reverse`, matching the About page's grammar.
  *
  * Plate: crisp <picture> base (zero-JS safe) + enhancement on capable
- *   devices (feDisplacementMap refraction, specular, one gold depth-scan).
+ *   devices (feDisplacementMap refraction, specular, one ivory depth-scan).
  * Atelier take-aways (all client-side, no new files):
  *   Colors   - build-time palette; click to copy hex, CSS copies the set.
  *   Wallpaper- Framed|Full toggle + phone/tablet/desktop/square crops.
@@ -127,22 +127,22 @@ const hero = tier('hero', 'webp');
   .lp-grp__k { flex: 0 0 78px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a89f8c; opacity: 0.85; padding-top: 5px; }
   .lp-grp__v { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; position: relative; min-width: 0; }
 
-  .lp-sw { width: 28px; height: 20px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
+  .lp-sw { position: relative; width: 28px; height: 24px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
     flex-shrink: 0; background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
   .lp-sw:hover { transform: translateY(-2px); }
   .lp-ctl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
-    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 8px; cursor: pointer;
+    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 5px 10px; cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease; }
   .lp-ctl:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
   .lp-ctl:disabled { opacity: 0.45; cursor: default; }
   .lp-fitgroup { display: inline-flex; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; overflow: hidden; }
   .lp-fit { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #a89f8c;
-    background: transparent; border: 0; padding: 3px 8px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease; }
+    background: transparent; border: 0; padding: 5px 10px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease; }
   .lp-fit + .lp-fit { border-left: 0.5px solid rgba(168,159,140,0.4); }
   .lp-fit.on { color: #0a0a0a; background: #a89f8c; }
   .lp-devs { display: inline-flex; gap: 4px; }
   .lp-dev { display: inline-flex; align-items: center; justify-content: center; color: #a89f8c;
-    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 3px 6px; cursor: pointer;
+    background: transparent; border: 0.5px solid rgba(168,159,140,0.4); border-radius: 5px; padding: 5px 8px; cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease; }
   .lp-dev svg { stroke: currentColor; fill: none; stroke-width: 1.3; stroke-linejoin: round; stroke-linecap: round; display: block; }
   .lp-dev:hover { color: #fdfcfa; border-color: rgba(253,252,250,0.4); }
@@ -153,6 +153,19 @@ const hero = tier('hero', 'webp');
   .lp-toast.show { opacity: 1; transform: translateY(0); }
   .lp-msg { font-size: 10px; color: #9a958c; opacity: 0; transition: opacity 0.2s ease; }
   .lp-msg.show { opacity: 1; }
+
+  /* Touch ergonomics: on coarse pointers every atelier control presents a
+     44px effective hit area (Apple HIG). Swatches grow physically to 44x34
+     and borrow the remaining 5px per edge via an ::after extension that the
+     10px row gap keeps collision-free. Fine-pointer (desktop) rendering is
+     unchanged apart from the AA-minimum base bump above. */
+  @media (pointer: coarse) {
+    .lp-grp__v { gap: 10px; }
+    .lp-devs { gap: 8px; }
+    .lp-sw { width: 44px; height: 34px; }
+    .lp-sw::after { content: ''; position: absolute; inset: -5px; }
+    .lp-ctl, .lp-fit, .lp-dev { min-height: 44px; min-width: 44px; padding: 8px 12px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .liquid-plate__sheen, .lp-sw, .lp-ctl, .lp-fit, .lp-dev, .lp-toast, .lp-msg { transition: none; }
