@@ -694,10 +694,8 @@ html[data-theme="black"] {
   .reveal {
     opacity: 0;
     transform: translateY(16px);
-    filter: brightness(0.55);
     transition: opacity 1s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1),
-                filter 1.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+                transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   @media (min-width: 768px) {
@@ -710,7 +708,6 @@ html[data-theme="black"] {
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
-    filter: none;
   }
 
   .reveal-delay-1 { transition-delay: 100ms; }
@@ -722,10 +719,8 @@ html[data-theme="black"] {
   .stagger-children > * {
     opacity: 0;
     transform: translateY(16px);
-    filter: brightness(0.55);
     transition: opacity 1s cubic-bezier(0.22, 0.61, 0.36, 1),
-                transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1),
-                filter 1.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+                transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .stagger-children.visible > *:nth-child(1) { transition-delay: 0ms; }
@@ -738,7 +733,6 @@ html[data-theme="black"] {
   .stagger-children.visible > * {
     opacity: 1;
     transform: translateY(0);
-    filter: none;
   }
 
   /* Resilience + a11y: scroll-reveal must never hide content. Under
@@ -994,7 +988,8 @@ html.lenis body { height: auto; }
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 0 3px rgba(0, 0, 0, 0.40);
 }
 
-/* ============================================================
+/* =====================================================
+
    MOBILE TAB BAR (2026-06-06): single source of truth.
    The bar is glass. Items are bare: icon + label, muted when
    inactive, blue (navy-hour) when active. No box, bubble, dot,
@@ -1084,4 +1079,16 @@ html.lenis body { height: auto; }
       padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
     }
   }
+=======
+/* ============================================================
+   RENDER-SKIP — below-fold, non-anchored sections. Visual no-op that
+   removes offscreen layout/paint from every scrolled frame (the desktop
+   stutter headroom). The hero (first section) always renders; [id]
+   sections are excluded so in-page anchor jumps (photography categories)
+   stay pixel-accurate. contain-intrinsic-size:auto memoizes the real
+   height after first render so the scrollbar stays honest.
+   ============================================================ */
+main > section:not(:first-of-type):not([id]) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
