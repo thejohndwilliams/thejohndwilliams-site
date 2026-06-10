@@ -342,6 +342,7 @@ const jsonLd = {
   .gallery-section[data-hidden="true"] { display: none; }
 
   #lightbox.active { display: flex; }
+  #lightbox { touch-action: none; }
 
   /* Develop-from-black: photos settle up out of shadow as they load. JS adds
      .developing only to not-yet-loaded imgs and removes on load - a JS failure
@@ -357,12 +358,34 @@ const jsonLd = {
 </style>
 
 <script>
-  function initGallery() {
-    // Category wayfinding is now plain anchor links (.cat-link) + native
-    // smooth scroll - no JS filter/hide. The lightbox cycles the full gallery.
+  // Gallery + lightbox controller.
+  //
+  // Rebuilt 2026-06-09 after a field crash report: rapid swiping killed the
+  // page on iOS Safari. Root causes, verified by instrumented repro:
+  //   1. navigate() ran document.startViewTransition PER SWIPE. Each VT
+  //      snapshots the full 101-image page twice; rapid-fire swipes created
+  //      an allocation storm that tripped Safari's memory watchdog.
+  //   2. initGallery re-ran on every astro:after-swap (site-wide) and added
+  //      document-level listeners each time without removing the previous
+  //      set: N visits = N keydown handlers = N navigations per keypress,
+  //      each closure retaining a detached DOM tree.
+  //   3. body.overflow=hidden does not lock scroll on iOS; the gallery
+  //      rubber-banded (and Lenis kept processing) behind the open dialog.
+  // Design now: View Transitions ONLY for open/close morph (the signature
+  // move). Swipes are finger-tracked transforms + compositor slides, one
+  // in-flight animation max, with jump-cut coalescing under rapid input.
+  // All listeners bind through one AbortController, aborted on re-init.
 
-    // Lightbox - intercept gallery link clicks
+  let galleryAbort: AbortController | null = null;
+
+  function initGallery() {
+    galleryAbort?.abort();
+    galleryAbort = null;
     const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return; // other pages: bind nothing, leak nothing
+    galleryAbort = new AbortController();
+    const { signal } = galleryAbort;
+
     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
@@ -375,33 +398,64 @@ const jsonLd = {
     const reduceMo = matchMedia('(prefers-reduced-motion: reduce)');
     const canVT = () => typeof (document as any).startViewTransition === 'function' && !reduceMo.matches;
     const tileImg = (item: any): HTMLElement | null => item ? item.querySelector('img') : null;
-    function armIdle() { lightbox?.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => lightbox?.classList.add('idle'), 2000); }
+    const lenis = () => (window as any).__lenis;
+    function armIdle() { lightbox.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => lightbox.classList.add('idle'), 2000); }
 
-    // Set the lightbox image from a gallery item. Serves the 1200px gallery
-    // tier on phones and the 2400px hero on retina desktop (native sizes
-    // selection) - previously every open fetched the full 2400px hero.
+    // iOS-proof scroll lock: fix the body in place and pause Lenis. overflow
+    // alone does not stop touch scroll or rubber-banding on iOS Safari.
+    let savedScrollY = 0;
+    function lockScroll() {
+      savedScrollY = window.scrollY;
+      lenis()?.stop?.();
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+    function unlockScroll() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY);
+      lenis()?.start?.();
+    }
+
+    // Serve the 1200px gallery tier as the base; srcset lets retina desktop
+    // pull the 2400px hero. src previously pointed at the hero, which forced
+    // worst-case decodes on phones during swipe bursts.
     function setLightboxImage(item: HTMLElement) {
       const file = item.dataset.file || '';
       const alt = item.dataset.alt || '';
       if (file) {
         lightboxImg.srcset = `/images/photography/gallery/${file}.webp 1200w, /images/photography/hero/${file}.webp 2400w`;
-        lightboxImg.src = `/images/photography/hero/${file}.webp`;
+        lightboxImg.src = `/images/photography/gallery/${file}.webp`;
       } else {
         lightboxImg.removeAttribute('srcset');
         lightboxImg.src = item.dataset.src || '';
       }
+      lightboxImg.decoding = 'async';
       lightboxImg.alt = alt;
       if (lightboxCaption) lightboxCaption.textContent = alt;
       if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
     }
 
-    // Warm the next/prev gallery-tier image so navigation feels instant.
+    // Neighbor warmer with a bounded set so swipe bursts cannot re-spawn
+    // Image() objects for files already requested this visit.
+    const prefetched = new Set<string>();
     function prefetchNeighbors() {
       if (!visibleItems.length) return;
       for (const d of [-1, 1]) {
         const n = (currentIndex + d + visibleItems.length) % visibleItems.length;
         const f = (visibleItems[n] as HTMLElement)?.dataset.file;
-        if (f) { const im = new Image(); im.src = `/images/photography/gallery/${f}.webp`; }
+        if (f && !prefetched.has(f)) {
+          if (prefetched.size > 24) prefetched.clear();
+          prefetched.add(f);
+          const im = new Image();
+          im.src = `/images/photography/gallery/${f}.webp`;
+        }
       }
     }
 
@@ -418,65 +472,97 @@ const jsonLd = {
       const src = tileImg(item);
       const reveal = () => {
         setLightboxImage(item);
-        lightbox!.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        lightbox.classList.add('active');
+        lockScroll();
         (closeBtn as HTMLElement | null)?.focus();
         prefetchNeighbors();
         armIdle();
       };
       if (canVT() && src) {
+        // Name handoff: only ONE element may carry lb-photo per snapshot.
+        // Old snapshot: the tile. New snapshot: the lightbox image.
         src.style.viewTransitionName = 'lb-photo';
-        lightboxImg.style.viewTransitionName = 'lb-photo';
-        const t = (document as any).startViewTransition(reveal);
+        const t = (document as any).startViewTransition(() => {
+          src.style.viewTransitionName = '';
+          lightboxImg.style.viewTransitionName = 'lb-photo';
+          reveal();
+        });
         t.finished.finally(() => { src.style.viewTransitionName = ''; lightboxImg.style.viewTransitionName = ''; });
       } else reveal();
     }
 
     function closeLightbox() {
       const src = tileImg(visibleItems[currentIndex] as HTMLElement);
-      const hide = () => { lightbox!.classList.remove('active'); document.body.style.overflow = ''; lastFocused?.focus(); };
+      const hide = () => { lightbox.classList.remove('active'); unlockScroll(); lastFocused?.focus(); };
       if (canVT() && src) {
         lightboxImg.style.viewTransitionName = 'lb-photo';
-        const t = (document as any).startViewTransition(() => { hide(); src.style.viewTransitionName = 'lb-photo'; });
+        const t = (document as any).startViewTransition(() => {
+          lightboxImg.style.viewTransitionName = '';
+          src.style.viewTransitionName = 'lb-photo';
+          hide();
+        });
         t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; src.style.viewTransitionName = ''; });
       } else hide();
     }
 
-    function navigate(dir: number) {
+    // -- Slide engine: compositor-only transforms, one animation in flight. --
+    let animating = false;
+    const slideMs = () => (reduceMo.matches ? 0 : 170);
+    function snapComplete() {
+      // jump-cut: finish any running slide instantly so rapid input stays
+      // bounded instead of queueing snapshots or transitions.
+      lightboxImg.style.transition = 'none';
+      lightboxImg.style.transform = '';
+      lightboxImg.style.opacity = '';
+      void lightboxImg.offsetWidth;
+      animating = false;
+    }
+    function slideTo(dir: number) {
+      if (animating) snapComplete();
       updateVisibleItems();
+      if (!visibleItems.length) return;
+      animating = true;
       currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
       const item = visibleItems[currentIndex] as HTMLElement;
-      if (!item) return;
-      const swap = () => { setLightboxImage(item); prefetchNeighbors(); };
-      if (canVT()) {
-        lightboxImg.style.viewTransitionName = 'lb-photo';
-        const t = (document as any).startViewTransition(swap);
-        t.finished.finally(() => { lightboxImg.style.viewTransitionName = ''; });
-      } else swap();
+      const out = () => {
+        lightboxImg.style.transition = `transform ${slideMs()}ms ease-in, opacity ${slideMs()}ms ease-in`;
+        lightboxImg.style.transform = `translateX(${dir * -34}vw)`;
+        lightboxImg.style.opacity = '0';
+      };
+      const swapIn = () => {
+        setLightboxImage(item);
+        lightboxImg.style.transition = 'none';
+        lightboxImg.style.transform = `translateX(${dir * 34}vw)`;
+        void lightboxImg.offsetWidth;
+        lightboxImg.style.transition = `transform ${slideMs()}ms ease-out, opacity ${slideMs()}ms ease-out`;
+        lightboxImg.style.transform = '';
+        lightboxImg.style.opacity = '1';
+        prefetchNeighbors();
+        window.setTimeout(() => { animating = false; lightboxImg.style.transition = ''; }, slideMs() + 30);
+      };
+      if (slideMs() === 0) { setLightboxImage(item); prefetchNeighbors(); animating = false; return; }
+      out();
+      window.setTimeout(swapIn, slideMs());
       armIdle();
     }
+    const navigate = (dir: number) => slideTo(dir);
 
-    // Intercept clicks on gallery links - open lightbox instead of navigating.
-    // Middle-click / Ctrl+click / right-click still follow the link naturally.
+    // Intercept gallery link clicks; modified clicks still open in new tab.
     items.forEach((item) => {
       item.addEventListener('click', (e) => {
-        // Let modified clicks pass through for "open in new tab"
         const me = e as MouseEvent;
         if (me.ctrlKey || me.metaKey || me.shiftKey || me.button !== 0) return;
         e.preventDefault();
         updateVisibleItems();
         const idx = visibleItems.indexOf(item);
         openLightbox(idx >= 0 ? idx : 0);
-      });
+      }, { signal });
     });
 
-    document.getElementById('lightbox-close')?.addEventListener('click', closeLightbox);
-    document.getElementById('lightbox-prev')?.addEventListener('click', () => navigate(-1));
-    document.getElementById('lightbox-next')?.addEventListener('click', () => navigate(1));
-
-    lightbox?.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+    closeBtn?.addEventListener('click', closeLightbox, { signal });
+    document.getElementById('lightbox-prev')?.addEventListener('click', () => navigate(-1), { signal });
+    document.getElementById('lightbox-next')?.addEventListener('click', () => navigate(1), { signal });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); }, { signal });
 
     // Develop-from-black: dim not-yet-loaded gallery photos, restore on load.
     if (!reduceMo.matches) {
@@ -484,20 +570,18 @@ const jsonLd = {
         const im = (item as HTMLElement).querySelector('img');
         if (!im || (im as HTMLImageElement).complete) return;
         im.classList.add('developing');
-        im.addEventListener('load', () => im.classList.remove('developing'), { once: true });
+        im.addEventListener('load', () => im.classList.remove('developing'), { once: true, signal });
       });
     }
-    lightbox?.addEventListener('mousemove', armIdle);
-    lightbox?.addEventListener('touchstart', armIdle, { passive: true });
+    lightbox.addEventListener('mousemove', armIdle, { signal });
 
     document.addEventListener('keydown', (e) => {
-      if (!lightbox?.classList.contains('active')) return;
+      if (!lightbox.classList.contains('active')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') navigate(-1);
       if (e.key === 'ArrowRight') navigate(1);
       if (e.key === 'Tab') {
-        // Focus trap: keep Tab within the dialog's visible controls.
-        const f = (Array.from(lightbox!.querySelectorAll('button')) as HTMLElement[])
+        const f = (Array.from(lightbox.querySelectorAll('button')) as HTMLElement[])
           .filter((b) => b.offsetParent !== null);
         if (f.length) {
           const first = f[0], last = f[f.length - 1];
@@ -505,27 +589,73 @@ const jsonLd = {
           else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
         }
       }
-    });
+    }, { signal });
 
-    // Touch/swipe support for mobile lightbox
-    let touchStartX = 0;
-    let touchStartY = 0;
+    // -- Finger-tracked swipe: the image follows the touch (direct
+    // manipulation), then commits or springs back on release. --
+    let startX = 0, startY = 0, startT = 0, dragX = 0;
+    let dragMode: 'idle' | 'pending' | 'drag' = 'idle';
+    let dragRaf = 0;
+    const paintDrag = () => {
+      dragRaf = 0;
+      if (dragMode !== 'drag') return;
+      const fade = Math.max(0.35, 1 - Math.abs(dragX) / (window.innerWidth * 1.2));
+      lightboxImg.style.transform = `translateX(${dragX}px)`;
+      lightboxImg.style.opacity = String(fade);
+    };
 
-    lightbox?.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-    }, { passive: true });
+    lightbox.addEventListener('touchstart', (e) => {
+      armIdle();
+      if (!lightbox.classList.contains('active') || e.touches.length > 1) return;
+      if (animating) snapComplete();
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startT = performance.now();
+      dragX = 0;
+      dragMode = 'pending';
+      lightboxImg.style.willChange = 'transform, opacity';
+    }, { passive: true, signal });
 
-    lightbox?.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].screenX;
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = e.changedTouches[0].screenY - touchStartY;
-
-      if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-        if (deltaX < 0) navigate(1);
-        else navigate(-1);
+    lightbox.addEventListener('touchmove', (e) => {
+      if (dragMode === 'idle' || e.touches.length > 1) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (dragMode === 'pending') {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dx) <= Math.abs(dy)) { dragMode = 'idle'; return; } // vertical intent: not ours
+        dragMode = 'drag';
+        lightboxImg.style.transition = 'none';
       }
-    }, { passive: true });
+      e.preventDefault(); // scroll lock backstop; container also has touch-action: none
+      dragX = dx;
+      if (!dragRaf) dragRaf = requestAnimationFrame(paintDrag);
+    }, { passive: false, signal });
+
+    lightbox.addEventListener('touchend', (e) => {
+      lightboxImg.style.willChange = '';
+      if (dragMode !== 'drag') { dragMode = 'idle'; return; }
+      dragMode = 'idle';
+      const dt = Math.max(1, performance.now() - startT);
+      const velocity = Math.abs(dragX) / dt; // px per ms
+      const commit = Math.abs(dragX) > 64 || (velocity > 0.45 && Math.abs(dragX) > 24);
+      if (commit) {
+        const dir = dragX < 0 ? 1 : -1;
+        slideTo(dir);
+      } else {
+        lightboxImg.style.transition = `transform 180ms ease-out, opacity 180ms ease-out`;
+        lightboxImg.style.transform = '';
+        lightboxImg.style.opacity = '1';
+        window.setTimeout(() => { lightboxImg.style.transition = ''; }, 220);
+      }
+    }, { passive: true, signal });
+
+    lightbox.addEventListener('touchcancel', () => {
+      dragMode = 'idle';
+      lightboxImg.style.willChange = '';
+      lightboxImg.style.transition = 'none';
+      lightboxImg.style.transform = '';
+      lightboxImg.style.opacity = '1';
+    }, { passive: true, signal });
   }
 
   initGallery();

@@ -309,9 +309,21 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
   {/* Keyboard navigation - arrow keys between photo pages */}
   <script>
+    // AbortController hygiene: this module runs once per session, but
+    // initKeyboardNav re-runs on every astro:after-swap (site-wide). The
+    // document-level keydown previously accumulated one handler per page
+    // visit, each closure retaining the detached page DOM. Same failure
+    // class as the gallery lightbox crash (fixed 2026-06-09).
+    let kbAbort: AbortController | null = null;
+
     function initKeyboardNav() {
+      kbAbort?.abort();
+      kbAbort = null;
       const prev = document.getElementById('nav-prev') as HTMLAnchorElement | null;
       const next = document.getElementById('nav-next') as HTMLAnchorElement | null;
+      if (!prev && !next) return;
+      kbAbort = new AbortController();
+      const { signal } = kbAbort;
 
       function handleKey(e: KeyboardEvent) {
         // Don't intercept if user is in an input or modifier keys held
@@ -327,7 +339,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         }
       }
 
-      document.addEventListener('keydown', handleKey);
+      document.addEventListener('keydown', handleKey, { signal });
 
       // Show arrows on any mouse movement in hero area (desktop affordance)
       const hero = document.querySelector('section:first-of-type');
@@ -335,11 +347,11 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         hero.addEventListener('mouseenter', () => {
           if (prev) prev.style.opacity = '0.6';
           if (next) next.style.opacity = '0.6';
-        });
+        }, { signal });
         hero.addEventListener('mouseleave', () => {
           if (prev) prev.style.opacity = '0';
           if (next) next.style.opacity = '0';
-        });
+        }, { signal });
       }
     }
 
