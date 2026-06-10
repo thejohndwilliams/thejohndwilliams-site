@@ -988,8 +988,7 @@ html.lenis body { height: auto; }
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 0 3px rgba(0, 0, 0, 0.40);
 }
 
-/* =====================================================
-
+/* ============================================================
    MOBILE TAB BAR (2026-06-06): single source of truth.
    The bar is glass. Items are bare: icon + label, muted when
    inactive, blue (navy-hour) when active. No box, bubble, dot,
@@ -1079,7 +1078,8 @@ html.lenis body { height: auto; }
       padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
     }
   }
-=======
+}
+
 /* ============================================================
    RENDER-SKIP — below-fold, non-anchored sections. Visual no-op that
    removes offscreen layout/paint from every scrolled frame (the desktop
