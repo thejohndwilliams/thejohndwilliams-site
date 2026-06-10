@@ -1092,3 +1092,176 @@ main > section:not(:first-of-type):not([id]) {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }
+
+/* ============================================================
+   GLASS COMPLICATIONS (2026-06-09). John's directive: liquid glass
+   is the primary thematic; Reverent Dark Stoicism complements through
+   color. Complications bend light at their rims, answer the cursor
+   with a high-resolution caustic, and each carries a quiet idle
+   animation. Bounds respected: blur<=44 sat<=1.85; no
+   backdrop-filter:url() and no mask-image:url() (gradient masks only,
+   iOS-safe); glass children are z-index guarded per the tile-caption
+   incident; everything animated is opacity/background/transform and
+   stops under prefers-reduced-motion.
+   ============================================================ */
+
+@property --lens-a {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Complication rail: one glass capsule holding the category links. */
+.glass-chip-rail {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 1.1rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015) 55%, rgba(255,255,255,0.035));
+  backdrop-filter: blur(24px) saturate(1.7);
+  -webkit-backdrop-filter: blur(24px) saturate(1.7);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 22px rgba(0,0,0,0.22);
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.glass-chip-rail::-webkit-scrollbar { display: none; }
+
+/* Idle: a band of light drifts across the capsule, 9s, alternating. */
+.glass-chip-rail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02) 30%, transparent 55%),
+    linear-gradient(100deg, transparent 30%, rgba(244,234,222,0.07) 50%, transparent 70%);
+  background-size: 100% 100%, 280% 100%;
+  background-position: 0 0, 0% 0;
+  animation: glassSheenDrift 9s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+/* Hover: high-resolution caustic anchored to the pointer (--mx/--my
+   come from the rAF tracker in BaseLayout). */
+.glass-chip-rail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(140px 70px at var(--mx, 50%) var(--my, 20%),
+    rgba(253,252,250,0.16), rgba(126,156,184,0.07) 45%, transparent 70%);
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+.glass-chip-rail:hover::after { opacity: 1; }
+.glass-chip-rail > * { position: relative; z-index: 1; }
+
+/* Lens ring: light bending around the complication's edge. A soft
+   conic segment circles the rim on a 14s orbit. Gradient mask keeps
+   it to a 1px band (mask-image url() stays banned; gradients are
+   iOS-safe). Engines without @property render a static segment. */
+.lens-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: conic-gradient(from var(--lens-a, 0deg),
+    transparent 0turn, transparent 0.30turn,
+    rgba(244,234,222,0.50) 0.37turn,
+    rgba(126,156,184,0.35) 0.43turn,
+    transparent 0.50turn, transparent 1turn);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: lensSweep 14s linear infinite;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+/* Lightbox chrome: glass discs that breathe at idle and answer the
+   cursor. Sized by their existing utility classes (>=44px). */
+.glass-disc {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 18px rgba(0,0,0,0.30);
+  animation: glassBreath 5.5s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease;
+}
+.glass-disc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(60px 60px at var(--mx, 50%) var(--my, 35%),
+    rgba(253,252,250,0.20), transparent 70%);
+  transition: opacity 0.35s ease;
+}
+.glass-disc:hover::after { opacity: 1; }
+.glass-disc:hover { transform: scale(1.05); border-color: rgba(126,156,184,0.35); }
+.glass-disc > * { position: relative; z-index: 1; }
+
+/* Lightbox caption plate: dark-tinted glass so cream stays legible
+   (b9178de lesson), children z-guarded. */
+.glass-plate-lb {
+  /* No position here: the lightbox caption carries Tailwind's absolute
+     placement; overriding it pulled the plate into the flex row and
+     shoved the photo off-center (caught 2026-06-09). Children get their
+     own positioning for the z-guard. */
+  background: rgba(10,10,10,0.45);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.9rem;
+  padding: 0.55rem 1.1rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.glass-plate-lb > * { position: relative; z-index: 1; }
+
+/* Secondary button: a band of light crosses on hover. */
+.btn-outline { position: relative; overflow: hidden; }
+.btn-outline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(244,234,222,0.10) 50%, transparent 65%);
+  transform: translateX(-130%);
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-outline:hover::after { transform: translateX(130%); }
+
+@keyframes glassSheenDrift {
+  from { background-position: 0 0, 0% 0; }
+  to { background-position: 0 0, 100% 0; }
+}
+@keyframes lensSweep {
+  to { --lens-a: 360deg; }
+}
+@keyframes glassBreath {
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 18px rgba(0,0,0,0.30); }
+  50% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 4px 22px rgba(0,0,0,0.34); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-chip-rail::before { animation: none; }
+  .lens-ring { animation: none; }
+  .glass-disc { animation: none; }
+  .btn-outline::after { display: none; }
+}

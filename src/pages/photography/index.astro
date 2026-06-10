@@ -105,7 +105,9 @@ const jsonLd = {
       sticky glass filter bar was retired here 2026-05-30. */}
   <nav class="border-y border-white/5 py-4 sm:py-5" aria-label="Browse by category">
     <div class="container-narrow">
-      <ul class="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto scrollbar-hide -mx-1 px-1">
+      <div class="glass-chip-rail lens-bend">
+        <span class="lens-ring" aria-hidden="true"></span>
+        <ul class="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto scrollbar-hide -mx-1 px-1">
         {categories.map((cat) => (
           <li>
             <a
@@ -118,6 +120,7 @@ const jsonLd = {
           </li>
         ))}
       </ul>
+      </div>
     </div>
   </nav>
 
@@ -193,23 +196,23 @@ const jsonLd = {
 
   {/* LIGHTBOX - touch-friendly with swipe support */}
   <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/92 backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
-    <button id="lightbox-close" class="absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-60 sm:opacity-60 hover:opacity-100 transition-opacity duration-300 bg-black/30 sm:bg-transparent rounded-full" aria-label="Close">
+    <button id="lightbox-close" class="glass-disc absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Close">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-    <button id="lightbox-prev" class="hidden sm:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
+    <button id="lightbox-prev" class="glass-disc hidden sm:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
-    <button id="lightbox-next" class="hidden sm:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
+    <button id="lightbox-next" class="glass-disc hidden sm:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
       </svg>
     </button>
     <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
-    <div class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
+    <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
       <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
     </div>
