@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate from '../components/KineticPlate.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
+---
+
+<BaseLayout title="Kinetic 3D spike" description="Internal preview: true-3D KineticPlate spike." noindex={true}>
+  <section class="py-16 sm:py-24">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3">spike, not for ship</p>
+      <h1 class="t-title font-serif mb-4">Kinetic plate: 2.5D vs true 3D</h1>
+      <p class="text-sm sm:text-base text-mute max-w-2xl mb-10">
+        Left is the current effect (four 2D canvases stacked with CSS depth).
+        Right is the Phase 0 spike: a real WebGL2 point cloud, every dot a
+        true 3D vertex with luminance as depth, orbited by the cursor. Move
+        your pointer across each. Reduced-motion and touch fall back to a
+        still pose. Notes in docs/kinetic-plate-3d-scope.md.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <figure class="m-0">
+          <KineticPlate category="sky" />
+          <figcaption class="text-xs text-mute tracking-[0.15em] uppercase mt-4">Current, 2.5D canvas stack</figcaption>
+        </figure>
+        <figure class="m-0">
+          <KineticPlate3D category="sky" />
+          <figcaption class="text-xs text-mute tracking-[0.15em] uppercase mt-4">Spike, true 3D point cloud</figcaption>
+        </figure>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mt-12">
+        <figure class="m-0">
+          <KineticPlate category="structure" />
+          <figcaption class="text-xs text-mute tracking-[0.15em] uppercase mt-4">Current, structure</figcaption>
+        </figure>
+        <figure class="m-0">
+          <KineticPlate3D category="structure" />
+          <figcaption class="text-xs text-mute tracking-[0.15em] uppercase mt-4">Spike, structure</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

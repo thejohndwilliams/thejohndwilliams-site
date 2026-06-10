@@ -6,6 +6,8 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  /** Emit noindex meta for preview/spike pages. */
+  noindex?: boolean;
   description?: string;
   ogImage?: string;
   /** OG image width in px (Twitter/FB/LinkedIn unfurl hint). Defaults to
@@ -30,6 +32,7 @@ interface Props {
 
 const {
   title = 'John D. Williams',
+  noindex = false,
   description = 'Photography, cybersecurity, and data - the work of John D. Williams.',
   ogImage = '/images/photography/hero/john-portrait-bw.webp',
   ogImageWidth = 2400,
@@ -50,6 +53,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="author" content="John D. Williams" />
 
     <link rel="canonical" href={canonicalURL} />

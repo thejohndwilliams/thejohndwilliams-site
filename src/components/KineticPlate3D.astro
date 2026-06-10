@@ -1,0 +1,262 @@
+---
+/*
+ * KineticPlate3D — Phase 0 spike (2026-06-09). NOT production.
+ *
+ * A genuine WebGL2 point cloud: each cell of the existing luminance
+ * signature becomes a real 3D vertex (x,y from grid, z from luminance),
+ * projected through a perspective camera and orbited by the pointer.
+ * This is the "true 3D" the /about flagship was always meant to be —
+ * here proving the look before the production renderer (scope:
+ * docs/kinetic-plate-3d-scope.md).
+ *
+ * Spike scope honored from the doc:
+ *  - reuses public/data/kinetic/<id>.json (luminance-as-depth), no new data
+ *  - one shared-context-ready renderer (single canvas here)
+ *  - render-on-demand: draws only while orbiting or settling, never idle
+ *  - prefers-reduced-motion: one static frame, no orbit
+ *  - pointer orbit gated to fine pointers; shallow, quiet arc
+ *  - WebGL2 absent / context lost: figure stays labeled, no crash
+ *    (production will fall back to the 2.5D renderer; out of spike scope)
+ */
+import signature from '../data/kinetic-signature.json';
+
+export interface Props {
+  category: 'sky' | 'earth' | 'water' | 'structure';
+  class?: string;
+}
+const { category, class: extraClass = '' } = Astro.props;
+const frame = signature.frames.find((f: { id: string }) => f.id === category);
+if (!frame) throw new Error(`KineticPlate3D: unknown category "${category}"`);
+const plateSrc = `/data/kinetic/${category}.json`;
+---
+
+<figure
+  class={`kplate3d ${extraClass}`}
+  role="img"
+  aria-label={`Three-dimensional dot projection of ${frame.alt}`}
+  data-plate-src={plateSrc}
+>
+  <canvas class="kplate3d__canvas" aria-hidden="true"></canvas>
+</figure>
+
+<style>
+  .kplate3d {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    /* glass frame so the cloud sits inside the site's liquid-glass language */
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01) 55%, rgba(255,255,255,0.03));
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 24px rgba(0,0,0,0.22);
+  }
+  .kplate3d__canvas { display: block; width: 100%; height: 100%; }
+</style>
+
+<script>
+  type Plate = { cols: number; rows: number; grid: number[]; alt: string };
+
+  // -- tiny mat4 helpers (column-major), no dependency --------------------
+  function mPerspective(fovy: number, aspect: number, near: number, far: number) {
+    const f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+    return [f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,2*far*near*nf,0];
+  }
+  function mMul(a: number[], b: number[]) {
+    const o = new Array(16).fill(0);
+    for (let r=0;r<4;r++) for (let c=0;c<4;c++) for (let k=0;k<4;k++) o[c*4+r]+=a[k*4+r]*b[c*4+k];
+    return o;
+  }
+  function mTranslate(x:number,y:number,z:number){return [1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1];}
+  function mRotX(a:number){const c=Math.cos(a),s=Math.sin(a);return [1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1];}
+  function mRotY(a:number){const c=Math.cos(a),s=Math.sin(a);return [c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1];}
+
+  const VERT = `#version 300 es
+  precision highp float;
+  in vec3 aPos;        // x,y in [-1,1], z = luminance-derived depth
+  in float aLum;       // 0..1
+  uniform mat4 uMVP;
+  uniform float uPointScale;
+  out float vLum;
+  void main() {
+    vLum = aLum;
+    vec4 clip = uMVP * vec4(aPos, 1.0);
+    gl_Position = clip;
+    // perspective point size: closer points (smaller clip.w) draw larger,
+    // brighter points draw slightly larger so highlights read forward.
+    float size = uPointScale * (0.55 + 0.75 * aLum) / max(clip.w, 0.25);
+    gl_PointSize = clamp(size, 1.0, 9.0);
+  }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  in float vLum;
+  out vec4 frag;
+  void main() {
+    // soft round disc
+    vec2 d = gl_PointCoord - vec2(0.5);
+    float r = dot(d, d);
+    if (r > 0.25) discard;
+    float a = smoothstep(0.25, 0.02, r);
+    // cream token, brightened by luminance
+    vec3 cream = vec3(0.992, 0.988, 0.980);
+    float l = 0.30 + 0.70 * vLum;
+    frag = vec4(cream * l, a * (0.35 + 0.65 * vLum));
+  }`;
+
+  function compile(gl: WebGL2RenderingContext, type: number, src: string) {
+    const s = gl.createShader(type)!;
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn('kplate3d shader', gl.getShaderInfoLog(s)); return null;
+    }
+    return s;
+  }
+
+  function mount(fig: HTMLElement): (() => void) | void {
+    const canvas = fig.querySelector('canvas') as HTMLCanvasElement | null;
+    const src = fig.getAttribute('data-plate-src');
+    if (!canvas || !src) return;
+    const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: false });
+    if (!gl) return; // production: fall back to 2.5D. spike: leave labeled frame.
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    let prog: WebGLProgram | null = null;
+    let count = 0;
+    let raf = 0, active = false;
+    let curRx = -0.18, curRy = 0.0;      // rest pose: a gentle downward tilt
+    let tgtRx = -0.18, tgtRy = 0.0;
+    let disposed = false;
+
+    const vs = compile(gl, gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    prog = gl.createProgram()!;
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('kplate3d link', gl.getProgramInfoLog(prog)); return; }
+    gl.useProgram(prog);
+    const uMVP = gl.getUniformLocation(prog, 'uMVP');
+    const uPointScale = gl.getUniformLocation(prog, 'uPointScale');
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, fine ? 2 : 1.5);
+      const w = fig.clientWidth, h = fig.clientHeight;
+      canvas!.width = Math.round(w * dpr); canvas!.height = Math.round(h * dpr);
+      gl!.viewport(0, 0, canvas!.width, canvas!.height);
+      requestRender();
+    }
+
+    function buildGeometry(p: Plate) {
+      // upload only points above a luminance floor: the subject, not a
+      // black slab. centers the cloud and keeps the buffer lean.
+      const FLOOR = 0.06;
+      const pos: number[] = [], lum: number[] = [];
+      const { cols, rows, grid } = p;
+      for (let i = 0; i < grid.length; i++) {
+        const v = grid[i]; if (v < FLOOR) continue;
+        const col = i % cols, row = (i / cols) | 0;
+        const x = (col / (cols - 1)) * 2 - 1;
+        const y = -((row / (rows - 1)) * 2 - 1);
+        const z = (v - 0.5) * 0.9;          // luminance relief depth
+        pos.push(x, y, z); lum.push(v);
+      }
+      count = lum.length;
+      const vao = gl!.createVertexArray(); gl!.bindVertexArray(vao);
+      const pb = gl!.createBuffer(); gl!.bindBuffer(gl!.ARRAY_BUFFER, pb);
+      gl!.bufferData(gl!.ARRAY_BUFFER, new Float32Array(pos), gl!.STATIC_DRAW);
+      const aPos = gl!.getAttribLocation(prog!, 'aPos');
+      gl!.enableVertexAttribArray(aPos); gl!.vertexAttribPointer(aPos, 3, gl!.FLOAT, false, 0, 0);
+      const lb = gl!.createBuffer(); gl!.bindBuffer(gl!.ARRAY_BUFFER, lb);
+      gl!.bufferData(gl!.ARRAY_BUFFER, new Float32Array(lum), gl!.STATIC_DRAW);
+      const aLum = gl!.getAttribLocation(prog!, 'aLum');
+      gl!.enableVertexAttribArray(aLum); gl!.vertexAttribPointer(aLum, 1, gl!.FLOAT, false, 0, 0);
+    }
+
+    function draw() {
+      if (disposed || !count) return;
+      const aspect = canvas!.width / Math.max(canvas!.height, 1);
+      const proj = mPerspective(0.62, aspect, 0.1, 20);
+      const view = mTranslate(0, 0, -3.05);
+      const model = mMul(mRotY(curRy), mRotX(curRx));
+      const mvp = mMul(proj, mMul(view, model));
+      gl!.useProgram(prog!);
+      gl!.uniformMatrix4fv(uMVP, false, new Float32Array(mvp));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      gl!.uniform1f(uPointScale, 170 * dpr);
+      gl!.clearColor(0, 0, 0, 0); gl!.clear(gl!.COLOR_BUFFER_BIT);
+      gl!.drawArrays(gl!.POINTS, 0, count);
+    }
+
+    // render-on-demand: ease toward target; stop when settled. no idle rAF.
+    function tick() {
+      raf = 0;
+      const dx = tgtRx - curRx, dy = tgtRy - curRy;
+      curRx += dx * 0.12; curRy += dy * 0.12;
+      draw();
+      if (Math.abs(dx) > 0.0006 || Math.abs(dy) > 0.0006) { raf = requestAnimationFrame(tick); active = true; }
+      else { active = false; }
+    }
+    function requestRender() { if (!active && !raf) raf = requestAnimationFrame(tick); }
+
+    function onMove(e: PointerEvent) {
+      if (reduce || !fine) return;
+      const r = fig.getBoundingClientRect();
+      const nx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+      const ny = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+      // shallow, quiet arc: examine the relief, never a spinning toy
+      tgtRy = Math.max(-1, Math.min(1, nx)) * 0.55;
+      tgtRx = -0.18 + (-Math.max(-1, Math.min(1, ny)) * 0.40);
+      requestRender();
+    }
+    function onLeave() { tgtRx = -0.18; tgtRy = 0; requestRender(); }
+
+    const io = new IntersectionObserver((ents) => {
+      for (const en of ents) if (en.isIntersecting) requestRender();
+    }, { threshold: 0.01 });
+    io.observe(fig);
+
+    let ro: ResizeObserver | null = new ResizeObserver(resize);
+    ro.observe(fig);
+
+    if (fine && !reduce) {
+      fig.addEventListener('pointermove', onMove);
+      fig.addEventListener('pointerleave', onLeave);
+    }
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, { passive: false });
+
+    // load geometry then first paint
+    fetch(src).then(r => r.json()).then((p: Plate) => {
+      if (disposed) return;
+      buildGeometry(p); resize(); draw();
+    }).catch(() => {});
+
+    return () => {
+      disposed = true;
+      if (raf) cancelAnimationFrame(raf);
+      io.disconnect(); ro?.disconnect(); ro = null;
+      fig.removeEventListener('pointermove', onMove);
+      fig.removeEventListener('pointerleave', onLeave);
+      const lose = gl!.getExtension('WEBGL_lose_context'); lose?.loseContext();
+    };
+  }
+
+  const teardowns: Array<() => void> = [];
+  function initAll() {
+    while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} }
+    document.querySelectorAll('.kplate3d').forEach((f) => {
+      const t = mount(f as HTMLElement); if (t) teardowns.push(t);
+    });
+  }
+  initAll();
+  document.addEventListener('astro:after-swap', initAll);
+  document.addEventListener('astro:before-swap', () => { while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} } });
+</script>
