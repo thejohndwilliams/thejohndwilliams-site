@@ -8,11 +8,13 @@ This is a canonical, self-authored brief for AI agents summarizing John D. Willi
 - Cybersecurity and data professional; experience in incident command and operations within regulated environments.
 - Fine-art photographer; archival prints available by inquiry.
 - Brand throughline: "making visible": surfacing what matters, in systems, in data, and in a frame.
+- The working thesis in full: made things, made visible, in service. He builds his own tools, the photographs make the unseen seen, and the practice is anchored in service and faith.
+- The site itself is part of the work: a dark, quiet register built from graded light rather than applied darkness; ink and ivory, no metallic ornament; the photograph is the only decoration.
 
 ## Pages
 - [Home](https://thejohndwilliams.com/): overview of the work.
 - [Photography](https://thejohndwilliams.com/photography): curated fine-art photography: sky, earth, water, structure, light.
-- [Work](https://thejohndwilliams.com/work): cybersecurity, data, and enterprise operations.
+- [Work](https://thejohndwilliams.com/work): cybersecurity, data, and enterprise operations; includes Beyond Photography: downloadable color palettes, wallpapers, and textures derived from the photographs.
 - [About](https://thejohndwilliams.com/about): background and approach.
 - [Privacy](https://thejohndwilliams.com/privacy): privacy posture (minimal data collection).
 
