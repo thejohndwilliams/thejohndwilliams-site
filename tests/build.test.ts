@@ -279,6 +279,21 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('.glass-tabbar');
   });
 
+  it('defines the backlit-crystal chip lens (2026-06-10)', () => {
+    expect(cssBundle).toContain('.chip-lens');
+    expect(cssBundle).toContain('.cl-ring');
+    expect(cssBundle).toContain('.cl-core');
+  });
+
+  it('ships the chip lens markup on the photography rail', () => {
+    const html = fs.readFileSync(
+      path.join(distDir, 'photography', 'index.html'),
+      'utf-8'
+    );
+    expect(html).toContain('id="chip-lens"');
+    expect(html).toContain('cat-link');
+  });
+
   it('respects prefers-reduced-motion for glass specular', () => {
     expect(cssBundle).toContain('prefers-reduced-motion');
   });
