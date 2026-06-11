@@ -16,6 +16,17 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    // WebKit projects added 2026-06-11: every defect cluster on this site
+    // (mask-image, backdrop-filter url(), reveal opacity, lightbox crash)
+    // was iOS/WebKit-specific and found by John post-deploy. Catch it here.
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'iphone',
+      use: { ...devices['iPhone 13'] },
+    },
   ],
   webServer: {
     command: 'npm run preview',

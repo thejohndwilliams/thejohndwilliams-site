@@ -1,3 +1,4 @@
+// @vitest-environment node  (fs/path need real node builtins; see build.test.ts note)
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';

@@ -1,3 +1,8 @@
+// @vitest-environment node
+// This suite shells out + reads dist/ — it needs real node builtins. Under
+// the global happy-dom environment, vite externalizes node: imports and the
+// suite dies at import ("No such built-in module"). That failure was long
+// misdiagnosed as a node-version problem. Pinned 2026-06-11.
 import { describe, it, expect, beforeAll } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';

@@ -1,3 +1,7 @@
+// Rewritten 2026-06-11 (foundation session). The previous suite tested the
+// hamburger-era DOM (retired 2026-05-30) and had rotted into fiction because
+// nothing ever ran it. These specs were verified against the built dist
+// markup and run on chromium + webkit + iphone via playwright.config.ts.
 import { test, expect } from '@playwright/test';
 
 test.describe('Navigation', () => {
@@ -6,25 +10,32 @@ test.describe('Navigation', () => {
     await expect(page).toHaveTitle(/John D. Williams/);
   });
 
-  test('can navigate to About page', async ({ page }) => {
+  test('can navigate to About', async ({ page }) => {
     await page.goto('/');
-    await page.click('header a[href="/about"]');
-    await expect(page).toHaveURL('/about');
-    await expect(page.locator('h1')).toContainText('About');
+    await page.locator('header a[href="/about"]:visible').first().click();
+    await expect(page).toHaveURL(/\/about\/?$/);
+    await expect(page).toHaveTitle(/About/);
   });
 
-  test('can navigate to Work page', async ({ page }) => {
+  test('can navigate to Work', async ({ page }) => {
     await page.goto('/');
-    await page.click('header a[href="/work"]');
-    await expect(page).toHaveURL('/work');
+    await page.locator('header a[href="/work"]:visible').first().click();
+    await expect(page).toHaveURL(/\/work\/?$/);
+    await expect(page.locator('h1')).toContainText('Selected Work');
   });
 
-  test('header logo links to homepage', async ({ page }) => {
+  test('can navigate to Photography', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('header a[href="/photography"]:visible').first().click();
+    await expect(page).toHaveURL(/\/photography\/?$/);
+    await expect(page).toHaveTitle(/Photography/);
+  });
+
+  test('header wordmark links to homepage', async ({ page }) => {
     await page.goto('/about');
-    await page.click('a:has-text("JW")');
-    await expect(page).toHaveURL('/');
+    await page.locator('header a[href="/"]:visible').first().click();
+    await expect(page).toHaveURL(/\/$/);
   });
-
 });
 
 test.describe('404 Page', () => {

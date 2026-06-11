@@ -14,8 +14,10 @@ addresses agents directly.
 
 ## Stack
 
-- Astro 4.16, static output. Tailwind 3.4. vitest (71 tests, must stay green).
-  Playwright e2e in `e2e/`. Build currently emits 105 pages; the exact counts
+- Astro 4.16, static output. Tailwind 3.4. vitest, incl. `tests/hazards.test.ts`
+  prose-rule locks (green is the gate; the count grows). Playwright e2e in
+  `e2e/` runs chromium + webkit + iphone. Node pinned to 24 (`.nvmrc`;
+  node 25 breaks suite imports SILENTLY — `scripts/check-node.mjs` guards). Build currently emits 105 pages; the exact counts
   asserted in `tests/build.test.ts` are the source of truth, not this file.
 - Fonts, self-hosted: IBM Plex Sans (UI), EB Garamond (display serif voice),
   JetBrains Mono (code). Source Sans 3 and Libre Baskerville are RETIRED.
@@ -28,9 +30,11 @@ addresses agents directly.
 ## Commands
 
 ```
-npm install --no-audit --no-fund
+npm install --include=dev --no-audit --no-fund   # --include=dev: some envs set omit=dev and silently skip vitest
+npm run gate                 # THE pre-push gate: node-check + full build + vitest + Playwright (chromium/webkit/iphone)
+npm run gate:quick           # node-check + build + vitest, for copy-only changes
 npx astro build              # quick build (npm run build adds kinetic frames + OG images)
-npx vitest run               # 71 tests, green is a hard gate
+npx vitest run               # unit + lock suites alone; green is a hard gate (count grows)
 npm run audit:pages -- 390 844 ./audit-out yes all   # headless defect sweep, see scripts/audit-pages.mjs
 npm run test:e2e             # Playwright
 ```
@@ -109,11 +113,25 @@ If you cannot run that skill, do not push public copy changes.
   Co-author: John D. Williams <jndwcreative@gmail.com>.
 - Auth: `gh auth git-credential`. The old iCloud token-file path is retired.
 - After shipping, update the vault note with the new HEAD and what shipped.
+- End every session with a state ledger: name the branch + URL carrying each
+  in-flight change (preview vs production). Unnamed preview work rots — v9.x
+  sat on a preview branch for 3 days while production looked stale.
+- After deleting a route, purge the Cloudflare cache for it (s-maxage kept a
+  deleted page alive for a week) and sweep tests/copy for references.
 
 ## Hazards
 
-- Agent sandboxes: clone to /tmp/work and edit there, preferably via Python
-  scripts. Bash heredocs containing != need `set +H` first.
+- NEVER patch source through bash heredocs or inline sed: shell escaping has
+  corrupted code at least six times (`!` mangled to `\!`, swallowed `\u`,
+  miscounted escape layers). Write files with file tools or a Python script
+  that reads/writes whole files. After any chained shell command, verify the
+  artifact actually exists — a timeout silently drops the later steps.
+  If a heredoc is unavoidable and contains !=, `set +H` first.
+- Secrets never travel through chat (two pasted tokens forced rotations).
+  Hand off via file path (the 09_Restricted pattern).
+- Agent sandboxes: clone to /tmp/work and edit there. The sandbox is the
+  UNRELIABLE environment (disk-wedges, mid-session VM resets, no domain
+  egress); the Mac + node 24 is the canonical gate environment.
 - Do not edit a /sessions outputs mount copy without syncing; a linter there
   can revert or alter edits.
 - Lighthouse color-contrast flags on photography backgrounds are false

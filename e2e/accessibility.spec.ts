@@ -72,10 +72,12 @@ test.describe('Accessibility', () => {
   });
 
   test.describe('Buttons', () => {
-    test('mobile menu button has aria-label', async ({ page }) => {
+    // 2026-06-11: was #menu-toggle (hamburger), retired 2026-05-30.
+    test('theme toggle has aria-label and aria-pressed', async ({ page }) => {
       await page.goto('/');
-      const menuButton = page.locator('#menu-toggle');
-      await expect(menuButton).toHaveAttribute('aria-label');
+      const toggle = page.locator('button.theme-toggle').first();
+      await expect(toggle).toHaveAttribute('aria-label', /.+/);
+      await expect(toggle).toHaveAttribute('aria-pressed', /true|false/);
     });
   });
 

@@ -1,44 +1,48 @@
+// Rewritten 2026-06-11. The old suite tested #menu-toggle / #mobile-menu —
+// the hamburger retired 2026-05-30 (and the bottom tab bar retired
+// 2026-06-06; nav now lives in the top glass header as .m-nav-item icons).
 import { test, expect } from '@playwright/test';
 
-// Configure viewport for mobile testing (use viewport size instead of device preset)
 test.use({
   viewport: { width: 390, height: 844 },
   isMobile: true,
+  hasTouch: true,
 });
 
-test.describe('Mobile Navigation', () => {
-  test('mobile menu toggle is visible on mobile', async ({ page }) => {
+test.describe('Mobile navigation (top glass header)', () => {
+  test('icon nav links are present and tappable', async ({ page }) => {
     await page.goto('/');
-    const menuButton = page.locator('#menu-toggle');
-    await expect(menuButton).toBeVisible();
+    const items = page.locator('header .m-nav-item:visible');
+    expect(await items.count()).toBeGreaterThanOrEqual(3);
+    await page.locator('header .m-nav-item[href="/about"]').click();
+    await expect(page).toHaveURL(/\/about\/?$/);
   });
 
-  test('mobile menu is hidden by default', async ({ page }) => {
+  test('theme toggle flips aria-pressed', async ({ page }) => {
     await page.goto('/');
-    const mobileMenu = page.locator('#mobile-menu');
-    // Check for exact 'hidden' class (not md:hidden which is a responsive breakpoint)
-    await expect(mobileMenu).toHaveClass(/\bhidden\b/);
+    const toggle = page.locator('button.theme-toggle:visible').first();
+    const before = await toggle.getAttribute('aria-pressed');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute(
+      'aria-pressed',
+      before === 'true' ? 'false' : 'true',
+    );
   });
+});
 
-  test('clicking menu toggle shows mobile menu', async ({ page }) => {
-    await page.goto('/');
-    await page.click('#menu-toggle');
-    const mobileMenu = page.locator('#mobile-menu');
-    // After clicking toggle, the 'hidden' class should be removed (md:hidden will remain)
-    await expect(mobileMenu).toBeVisible();
-  });
-
-  test('mobile menu contains navigation links', async ({ page }) => {
-    await page.goto('/');
-    await page.click('#menu-toggle');
-    await expect(page.locator('#mobile-menu a[href="/about"]')).toBeVisible();
-    await expect(page.locator('#mobile-menu a[href="/work"]')).toBeVisible();
-  });
-
-  test('can navigate via mobile menu', async ({ page }) => {
-    await page.goto('/');
-    await page.click('#menu-toggle');
-    await page.click('#mobile-menu a[href="/about"]');
-    await expect(page).toHaveURL('/about');
-  });
+test.describe('Mobile layout integrity', () => {
+  for (const route of ['/', '/photography', '/work', '/about']) {
+    test(`no horizontal overflow on ${route}`, async ({ page }) => {
+      await page.goto(route);
+      await page.waitForTimeout(400);
+      const overflow = await page.evaluate(() => {
+        const docW = Math.max(
+          document.documentElement.scrollWidth,
+          document.body.scrollWidth,
+        );
+        return docW - window.innerWidth;
+      });
+      expect(overflow).toBeLessThanOrEqual(1);
+    });
+  }
 });
