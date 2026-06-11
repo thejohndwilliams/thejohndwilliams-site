@@ -107,7 +107,7 @@ const jsonLd = {
     <div class="container-narrow">
       <div class="glass-chip-rail lens-bend">
         <span class="lens-ring" aria-hidden="true"></span>
-        <ul class="relative flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto scrollbar-hide -mx-1 px-1">
+        <ul class="relative flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto scrollbar-hide -mx-3 px-3">
         <span class="chip-lens" id="chip-lens" aria-hidden="true"><span class="cl-ring"></span><span class="cl-arcs"></span><span class="cl-core"></span></span>
         {categories.map((cat) => (
           <li>
@@ -314,7 +314,7 @@ const jsonLd = {
         const s = document.createElement('span');
         s.className = cls;
         if (cls === 'cl-bloom') {
-          s.style.left = t.x + t.w / 2 - 35 + 'px';
+          s.style.left = t.x + t.w / 2 - 24 + 'px';
         } else {
           s.style.left = t.x + 'px';
           s.style.width = t.w + 'px';
@@ -377,11 +377,11 @@ const jsonLd = {
         if (fast) {
           spawn('cl-bloom', t, [
             { transform: 'translateY(-50%) scale(0.3)', opacity: 0.6 },
-            { transform: 'translateY(-50%) scale(2)', opacity: 0 },
+            { transform: 'translateY(-50%) scale(1.8)', opacity: 0 },
           ], 680);
           spawn('cl-flare', t, [
             { transform: 'translateY(-50%) scale(1, 1)', opacity: 0.8 },
-            { transform: 'translateY(-50%) scale(1.45, 2.1)', opacity: 0 },
+            { transform: 'translateY(-50%) scale(1.4, 1.15)', opacity: 0 },
           ], 560);
         }
       }
