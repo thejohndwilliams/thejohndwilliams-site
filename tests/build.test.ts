@@ -285,6 +285,13 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('.cl-core');
   });
 
+  it('ships the panes-over-plates home pilot (2026-06-10)', () => {
+    expect(cssBundle).toContain('.glass-pane');
+    const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
+    expect(html).toContain('plate-section');
+    expect(html).toContain('glass-pane');
+  });
+
   it('extends the crystal control material to buttons site-wide', () => {
     // minifiers may collapse ::before to :before; accept either
     expect(cssBundle).toMatch(/\.glass-control::?before/);

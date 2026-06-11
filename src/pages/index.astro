@@ -127,8 +127,15 @@ const socialLinks = [
 
 
   {/* IN SERVICE - charitable organizations, staggered bento */}
-  <section class="section-light py-12 sm:py-16 md:py-24">
+  <section class="plate-section py-12 sm:py-16 md:py-24" data-plate>
+    <picture class="plate-img" aria-hidden="true">
+      <source type="image/avif" srcset="/images/photography/gallery/img-0075.avif 1200w, /images/photography/hero/img-0075.avif 2400w" sizes="100vw" />
+      <source type="image/webp" srcset="/images/photography/gallery/img-0075.webp 1200w, /images/photography/hero/img-0075.webp 2400w" sizes="100vw" />
+      <img src="/images/photography/gallery/img-0075.webp" alt="" loading="lazy" decoding="async" />
+    </picture>
+    <div class="plate-scrim" aria-hidden="true"></div>
     <div class="container-wide">
+      <div class="glass-pane pane-settle p-4 sm:p-6 md:p-8">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">In Service</h2>
       <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
         {charities.map((org, i) => {
@@ -174,6 +181,7 @@ const socialLinks = [
             </a>
           );
         })}
+      </div>
       </div>
     </div>
   </section>
@@ -227,8 +235,15 @@ const socialLinks = [
   </section>
 
   {/* SOCIAL TILES - bento grid with alternating spans */}
-  <section class="section-light py-12 sm:py-16 md:py-24">
+  <section class="plate-section py-12 sm:py-16 md:py-24" data-plate>
+    <picture class="plate-img" aria-hidden="true">
+      <source type="image/avif" srcset="/images/photography/gallery/dscf0671.avif 1200w, /images/photography/hero/dscf0671.avif 2400w" sizes="100vw" />
+      <source type="image/webp" srcset="/images/photography/gallery/dscf0671.webp 1200w, /images/photography/hero/dscf0671.webp 2400w" sizes="100vw" />
+      <img src="/images/photography/gallery/dscf0671.webp" alt="" loading="lazy" decoding="async" />
+    </picture>
+    <div class="plate-scrim" aria-hidden="true"></div>
     <div class="container-wide">
+      <div class="glass-pane pane-settle p-4 sm:p-6 md:p-8">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">Connect</h2>
       <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
         {socialLinks.map((link, i) => {
@@ -273,6 +288,7 @@ const socialLinks = [
             </a>
           );
         })}
+      </div>
       </div>
     </div>
   </section>
@@ -342,6 +358,72 @@ const socialLinks = [
       window.addEventListener('load', initTimeHero, { once: true });
     }
     document.addEventListener('astro:after-swap', initTimeHero);
+  </script>
+
+
+  <script>
+    // Liquid float: panes trail the scroll with spring lag and settle
+    // like droplets. Transform-only; listeners through an
+    // AbortController aborted on re-init per the hygiene rule.
+    let paneAbort: AbortController | null = null;
+    function initPaneFloat() {
+      paneAbort?.abort();
+      paneAbort = null;
+      const sections = Array.from(document.querySelectorAll('.plate-section')) as HTMLElement[];
+      if (!sections.length) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      paneAbort = new AbortController();
+      const { signal } = paneAbort;
+      const parts = sections.map((s) => ({
+        img: s.querySelector('.plate-img img') as HTMLElement | null,
+        pane: s.querySelector('.glass-pane') as HTMLElement | null,
+        s,
+        fy: 0,
+        py: 0,
+      }));
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const pane = (e.target as HTMLElement).querySelector('.pane-settle');
+          if (pane && !pane.classList.contains('is-set')) {
+            pane.classList.add('is-set');
+            pane.addEventListener('transitionend', () => pane.classList.add('settled'), { once: true });
+          }
+        });
+      }, { threshold: 0.22 });
+      sections.forEach((s) => io.observe(s));
+      signal.addEventListener('abort', () => io.disconnect());
+      if (reduce) {
+        sections.forEach((s) => s.querySelector('.pane-settle')?.classList.add('is-set', 'settled'));
+        return;
+      }
+
+      let raf = 0;
+      const tick = () => {
+        const vh = window.innerHeight;
+        parts.forEach((p) => {
+          const r = p.s.getBoundingClientRect();
+          if (r.bottom < -80 || r.top > vh + 80) return;
+          const prog = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / vh));
+          const ty = prog * 26;
+          const tp = prog * -12;
+          p.py += (ty - p.py) * 0.07;
+          p.fy += (tp - p.fy) * 0.055;
+          if (p.img) p.img.style.setProperty('--py', p.py.toFixed(2) + 'px');
+          if (p.pane) p.pane.style.setProperty('--fy', p.fy.toFixed(2) + 'px');
+        });
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      signal.addEventListener('abort', () => cancelAnimationFrame(raf));
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else raf = requestAnimationFrame(tick);
+      }, { signal });
+    }
+    initPaneFloat();
+    document.addEventListener('astro:after-swap', initPaneFloat);
   </script>
 
 </BaseLayout>
