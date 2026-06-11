@@ -1444,3 +1444,51 @@ footer.glass-footer:hover::after { opacity: 1; }
   .cl-core { animation: none; opacity: 0.8; }
 }
 
+/* ============================================================
+   CRYSTAL CONTROLS (2026-06-10). The chip-lens material extended
+   to every true button and control, per John's directive after
+   the lens shipped. Nav items stay bare: the 2026-06-06
+   single-source-of-truth decision holds, reaffirmed 2026-06-10.
+   Rim = the same gradient-masked refraction ring as .cl-ring.
+   Press = key-sink physics. Lit states stay within the accent
+   rules: ivory remains the CTA light, navy-hour marks active.
+   Rings are static (no loops); the sink is discrete interaction
+   feedback, consistent with existing unganged hover scales.
+   ============================================================ */
+.btn-primary::before,
+.btn-outline::before,
+.glass-disc::before,
+.glass-control::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 2px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  backdrop-filter: blur(1.5px) brightness(1.4) saturate(1.25);
+  -webkit-backdrop-filter: blur(1.5px) brightness(1.4) saturate(1.25);
+  z-index: 1;
+}
+.glass-control { position: relative; }
+.glass-control.fixed { position: fixed; }
+.glass-control.absolute { position: absolute; }
+/* Key-sink: every control compresses under the finger and springs back. */
+.btn:active,
+.glass-control:active,
+.glass-disc:active,
+.theme-toggle:active {
+  transform: scale(1.03, 0.94) translateY(0.5px);
+}
+.theme-toggle {
+  transition: color 0.3s ease, transform 0.25s cubic-bezier(0.3, 0.6, 0.3, 1.2), filter 0.3s ease;
+}
+/* Lit state: the toggle's core ignites when true black is engaged. */
+.theme-toggle[aria-pressed="true"] svg {
+  filter: drop-shadow(0 0 6px rgba(126,156,184,0.55));
+}
+
+

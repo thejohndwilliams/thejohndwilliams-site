@@ -285,6 +285,12 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('.cl-core');
   });
 
+  it('extends the crystal control material to buttons site-wide', () => {
+    // minifiers may collapse ::before to :before; accept either
+    expect(cssBundle).toMatch(/\.glass-control::?before/);
+    expect(cssBundle).toContain('.theme-toggle:active');
+  });
+
   it('ships the chip lens markup on the photography rail', () => {
     const html = fs.readFileSync(
       path.join(distDir, 'photography', 'index.html'),
