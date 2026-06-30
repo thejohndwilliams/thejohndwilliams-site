@@ -46,5 +46,9 @@ scripts/kinetic/.venv/
 scripts/kinetic/.cache/
 plates-source/
 
+# Visual-regression harness (local dev aid; baselines regenerated per machine)
+visual-baseline/
+visual-diff/
+
 # axe a11y test scratch build
 dist-a11y-test/

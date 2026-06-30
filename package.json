@@ -23,7 +23,10 @@
     "build:placeholders": "node scripts/build-photo-placeholders.mjs",
     "audit:pages": "node scripts/audit-pages.mjs",
     "kinetic:setup": "node scripts/kinetic/setup.mjs",
-    "kinetic:build": "node scripts/kinetic/build.mjs"
+    "kinetic:build": "node scripts/kinetic/build.mjs",
+    "preview:status": "node scripts/preview-status.mjs",
+    "visual:baseline": "node scripts/visual-regress.mjs --update",
+    "visual:check": "node scripts/visual-regress.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
@@ -42,6 +45,8 @@
     "dom-accessibility-api": "^0.7.1",
     "happy-dom": "^20.3.3",
     "jsdom": "^29.1.1",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "sharp": "^0.34.5",
     "simple-icons": "^16.16.0",
     "vitest": "^4.0.17"
