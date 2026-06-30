@@ -1,0 +1,18 @@
+{
+  "_comment": "Single source of truth for the KineticPlate flagship. Edit a plate's file/alt here, drop the photo (see scripts/kinetic/README.md), then run `npm run kinetic:build`. Both the luminance builder (build-kinetic-signature.mjs) and the depth builder (build-kinetic-depth.py) read this.",
+  "grid": { "cols": 128, "rows": 128 },
+  "depthModel": {
+    "name": "depth-anything-v2-small",
+    "file": "depth-anything-v2-small.onnx",
+    "url": "https://github.com/fabio-sim/Depth-Anything-ONNX/releases/download/v2.0.0/depth_anything_v2_vits.onnx",
+    "inputSize": 518,
+    "bytes": 99373606,
+    "sha256": "d2b11a11c1d4a12b47608fa65a17ee9a4c605b55ee1730c8e3b526304f2562be"
+  },
+  "plates": [
+    { "id": "sky", "file": "7r52326", "alt": "Thunderheads against black sky" },
+    { "id": "earth", "file": "7r51025-enhanced-sr", "alt": "Rain-wet leaf in darkness" },
+    { "id": "water", "file": "7r50674-enhanced-sr", "alt": "El Arco de Cabo San Lucas" },
+    { "id": "structure", "file": "img-7576-enhanced", "alt": "Shanghai Tower from below" }
+  ]
+}

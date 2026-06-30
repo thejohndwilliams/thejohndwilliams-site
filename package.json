@@ -21,7 +21,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test && npm run build && npm run test:e2e",
     "build:placeholders": "node scripts/build-photo-placeholders.mjs",
-    "audit:pages": "node scripts/audit-pages.mjs"
+    "audit:pages": "node scripts/audit-pages.mjs",
+    "kinetic:setup": "node scripts/kinetic/setup.mjs",
+    "kinetic:build": "node scripts/kinetic/build.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

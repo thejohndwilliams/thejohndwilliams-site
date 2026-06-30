@@ -41,5 +41,10 @@ public/data/kinetic/
 # KineticPlate depth-map QA previews (scripts/build-kinetic-depth.py)
 .kinetic-depth-preview/
 
+# KineticPlate toolkit local state (venv, cached model, raw photo dropzone)
+scripts/kinetic/.venv/
+scripts/kinetic/.cache/
+plates-source/
+
 # axe a11y test scratch build
 dist-a11y-test/
