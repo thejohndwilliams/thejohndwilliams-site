@@ -1539,3 +1539,44 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 
 
+
+/* ============================================================
+   Motion — wave 1 (2026-06-30). Additive micro-interactions on
+   top of the existing material. Quiet Power holds: every effect
+   is interaction-driven and neutralized under reduced motion.
+   Buttons keep their tuned crystal transforms/rims untouched —
+   only the inner arrow and opt-in links gain new motion.
+   ============================================================ */
+
+/* The button arrow leans toward where you're about to go. Targets
+   the inner SVG only, so the crystal body's transform/::before rim
+   and :active key-sink are unaffected. */
+.btn svg { transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.46, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover svg { transform: translateX(4px); }
+}
+.btn:focus-visible svg { transform: translateX(4px); }
+
+/* A blue-hour underline that draws in from the left instead of a bare
+   color flip. Opt-in via .link-draw so it never touches the
+   bare-by-decree nav. */
+.link-draw {
+  background-image: linear-gradient(#7E9CB8, #7E9CB8);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+}
+.link-draw:hover,
+.link-draw:focus-visible {
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn svg,
+  .link-draw { transition: none; }
+  .btn:hover svg,
+  .btn:focus-visible svg { transform: none; }
+  .link-draw:hover,
+  .link-draw:focus-visible { background-size: 100% 1px; } /* present, don't animate */
+}
