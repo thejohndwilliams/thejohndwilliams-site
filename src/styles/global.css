@@ -1584,9 +1584,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 
 /* The arrow glides forward once and holds (a quiet lean, no loop). */
-.btn svg { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.btn svg { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
 .btn-primary:hover svg, .btn-primary:focus-visible svg, .btn-primary.is-lit svg,
-.btn-outline:hover svg, .btn-outline:focus-visible svg, .btn-outline.is-lit svg { transform: translateX(5px); }
+.btn-outline:hover svg, .btn-outline:focus-visible svg, .btn-outline.is-lit svg { transform: translateX(4px); }
 
 /* Blue-hour underline draws in from the left (links opt in via .link-draw). */
 .link-draw {
