@@ -1536,33 +1536,40 @@ footer.glass-footer:hover::after { opacity: 1; }
 /* Sheen rides ON the glass surface, clipped to the key. */
 .btn-primary, .btn-outline { overflow: hidden; }
 
+/* A soft FEATHERED specular: a soft-box reflection on the glass, never a
+   hard line. It breathes (slow, low amplitude) so the key feels alive —
+   liquid glass — and blooms gently on hover. Faint chromatic dispersion
+   lives in the feathered falloff (cyan into magenta), never a band. */
+@keyframes btn-breathe {
+  0%, 100% { opacity: 0.32; transform: scale(1)    translateY(0); }
+  50%      { opacity: 0.50; transform: scale(1.05) translateY(-1.5px); }
+}
 .btn-primary::after,
 .btn-outline::after {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: inherit;
+  left: 7%; right: 7%; top: 6%;
+  height: 66%;
+  border-radius: 50%;
   pointer-events: none;
   z-index: 2;                 /* above the static crystal rim (::before, z1) */
-  /* A glancing CHROMATIC sheen: a soft band of light with cyan/magenta
-     dispersion at its edges, like light raked across glass. It wakes in
-     once (a state transition, not a loop): the glass tilts toward the
-     light, the sheen forms and settles, then holds. */
-  background: linear-gradient(116deg,
-    transparent 36%,
-    rgba(130,210,255,0.32) 45%,
-    rgba(255,255,255,0.74) 50%,
-    rgba(255,160,210,0.32) 55%,
-    transparent 64%);
+  background:
+    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.10) 40%, transparent 72%),
+    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.32) 0%, transparent 62%),
+    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.28) 0%, transparent 62%);
+  filter: blur(4px);
   mix-blend-mode: screen;
-  opacity: 0;
-  transform: translateX(-24%);
-  transition: opacity 0.55s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.32;
+  transform-origin: 50% 28%;
+  animation: btn-breathe 6.5s ease-in-out infinite;
 }
 .btn-primary:hover::after, .btn-primary:focus-visible::after, .btn-primary.is-lit::after,
 .btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
-  opacity: 1;
-  transform: translateX(0);
+  animation-duration: 4.5s;
+  background:
+    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.14) 40%, transparent 72%),
+    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.40) 0%, transparent 62%),
+    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.36) 0%, transparent 62%);
 }
 
 /* The bubble inflates into translucence on approach: a hair more
@@ -1593,7 +1600,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 .link-draw:focus-visible { background-size: 100% 1px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn-primary::after, .btn-outline::after { transition: none; transform: none; }
+  .btn-primary::after, .btn-outline::after { animation: none; opacity: 0.4; transform: none; }
   .btn svg { transition: none; }
   .btn-primary:hover svg, .btn-outline:hover svg,
   .btn-primary:focus-visible svg, .btn-outline:focus-visible svg { transform: none; }
