@@ -15,16 +15,17 @@
  * stands in for the orbit so phones still feel the dimensionality without
  * fighting page scroll.
  *
- * This is the "true 3D" the /about flagship was always meant to be — the
- * silhouette genuinely changes as the cloud turns because every point
- * carries independent depth, not a four-plane approximation (KineticPlate,
- * the 2.5D renderer, stays as the documented fallback).
+ * Far-fade: uFade (0..1) attenuates the far points so the subject can be
+ * isolated from a bright-but-distant background (e.g. open sky). Default per
+ * plate flows from the manifest (render.depthFade); the lab exposes a live
+ * slider via window.kineticSetFade() so the value can be dialed to taste and
+ * then baked back into the manifest.
  *
  * Build-time derivation only: geometry comes from /data/kinetic/<id>.json
- * (luminance grid + optional depth array). No runtime image decode, no new
- * CSP surface, no external fetch, no renderer dependency (hand-written
- * shaders + a tiny inline mat4). Decorative: role="img" on the figure,
- * canvas aria-hidden. prefers-reduced-motion renders one static frame.
+ * (luminance grid + optional depth + depthFade). No runtime image decode, no
+ * new CSP surface, no external fetch, no renderer dependency (hand-written
+ * shaders + a tiny inline mat4). Decorative: role="img" on the figure, canvas
+ * aria-hidden. prefers-reduced-motion renders one static frame.
  */
 import signature from '../data/kinetic-signature.json';
 
@@ -75,7 +76,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
 </style>
 
 <script>
-  type Plate = { cols: number; rows: number; grid: number[]; depth?: number[]; alt: string };
+  type Plate = { cols: number; rows: number; grid: number[]; depth?: number[]; depthFade?: number; alt: string };
 
   // --- tiny column-major mat4, zero dependency -------------------------
   function mPerspective(fovy: number, aspect: number, near: number, far: number) {
@@ -95,11 +96,14 @@ const plateSrc = `/data/kinetic/${category}.json`;
   precision highp float;
   in vec3 aPos;        // x,y in [-1,1]; z = depth-map relief (or luminance)
   in float aLum;       // 0..1 luminance -> color + size
+  in float aDepth;     // 0..1 normalized depth (1 = near) -> far-fade
   uniform mat4 uMVP;
   uniform float uPointScale;
   out float vLum;
+  out float vDepth;
   void main() {
     vLum = aLum;
+    vDepth = aDepth;
     vec4 clip = uMVP * vec4(aPos, 1.0);
     gl_Position = clip;
     // perspective point size: nearer points (smaller clip.w) draw larger;
@@ -111,6 +115,8 @@ const plateSrc = `/data/kinetic/${category}.json`;
   const FRAG = `#version 300 es
   precision highp float;
   in float vLum;
+  in float vDepth;
+  uniform float uFade;       // 0 = no fade, 1 = far points fully attenuated
   out vec4 frag;
   void main() {
     vec2 d = gl_PointCoord - vec2(0.5);
@@ -119,7 +125,9 @@ const plateSrc = `/data/kinetic/${category}.json`;
     float a = smoothstep(0.25, 0.02, r);
     vec3 cream = vec3(0.992, 0.988, 0.980);   // cream token
     float l = 0.30 + 0.70 * vLum;             // tonal lift
-    frag = vec4(cream * l, a * (0.32 + 0.68 * vLum));
+    float dw = smoothstep(0.12, 0.72, vDepth);   // near=1, far=0
+    float keep = mix(1.0, dw, uFade);            // isolate the subject on demand
+    frag = vec4(cream * l, a * (0.32 + 0.68 * vLum) * keep);
   }`;
 
   function compile(gl: WebGL2RenderingContext, type: number, src: string) {
@@ -137,6 +145,11 @@ const plateSrc = `/data/kinetic/${category}.json`;
   const FRICTION = 0.86;      // velocity retained per frame -> the momentum
   const K_ENGAGED = 0.18;     // spring toward the pointer while hovering
   const K_HOME = 0.012;       // weak pull back to rest after release (lazy settle)
+
+  // Live far-fade control: each mounted plate registers a setter so the lab
+  // slider (window.kineticSetFade) can dial all plates at once before the
+  // chosen value is baked into the manifest.
+  const fadeControllers: Array<(v: number) => void> = [];
 
   function mount(fig: HTMLElement): (() => void) | void {
     const canvas = fig.querySelector('canvas') as HTMLCanvasElement | null;
@@ -157,12 +170,14 @@ const plateSrc = `/data/kinetic/${category}.json`;
     gl.useProgram(prog);
     const uMVP = gl.getUniformLocation(prog, 'uMVP');
     const uPointScale = gl.getUniformLocation(prog, 'uPointScale');
+    const uFade = gl.getUniformLocation(prog, 'uFade');
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     let count = 0, raf = 0, active = false, disposed = false;
     let curRx = REST_RX, curRy = 0, velRx = 0, velRy = 0;
     let tgtRx = REST_RX, tgtRy = 0, engaged = false;
+    let fadeVal = 0;
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, fine ? 2 : 1.5);
@@ -177,11 +192,13 @@ const plateSrc = `/data/kinetic/${category}.json`;
       // Render every cell: z from the depth map (true relief) when present,
       // else luminance. No luminance cull — a DARK subject (a wet leaf, a
       // tower against bright sky) must keep its depth structure, only drawn
-      // faint. Alpha carries the photograph's tonality; depth carries form.
+      // faint. Alpha carries the photograph's tonality; depth carries form
+      // and (via uFade) optional far-isolation.
       const { cols, rows, grid } = p;
       const depth = p.depth && p.depth.length === grid.length ? p.depth : null;
       const pos = new Float32Array(grid.length * 3);
       const lum = new Float32Array(grid.length);
+      const dep = new Float32Array(grid.length);
       for (let i = 0; i < grid.length; i++) {
         const col = i % cols, row = (i / cols) | 0;
         const x = (col / (cols - 1)) * 2 - 1;
@@ -189,6 +206,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
         const zSrc = depth ? depth[i] : grid[i];
         pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = (zSrc - 0.5) * DEPTH_SPREAD;
         lum[i] = grid[i];
+        dep[i] = zSrc;
       }
       count = grid.length;
       const vao = gl!.createVertexArray(); gl!.bindVertexArray(vao);
@@ -200,6 +218,10 @@ const plateSrc = `/data/kinetic/${category}.json`;
       gl!.bufferData(gl!.ARRAY_BUFFER, lum, gl!.STATIC_DRAW);
       const aLum = gl!.getAttribLocation(prog, 'aLum');
       gl!.enableVertexAttribArray(aLum); gl!.vertexAttribPointer(aLum, 1, gl!.FLOAT, false, 0, 0);
+      const db = gl!.createBuffer(); gl!.bindBuffer(gl!.ARRAY_BUFFER, db);
+      gl!.bufferData(gl!.ARRAY_BUFFER, dep, gl!.STATIC_DRAW);
+      const aDepth = gl!.getAttribLocation(prog, 'aDepth');
+      gl!.enableVertexAttribArray(aDepth); gl!.vertexAttribPointer(aDepth, 1, gl!.FLOAT, false, 0, 0);
     }
 
     function draw() {
@@ -213,6 +235,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
       gl!.uniformMatrix4fv(uMVP, false, new Float32Array(mvp));
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       gl!.uniform1f(uPointScale, 168 * dpr);
+      gl!.uniform1f(uFade, fadeVal);
       gl!.clearColor(0, 0, 0, 0); gl!.clear(gl!.COLOR_BUFFER_BIT);
       gl!.drawArrays(gl!.POINTS, 0, count);
     }
@@ -278,8 +301,13 @@ const plateSrc = `/data/kinetic/${category}.json`;
     }
     canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, { passive: false });
 
+    // Register the live far-fade setter for window.kineticSetFade.
+    const setFade = (v: number) => { fadeVal = v; draw(); };
+    fadeControllers.push(setFade);
+
     fetch(src).then((r) => r.json()).then((p: Plate) => {
       if (disposed) return;
+      fadeVal = typeof p.depthFade === 'number' ? p.depthFade : 0;
       buildGeometry(p); resize(); cacheCenter();
       draw();                 // first static frame (also the reduced-motion frame)
       if (!fine && !reduce) onScroll();
@@ -292,6 +320,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
       fig.removeEventListener('pointermove', onMove);
       fig.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('scroll', onScroll);
+      const i = fadeControllers.indexOf(setFade); if (i >= 0) fadeControllers.splice(i, 1);
       const lose = gl!.getExtension('WEBGL_lose_context'); lose?.loseContext();
     };
   }
@@ -302,10 +331,12 @@ const plateSrc = `/data/kinetic/${category}.json`;
   const teardowns: Array<() => void> = [];
   function initAll() {
     while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} }
+    fadeControllers.length = 0;
     document.querySelectorAll('.kplate3d').forEach((f) => {
       const t = mount(f as HTMLElement); if (t) teardowns.push(t);
     });
   }
+  (window as any).kineticSetFade = (v: number) => fadeControllers.forEach((fn) => fn(v));
   initAll();
   document.addEventListener('astro:after-swap', initAll);
   document.addEventListener('astro:before-swap', () => { while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} } });

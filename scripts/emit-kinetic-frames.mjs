@@ -18,6 +18,10 @@ const depthFile = join(root, 'src/data/kinetic-depth.json');
 const outDir = join(root, 'public/data/kinetic');
 
 const sig = JSON.parse(readFileSync(src, 'utf-8'));
+const manifest = JSON.parse(readFileSync(join(root, 'src/data/kinetic-plates.json'), 'utf-8'));
+const globalFade = manifest.render?.depthFade ?? 0;
+const fadeById = {};
+for (const p of manifest.plates) fadeById[p.id] = typeof p.depthFade === 'number' ? p.depthFade : globalFade;
 mkdirSync(outDir, { recursive: true });
 
 // Optional monocular depth (built by scripts/build-kinetic-depth.py). When
@@ -34,9 +38,10 @@ if (existsSync(depthFile)) {
 let total = 0;
 for (const frame of sig.frames) {
   const depth = depthById[frame.id];
+  const depthFade = fadeById[frame.id] ?? 0;
   const payload = depth
-    ? { cols: sig.cols, rows: sig.rows, grid: frame.grid, depth, alt: frame.alt }
-    : { cols: sig.cols, rows: sig.rows, grid: frame.grid, alt: frame.alt };
+    ? { cols: sig.cols, rows: sig.rows, grid: frame.grid, depth, depthFade, alt: frame.alt }
+    : { cols: sig.cols, rows: sig.rows, grid: frame.grid, depthFade, alt: frame.alt };
   const json = JSON.stringify(payload);
   writeFileSync(join(outDir, `${frame.id}.json`), json);
   total += json.length;

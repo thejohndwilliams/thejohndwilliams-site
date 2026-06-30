@@ -42,6 +42,12 @@ const ROWS = [
     </div>
   </section>
 
+  <div class="lab-fade">
+    <label class="lab-fade__label" for="fadeRange">Far-fade</label>
+    <input id="fadeRange" class="lab-fade__range" type="range" min="0" max="1" step="0.05" value="0.3" aria-label="Far-fade amount" />
+    <output id="fadeVal" class="lab-fade__val">0.30</output>
+  </div>
+
   {ROWS.map((row, i) => (
     <section class={`py-10 sm:py-14 md:py-16 ${i % 2 === 1 ? 'section-light' : ''}`}>
       <div class="container-wide">
@@ -68,6 +74,20 @@ const ROWS = [
       </p>
     </div>
   </section>
+  <script>
+    // Live far-fade tuning: drives every mounted 3D plate via the renderer's
+    // global setter, so John can dial subject-isolation to taste and we bake
+    // the chosen value into the manifest (render.depthFade).
+    const range = document.getElementById('fadeRange') as HTMLInputElement | null;
+    const out = document.getElementById('fadeVal');
+    const apply = (v: number) => {
+      if (out) out.textContent = v.toFixed(2);
+      (window as any).kineticSetFade?.(v);
+    };
+    range?.addEventListener('input', () => apply(Number(range.value)));
+    // plates mount asynchronously (they fetch geometry); apply once they're up
+    setTimeout(() => apply(range ? Number(range.value) : 0.3), 700);
+  </script>
 </BaseLayout>
 
 <style>
@@ -88,5 +108,37 @@ const ROWS = [
     border: 1px solid rgba(126, 156, 184, 0.45); /* blue-hour hairline */
     border-radius: 999px;
     color: #7E9CB8;
+  }
+  .lab-fade {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: max-content;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border: 1px solid rgba(126, 156, 184, 0.28);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  }
+  .lab-fade__label {
+    font-size: 0.625rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.7);
+  }
+  .lab-fade__range { width: 140px; accent-color: #7E9CB8; }
+  .lab-fade__val {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.7rem;
+    color: #7E9CB8;
+    min-width: 2.4ch;
+    text-align: right;
   }
 </style>
