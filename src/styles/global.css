@@ -558,16 +558,8 @@ html[data-theme="black"] {
   }
 
   .btn-primary { position: relative; overflow: hidden; }
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%);
-    transform: translateX(-130%);
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .btn-primary:hover::after { transform: translateX(130%); }
+  /* (old diagonal ::after sweep removed 2026-06-30 — replaced by the
+     rim-orbit light in the liquid-glass wave-2 section below) */
 
   .btn-primary:hover {
     transform: translateY(-2px);
@@ -1290,18 +1282,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .glass-plate-lb > * { position: relative; z-index: 1; }
 
-/* Secondary button: a band of light crosses on hover. */
-.btn-outline { position: relative; overflow: hidden; }
-.btn-outline::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgba(244,234,222,0.10) 50%, transparent 65%);
-  transform: translateX(-130%);
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-outline:hover::after { transform: translateX(130%); }
+.btn-outline { position: relative; }
+/* (old diagonal ::after sweep removed 2026-06-30 — replaced by the
+   rim-orbit light in the liquid-glass wave-2 section below) */
 
 @keyframes glassSheenDrift {
   from { background-position: 0 0, 0% 0; }
@@ -1541,25 +1524,83 @@ footer.glass-footer:hover::after { opacity: 1; }
 
 
 /* ============================================================
-   Motion — wave 1 (2026-06-30). Additive micro-interactions on
-   top of the existing material. Quiet Power holds: every effect
-   is interaction-driven and neutralized under reduced motion.
-   Buttons keep their tuned crystal transforms/rims untouched —
-   only the inner arrow and opt-in links gain new motion.
+   Liquid-glass controls — wave 2 (2026-06-30). The light now
+   TRAVELS around each control's rim, curving around the pill; the
+   glass deepens into translucence on approach; the arrow has
+   personality. Replaces the flat diagonal ::after sweep (it read
+   cheap). The static crystal ::before rim and :active key-sink are
+   untouched — ::after is repurposed as the moving specular.
+   Interaction-driven only; frozen under reduced motion.
    ============================================================ */
 
-/* The button arrow leans toward where you're about to go. Targets
-   the inner SVG only, so the crystal body's transform/::before rim
-   and :active key-sink are unaffected. */
+/* A single bright specular ORBITS the rim. @property animates the
+   angle; the ring-mask confines the light to the bezel so it curves
+   around the pill edge instead of washing the face. */
+@keyframes rim-orbit { to { offset-distance: 100%; } }
+
+/* The orbiting light glows just past the rim, so the keys no longer clip.
+   (The old diagonal sweep that required overflow:hidden is gone.) */
+.btn-primary, .btn-outline { overflow: visible; }
+
+.btn-primary::after,
+.btn-outline::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;                 /* above the static crystal rim (::before, z1) */
+  /* A glowing specular that TRAVELS the pill's own border path
+     (offset-path: border-box), curving around the corners — light
+     literally moving around the button. offset-distance composites
+     reliably, where an animated conic angle would not repaint. */
+  background: radial-gradient(circle,
+    rgba(236,244,255,0.95) 0%, rgba(176,202,242,0.5) 28%, transparent 60%);
+  offset-path: border-box;
+  offset-rotate: 0deg;
+  offset-distance: 0%;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.btn-outline::after {
+  background: radial-gradient(circle,
+    rgba(205,226,255,0.96) 0%, rgba(126,156,184,0.5) 30%, transparent 60%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover::after,
+  .btn-outline:hover::after { opacity: 1; transform: none; animation: rim-orbit 2.4s linear infinite; }
+}
+.btn-primary:focus-visible::after,
+.btn-outline:focus-visible::after { opacity: 1; transform: none; animation: rim-orbit 2.4s linear infinite; }
+
+/* The bubble inflates into translucence on approach: a hair more
+   lift + a subtle scale, and the outline glass deepens its blur. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover,
+  .btn-outline:hover { transform: translateY(-3px) scale(1.015); }
+  .btn-outline:hover {
+    backdrop-filter: blur(18px) saturate(1.85);
+    -webkit-backdrop-filter: blur(18px) saturate(1.85);
+  }
+}
+
+/* The arrow has personality: it launches forward, slips away, and
+   the next curves back in from behind — a continuous "forward" while
+   you dwell, rather than a flat nudge. */
+@keyframes arrow-cycle {
+  0%   { transform: translateX(0);    opacity: 1; }
+  45%  { transform: translateX(7px);  opacity: 0; }
+  46%  { transform: translateX(-7px); opacity: 0; }
+  100% { transform: translateX(0);    opacity: 1; }
+}
 .btn svg { transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.46, 1); }
 @media (hover: hover) and (pointer: fine) {
-  .btn:hover svg { transform: translateX(4px); }
+  .btn:hover svg { animation: arrow-cycle 1.1s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 }
-.btn:focus-visible svg { transform: translateX(4px); }
+.btn:focus-visible svg { animation: arrow-cycle 1.1s cubic-bezier(0.5, 0, 0.2, 1) infinite; }
 
-/* A blue-hour underline that draws in from the left instead of a bare
-   color flip. Opt-in via .link-draw so it never touches the
-   bare-by-decree nav. */
+/* Blue-hour underline draws in from the left (links opt in via .link-draw). */
 .link-draw {
   background-image: linear-gradient(#7E9CB8, #7E9CB8);
   background-repeat: no-repeat;
@@ -1568,15 +1609,13 @@ footer.glass-footer:hover::after { opacity: 1; }
   transition: background-size 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
 }
 .link-draw:hover,
-.link-draw:focus-visible {
-  background-size: 100% 1px;
-}
+.link-draw:focus-visible { background-size: 100% 1px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn svg,
+  .btn-primary::after, .btn-outline::after { animation: none; opacity: 0; }
+  .btn svg { transition: none; }
+  .btn:hover svg, .btn:focus-visible svg { animation: none; transform: none; }
+  .btn-primary:hover, .btn-outline:hover { transform: translateY(-2px); }
   .link-draw { transition: none; }
-  .btn:hover svg,
-  .btn:focus-visible svg { transform: none; }
-  .link-draw:hover,
-  .link-draw:focus-visible { background-size: 100% 1px; } /* present, don't animate */
+  .link-draw:hover, .link-draw:focus-visible { background-size: 100% 1px; }
 }
