@@ -1,0 +1,312 @@
+---
+/*
+ * KineticPlate3D — a genuine WebGL2 point cloud of a photograph.
+ *
+ * Each cell of the build-time signature becomes a real 3D vertex:
+ *   x,y  from the grid position (centered, normalized)
+ *   z    from a TRUE monocular depth map (scripts/build-kinetic-depth.py,
+ *        Depth-Anything-V2) when present, else luminance-as-depth relief
+ *   color/size  from luminance (cream token; the photograph's tonality)
+ *
+ * The cloud is projected through a real perspective camera on the GPU and
+ * orbited by the pointer with momentum (a free, inertial turn that decays
+ * and homes back to rest — Quiet Power: no autonomous motion, the volume
+ * is still until the user drives it). On touch, a gentle scroll-linked roll
+ * stands in for the orbit so phones still feel the dimensionality without
+ * fighting page scroll.
+ *
+ * This is the "true 3D" the /about flagship was always meant to be — the
+ * silhouette genuinely changes as the cloud turns because every point
+ * carries independent depth, not a four-plane approximation (KineticPlate,
+ * the 2.5D renderer, stays as the documented fallback).
+ *
+ * Build-time derivation only: geometry comes from /data/kinetic/<id>.json
+ * (luminance grid + optional depth array). No runtime image decode, no new
+ * CSP surface, no external fetch, no renderer dependency (hand-written
+ * shaders + a tiny inline mat4). Decorative: role="img" on the figure,
+ * canvas aria-hidden. prefers-reduced-motion renders one static frame.
+ */
+import signature from '../data/kinetic-signature.json';
+
+export interface Props {
+  category: 'sky' | 'earth' | 'water' | 'structure';
+  /** Optional additional classes on the outer figure. */
+  class?: string;
+}
+
+const { category, class: extraClass = '' } = Astro.props;
+const frame = signature.frames.find((f: { id: string }) => f.id === category);
+if (!frame) throw new Error(`KineticPlate3D: unknown category "${category}"`);
+const plateSrc = `/data/kinetic/${category}.json`;
+---
+
+<figure
+  class={`kplate3d ${extraClass}`}
+  role="img"
+  aria-label={`Three-dimensional dot projection of ${frame.alt}`}
+  data-plate-src={plateSrc}
+>
+  <canvas class="kplate3d__canvas" aria-hidden="true"></canvas>
+</figure>
+
+<style>
+  /* Matches KineticPlate (2.5D) geometry exactly so the lab A/B is fair:
+     same max-width, same square aspect, same mobile clamp. Transparent —
+     the cloud floats on midnight, no frame competing with the photograph. */
+  .kplate3d {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    touch-action: pan-y; /* let the page scroll; we never hijack vertical drag */
+  }
+  @media (max-width: 767px) {
+    .kplate3d { max-width: 400px; margin: 0 auto; }
+  }
+  .kplate3d__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* pointer math reads the figure rect, not the canvas */
+  }
+</style>
+
+<script>
+  type Plate = { cols: number; rows: number; grid: number[]; depth?: number[]; alt: string };
+
+  // --- tiny column-major mat4, zero dependency -------------------------
+  function mPerspective(fovy: number, aspect: number, near: number, far: number) {
+    const f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+    return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0];
+  }
+  function mMul(a: number[], b: number[]) {
+    const o = new Array(16).fill(0);
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
+    return o;
+  }
+  function mTranslate(x: number, y: number, z: number) { return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]; }
+  function mRotX(a: number) { const c = Math.cos(a), s = Math.sin(a); return [1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]; }
+  function mRotY(a: number) { const c = Math.cos(a), s = Math.sin(a); return [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]; }
+
+  const VERT = `#version 300 es
+  precision highp float;
+  in vec3 aPos;        // x,y in [-1,1]; z = depth-map relief (or luminance)
+  in float aLum;       // 0..1 luminance -> color + size
+  uniform mat4 uMVP;
+  uniform float uPointScale;
+  out float vLum;
+  void main() {
+    vLum = aLum;
+    vec4 clip = uMVP * vec4(aPos, 1.0);
+    gl_Position = clip;
+    // perspective point size: nearer points (smaller clip.w) draw larger;
+    // brighter points a touch larger so highlights read forward.
+    float size = uPointScale * (0.55 + 0.75 * aLum) / max(clip.w, 0.25);
+    gl_PointSize = clamp(size, 1.0, 9.0);
+  }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  in float vLum;
+  out vec4 frag;
+  void main() {
+    vec2 d = gl_PointCoord - vec2(0.5);
+    float r = dot(d, d);
+    if (r > 0.25) discard;            // soft round disc
+    float a = smoothstep(0.25, 0.02, r);
+    vec3 cream = vec3(0.992, 0.988, 0.980);   // cream token
+    float l = 0.30 + 0.70 * vLum;             // tonal lift
+    frag = vec4(cream * l, a * (0.32 + 0.68 * vLum));
+  }`;
+
+  function compile(gl: WebGL2RenderingContext, type: number, src: string) {
+    const s = gl.createShader(type)!;
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn('kplate3d shader', gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+
+  // Depth relief: how far the cloud stretches in Z. Bigger = more dramatic
+  // parallax as it turns. Tuned to read dimensional without the silhouette
+  // tearing apart on a hard side-orbit.
+  const DEPTH_SPREAD = 1.15;
+  const REST_RX = -0.16;      // gentle downward "examine the relief" rest pose
+  const FRICTION = 0.86;      // velocity retained per frame -> the momentum
+  const K_ENGAGED = 0.18;     // spring toward the pointer while hovering
+  const K_HOME = 0.012;       // weak pull back to rest after release (lazy settle)
+
+  function mount(fig: HTMLElement): (() => void) | void {
+    const canvas = fig.querySelector('canvas') as HTMLCanvasElement | null;
+    const src = fig.getAttribute('data-plate-src');
+    if (!canvas || !src) return;
+    const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: false });
+    if (!gl) { fig.setAttribute('data-webgl', 'unsupported'); return; } // prod: 2.5D fallback
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const vs = compile(gl, gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('kplate3d link', gl.getProgramInfoLog(prog)); return; }
+    gl.useProgram(prog);
+    const uMVP = gl.getUniformLocation(prog, 'uMVP');
+    const uPointScale = gl.getUniformLocation(prog, 'uPointScale');
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    let count = 0, raf = 0, active = false, disposed = false;
+    let curRx = REST_RX, curRy = 0, velRx = 0, velRy = 0;
+    let tgtRx = REST_RX, tgtRy = 0, engaged = false;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, fine ? 2 : 1.5);
+      const w = fig.clientWidth, h = fig.clientHeight;
+      canvas!.width = Math.max(1, Math.round(w * dpr));
+      canvas!.height = Math.max(1, Math.round(h * dpr));
+      gl!.viewport(0, 0, canvas!.width, canvas!.height);
+      requestRender();
+    }
+
+    function buildGeometry(p: Plate) {
+      // Render every cell: z from the depth map (true relief) when present,
+      // else luminance. No luminance cull — a DARK subject (a wet leaf, a
+      // tower against bright sky) must keep its depth structure, only drawn
+      // faint. Alpha carries the photograph's tonality; depth carries form.
+      const { cols, rows, grid } = p;
+      const depth = p.depth && p.depth.length === grid.length ? p.depth : null;
+      const pos = new Float32Array(grid.length * 3);
+      const lum = new Float32Array(grid.length);
+      for (let i = 0; i < grid.length; i++) {
+        const col = i % cols, row = (i / cols) | 0;
+        const x = (col / (cols - 1)) * 2 - 1;
+        const y = -((row / (rows - 1)) * 2 - 1);
+        const zSrc = depth ? depth[i] : grid[i];
+        pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = (zSrc - 0.5) * DEPTH_SPREAD;
+        lum[i] = grid[i];
+      }
+      count = grid.length;
+      const vao = gl!.createVertexArray(); gl!.bindVertexArray(vao);
+      const pb = gl!.createBuffer(); gl!.bindBuffer(gl!.ARRAY_BUFFER, pb);
+      gl!.bufferData(gl!.ARRAY_BUFFER, pos, gl!.STATIC_DRAW);
+      const aPos = gl!.getAttribLocation(prog, 'aPos');
+      gl!.enableVertexAttribArray(aPos); gl!.vertexAttribPointer(aPos, 3, gl!.FLOAT, false, 0, 0);
+      const lb = gl!.createBuffer(); gl!.bindBuffer(gl!.ARRAY_BUFFER, lb);
+      gl!.bufferData(gl!.ARRAY_BUFFER, lum, gl!.STATIC_DRAW);
+      const aLum = gl!.getAttribLocation(prog, 'aLum');
+      gl!.enableVertexAttribArray(aLum); gl!.vertexAttribPointer(aLum, 1, gl!.FLOAT, false, 0, 0);
+    }
+
+    function draw() {
+      if (disposed || !count) return;
+      const aspect = canvas!.width / Math.max(canvas!.height, 1);
+      const proj = mPerspective(0.62, aspect, 0.1, 20);
+      const view = mTranslate(0, 0, -3.05);
+      const model = mMul(mRotY(curRy), mRotX(curRx));
+      const mvp = mMul(proj, mMul(view, model));
+      gl!.useProgram(prog);
+      gl!.uniformMatrix4fv(uMVP, false, new Float32Array(mvp));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      gl!.uniform1f(uPointScale, 168 * dpr);
+      gl!.clearColor(0, 0, 0, 0); gl!.clear(gl!.COLOR_BUFFER_BIT);
+      gl!.drawArrays(gl!.POINTS, 0, count);
+    }
+
+    // Momentum integrator: a damped spring toward target (pointer while
+    // engaged, rest after release) with retained velocity. The retained
+    // velocity is the "throw" — release mid-sweep and the cloud keeps
+    // turning, then friction + the weak home spring settle it to rest.
+    function tick() {
+      raf = 0;
+      const k = engaged ? K_ENGAGED : K_HOME;
+      const txr = engaged ? tgtRx : REST_RX;
+      const tyr = engaged ? tgtRy : 0;
+      velRx = velRx * FRICTION + (txr - curRx) * k;
+      velRy = velRy * FRICTION + (tyr - curRy) * k;
+      curRx += velRx; curRy += velRy;
+      draw();
+      const energy = Math.abs(velRx) + Math.abs(velRy) + (engaged ? Math.abs(txr - curRx) + Math.abs(tyr - curRy) : 0);
+      if (energy > 6e-4) { raf = requestAnimationFrame(tick); active = true; } else { active = false; }
+    }
+    function requestRender() { if (!active && !raf && !reduce) raf = requestAnimationFrame(tick); }
+
+    // Desktop: pointer orbits the volume with a free, wide arc.
+    function onMove(e: PointerEvent) {
+      if (reduce || !fine) return;
+      const r = fig.getBoundingClientRect();
+      const nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+      const ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+      engaged = true;
+      tgtRy = nx * 0.95;                 // wider than the quiet spike — a real turn
+      tgtRx = REST_RX + (-ny * 0.62);
+      requestRender();
+    }
+    function onLeave() { engaged = false; requestRender(); } // velocity carries, then homes
+
+    // Touch: no drag (never fight scroll). A gentle roll tied to scroll
+    // position gives phones the dimensionality without hijacking the page.
+    let figCenterY = 0;
+    function cacheCenter() { const r = fig.getBoundingClientRect(); figCenterY = r.top + window.scrollY + r.height / 2; }
+    function onScroll() {
+      if (reduce || fine) return;
+      const vp = window.innerHeight || 1;
+      const p = Math.max(-1, Math.min(1, (figCenterY - window.scrollY - vp / 2) / (vp / 2)));
+      curRy = p * 0.5; curRx = REST_RX + p * 0.14;
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); });
+    }
+
+    // Pause fully offscreen; re-cache + nudge a paint on re-entry.
+    let onScreen = true;
+    const io = new IntersectionObserver((ents) => {
+      for (const en of ents) { onScreen = en.isIntersecting; if (onScreen) { cacheCenter(); requestRender(); } }
+    }, { threshold: 0.01, rootMargin: '100px' });
+    io.observe(fig);
+
+    let ro: ResizeObserver | null = new ResizeObserver(() => { resize(); cacheCenter(); });
+    ro.observe(fig);
+
+    if (fine && !reduce) {
+      fig.addEventListener('pointermove', onMove, { passive: true });
+      fig.addEventListener('pointerleave', onLeave, { passive: true });
+    } else if (!reduce) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, { passive: false });
+
+    fetch(src).then((r) => r.json()).then((p: Plate) => {
+      if (disposed) return;
+      buildGeometry(p); resize(); cacheCenter();
+      draw();                 // first static frame (also the reduced-motion frame)
+      if (!fine && !reduce) onScroll();
+    }).catch(() => { /* leave a clean empty frame; never throw */ });
+
+    return () => {
+      disposed = true;
+      if (raf) cancelAnimationFrame(raf);
+      io.disconnect(); ro?.disconnect(); ro = null;
+      fig.removeEventListener('pointermove', onMove);
+      fig.removeEventListener('pointerleave', onLeave);
+      window.removeEventListener('scroll', onScroll);
+      const lose = gl!.getExtension('WEBGL_lose_context'); lose?.loseContext();
+    };
+  }
+
+  // Mount every plate; tear down cleanly across view-transition swaps so a
+  // navigation never leaves an orphaned context or a piled-up listener
+  // (the interaction-hygiene rule from the lightbox crash rebuild).
+  const teardowns: Array<() => void> = [];
+  function initAll() {
+    while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} }
+    document.querySelectorAll('.kplate3d').forEach((f) => {
+      const t = mount(f as HTMLElement); if (t) teardowns.push(t);
+    });
+  }
+  initAll();
+  document.addEventListener('astro:after-swap', initAll);
+  document.addEventListener('astro:before-swap', () => { while (teardowns.length) { const t = teardowns.pop(); try { t && t(); } catch {} } });
+</script>

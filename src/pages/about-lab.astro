@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate from '../components/KineticPlate.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
+
+// Unlinked, noindexed comparison lab. Side-by-side: the current 2.5D
+// stacked-canvas plate vs the true-3D depth-mapped WebGL point cloud, for
+// every featured photograph. Built for John's in-browser judgement on the
+// preview deployment; not part of the production page set.
+const ROWS = [
+  { id: 'earth', label: 'Earth · rain-wet leaf', note: 'A dark subject. Luminance buries it; depth stands it forward.' },
+  { id: 'structure', label: 'Structure · Shanghai Tower', note: 'Shot against bright sky. Depth keeps the tower near, the sky far.' },
+  { id: 'sky', label: 'Sky · thunderheads', note: 'The nearest billows read closest; the void recedes to black.' },
+  { id: 'water', label: 'Water · El Arco', note: 'A distant scene. The arch holds its place in real space.' },
+] as const;
+---
+
+<BaseLayout
+  title="Kinetic Plate Lab"
+  description="Private comparison lab."
+  noindex={true}
+>
+  <section class="py-12 sm:py-16 md:py-20 overflow-hidden">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3 sm:mb-4">Lab · Kinetic Plates</p>
+      <h1 class="mb-5 sm:mb-7">True 3D, judged against the original</h1>
+      <div class="prose max-w-2xl">
+        <p>
+          The same photographs, twice. On the left, today's plate: four flat
+          canvases stacked to fake relief. On the right, the genuine article:
+          a WebGL point cloud where every dot sits at the true depth the
+          photograph holds, baked from a monocular depth model. No flat planes.
+          Real geometry the silhouette honors as it turns.
+        </p>
+        <p class="text-sm opacity-60">
+          On a trackpad or mouse, sweep across a plate to orbit it. Release
+          mid-turn and it carries, then settles back to rest. On a phone, scroll
+          and watch each cloud roll with the page. Reduced motion holds a still
+          frame.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {ROWS.map((row, i) => (
+    <section class={`py-10 sm:py-14 md:py-16 ${i % 2 === 1 ? 'section-light' : ''}`}>
+      <div class="container-wide">
+        <p class="eyebrow mb-2">{row.label}</p>
+        <p class="text-sm opacity-55 mb-8 max-w-xl">{row.note}</p>
+        <div class="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
+          <div>
+            <KineticPlate category={row.id} />
+            <p class="plate-tag">2.5D · stacked canvases <span>current</span></p>
+          </div>
+          <div>
+            <KineticPlate3D category={row.id} />
+            <p class="plate-tag">True 3D · depth-mapped cloud <span>new</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="py-12 sm:py-16">
+    <div class="container-narrow">
+      <p class="text-xs tracking-[0.3em] uppercase opacity-40">
+        Private preview. Not linked, not indexed.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .plate-tag {
+    margin-top: 1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.62);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .plate-tag span {
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid rgba(126, 156, 184, 0.45); /* blue-hour hairline */
+    border-radius: 999px;
+    color: #7E9CB8;
+  }
+</style>
