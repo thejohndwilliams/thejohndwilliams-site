@@ -1541,25 +1541,28 @@ footer.glass-footer:hover::after { opacity: 1; }
    liquid glass — and blooms gently on hover. Faint chromatic dispersion
    lives in the feathered falloff (cyan into magenta), never a band. */
 @keyframes btn-breathe {
-  0%, 100% { opacity: 0.32; transform: scale(1)    translateY(0); }
-  50%      { opacity: 0.50; transform: scale(1.05) translateY(-1.5px); }
+  0%, 100% { opacity: 0.55; transform: scale(1)    translateY(0); }
+  50%      { opacity: 0.74; transform: scale(1.06) translateY(-1.5px); }
 }
+/* Feathered specular. NOTE: no `mix-blend: screen` — screen can't shift a
+   near-white (ivory) key, so the primary read as untouched. Normal blend +
+   chromatic side-lobes (cyan left / magenta right) that carry on BOTH the
+   ivory primary and the dark outline; the soft cool core is the glass glint. */
 .btn-primary::after,
 .btn-outline::after {
   content: '';
   position: absolute;
-  left: 7%; right: 7%; top: 6%;
-  height: 66%;
+  left: 6%; right: 6%; top: 5%;
+  height: 70%;
   border-radius: 50%;
   pointer-events: none;
   z-index: 2;                 /* above the static crystal rim (::before, z1) */
   background:
-    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.10) 40%, transparent 72%),
-    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.32) 0%, transparent 62%),
-    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.28) 0%, transparent 62%);
-  filter: blur(4px);
-  mix-blend-mode: screen;
-  opacity: 0.32;
+    radial-gradient(60% 90% at 50% 14%, rgba(255,255,255,0.80) 0%, rgba(228,242,255,0.30) 40%, transparent 72%),
+    radial-gradient(54% 86% at 28% 20%, rgba(64,180,255,0.62) 0%, transparent 60%),
+    radial-gradient(54% 86% at 72% 20%, rgba(255,116,198,0.56) 0%, transparent 60%);
+  filter: blur(3.5px);
+  opacity: 0.55;
   transform-origin: 50% 28%;
   animation: btn-breathe 6.5s ease-in-out infinite;
 }
@@ -1567,9 +1570,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 .btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
   animation-duration: 4.5s;
   background:
-    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.14) 40%, transparent 72%),
-    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.40) 0%, transparent 62%),
-    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.36) 0%, transparent 62%);
+    radial-gradient(60% 90% at 50% 14%, rgba(255,255,255,0.92) 0%, rgba(228,242,255,0.42) 40%, transparent 72%),
+    radial-gradient(54% 86% at 28% 20%, rgba(64,180,255,0.82) 0%, transparent 60%),
+    radial-gradient(54% 86% at 72% 20%, rgba(255,116,198,0.76) 0%, transparent 60%);
 }
 
 /* The bubble inflates into translucence on approach: a hair more
@@ -1595,7 +1598,7 @@ footer.glass-footer:hover::after { opacity: 1; }
    ::after specular stay untouched. */
 @keyframes encircle-dissolve {
   0%   { opacity: 0;    filter: blur(0.4px); transform: scale(1); }
-  24%  { opacity: 0.92; filter: blur(0.4px); transform: scale(1); }
+  24%  { opacity: 1;    filter: blur(0.4px); transform: scale(1); }
   100% { opacity: 0;    filter: blur(7px);   transform: scale(0.9); }
 }
 .btn-wake {
@@ -1604,17 +1607,21 @@ footer.glass-footer:hover::after { opacity: 1; }
   border-radius: inherit;
   pointer-events: none;
   z-index: 3;
-  padding: 1.5px;              /* rim-contour thickness */
+  padding: 2px;                /* rim-contour thickness */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;     /* border-only ring; no url() masks (iOS-safe) */
+  /* Saturated chroma only — the earlier white arcs vanished on the ivory key.
+     Blue-hour -> cyan -> violet -> magenta reads on ivory AND on the dark
+     outline. */
   background: conic-gradient(from 210deg,
-    rgba(150,215,255,0.80),
-    rgba(255,255,255,0.92) 92deg,
-    rgba(255,178,216,0.80) 184deg,
-    rgba(255,255,255,0.88) 276deg,
-    rgba(150,215,255,0.80));
+    rgba(96,184,255,0.95),
+    rgba(126,156,184,0.88) 66deg,
+    rgba(198,150,255,0.94) 148deg,
+    rgba(255,120,196,0.97) 216deg,
+    rgba(138,206,255,0.94) 300deg,
+    rgba(96,184,255,0.95));
   opacity: 0;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -1625,7 +1632,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 .btn-outline:focus-visible .btn-wake { animation: encircle-dissolve 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 /* material-lab capture: freeze at the encircle peak (the ring lit around the rim) */
 .btn-primary.is-lit .btn-wake,
-.btn-outline.is-lit .btn-wake { opacity: 0.92; filter: blur(0.4px); animation: none; }
+.btn-outline.is-lit .btn-wake { opacity: 1; filter: blur(0.4px); animation: none; }
 
 /* Blue-hour underline draws in from the left (links opt in via .link-draw). */
 .link-draw {
