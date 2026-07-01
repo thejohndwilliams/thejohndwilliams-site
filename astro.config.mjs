@@ -22,6 +22,8 @@ export default defineConfig({
   integrations: [
     tailwind(),
     sitemap({
+      // Keep unlinked preview/lab routes out of the production sitemap.
+      filter: (page) => !page.includes('/about-lab'),
       // Google Images sitemap enrichment: attach <image:image> entries to
       // photography URLs so the gallery is discovered as images (not just HTML).
       serialize(item) {

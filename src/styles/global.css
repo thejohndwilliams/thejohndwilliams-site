@@ -558,16 +558,8 @@ html[data-theme="black"] {
   }
 
   .btn-primary { position: relative; overflow: hidden; }
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%);
-    transform: translateX(-130%);
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .btn-primary:hover::after { transform: translateX(130%); }
+  /* (old diagonal ::after sweep removed 2026-06-30 — replaced by the
+     rim-orbit light in the liquid-glass wave-2 section below) */
 
   .btn-primary:hover {
     transform: translateY(-2px);
@@ -1290,18 +1282,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .glass-plate-lb > * { position: relative; z-index: 1; }
 
-/* Secondary button: a band of light crosses on hover. */
-.btn-outline { position: relative; overflow: hidden; }
-.btn-outline::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgba(244,234,222,0.10) 50%, transparent 65%);
-  transform: translateX(-130%);
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-outline:hover::after { transform: translateX(130%); }
+.btn-outline { position: relative; }
+/* (old diagonal ::after sweep removed 2026-06-30 — replaced by the
+   rim-orbit light in the liquid-glass wave-2 section below) */
 
 @keyframes glassSheenDrift {
   from { background-position: 0 0, 0% 0; }
@@ -1539,3 +1522,129 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 
 
+
+/* ============================================================
+   Liquid-glass controls — wave 2 (2026-06-30). The light now
+   TRAVELS around each control's rim, curving around the pill; the
+   glass deepens into translucence on approach; the arrow has
+   personality. Replaces the flat diagonal ::after sweep (it read
+   cheap). The static crystal ::before rim and :active key-sink are
+   untouched — ::after is repurposed as the moving specular.
+   Interaction-driven only; frozen under reduced motion.
+   ============================================================ */
+
+/* Sheen rides ON the glass surface, clipped to the key. */
+.btn-primary, .btn-outline { overflow: hidden; }
+
+/* A soft FEATHERED specular: a soft-box reflection on the glass, never a
+   hard line. It breathes (slow, low amplitude) so the key feels alive —
+   liquid glass — and blooms gently on hover. Faint chromatic dispersion
+   lives in the feathered falloff (cyan into magenta), never a band. */
+@keyframes btn-breathe {
+  0%, 100% { opacity: 0.32; transform: scale(1)    translateY(0); }
+  50%      { opacity: 0.50; transform: scale(1.05) translateY(-1.5px); }
+}
+.btn-primary::after,
+.btn-outline::after {
+  content: '';
+  position: absolute;
+  left: 7%; right: 7%; top: 6%;
+  height: 66%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;                 /* above the static crystal rim (::before, z1) */
+  background:
+    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.10) 40%, transparent 72%),
+    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.32) 0%, transparent 62%),
+    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.28) 0%, transparent 62%);
+  filter: blur(4px);
+  mix-blend-mode: screen;
+  opacity: 0.32;
+  transform-origin: 50% 28%;
+  animation: btn-breathe 6.5s ease-in-out infinite;
+}
+.btn-primary:hover::after, .btn-primary:focus-visible::after, .btn-primary.is-lit::after,
+.btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
+  animation-duration: 4.5s;
+  background:
+    radial-gradient(58% 88% at 50% 16%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.14) 40%, transparent 72%),
+    radial-gradient(48% 80% at 35% 22%, rgba(120,205,255,0.40) 0%, transparent 62%),
+    radial-gradient(48% 80% at 65% 22%, rgba(255,150,210,0.36) 0%, transparent 62%);
+}
+
+/* The bubble inflates into translucence on approach: a hair more
+   lift + a subtle scale, and the outline glass deepens its blur. */
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover,
+  .btn-outline:hover { transform: translateY(-3px) scale(1.015); }
+  .btn-outline:hover {
+    backdrop-filter: blur(18px) saturate(1.85);
+    -webkit-backdrop-filter: blur(18px) saturate(1.85);
+  }
+}
+
+/* The arrow glides forward once and holds (a quiet lean, no loop). */
+.btn svg { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+.btn-primary:hover svg, .btn-primary:focus-visible svg, .btn-primary.is-lit svg,
+.btn-outline:hover svg, .btn-outline:focus-visible svg, .btn-outline.is-lit svg { transform: translateX(4px); }
+
+/* Encircle-then-dissolve wake: a chromatic rim contour lights up around the
+   key on approach, then melts inward and dissolves into the glass — light
+   sinking into the surface. Plays once per hover (resets on leave). Uses an
+   injected .btn-wake element (BaseLayout) so the tuned ::before rim and
+   ::after specular stay untouched. */
+@keyframes encircle-dissolve {
+  0%   { opacity: 0;    filter: blur(0.4px); transform: scale(1); }
+  24%  { opacity: 0.92; filter: blur(0.4px); transform: scale(1); }
+  100% { opacity: 0;    filter: blur(7px);   transform: scale(0.9); }
+}
+.btn-wake {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+  padding: 1.5px;              /* rim-contour thickness */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;     /* border-only ring; no url() masks (iOS-safe) */
+  background: conic-gradient(from 210deg,
+    rgba(150,215,255,0.80),
+    rgba(255,255,255,0.92) 92deg,
+    rgba(255,178,216,0.80) 184deg,
+    rgba(255,255,255,0.88) 276deg,
+    rgba(150,215,255,0.80));
+  opacity: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover .btn-wake,
+  .btn-outline:hover .btn-wake { animation: encircle-dissolve 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+}
+.btn-primary:focus-visible .btn-wake,
+.btn-outline:focus-visible .btn-wake { animation: encircle-dissolve 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+/* material-lab capture: freeze at the encircle peak (the ring lit around the rim) */
+.btn-primary.is-lit .btn-wake,
+.btn-outline.is-lit .btn-wake { opacity: 0.92; filter: blur(0.4px); animation: none; }
+
+/* Blue-hour underline draws in from the left (links opt in via .link-draw). */
+.link-draw {
+  background-image: linear-gradient(#7E9CB8, #7E9CB8);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+}
+.link-draw:hover,
+.link-draw:focus-visible { background-size: 100% 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after, .btn-outline::after { animation: none; opacity: 0.4; transform: none; }
+  .btn-wake { display: none; }
+  .btn svg { transition: none; }
+  .btn-primary:hover svg, .btn-outline:hover svg,
+  .btn-primary:focus-visible svg, .btn-outline:focus-visible svg { transform: none; }
+  .btn-primary:hover, .btn-outline:hover { transform: translateY(-2px); }
+  .link-draw { transition: none; }
+  .link-draw:hover, .link-draw:focus-visible { background-size: 100% 1px; }
+}

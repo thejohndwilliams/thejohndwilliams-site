@@ -26,6 +26,9 @@ interface Props {
       When set, the LCP preload is split media-wise so phones preload the
       portrait art-direction, not the landscape they won't paint. */
   lcpImagePortrait?: string;
+  /** Emit <meta name="robots" content="noindex, nofollow">. For unlinked
+      preview/lab pages that must build but never be indexed. */
+  noindex?: boolean;
 }
 
 const {
@@ -36,7 +39,8 @@ const {
   ogImageHeight = 1600,
   lcpImage,
   lcpImageSizes = '100vw',
-  lcpImagePortrait
+  lcpImagePortrait,
+  noindex = false
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -53,6 +57,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="author" content="John D. Williams" />
 
     <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=2" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
@@ -424,6 +429,22 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         requestAnimationFrame(raf);
         document.addEventListener('astro:after-swap', () => lenis.scrollTo(0, { immediate: true }));
       }
+    </script>
+    {/* Inject the encircle-then-dissolve wake element into every crystal button
+         so the tuned ::before rim and ::after specular stay untouched. */}
+    <script>
+      function addBtnWake() {
+        document.querySelectorAll('.btn-primary, .btn-outline').forEach((b) => {
+          if (!b.querySelector('.btn-wake')) {
+            const s = document.createElement('span');
+            s.className = 'btn-wake';
+            s.setAttribute('aria-hidden', 'true');
+            b.appendChild(s);
+          }
+        });
+      }
+      addBtnWake();
+      document.addEventListener('astro:after-swap', addBtnWake);
     </script>
   </body>
 </html>

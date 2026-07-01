@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import KineticPlate from '../components/KineticPlate.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
 ---
 
 <BaseLayout
@@ -76,7 +77,8 @@ import KineticPlate from '../components/KineticPlate.astro';
           </p>
         </div>
         <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
-          <KineticPlate category="earth" />
+          <KineticPlate3D category="earth" />
+          <KineticPlate category="earth" class="plate-fallback" />
           <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Earth · rain-wet leaf</p>
         </aside>
       </div>
@@ -102,7 +104,8 @@ import KineticPlate from '../components/KineticPlate.astro';
           </p>
         </div>
         <aside class="reveal shrink-0 lg:order-1 lg:w-[560px] lg:pt-2">
-          <KineticPlate category="structure" />
+          <KineticPlate3D category="structure" />
+          <KineticPlate category="structure" class="plate-fallback" />
           <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Structure · Shanghai Tower</p>
         </aside>
       </div>
@@ -131,7 +134,8 @@ import KineticPlate from '../components/KineticPlate.astro';
           </p>
         </div>
         <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
-          <KineticPlate category="sky" />
+          <KineticPlate3D category="sky" />
+          <KineticPlate category="sky" class="plate-fallback" />
           <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">Sky · thunderheads</p>
         </aside>
       </div>
@@ -158,4 +162,13 @@ import KineticPlate from '../components/KineticPlate.astro';
 
 <script>
 </script>
+
+<style is:global>
+  /* The true-3D plate is primary; the 2.5D plate is a graceful fallback,
+     shown only when WebGL2 is unavailable (KineticPlate3D marks its figure
+     data-webgl="unsupported" on context-creation failure). */
+  .plate-fallback { display: none !important; }
+  .kplate3d[data-webgl="unsupported"] { display: none !important; }
+  .kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
+</style>
 </BaseLayout>
