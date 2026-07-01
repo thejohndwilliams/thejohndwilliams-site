@@ -430,5 +430,21 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         document.addEventListener('astro:after-swap', () => lenis.scrollTo(0, { immediate: true }));
       }
     </script>
+    {/* Inject the encircle-then-dissolve wake element into every crystal button
+         so the tuned ::before rim and ::after specular stay untouched. */}
+    <script>
+      function addBtnWake() {
+        document.querySelectorAll('.btn-primary, .btn-outline').forEach((b) => {
+          if (!b.querySelector('.btn-wake')) {
+            const s = document.createElement('span');
+            s.className = 'btn-wake';
+            s.setAttribute('aria-hidden', 'true');
+            b.appendChild(s);
+          }
+        });
+      }
+      addBtnWake();
+      document.addEventListener('astro:after-swap', addBtnWake);
+    </script>
   </body>
 </html>
