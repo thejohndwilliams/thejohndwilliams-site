@@ -520,6 +520,24 @@ const jsonLd = {
   #lightbox.active { display: flex; }
   #lightbox { touch-action: none; }
 
+  /* Site chrome yields to the open viewer. The page content (lightbox
+     included) lives inside the smooth-scroll fixed wrapper, whose stacking
+     context traps the dialog's z-50 beneath the root-level sticky header
+     (z-40) — so the nav painted OVER the modal (2026-07-02 incident).
+     Rather than fight compositor stacking, fixed chrome fades out while
+     the dialog is open: correct aria-modal behavior anyway. Transition
+     declared on the hidden state only — graceful fade-out on open,
+     instant return on close, no tampering with the elements' own
+     transition stacks. :global() because header/tabbar/back-to-top live
+     in the layout, outside this page's scope attribute. */
+  :global(body:has(#lightbox.active) #site-header),
+  :global(body:has(#lightbox.active) #back-to-top),
+  :global(body:has(#lightbox.active) .glass-tabbar) {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
   /* Develop-from-black: photos settle up out of shadow as they load. JS adds
      .developing only to not-yet-loaded imgs and removes on load - a JS failure
      can never hide them (visible by default). */
