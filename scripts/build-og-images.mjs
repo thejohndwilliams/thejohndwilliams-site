@@ -8,7 +8,9 @@
  * slug (first-seen-wins — matches the /photography/[slug] routing contract),
  * composites the hero WebP under an SVG overlay (category eyebrow + title +
  * site mark on a graded dark vignette), and writes a 1200×630 JPEG to
- * dist/og/photography/<file>.jpg.
+ * dist/og/photography/<file>.jpg. Also renders four page-level OG images
+ * (home / photography / work / about) to dist/og/pages/<slug>.jpg so the
+ * top-level pages get the same JPEG floor-compatibility as photo unfurls.
  *
  * Why 1200×630 JPEG and not 2400×1600 WebP:
  *   - 1200×630 is the Twitter / Facebook / LinkedIn / Slack / iMessage
@@ -34,6 +36,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PHOTOGRAPHY_TS = path.join(ROOT, 'src/data/photography.ts');
 const HERO_DIR = path.join(ROOT, 'public/images/photography/hero');
 const OUT_DIR = path.join(ROOT, 'dist/og/photography');
+const PAGES_OUT_DIR = path.join(ROOT, 'dist/og/pages');
 
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
@@ -124,9 +127,13 @@ function wrapTitle(title, maxCharsPerLine = 28, maxLines = 2) {
  * Design:
  *   - Left-side dark gradient scrim so text is legible regardless of
  *     how bright the underlying photo is at that region.
- *   - Gold hairline rule above the eyebrow (same 1px discipline as site nav).
+ *   - Blue-hour hairline rule above the eyebrow (same 1px discipline as
+ *     site nav). Palette note 2026-07-01: was gold #B8973F from the retired
+ *     gold era; corrected to navy-hour #7E9CB8 per the standing register
+ *     rule (ink and ivory, no metallic ornament).
  *   - Eyebrow: category name, IBM Plex Sans fallback, letterspaced uppercase.
- *   - Title: alt text in Libre Baskerville fallback, display serif, tight.
+ *   - Title: alt text in EB Garamond fallback (Libre Baskerville is
+ *     deprecated), display serif, tight.
  *   - Site mark bottom-left: thejohndwilliams.com in muted cream.
  *
  * Font fallback: libvips/librsvg will substitute a generic serif and
@@ -171,12 +178,12 @@ function buildOverlaySvg({ title, categoryName }) {
   <!-- Soft bottom vignette to seat the site mark -->
   <rect x="0" y="${OG_HEIGHT - 180}" width="${OG_WIDTH}" height="180" fill="url(#bottomFade)"/>
 
-  <!-- Gold hairline rule -->
-  <line x1="72" y1="${ruleY}" x2="168" y2="${ruleY}" stroke="#B8973F" stroke-width="1.5"/>
+  <!-- Blue-hour hairline rule -->
+  <line x1="72" y1="${ruleY}" x2="168" y2="${ruleY}" stroke="#7E9CB8" stroke-width="1.5"/>
 
   <!-- Category eyebrow (sans, uppercase, letterspaced) -->
   <text x="72" y="${eyebrowY}"
-        fill="#B8973F"
+        fill="#7E9CB8"
         font-family="'IBM Plex Sans','Helvetica Neue',Arial,sans-serif"
         font-size="16"
         font-weight="600"
@@ -187,7 +194,7 @@ function buildOverlaySvg({ title, categoryName }) {
     .map((line, i) => `
   <text x="72" y="${firstLineY + i * titleLineHeight}"
         fill="#FDFCFA"
-        font-family="'Libre Baskerville','Georgia',serif"
+        font-family="'EB Garamond','Georgia',serif"
         font-size="${titleFontSize}"
         font-weight="400">${line}</text>`)
     .join('')}
@@ -205,7 +212,7 @@ function buildOverlaySvg({ title, categoryName }) {
   <text x="${OG_WIDTH - 72}" y="${OG_HEIGHT - 48}"
         fill="#FDFCFA"
         fill-opacity="0.55"
-        font-family="'Libre Baskerville','Georgia',serif"
+        font-family="'EB Garamond','Georgia',serif"
         font-size="14"
         font-style="italic"
         text-anchor="end">John D. Williams</text>
@@ -248,10 +255,58 @@ async function renderOg({ file, alt, categoryName }) {
   return outPath;
 }
 
+/**
+ * Page-level OG images (home, photography, work, about).
+ *
+ * Same overlay + pipeline as photo OGs; the eyebrow carries the page's
+ * on-site register word instead of a photo category. Referenced from the
+ * top-level pages' BaseLayout ogImage props. Rationale: LinkedIn and some
+ * Messages builds do not render WebP unfurls, and the 2400×1600 heroes the
+ * pages previously pointed at are oversized for every unfurl surface.
+ */
+const PAGES = [
+  { slug: 'home', hero: '7r52326', eyebrow: 'Making visible', title: 'John D. Williams' },
+  { slug: 'photography', hero: 'img-1066', eyebrow: 'Noticing', title: 'Photography' },
+  { slug: 'work', hero: 'dscf0331', eyebrow: 'Building', title: 'Selected Work' },
+  { slug: 'about', hero: 'john-portrait-bw', eyebrow: 'Making visible', title: 'About' },
+];
+
+async function renderPageOg({ slug, hero, eyebrow, title }) {
+  const heroPath = path.join(HERO_DIR, `${hero}.webp`);
+  const outPath = path.join(PAGES_OUT_DIR, `${slug}.jpg`);
+
+  if (!existsSync(heroPath)) {
+    throw new Error(`Missing page hero source: ${heroPath}`);
+  }
+
+  const overlayBuffer = Buffer.from(buildOverlaySvg({ title, categoryName: eyebrow }));
+
+  await sharp(heroPath)
+    .resize(OG_WIDTH, OG_HEIGHT, { fit: 'cover', position: 'attention' })
+    .modulate({ brightness: 0.92 })
+    .composite([{ input: overlayBuffer, top: 0, left: 0 }])
+    .flatten({ background: '#0a0a0a' })
+    .jpeg({
+      quality: JPEG_QUALITY,
+      mozjpeg: true,
+      progressive: true,
+      chromaSubsampling: '4:2:0',
+    })
+    .toFile(outPath);
+
+  return outPath;
+}
+
 async function main() {
   const t0 = Date.now();
 
   await fs.mkdir(OUT_DIR, { recursive: true });
+  await fs.mkdir(PAGES_OUT_DIR, { recursive: true });
+
+  for (const page of PAGES) {
+    await renderPageOg(page);
+  }
+  console.log(`[og] ✓ wrote ${PAGES.length} page OG images → ${path.relative(ROOT, PAGES_OUT_DIR)}/`);
 
   const photos = await parsePhotographyManifest();
   if (photos.length === 0) {

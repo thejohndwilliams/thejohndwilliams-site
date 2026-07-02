@@ -30,7 +30,14 @@ function visibleText(el: Element): string {
 }
 
 function audit(html: string): string[] {
-  const dom = new JSDOM(html);
+  // inlineStylesheets: 'always' (2026-07-01) ships the full CSS bundle in
+  // <style> blocks that jsdom's CSSOM DOES apply — but jsdom never evaluates
+  // media queries, so responsive utilities (`hidden md:flex`) collapse to
+  // display:none and computeAccessibleName reports real, labelled controls
+  // as nameless. This harness is layout-free by design (see header note):
+  // strip inline styles so it keeps auditing DOM/ARIA semantics only.
+  // CSS-aware checks (contrast, visibility) remain the Lighthouse run's job.
+  const dom = new JSDOM(html.replace(/<style[^>]*>[\s\S]*?<\/style>/g, ''));
   const doc = dom.window.document;
   const issues: string[] = [];
   const controls = Array.from(doc.querySelectorAll(SEL));
