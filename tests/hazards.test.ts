@@ -72,6 +72,22 @@ describe('hazard locks: source', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('.glass-disc / .glass-plate-lb never hard-position the host — lightbox control utilities must win (2026-07-02, 2026-06-09)', () => {
+    // .glass-disc { position: relative } out-cascaded the lightbox buttons'
+    // `absolute` (unlayered material rules land after utilities in the
+    // bundle), pulling all three controls into the flex row and shoving the
+    // photo off-center. Third instance of this theft family: .glass-plate-lb
+    // caught 2026-06-09, .glass-control carries .fixed/.absolute shims.
+    // Hosts take :where() for zero-specificity defaults; pseudo-elements and
+    // children may position freely.
+    const css = readFileSync(join(SRC, 'styles', 'global.css'), 'utf8');
+    for (const cls of ['glass-disc', 'glass-plate-lb']) {
+      const m = css.match(new RegExp('(?:^|\\n)\\.' + cls + '\\s*\\{([^}]*)\\}'));
+      expect(m, `.${cls} block not found in global.css`).toBeTruthy();
+      expect(/position\s*:/.test((m as RegExpMatchArray)[1]), `.${cls} must not declare position on the host (use :where())`).toBe(false);
+    }
+  });
+
   it('headings carry no fixed text-size caps — fluid clamp() only (frozen-heading bug, 2026-05-31)', () => {
     const offenders: string[] = [];
     for (const { p, body } of src) {
