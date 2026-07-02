@@ -530,16 +530,19 @@ const jsonLd = {
      instant return on close, no tampering with the elements' own
      transition stacks. :global() because header/tabbar/back-to-top live
      in the layout, outside this page's scope attribute. */
-  :global(body:has(#lightbox.active) #site-header),
+  /* Channel choice matters: opacity is owned by the header's scroll
+     controller (inline writes) and visibility got wedged by transition-all
+     on a persisted element — both fight. `translate` is the independent
+     transform property: nothing else on the site writes it, the elements'
+     own transition-all animates the slide both directions, no !important. */
+  :global(body:has(#lightbox.active) #site-header) {
+    translate: 0 -120%;
+    pointer-events: none;
+  }
   :global(body:has(#lightbox.active) #back-to-top),
   :global(body:has(#lightbox.active) .glass-tabbar) {
-    /* !important: the header's scroll controller writes inline opacity
-       every frame, which out-ranks any selector. visibility is the
-       belt on top of pointer-events for a11y/tab order. */
-    opacity: 0 !important;
-    visibility: hidden;
+    translate: 0 150%;
     pointer-events: none;
-    transition: opacity 0.35s ease;
   }
 
   /* Develop-from-black: photos settle up out of shadow as they load. JS adds
