@@ -533,7 +533,11 @@ const jsonLd = {
   :global(body:has(#lightbox.active) #site-header),
   :global(body:has(#lightbox.active) #back-to-top),
   :global(body:has(#lightbox.active) .glass-tabbar) {
-    opacity: 0;
+    /* !important: the header's scroll controller writes inline opacity
+       every frame, which out-ranks any selector. visibility is the
+       belt on top of pointer-events for a11y/tab order. */
+    opacity: 0 !important;
+    visibility: hidden;
     pointer-events: none;
     transition: opacity 0.35s ease;
   }
