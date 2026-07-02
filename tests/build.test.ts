@@ -109,6 +109,58 @@ describe('Astro Build', () => {
     expect(html).toContain('property="og:image:height" content="630"');
   });
 
+  it('generates page-level OG JPEGs and wires them into top-level pages', () => {
+    // 2026-07-01 web review: /, /photography, /work, /about pointed og:image
+    // at 2400×1600 WebP heroes — LinkedIn (the primary professional share
+    // surface) does not reliably render WebP unfurls. Top-level pages now use
+    // the same 1200×630 JPEG pipeline as photo detail pages.
+    const pagesDir = path.join(distDir, 'og', 'pages');
+    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg']) {
+      expect(fs.existsSync(path.join(pagesDir, f))).toBe(true);
+    }
+    const pairs: Array<[string, string]> = [
+      ['index.html', '/og/pages/home.jpg'],
+      [path.join('photography', 'index.html'), '/og/pages/photography.jpg'],
+      [path.join('work', 'index.html'), '/og/pages/work.jpg'],
+      [path.join('about', 'index.html'), '/og/pages/about.jpg'],
+    ];
+    for (const [rel, og] of pairs) {
+      const html = fs.readFileSync(path.join(distDir, rel), 'utf-8');
+      expect(html).toContain(og);
+      expect(html).toContain('property="og:image:width" content="1200"');
+      expect(html).toContain('property="og:image:height" content="630"');
+    }
+  });
+
+  it('LCP preload is AVIF-only and the CSS bundle is inlined', () => {
+    // 2026-07-01 web review locks:
+    // (a) Dual-format preloads made evergreen browsers download the LCP image
+    //     twice (~108 KB desktop / ~36 KB mobile). AVIF-only is deliberate —
+    //     non-AVIF engines fall back to <picture> discovery.
+    // (b) inlineStylesheets: 'always' removes the render-blocking /_assets
+    //     CSS <link> (~1.2 s mobile LCP). hdr-palette.css stays a media-gated
+    //     <link> by design and is exempt.
+    const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
+    expect(html).toMatch(/rel="preload" as="image" type="image\/avif"/);
+    expect(html).not.toMatch(/rel="preload" as="image" type="image\/webp"/);
+    expect(html).not.toMatch(/<link rel="stylesheet" href="\/_assets\//);
+    expect(html).toContain('rel="stylesheet" href="/hdr-palette.css"');
+  });
+
+  it('robots.txt blocks training crawlers but allows user-triggered AI fetchers', () => {
+    // 2026-07-01 decision: ChatGPT-User / Perplexity-User / OAI-SearchBot are
+    // user-triggered fetchers, not training crawlers. Blocking them broke the
+    // /llms.txt invitation (a recruiter asking an assistant about the site got
+    // nothing). Training bots stay blocked.
+    const robots = fs.readFileSync(path.join(distDir, 'robots.txt'), 'utf-8');
+    for (const bot of ['GPTBot', 'ClaudeBot', 'CCBot', 'PerplexityBot', 'Google-Extended', 'Bytespider']) {
+      expect(robots).toContain(`User-agent: ${bot}\nDisallow: /`);
+    }
+    for (const bot of ['ChatGPT-User', 'Perplexity-User', 'OAI-SearchBot']) {
+      expect(robots).not.toContain(`User-agent: ${bot}`);
+    }
+  });
+
   it('emits per-frame KineticPlate geometry and keeps /about lean (no inline grids)', () => {
     // v10: KineticPlate fetches geometry from /data/kinetic/<id>.json instead of
     // inlining a ~80-130 KB data-plate attribute per plate. /about renders three
@@ -119,7 +171,12 @@ describe('Astro Build', () => {
     expect(parsed.grid.length).toBe(parsed.cols * parsed.rows);
     const aboutHtml = fs.readFileSync(path.join(distDir, 'about', 'index.html'), 'utf-8');
     expect(aboutHtml).not.toContain('data-plate=');
-    expect(aboutHtml.length).toBeLessThan(80_000);
+    // Ceiling raised 80 KB → 128 KB on 2026-07-01: inlineStylesheets 'always'
+    // adds the page's full stylesheet (~40 KB raw, ~4 KB over brotli) to the
+    // HTML in exchange for killing the render-blocking CSS request. The real
+    // guard against re-inlined plate grids is the data-plate check above —
+    // a single regressed plate would blow past this ceiling anyway.
+    expect(aboutHtml.length).toBeLessThan(128_000);
   });
 
 });
@@ -262,10 +319,19 @@ describe('Liquid Glass CSS', () => {
 
   beforeAll(async () => {
     await execAsync('npm run build');
-    const assetsDir = path.join(distDir, '_assets');
-    const cssFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.css'));
-    cssBundle = cssFiles
-      .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+    // inlineStylesheets: 'always' (2026-07-01) — Astro CSS ships inlined in
+    // <style> blocks, not as /_assets/*.css files. Concatenate the inlined
+    // styles from pages that collectively carry every material: global.css
+    // (all pages) plus the photography rail lens and page-scoped layers.
+    const pages = [
+      'index.html',
+      path.join('photography', 'index.html'),
+      path.join('work', 'index.html'),
+      path.join('about', 'index.html'),
+    ];
+    cssBundle = pages
+      .map((p) => fs.readFileSync(path.join(distDir, p), 'utf-8'))
+      .flatMap((html) => Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g), (m) => m[1]))
       .join('\n');
   }, 60000);
 

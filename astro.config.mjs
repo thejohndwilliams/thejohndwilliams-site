@@ -61,6 +61,11 @@ export default defineConfig({
   output: 'static',
   build: {
     assets: '_assets',
-    inlineStylesheets: 'auto',
+    // 'always': the shared CSS bundle (~13 KB) sat above Astro's 'auto'
+    // inline threshold and shipped as a render-blocking <link>, costing
+    // ~1.2 s of mobile LCP (Lighthouse, 2026-07-01). Inlining trades
+    // repeat-view CSS caching (~4 KB brotli per page) for first-paint
+    // speed — the right trade for a portfolio found via shared links.
+    inlineStylesheets: 'always',
   },
 });

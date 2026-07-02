@@ -7,9 +7,6 @@
 User-agent: GPTBot
 Disallow: /
 
-User-agent: ChatGPT-User
-Disallow: /
-
 User-agent: ClaudeBot
 Disallow: /
 
@@ -23,9 +20,6 @@ User-agent: CCBot
 Disallow: /
 
 User-agent: PerplexityBot
-Disallow: /
-
-User-agent: Perplexity-User
 Disallow: /
 
 User-agent: Google-Extended
@@ -64,8 +58,11 @@ Disallow: /
 User-agent: omgili
 Disallow: /
 
-User-agent: OAI-SearchBot
-Disallow: /
+# --- User-triggered AI fetchers (deliberately allowed, 2026-07-01) -----------
+# ChatGPT-User, Perplexity-User and OAI-SearchBot fire when a person asks an
+# assistant to read this site (recruiters included). Allowing them matches
+# /llms.txt and the ai-train=no, use=reference content signal. Training
+# crawlers above stay blocked. These agents fall through to the * group.
 
 # --- Search engines (allowed) -------------------------------------------------
 User-agent: *

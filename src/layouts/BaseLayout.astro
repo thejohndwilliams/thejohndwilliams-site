@@ -34,9 +34,9 @@ interface Props {
 const {
   title = 'John D. Williams',
   description = 'Photography, cybersecurity, and data - the work of John D. Williams.',
-  ogImage = '/images/photography/hero/john-portrait-bw.webp',
-  ogImageWidth = 2400,
-  ogImageHeight = 1600,
+  ogImage = '/og/pages/home.jpg',
+  ogImageWidth = 1200,
+  ogImageHeight = 630,
   lcpImage,
   lcpImageSizes = '100vw',
   lcpImagePortrait,
@@ -102,10 +102,17 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     {lcpImage && (
       <>
-        {/* LCP preload ladder. imagesrcset MUST mirror every candidate the
-            <picture> tag can resolve to - including the 400w thumb tier -
-            or Lighthouse flags prioritize-lcp-image for partial coverage when
-            the viewport picks a narrower candidate than the preload offers. */}
+        {/* LCP preload ladder — AVIF only, deliberately. Browsers fetch every
+            preload whose `type` they support, so pairing AVIF + WebP preloads
+            made dual-format engines (all evergreen browsers) download the LCP
+            image twice: ~108 KB wasted on desktop, ~36 KB on mobile, measured
+            against production 2026-07-01. Engines without AVIF (Safari ≤16.3)
+            skip the typed preload and still discover the WebP through the
+            <picture> element at parse time.
+            imagesrcset MUST mirror every AVIF candidate the <picture> tag can
+            resolve to - including the 400w thumb tier - or Lighthouse flags
+            prioritize-lcp-image for partial coverage when the viewport picks
+            a narrower candidate than the preload offers. */}
         <link
           rel="preload"
           as="image"
@@ -116,21 +123,8 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           media={lcpImagePortrait ? '(min-width: 641px)' : undefined}
           fetchpriority="high"
         />
-        <link
-          rel="preload"
-          as="image"
-          type="image/webp"
-          href={`/images/photography/hero/${lcpImage}.webp`}
-          imagesrcset={`/images/photography/thumb/${lcpImage}.webp 400w, /images/photography/gallery/${lcpImage}.webp 1200w, /images/photography/hero/${lcpImage}.webp 2400w`}
-          imagesizes={lcpImageSizes}
-          media={lcpImagePortrait ? '(min-width: 641px)' : undefined}
-          fetchpriority="high"
-        />
         {lcpImagePortrait && (
-          <>
-            <link rel="preload" as="image" type="image/avif" href={`/images/photography/portrait/${lcpImagePortrait}.avif`} media="(max-width: 640px)" fetchpriority="high" />
-            <link rel="preload" as="image" type="image/webp" href={`/images/photography/portrait/${lcpImagePortrait}.webp`} media="(max-width: 640px)" fetchpriority="high" />
-          </>
+          <link rel="preload" as="image" type="image/avif" href={`/images/photography/portrait/${lcpImagePortrait}.avif`} media="(max-width: 640px)" fetchpriority="high" />
         )}
       </>
     )}
