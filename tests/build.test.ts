@@ -132,18 +132,20 @@ describe('Astro Build', () => {
     }
   });
 
-  it('LCP preload is AVIF-only and the CSS bundle is inlined', () => {
-    // 2026-07-01 web review locks:
-    // (a) Dual-format preloads made evergreen browsers download the LCP image
-    //     twice (~108 KB desktop / ~36 KB mobile). AVIF-only is deliberate —
-    //     non-AVIF engines fall back to <picture> discovery.
-    // (b) inlineStylesheets: 'always' removes the render-blocking /_assets
-    //     CSS <link> (~1.2 s mobile LCP). hdr-palette.css stays a media-gated
-    //     <link> by design and is exempt.
+  it('LCP preload is AVIF-only and the shared CSS bundle ships as an external <link>', () => {
+    // (a) 2026-07-01: dual-format preloads made evergreen browsers download
+    //     the LCP image twice (~108 KB desktop / ~36 KB mobile). AVIF-only is
+    //     deliberate — non-AVIF engines fall back to <picture> discovery.
+    // (b) 2026-07-02 incident lock: inlineStylesheets 'always' split the
+    //     site-wide bundle into per-page inline subsets that LOST the
+    //     photography lightbox's presentation rules, and view-transition
+    //     head swaps dropped scoped <style> tags on aborted transitions.
+    //     The external /_assets bundle is the transition-safe delivery.
+    //     Read the astro.config comment before touching this.
     const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
     expect(html).toMatch(/rel="preload" as="image" type="image\/avif"/);
     expect(html).not.toMatch(/rel="preload" as="image" type="image\/webp"/);
-    expect(html).not.toMatch(/<link rel="stylesheet" href="\/_assets\//);
+    expect(html).toMatch(/<link rel="stylesheet" href="\/_assets\//);
     expect(html).toContain('rel="stylesheet" href="/hdr-palette.css"');
   });
 
@@ -319,20 +321,26 @@ describe('Liquid Glass CSS', () => {
 
   beforeAll(async () => {
     await execAsync('npm run build');
-    // inlineStylesheets: 'always' (2026-07-01) — Astro CSS ships inlined in
-    // <style> blocks, not as /_assets/*.css files. Concatenate the inlined
-    // styles from pages that collectively carry every material: global.css
-    // (all pages) plus the photography rail lens and page-scoped layers.
+    // Collect shipped CSS from BOTH delivery modes so these material locks
+    // hold regardless of inlineStylesheets: every external /_assets file
+    // plus any inlined <style> blocks in the key pages. (2026-07-02: the
+    // delivery mode reverted to external after the lightbox incident.)
+    const assetsDir = path.join(distDir, '_assets');
+    const external = fs.existsSync(assetsDir)
+      ? fs.readdirSync(assetsDir)
+          .filter((f) => f.endsWith('.css'))
+          .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+      : [];
     const pages = [
       'index.html',
       path.join('photography', 'index.html'),
       path.join('work', 'index.html'),
       path.join('about', 'index.html'),
     ];
-    cssBundle = pages
+    const inline = pages
       .map((p) => fs.readFileSync(path.join(distDir, p), 'utf-8'))
-      .flatMap((html) => Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g), (m) => m[1]))
-      .join('\n');
+      .flatMap((html) => Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g), (m) => m[1]));
+    cssBundle = external.concat(inline).join('\n');
   }, 60000);
 
   it('has the pointer-tracked specular spotlight (restored 2026-06-06)', () => {
@@ -373,5 +381,14 @@ describe('Liquid Glass CSS', () => {
 
   it('respects prefers-reduced-motion for glass specular', () => {
     expect(cssBundle).toContain('prefers-reduced-motion');
+  });
+
+  it('ships the lightbox backdrop rule (transparent-lightbox incident, 2026-07-02)', () => {
+    // The dialog's darkening is one arbitrary-value utility; when it fell
+    // out of the shipped CSS the lightbox rendered as fog: backdrop-blur
+    // over an undarkened page, page chrome visible through the overlay.
+    // Exact emitted (minified) form — update deliberately if the minifier
+    // or the alpha value changes:
+    expect(cssBundle).toContain('bg-\\[\\#0a0a0a\\]\\/\\[0\\.92\\]{background-color:#0a0a0aeb}');
   });
 });

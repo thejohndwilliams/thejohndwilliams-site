@@ -61,11 +61,19 @@ export default defineConfig({
   output: 'static',
   build: {
     assets: '_assets',
-    // 'always': the shared CSS bundle (~13 KB) sat above Astro's 'auto'
-    // inline threshold and shipped as a render-blocking <link>, costing
-    // ~1.2 s of mobile LCP (Lighthouse, 2026-07-01). Inlining trades
-    // repeat-view CSS caching (~4 KB brotli per page) for first-paint
-    // speed — the right trade for a portfolio found via shared links.
-    inlineStylesheets: 'always',
+    // 'auto' — REVERTED from 'always' on 2026-07-02 after a production
+    // incident. 'always' replaced the single site-wide external bundle with
+    // per-page inline subsets: the photography lightbox's arbitrary-value
+    // utilities (bg-[#0a0a0a]/92 and friends) did not survive the split on
+    // ANY load path, and aborted view transitions (InvalidStateError on
+    // every client-side nav) additionally dropped whole scoped <style> tags
+    // during the head swap. Net effect: transparent lightbox backdrop with
+    // a stray 40px blur, unstyled 96px controls, stuck placeholders. The
+    // external shared bundle carries every rule and survives transitions.
+    // Do NOT re-inline without an interaction-level regression test that
+    // opens the lightbox after a view-transition navigation. If the ~13 KB
+    // render-blocking <link> needs to go, pursue a critical-CSS split or an
+    // Astro upgrade instead.
+    inlineStylesheets: 'auto',
   },
 });
