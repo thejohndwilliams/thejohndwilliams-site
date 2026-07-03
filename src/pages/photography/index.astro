@@ -534,13 +534,16 @@ const jsonLd = {
      controller (inline writes) and visibility got wedged by transition-all
      on a persisted element — both fight. `translate` is the independent
      transform property: nothing else on the site writes it, the elements'
-     own transition-all animates the slide both directions, no !important. */
-  :global(body:has(#lightbox.active) #site-header) {
+     own transition-all animates the slide both directions, no !important.
+     State key is html.lb-open, toggled by the lightbox controller —
+     body:has(#lightbox.active) proved unreliable (stale :has invalidation
+     in Chrome on close; never applied at all in headless CI). */
+  :global(html.lb-open #site-header) {
     translate: 0 -120%;
     pointer-events: none;
   }
-  :global(body:has(#lightbox.active) #back-to-top),
-  :global(body:has(#lightbox.active) .glass-tabbar) {
+  :global(html.lb-open #back-to-top),
+  :global(html.lb-open .glass-tabbar) {
     translate: 0 150%;
     pointer-events: none;
   }
@@ -582,6 +585,10 @@ const jsonLd = {
   function initGallery() {
     galleryAbort?.abort();
     galleryAbort = null;
+    // Stale-state guard: <html> persists across view-transition navigations,
+    // so a viewer left open on /photography must not hide the chrome
+    // site-wide after navigating away.
+    document.documentElement.classList.remove('lb-open');
     const lightbox = document.getElementById('lightbox');
     if (!lightbox) return; // other pages: bind nothing, leak nothing
     galleryAbort = new AbortController();
@@ -674,6 +681,10 @@ const jsonLd = {
       const reveal = () => {
         setLightboxImage(item);
         lightbox.classList.add('active');
+        // Chrome-yield state lives on <html>, controller-driven: body:has()
+        // proved unreliable (stale style invalidation observed in Chrome on
+        // close AND in headless CI where the yield never applied at all).
+        document.documentElement.classList.add('lb-open');
         lockScroll();
         (closeBtn as HTMLElement | null)?.focus();
         prefetchNeighbors();
@@ -694,7 +705,7 @@ const jsonLd = {
 
     function closeLightbox() {
       const src = tileImg(visibleItems[currentIndex] as HTMLElement);
-      const hide = () => { lightbox.classList.remove('active'); unlockScroll(); lastFocused?.focus(); };
+      const hide = () => { lightbox.classList.remove('active'); document.documentElement.classList.remove('lb-open'); unlockScroll(); lastFocused?.focus(); };
       if (canVT() && src) {
         lightboxImg.style.viewTransitionName = 'lb-photo';
         const t = (document as any).startViewTransition(() => {

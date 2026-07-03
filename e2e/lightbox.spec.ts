@@ -11,14 +11,20 @@ async function openViewer(page: Page) {
   const item = page.locator('.gallery-item').first();
   await item.scrollIntoViewIfNeeded();
   // Let smooth-scroll momentum settle so the click lands as a click.
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1000);
   await item.click();
   const lb = page.locator('#lightbox');
   try {
     await expect(lb).toHaveClass(/active/, { timeout: 4000 });
   } catch {
-    // WebKit on CI occasionally eats a click that lands mid-settle; once more.
-    await item.click();
+    // If the controller had not bound yet, the tile's anchor NAVIGATED to
+    // the photo detail page (WebKit binds late on CI hardware). Recover.
+    if (!/\/photography\/?$/.test(new URL(page.url()).pathname)) {
+      await page.goBack();
+      await expect(page).toHaveURL(/\/photography\/?$/);
+      await page.waitForTimeout(1200);
+    }
+    await page.locator('.gallery-item').first().click();
     await expect(lb).toHaveClass(/active/, { timeout: 8000 });
   }
   // Poll composition instead of a fixed sleep — the open morph duration
@@ -68,10 +74,13 @@ async function assertComposed(page: Page) {
   expect(img.fits).toBe(true);
 
   // Site chrome yields: the sticky header slides out of the viewport.
-  const headerBottom = await page.evaluate(
-    () => document.getElementById('site-header')!.getBoundingClientRect().bottom
-  );
-  expect(headerBottom).toBeLessThanOrEqual(0);
+  // Poll — the slide animates on the header's own 500ms transition.
+  await expect
+    .poll(
+      () => page.evaluate(() => document.getElementById('site-header')!.getBoundingClientRect().bottom),
+      { timeout: 8000 }
+    )
+    .toBeLessThanOrEqual(0);
 }
 
 test.describe('Photography lightbox composition (2026-07-02 incident locks)', () => {
