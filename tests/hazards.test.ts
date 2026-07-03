@@ -55,6 +55,39 @@ describe('hazard locks: source', () => {
     expect(hits).toEqual([]);
   });
 
+  it('color-utility alpha modifiers are scale values or bracketed — bare /92 is a silent no-op (transparent-lightbox incident, 2026-07-02)', () => {
+    // bg-[#0a0a0a]/92 generated NOTHING (92 is not on Tailwind's default
+    // opacity scale) and the lightbox backdrop shipped transparent from
+    // 2026-04-16 until 2026-07-02. Bare /NN must be a multiple of 5;
+    // anything else must be bracketed (bg-[#0a0a0a]/[0.92]). text-* is
+    // exempt: /N there is the font-size/line-height shorthand.
+    const offenders: string[] = [];
+    const re = /(?:bg|from|via|to|border|ring|divide|fill|stroke)-(?:\[[^\]]+\]|[a-z][a-z0-9-]*)\/(\d{1,3})(?!\d|\])/g;
+    for (const { p, body } of src) {
+      if (!p.endsWith('.astro')) continue;
+      for (const m of body.matchAll(re)) {
+        if (Number(m[1]) % 5 !== 0) offenders.push(`${p}: ${m[0]}`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('.glass-disc / .glass-plate-lb never hard-position the host — lightbox control utilities must win (2026-07-02, 2026-06-09)', () => {
+    // .glass-disc { position: relative } out-cascaded the lightbox buttons'
+    // `absolute` (unlayered material rules land after utilities in the
+    // bundle), pulling all three controls into the flex row and shoving the
+    // photo off-center. Third instance of this theft family: .glass-plate-lb
+    // caught 2026-06-09, .glass-control carries .fixed/.absolute shims.
+    // Hosts take :where() for zero-specificity defaults; pseudo-elements and
+    // children may position freely.
+    const css = readFileSync(join(SRC, 'styles', 'global.css'), 'utf8');
+    for (const cls of ['glass-disc', 'glass-plate-lb']) {
+      const m = css.match(new RegExp('(?:^|\\n)\\.' + cls + '\\s*\\{([^}]*)\\}'));
+      expect(m, `.${cls} block not found in global.css`).toBeTruthy();
+      expect(/position\s*:/.test((m as RegExpMatchArray)[1]), `.${cls} must not declare position on the host (use :where())`).toBe(false);
+    }
+  });
+
   it('headings carry no fixed text-size caps — fluid clamp() only (frozen-heading bug, 2026-05-31)', () => {
     const offenders: string[] = [];
     for (const { p, body } of src) {

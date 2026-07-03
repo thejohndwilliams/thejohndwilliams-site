@@ -1238,8 +1238,15 @@ footer.glass-footer:hover::after { opacity: 1; }
 
 /* Lightbox chrome: glass discs that breathe at idle and answer the
    cursor. Sized by their existing utility classes (>=44px). */
+/* No hard `position` on the material host: the lightbox controls carry
+   Tailwind's absolute placement, and a bare declaration here out-cascades
+   it (unlayered, after utilities in the bundle) — the same theft caught on
+   .glass-plate-lb 2026-06-09 and shimmed on .glass-control (.fixed/.absolute
+   re-assertions below). :where() keeps a relative default at ZERO
+   specificity: ::after still anchors on bare uses, and any positioning
+   utility in markup always wins. Locked in hazards.test.ts. */
+:where(.glass-disc) { position: relative; }
 .glass-disc {
-  position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
   backdrop-filter: blur(20px) saturate(1.6);
