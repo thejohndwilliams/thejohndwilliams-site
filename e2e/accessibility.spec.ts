@@ -48,12 +48,17 @@ test.describe('Accessibility', () => {
 
       for (let i = 0; i < count; i++) {
         const link = links.nth(i);
-        const text = await link.innerText();
+        // textContent, not innerText (CI-red repair, 2026-07-03): the site
+        // ships responsive nav variants — desktop nav links on phones and the
+        // mobile tabbar on desktop are display:none at any given viewport,
+        // and innerText returns '' for hidden elements, so every engine
+        // failed on the OTHER viewport's nav. textContent keeps the real
+        // intent: icon-only links with no label still fail.
+        const text = await link.textContent();
         const ariaLabel = await link.getAttribute('aria-label');
         const title = await link.getAttribute('title');
 
-        // Link should have visible text, aria-label, or title
-        const hasAccessibleText = text.trim() !== '' || ariaLabel !== null || title !== null;
+        const hasAccessibleText = (text ?? '').trim() !== '' || ariaLabel !== null || title !== null;
         expect(hasAccessibleText).toBe(true);
       }
     });

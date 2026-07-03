@@ -1,15 +1,19 @@
 name: CI
 
-# Build + full test gate on every PR and push to main.
+# Build + full test gate on every PR and EVERY push, any branch.
 # Lighthouse runs separately in lighthouse.yml. Added 2026-06-11:
 # before this, NOTHING enforced vitest or Playwright on GitHub —
 # gates ran only in whichever local environment happened to work.
+# Widened from main-only pushes on 2026-07-03: the house workflow ships
+# preview branches without PRs, so six lightbox-fix commits (including a
+# brand-new e2e spec) reached main having never met CI. Branch pushes
+# must gate BEFORE merge.
 
 on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches: ['**']
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'

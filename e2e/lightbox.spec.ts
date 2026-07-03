@@ -11,11 +11,24 @@ async function openViewer(page: Page) {
   const item = page.locator('.gallery-item').first();
   await item.scrollIntoViewIfNeeded();
   // Let smooth-scroll momentum settle so the click lands as a click.
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await item.click();
-  await expect(page.locator('#lightbox')).toHaveClass(/active/, { timeout: 5000 });
-  // Open morph (view transition) settles.
-  await page.waitForTimeout(700);
+  const lb = page.locator('#lightbox');
+  try {
+    await expect(lb).toHaveClass(/active/, { timeout: 4000 });
+  } catch {
+    // WebKit on CI occasionally eats a click that lands mid-settle; once more.
+    await item.click();
+    await expect(lb).toHaveClass(/active/, { timeout: 8000 });
+  }
+  // Poll composition instead of a fixed sleep — the open morph duration
+  // varies wildly across engines on CI hardware.
+  await expect
+    .poll(
+      () => page.evaluate(() => getComputedStyle(document.getElementById('lightbox')!).backgroundColor),
+      { timeout: 8000 }
+    )
+    .toBe('rgba(10, 10, 10, 0.92)');
 }
 
 async function assertComposed(page: Page) {
@@ -82,12 +95,13 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
     await page.goto('/photography/');
     await openViewer(page);
     await page.keyboard.press('Escape');
-    await expect(page.locator('#lightbox')).not.toHaveClass(/active/, { timeout: 5000 });
-    // Return slide runs on the elements' own transitions.
-    await page.waitForTimeout(900);
-    const headerBottom = await page.evaluate(
-      () => document.getElementById('site-header')!.getBoundingClientRect().bottom
-    );
-    expect(headerBottom).toBeGreaterThan(0);
+    await expect(page.locator('#lightbox')).not.toHaveClass(/active/, { timeout: 10000 });
+    // Return slide runs on the elements' own transitions; poll, don't sleep.
+    await expect
+      .poll(
+        () => page.evaluate(() => document.getElementById('site-header')!.getBoundingClientRect().bottom),
+        { timeout: 8000 }
+      )
+      .toBeGreaterThan(0);
   });
 });

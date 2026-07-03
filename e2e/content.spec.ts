@@ -15,12 +15,16 @@ test.describe('Homepage', () => {
     await expect(page.locator('a[href^="mailto:"]:visible').first()).toBeVisible();
   });
 
-  test('footer carries the scripture citation and socials', async ({ page }) => {
+  test('footer carries the scripture citation; socials live on the page', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('footer');
     await expect(footer).toContainText('15:13');
-    await expect(footer.locator('a[href*="linkedin.com"]').first()).toBeVisible();
-    await expect(footer.locator('a[href*="github.com"]').first()).toBeVisible();
+    // Socials moved out of the footer into the Connect section during the
+    // 2026-06 redesigns; this suite had never run green on main, so the
+    // stale footer assertion survived. The stable structure worth locking
+    // is their presence on the homepage. (CI-red repair, 2026-07-03)
+    await expect(page.locator('a[href*="linkedin.com"]').first()).toBeVisible();
+    await expect(page.locator('a[href*="github.com"]').first()).toBeVisible();
   });
 
   test('footer copyright shows the current year', async ({ page }) => {
@@ -46,10 +50,13 @@ test.describe('Photography gallery + lightbox', () => {
 
   test('lightbox opens from a tile and closes on Escape', async ({ page }) => {
     await page.goto('/photography');
-    await page.waitForTimeout(600); // gallery init binds after page load
-    await page.locator('[data-src^="/images/photography/hero/"]').first().click();
-    await expect(page.locator('#lightbox')).toBeVisible();
+    const tile = page.locator('[data-src^="/images/photography/hero/"]').first();
+    await tile.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800); // gallery init binds post-load; scroll settles
+    await tile.click();
+    // WebKit on CI hardware needs patience for the open/close morphs.
+    await expect(page.locator('#lightbox')).toBeVisible({ timeout: 10000 });
     await page.keyboard.press('Escape');
-    await expect(page.locator('#lightbox')).not.toBeVisible();
+    await expect(page.locator('#lightbox')).not.toBeVisible({ timeout: 10000 });
   });
 });
