@@ -8,11 +8,14 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function openViewer(page: Page) {
-  const item = page.locator('.gallery-item').first();
-  await item.scrollIntoViewIfNeeded();
+  // Click the tile IMAGE, not the anchor — the same target the long-green
+  // content.spec lightbox test uses; the anchor stalls WebKit's
+  // actionability checks on CI while the image clicks clean.
+  const tile = page.locator('[data-src^="/images/photography/hero/"]').first();
+  await tile.scrollIntoViewIfNeeded();
   // Let smooth-scroll momentum settle so the click lands as a click.
   await page.waitForTimeout(1000);
-  await item.click();
+  await tile.click();
   const lb = page.locator('#lightbox');
   try {
     await expect(lb).toHaveClass(/active/, { timeout: 4000 });
@@ -24,7 +27,13 @@ async function openViewer(page: Page) {
       await expect(page).toHaveURL(/\/photography\/?$/);
       await page.waitForTimeout(1200);
     }
-    await page.locator('.gallery-item').first().click();
+    // force: skip actionability — post-recovery pages keep long-running
+    // animations that stall the stability check; the controller's delegated
+    // listener only needs the event.
+    await page
+      .locator('[data-src^="/images/photography/hero/"]')
+      .first()
+      .click({ force: true, timeout: 10000 });
     await expect(lb).toHaveClass(/active/, { timeout: 8000 });
   }
   // Poll composition instead of a fixed sleep — the open morph duration
