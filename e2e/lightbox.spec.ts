@@ -8,17 +8,32 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function openViewer(page: Page) {
-  const item = page.locator('.gallery-item').first();
-  await item.scrollIntoViewIfNeeded();
+  // Click the tile IMAGE, not the anchor — the same target the long-green
+  // content.spec lightbox test uses; the anchor stalls WebKit's
+  // actionability checks on CI while the image clicks clean.
+  const tile = page.locator('[data-src^="/images/photography/hero/"]').first();
+  await tile.scrollIntoViewIfNeeded();
   // Let smooth-scroll momentum settle so the click lands as a click.
-  await page.waitForTimeout(800);
-  await item.click();
+  await page.waitForTimeout(1000);
+  await tile.click();
   const lb = page.locator('#lightbox');
   try {
     await expect(lb).toHaveClass(/active/, { timeout: 4000 });
   } catch {
-    // WebKit on CI occasionally eats a click that lands mid-settle; once more.
-    await item.click();
+    // If the controller had not bound yet, the tile's anchor NAVIGATED to
+    // the photo detail page (WebKit binds late on CI hardware). Recover.
+    if (!/\/photography\/?$/.test(new URL(page.url()).pathname)) {
+      await page.goBack();
+      await expect(page).toHaveURL(/\/photography\/?$/);
+      await page.waitForTimeout(1200);
+    }
+    // force: skip actionability — post-recovery pages keep long-running
+    // animations that stall the stability check; the controller's delegated
+    // listener only needs the event.
+    await page
+      .locator('[data-src^="/images/photography/hero/"]')
+      .first()
+      .click({ force: true, timeout: 10000 });
     await expect(lb).toHaveClass(/active/, { timeout: 8000 });
   }
   // Poll composition instead of a fixed sleep — the open morph duration
@@ -68,10 +83,13 @@ async function assertComposed(page: Page) {
   expect(img.fits).toBe(true);
 
   // Site chrome yields: the sticky header slides out of the viewport.
-  const headerBottom = await page.evaluate(
-    () => document.getElementById('site-header')!.getBoundingClientRect().bottom
-  );
-  expect(headerBottom).toBeLessThanOrEqual(0);
+  // Poll — the slide animates on the header's own 500ms transition.
+  await expect
+    .poll(
+      () => page.evaluate(() => document.getElementById('site-header')!.getBoundingClientRect().bottom),
+      { timeout: 8000 }
+    )
+    .toBeLessThanOrEqual(0);
 }
 
 test.describe('Photography lightbox composition (2026-07-02 incident locks)', () => {
