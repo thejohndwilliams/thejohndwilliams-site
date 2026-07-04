@@ -547,9 +547,16 @@ html[data-theme="black"] {
     }
   }
 
+  /* Honest-glass decision, 2026-07-04 (vault: Honest_Glass_Buttons): glass
+     is colorless — everything it shows is borrowed from the scene. The ivory
+     key is now TRANSLUCENT cream over a real backdrop blur, so the
+     photograph itself glows through the pill; no painted light anywhere on
+     the material. Blur/saturate within calibration bounds (≤44 / ≤1.85). */
   .btn-primary {
     color: #0a0a0a;
-    background: linear-gradient(180deg, #FBF6EE 0%, #F4EADE 52%, #ECDFCB 100%);
+    background: linear-gradient(180deg, rgba(251, 246, 238, 0.90) 0%, rgba(244, 234, 222, 0.84) 52%, rgba(236, 223, 203, 0.86) 100%);
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
     border: 1px solid rgba(255, 255, 255, 0.55);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.85),
@@ -569,9 +576,13 @@ html[data-theme="black"] {
       0 0 26px rgba(244, 234, 222, 0.16);
   }
 
+  /* Transmission is the outline key's resting identity too (was hover-only):
+     the dark glass ghosts the scene at rest and deepens on approach. */
   .btn-outline {
     color: #F4EADE;
-    background: linear-gradient(180deg, rgba(42, 44, 50, 0.60) 0%, rgba(16, 17, 21, 0.72) 100%);
+    background: linear-gradient(180deg, rgba(42, 44, 50, 0.46) 0%, rgba(16, 17, 21, 0.58) 100%);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
     border: 1px solid rgba(255, 255, 255, 0.20);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.26),
@@ -1462,7 +1473,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   background: conic-gradient(from 210deg,
     transparent 0deg,
     rgba(255,255,255,0.80) 26deg,
-    rgba(220,230,250,0.22) 50deg,
+    rgba(253,252,250,0.22) 50deg,
     transparent 88deg,
     transparent 175deg,
     rgba(255,255,255,0.50) 208deg,
@@ -1477,9 +1488,15 @@ footer.glass-footer:hover::after { opacity: 1; }
    idle bodies untouched; the material's thickness lives in the idle
    look. These overrides give every key a visible vessel at rest. */
 .btn-primary {
+  /* Honest-glass 2026-07-04: this idle-crystal override previously restated
+     the ivory as OPAQUE, silently defeating any transmission declared on the
+     base block (the cascade trap behind several "still not glass" rounds).
+     Translucent cream + real backdrop blur: the photograph glows through. */
   background:
-    radial-gradient(130% 100% at 50% 0%, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, #FBF6EE 0%, #F4EADE 52%, #ECDFCB 100%);
+    radial-gradient(130% 100% at 50% 0%, rgba(255,255,255,0.50), rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, rgba(251, 246, 238, 0.90) 0%, rgba(244, 234, 222, 0.84) 52%, rgba(236, 223, 203, 0.86) 100%);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.85),
     inset 0 -2px 2px 0 rgba(0, 0, 0, 0.08),
@@ -1489,9 +1506,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 .btn-outline {
   background:
     radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.10), transparent 55%),
-    linear-gradient(180deg, rgba(42, 44, 50, 0.55) 0%, rgba(16, 17, 21, 0.65) 100%);
-  backdrop-filter: blur(12px) saturate(1.6);
-  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+    linear-gradient(180deg, rgba(42, 44, 50, 0.46) 0%, rgba(16, 17, 21, 0.58) 100%);
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
   border-color: rgba(255, 255, 255, 0.28);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
@@ -1545,16 +1562,16 @@ footer.glass-footer:hover::after { opacity: 1; }
 
 /* A soft FEATHERED specular: a soft-box reflection on the glass, never a
    hard line. It breathes (slow, low amplitude) so the key feels alive —
-   liquid glass — and blooms gently on hover. Faint chromatic dispersion
-   lives in the feathered falloff (cyan into magenta), never a band. */
+   liquid glass — and blooms gently on hover. NEUTRAL ONLY (honest-glass
+   decision, 2026-07-04): glass reflects the scene's light as it is; the
+   old cyan/magenta side-lobes were hardcoded hues from nowhere in the
+   palette or the photographs, and read as a painted costume. On the ivory
+   key a white specular is quiet — that is correct; the translucent body
+   now carries the life instead. */
 @keyframes btn-breathe {
   0%, 100% { opacity: 0.55; transform: scale(1)    translateY(0); }
   50%      { opacity: 0.74; transform: scale(1.06) translateY(-1.5px); }
 }
-/* Feathered specular. NOTE: no `mix-blend: screen` — screen can't shift a
-   near-white (ivory) key, so the primary read as untouched. Normal blend +
-   chromatic side-lobes (cyan left / magenta right) that carry on BOTH the
-   ivory primary and the dark outline; the soft cool core is the glass glint. */
 .btn-primary::after,
 .btn-outline::after {
   content: '';
@@ -1565,11 +1582,9 @@ footer.glass-footer:hover::after { opacity: 1; }
   pointer-events: none;
   z-index: 2;                 /* above the static crystal rim (::before, z1) */
   background:
-    radial-gradient(60% 90% at 50% 14%, rgba(255,255,255,0.80) 0%, rgba(228,242,255,0.30) 40%, transparent 72%),
-    radial-gradient(54% 86% at 28% 20%, rgba(64,180,255,0.62) 0%, transparent 60%),
-    radial-gradient(54% 86% at 72% 20%, rgba(255,116,198,0.56) 0%, transparent 60%);
+    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.78) 0%, rgba(253, 252, 250, 0.26) 42%, transparent 72%);
   filter: blur(3.5px);
-  opacity: 0.55;
+  opacity: 0.5;
   transform-origin: 50% 28%;
   animation: btn-breathe 6.5s ease-in-out infinite;
 }
@@ -1577,9 +1592,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 .btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
   animation-duration: 4.5s;
   background:
-    radial-gradient(60% 90% at 50% 14%, rgba(255,255,255,0.92) 0%, rgba(228,242,255,0.42) 40%, transparent 72%),
-    radial-gradient(54% 86% at 28% 20%, rgba(64,180,255,0.82) 0%, transparent 60%),
-    radial-gradient(54% 86% at 72% 20%, rgba(255,116,198,0.76) 0%, transparent 60%);
+    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.92) 0%, rgba(253, 252, 250, 0.36) 42%, transparent 72%);
 }
 
 /* The bubble inflates into translucence on approach: a hair more
@@ -1619,16 +1632,16 @@ footer.glass-footer:hover::after { opacity: 1; }
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;     /* border-only ring; no url() masks (iOS-safe) */
-  /* Saturated chroma only — the earlier white arcs vanished on the ivory key.
-     Blue-hour -> cyan -> violet -> magenta reads on ivory AND on the dark
-     outline. */
+  /* Neutral light with the palette's one accent (honest-glass, 2026-07-04):
+     ivory arcs into navy-hour — the sanctioned active-state hue — replacing
+     the old cyan/violet/magenta rainbow, which was chroma from nowhere. The
+     white arcs read now because the translucent key darkens over the scene. */
   background: conic-gradient(from 210deg,
-    rgba(96,184,255,0.95),
-    rgba(126,156,184,0.88) 66deg,
-    rgba(198,150,255,0.94) 148deg,
-    rgba(255,120,196,0.97) 216deg,
-    rgba(138,206,255,0.94) 300deg,
-    rgba(96,184,255,0.95));
+    rgba(253, 252, 250, 0.95),
+    rgba(126, 156, 184, 0.90) 90deg,
+    rgba(253, 252, 250, 0.82) 180deg,
+    rgba(126, 156, 184, 0.92) 270deg,
+    rgba(253, 252, 250, 0.95));
   opacity: 0;
 }
 @media (hover: hover) and (pointer: fine) {

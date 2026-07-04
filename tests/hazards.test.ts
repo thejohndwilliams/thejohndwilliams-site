@@ -55,6 +55,26 @@ describe('hazard locks: source', () => {
     expect(hits).toEqual([]);
   });
 
+  it('button glass carries no off-palette chroma — glass is colorless (honest-glass decision, 2026-07-04)', () => {
+    // The material wore hardcoded cyan/pink specular lobes and a
+    // blue-violet-magenta wake ring: hues from nowhere in the tokens or the
+    // photographs, reading as a painted costume ("what glass is supposed to
+    // look like") instead of a material response to the scene. Glass borrows;
+    // it does not own color. Allowed hues on controls: white/cream neutrals
+    // and navy-hour #7E9CB8 / rgb(126,156,184) for active states.
+    const css = readFileSync(join(SRC, 'styles', 'global.css'), 'utf8');
+    const banned = [
+      '64,180,255', '64, 180, 255',
+      '255,116,198', '255, 116, 198',
+      '198,150,255', '198, 150, 255',
+      '255,120,196', '255, 120, 196',
+      '96,184,255', '96, 184, 255',
+      '138,206,255', '138, 206, 255',
+    ];
+    const hits = banned.filter((b) => css.includes(b));
+    expect(hits).toEqual([]);
+  });
+
   it('color-utility alpha modifiers are scale values or bracketed — bare /92 is a silent no-op (transparent-lightbox incident, 2026-07-02)', () => {
     // bg-[#0a0a0a]/92 generated NOTHING (92 is not on Tailwind's default
     // opacity scale) and the lightbox backdrop shipped transparent from
