@@ -548,6 +548,35 @@ const jsonLd = {
     pointer-events: none;
   }
 
+  /* Light-reveal (experiment, 2026-07-03 — vault: Monokern_Workflow_Adoption).
+     The cursor develops the print. Spec: base = the graded tile as shipped;
+     revealed = a warm lift rendered by backdrop-filter on a pseudo-layer (no
+     second image, zero added bytes) through a feathered radial mask that
+     follows --mx/--my; motion = the mask follows the pointer via the rAF
+     tracker in the gallery controller; touch and reduced-motion never bind
+     the tracker, so hover shows only a soft centered lift there. Gradient
+     mask, never url() (iOS hazard); backdrop-filter with functions only
+     (url() banned). One light per surface: the lit tile IS the active tile.
+     ::before because .glass-luminous owns ::after; z-index 1 lifts it above
+     the static <picture> (the hover scrim and caption also sit under it —
+     they warm slightly inside the beam; John judges on preview). */
+  @media (hover: hover) and (pointer: fine) {
+    .gallery-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      backdrop-filter: brightness(1.18) saturate(1.12) sepia(0.05);
+      -webkit-backdrop-filter: brightness(1.18) saturate(1.12) sepia(0.05);
+      -webkit-mask-image: radial-gradient(130px 130px at var(--mx, 50%) var(--my, 50%), rgba(0,0,0,0.9), rgba(0,0,0,0.35) 55%, transparent 78%);
+      mask-image: radial-gradient(130px 130px at var(--mx, 50%) var(--my, 50%), rgba(0,0,0,0.9), rgba(0,0,0,0.35) 55%, transparent 78%);
+    }
+    .gallery-item:hover::before { opacity: 1; }
+  }
+
   /* Develop-from-black: photos settle up out of shadow as they load. JS adds
      .developing only to not-yet-loaded imgs and removes on load - a JS failure
      can never hide them (visible by default). */
@@ -598,6 +627,40 @@ const jsonLd = {
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
     const items = document.querySelectorAll('.gallery-item');
+
+    // Light-reveal tracker (experiment, 2026-07-03): writes --mx/--my on the
+    // hovered tile for the masked warm lift. rAF-throttled, passive, dies
+    // with the gallery AbortController. Touch and reduced-motion never bind,
+    // matching initGlassSpecular's gates in BaseLayout.
+    if (
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      let lrPending = false;
+      let lrX = 0;
+      let lrY = 0;
+      let lrTile: HTMLElement | null = null;
+      document.addEventListener(
+        'pointermove',
+        (e) => {
+          const t = (e.target as Element | null)?.closest?.('.gallery-item') as HTMLElement | null;
+          if (!t) return;
+          lrTile = t;
+          lrX = e.clientX;
+          lrY = e.clientY;
+          if (lrPending) return;
+          lrPending = true;
+          requestAnimationFrame(() => {
+            lrPending = false;
+            if (!lrTile) return;
+            const r = lrTile.getBoundingClientRect();
+            lrTile.style.setProperty('--mx', ((lrX - r.left) / r.width) * 100 + '%');
+            lrTile.style.setProperty('--my', ((lrY - r.top) / r.height) * 100 + '%');
+          });
+        },
+        { signal, passive: true }
+      );
+    }
     const closeBtn = document.getElementById('lightbox-close');
     let currentIndex = 0;
     let visibleItems: Element[] = [];
