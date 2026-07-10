@@ -718,11 +718,27 @@ const jsonLd = {
     }
 
     // -- Slide engine: compositor-only transforms, one animation in flight. --
+    // Hardened 2026-07-08 after John's field report (arrow-key ghosting on
+    // desktop; occasional page death on iOS while switching). Two defects:
+    // (1) the swap changed src on the single <img> and slid it straight back
+    //     in — browsers paint the PREVIOUS bitmap until the new source
+    //     decodes, so the old photo visibly rode back across the screen;
+    // (2) the pending swap setTimeout was never cancelled, so rapid input
+    //     stacked swap closures fighting over one element — stale frames on
+    //     desktop, and on iOS a pile-up of concurrent large decodes that
+    //     trips Safari's memory watchdog.
+    // Now: ONE cancellable timer, a generation token so superseded swaps
+    // no-op entirely (at most one decode per settled navigation), and a
+    // decode() gate so the new frame is paintable before it slides in —
+    // capped at 400ms so slow networks jump-cut instead of hanging.
     let animating = false;
+    let swapTimer = 0;
+    let navToken = 0;
     const slideMs = () => (reduceMo.matches ? 0 : 170);
     function snapComplete() {
       // jump-cut: finish any running slide instantly so rapid input stays
       // bounded instead of queueing snapshots or transitions.
+      window.clearTimeout(swapTimer);
       lightboxImg.style.transition = 'none';
       lightboxImg.style.transform = '';
       lightboxImg.style.opacity = '';
@@ -734,27 +750,32 @@ const jsonLd = {
       updateVisibleItems();
       if (!visibleItems.length) return;
       animating = true;
+      const token = ++navToken;
       currentIndex = (currentIndex + dir + visibleItems.length) % visibleItems.length;
       const item = visibleItems[currentIndex] as HTMLElement;
-      const out = () => {
-        lightboxImg.style.transition = `transform ${slideMs()}ms ease-in, opacity ${slideMs()}ms ease-in`;
-        lightboxImg.style.transform = `translateX(${dir * -34}vw)`;
-        lightboxImg.style.opacity = '0';
-      };
       const swapIn = () => {
+        if (token !== navToken) return; // superseded by newer input
         setLightboxImage(item);
-        lightboxImg.style.transition = 'none';
-        lightboxImg.style.transform = `translateX(${dir * 34}vw)`;
-        void lightboxImg.offsetWidth;
-        lightboxImg.style.transition = `transform ${slideMs()}ms ease-out, opacity ${slideMs()}ms ease-out`;
-        lightboxImg.style.transform = '';
-        lightboxImg.style.opacity = '1';
-        prefetchNeighbors();
-        window.setTimeout(() => { animating = false; lightboxImg.style.transition = ''; }, slideMs() + 30);
+        Promise.race([
+          lightboxImg.decode().catch(() => {}),
+          new Promise((r) => window.setTimeout(r, 400)),
+        ]).then(() => {
+          if (token !== navToken) return;
+          lightboxImg.style.transition = 'none';
+          lightboxImg.style.transform = `translateX(${dir * 34}vw)`;
+          void lightboxImg.offsetWidth;
+          lightboxImg.style.transition = `transform ${slideMs()}ms ease-out, opacity ${slideMs()}ms ease-out`;
+          lightboxImg.style.transform = '';
+          lightboxImg.style.opacity = '1';
+          prefetchNeighbors();
+          swapTimer = window.setTimeout(() => { animating = false; lightboxImg.style.transition = ''; }, slideMs() + 30);
+        });
       };
       if (slideMs() === 0) { setLightboxImage(item); prefetchNeighbors(); animating = false; return; }
-      out();
-      window.setTimeout(swapIn, slideMs());
+      lightboxImg.style.transition = `transform ${slideMs()}ms ease-in, opacity ${slideMs()}ms ease-in`;
+      lightboxImg.style.transform = `translateX(${dir * -34}vw)`;
+      lightboxImg.style.opacity = '0';
+      swapTimer = window.setTimeout(swapIn, slideMs());
       armIdle();
     }
     const navigate = (dir: number) => slideTo(dir);
