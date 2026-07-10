@@ -109,6 +109,34 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
     await assertComposed(page);
   });
 
+  test('arrow navigation swaps frames cleanly and bursts stay bounded', async ({ page }) => {
+    // 2026-07-08 field report: the old swap slid the SAME <img> back in
+    // before its new source decoded (the previous photo visibly rode across
+    // the screen), and uncancelled swap timers stacked under rapid input
+    // (stale frames; decode pile-ups that killed iOS). Lock the fixed
+    // behavior: a settled navigation shows a NEW, fully decoded, untransformed
+    // frame, and a rapid burst coalesces to a stable settled frame.
+    await page.goto('/photography/');
+    await openViewer(page);
+    const settled = () =>
+      page.evaluate(() => {
+        const i = document.getElementById('lightbox-img') as HTMLImageElement;
+        return i.complete && getComputedStyle(i).opacity === '1' && i.style.transform === '' ? i.currentSrc : '';
+      });
+    const before = await settled();
+    expect(before).not.toBe('');
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(settled, { timeout: 8000 }).not.toBe('');
+    const after = await settled();
+    expect(after).not.toBe(before);
+    // Burst: five rapid presses must coalesce, not stack.
+    for (let k = 0; k < 5; k++) {
+      await page.keyboard.press('ArrowRight');
+      await page.waitForTimeout(45);
+    }
+    await expect.poll(settled, { timeout: 8000 }).not.toBe('');
+  });
+
   test('Escape closes the viewer and restores the chrome', async ({ page }) => {
     await page.goto('/photography/');
     await openViewer(page);
