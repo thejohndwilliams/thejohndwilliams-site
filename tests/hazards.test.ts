@@ -130,4 +130,27 @@ describe('hazard locks: built output', () => {
       .map((p) => p.slice(ROOT.length));
     expect(hits).toEqual([]);
   });
+
+  it('voice law: no ascent/status phrases in any built page (design/VOICE.md, adopted 2026-07-11)', () => {
+    if (!existsSync(DIST)) {
+      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      return;
+    }
+    // Lowercase substring bans: unfinished credentials, future claims,
+    // self-advocacy, interrupted-life vignettes, GPA. Scoped tightly so an
+    // essay can still say "on the way to the airport" mid-sentence; only the
+    // clause-terminal promise form is banned.
+    const bannedLower = ['(in progress)', 'coming soon', 'on the way.', 'not a hobby', 'life intervened', '3.86'];
+    // Case-sensitive: "Rising" as rendered element text (eyebrow/heading).
+    // Lowercase "rising" stays legal in captions and alt text.
+    const bannedExact = ['>Rising<'];
+    const offenders: string[] = [];
+    for (const p of walk(DIST, ['.html'])) {
+      const body = readFileSync(p, 'utf8');
+      const lower = body.toLowerCase();
+      for (const phrase of bannedLower) if (lower.includes(phrase)) offenders.push(`${p.slice(ROOT.length)} :: ${phrase}`);
+      for (const phrase of bannedExact) if (body.includes(phrase)) offenders.push(`${p.slice(ROOT.length)} :: ${phrase}`);
+    }
+    expect(offenders).toEqual([]);
+  });
 });
