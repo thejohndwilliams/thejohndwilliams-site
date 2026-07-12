@@ -54,6 +54,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         <a href="/about" data-path="/about" aria-label="About" class={`m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full transition-colors duration-300 ${currentPath === '/about' ? 'text-navy-hour' : 'text-mute'}`} aria-current={currentPath === '/about' ? 'page' : undefined}>
           <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.7" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M5.6 19.8a6.4 6.4 0 0 1 12.8 0" /></svg>
         </a>
+        <a href="mailto:jndwcreative@gmail.com" aria-label="Inquire" class="m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute transition-colors duration-300">
+          <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.8" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="m4.5 7.2 7.5 5.4 7.5-5.4" /></svg>
+        </a>
         <button type="button" class="theme-toggle flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute hover:text-cream transition-colors duration-300" aria-pressed="false" aria-label="Switch to true black background">
           <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
         </button>

@@ -46,7 +46,7 @@ const socialLinks = [
   {
     name: 'GitHub',
     url: 'https://github.com/thejohndwilliams',
-    description: 'Code & projects',
+    description: 'Code',
     icon: '/images/previews/github.svg',
     hero: '/images/github-hero.webp',
     heroFallback: '/images/github-hero.jpg',
@@ -55,7 +55,7 @@ const socialLinks = [
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/thejohndwilliams/',
-    description: 'Visual journal',
+    description: 'Photography',
     icon: '/images/previews/instagram.svg',
     hero: '/images/instagram-hero.webp',
     heroFallback: '/images/instagram-hero.jpg',
@@ -64,7 +64,7 @@ const socialLinks = [
   {
     name: 'Behance',
     url: 'https://www.behance.net/killthewizard',
-    description: 'Design work',
+    description: 'Design',
     icon: '/images/previews/behance.svg',
     hero: '/images/behance-hero.webp',
     heroFallback: '/images/behance-hero.jpg',
@@ -109,7 +109,10 @@ const socialLinks = [
     <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">making visible</p>
-        <h1 class="t-title mb-6 sm:mb-8 font-serif tracking-tight" transition:name="site-title">John D. Williams</h1>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight" transition:name="site-title">John D. Williams</h1>
+        <p class="text-sm sm:text-base leading-relaxed opacity-70 max-w-xl mb-6 sm:mb-8">
+          Enterprise operations, satellite communications. Fine-art photographer.
+        </p>
       </div>
 
       <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
@@ -117,8 +120,8 @@ const socialLinks = [
           About me
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </a>
-        <a href="mailto:jndwcreative@gmail.com" class="btn btn-outline w-full sm:w-auto">
-          Inquire
+        <a href="/photography" class="btn btn-outline w-full sm:w-auto">
+          Photography
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </a>
       </div>
@@ -126,8 +129,56 @@ const socialLinks = [
   </section>
 
 
-  {/* IN SERVICE - charitable organizations, staggered bento */}
+  {/* NAVIGATION CARDS - bento grid with visual hierarchy */}
   <section class="section-light py-12 sm:py-16 md:py-24">
+    <div class="container-wide">
+      <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
+      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
+        {/* Photography - hero card, spans 2 rows on desktop */}
+        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
+          <img
+            src="/images/photography/gallery/dscf0952.webp"
+            srcset="/images/photography/thumb/dscf0952.webp 400w, /images/photography/gallery/dscf0952.webp 1200w, /images/photography/hero/dscf0952.webp 2400w"
+            sizes="(max-width: 767px) 100vw, 58vw"
+            alt="Serene river landscape with traditional wooden boats and forested hills" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
+            <h3 class="t-sub font-serif mb-1.5 group-hover:text-cream transition-colors duration-300">Photography</h3>
+            <p class="text-xs sm:text-sm opacity-60">Sky, earth, water, structure, light.</p>
+          </div>
+        </a>
+        {/* About */}
+        <a href="/about" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
+          <img
+            src="/images/photography/gallery/7r52258.webp"
+            srcset="/images/photography/thumb/7r52258.webp 400w, /images/photography/gallery/7r52258.webp 1200w"
+            sizes="(max-width: 767px) 100vw, 42vw"
+            alt="Cumulus cloud formation rising against a deep blue-black sky" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+            <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">About</h3>
+            <p class="text-xs opacity-60">Security engineer. Film-trained eye.</p>
+          </div>
+        </a>
+        {/* Work */}
+        <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
+          <img
+            src="/images/photography/gallery/dscf0530.webp"
+            srcset="/images/photography/thumb/dscf0530.webp 400w, /images/photography/gallery/dscf0530.webp 1200w"
+            sizes="(max-width: 767px) 100vw, 42vw"
+            alt="Night urban street scene with warm-lit buildings and neon signage" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+            <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">Work</h3>
+            <p class="text-xs opacity-60">Data, security, operations.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* IN SERVICE - charitable organizations, staggered bento */}
+  <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">In Service</h2>
       <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
@@ -174,54 +225,6 @@ const socialLinks = [
             </a>
           );
         })}
-      </div>
-    </div>
-  </section>
-
-  {/* NAVIGATION CARDS - bento grid with visual hierarchy */}
-  <section class="py-12 sm:py-16 md:py-24">
-    <div class="container-wide">
-      <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
-      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
-        {/* Photography - hero card, spans 2 rows on desktop */}
-        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
-          <img
-            src="/images/photography/gallery/dscf0952.webp"
-            srcset="/images/photography/thumb/dscf0952.webp 400w, /images/photography/gallery/dscf0952.webp 1200w, /images/photography/hero/dscf0952.webp 2400w"
-            sizes="(max-width: 767px) 100vw, 58vw"
-            alt="Serene river landscape with traditional wooden boats and forested hills" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
-            <h3 class="t-sub font-serif mb-1.5 group-hover:text-cream transition-colors duration-300">Photography</h3>
-            <p class="text-xs sm:text-sm opacity-60">Sky, earth, water, structure, light.</p>
-          </div>
-        </a>
-        {/* About */}
-        <a href="/about" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
-          <img
-            src="/images/photography/gallery/7r52258.webp"
-            srcset="/images/photography/thumb/7r52258.webp 400w, /images/photography/gallery/7r52258.webp 1200w"
-            sizes="(max-width: 767px) 100vw, 42vw"
-            alt="Cumulus cloud formation rising against a deep blue-black sky" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-            <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">About</h3>
-            <p class="text-xs opacity-60">Film graduate turned security engineer</p>
-          </div>
-        </a>
-        {/* Work */}
-        <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500">
-          <img
-            src="/images/photography/gallery/dscf0530.webp"
-            srcset="/images/photography/thumb/dscf0530.webp 400w, /images/photography/gallery/dscf0530.webp 1200w"
-            sizes="(max-width: 767px) 100vw, 42vw"
-            alt="Night urban street scene with warm-lit buildings and neon signage" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-            <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">Work</h3>
-            <p class="text-xs opacity-60">Built, shipped, open-sourced</p>
-          </div>
-        </a>
       </div>
     </div>
   </section>
