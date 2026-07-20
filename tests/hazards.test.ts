@@ -118,6 +118,31 @@ describe('hazard locks: source', () => {
   });
 });
 
+describe('hazard locks: p1 review fixes (2026-07-19)', () => {
+  // Tri-fleet code review P1s. Each lock pins the FIX pattern in source so a
+  // refactor cannot silently reintroduce the defect class.
+  const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
+  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const lab = readFileSync(join(SRC, 'pages/about-lab.astro'), 'utf8');
+
+  it('initBottomNav tears down via AbortController — per-swap window listeners retained detached page trees (2026-06-09 class)', () => {
+    expect(base).toMatch(/bottomNavAbort\?\.abort\(\)/);
+    expect(base).toMatch(/\{ passive: true, signal \}/);
+  });
+
+  it('after-swap owner restarts Lenis and clears lb-open — history-back with the viewer open left scroll dead site-wide', () => {
+    const afterSwap = base.slice(base.indexOf("astro:after-swap', () => {", base.indexOf('import Lenis')));
+    expect(afterSwap).toContain("classList.remove('lb-open')");
+    expect(afterSwap).toContain('lenis.start?.()');
+    expect(gallery).toContain('__lenis?.start?.()');
+  });
+
+  it('about-lab is gated off the production branch — "Private" lab copy served publicly on main', () => {
+    expect(lab).toMatch(/CF_PAGES_BRANCH[\s\S]{0,80}=== 'main'/);
+    expect(lab).toContain("Astro.redirect('/', 308)");
+  });
+});
+
 describe('hazard locks: built output', () => {
   // Runs against dist/, so the build must precede vitest (npm run gate does).
   it('no em-dash in any built page (standing copy law)', () => {

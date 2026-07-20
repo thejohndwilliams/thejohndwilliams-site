@@ -67,5 +67,6 @@ Disallow: /
 # --- Search engines (allowed) -------------------------------------------------
 User-agent: *
 Allow: /
+Disallow: /about-lab
 
 Sitemap: https://thejohndwilliams.com/sitemap-index.xml
