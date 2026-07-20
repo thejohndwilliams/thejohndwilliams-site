@@ -354,8 +354,8 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).not.toContain('url(#glass-lens)');
   });
 
-  it('defines .glass-tabbar for the mobile bottom nav', () => {
-    expect(cssBundle).toContain('.glass-tabbar');
+  it('.glass-tabbar stays retired — the bottom tab bar was removed 2026-07 (collided with browser chrome); its material was dead CSS until the P3 sweep (2026-07-19)', () => {
+    expect(cssBundle).not.toContain('.glass-tabbar');
   });
 
   it('defines the backlit-crystal chip lens (2026-06-10)', () => {

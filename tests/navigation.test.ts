@@ -48,7 +48,7 @@ describe('navItems', () => {
 
 describe('socialLinks', () => {
   it('has the correct number of social links', () => {
-    expect(socialLinks).toHaveLength(3);
+    expect(socialLinks).toHaveLength(4);
   });
 
   it('contains all required social platforms', () => {
@@ -56,6 +56,7 @@ describe('socialLinks', () => {
     expect(names).toContain('LinkedIn');
     expect(names).toContain('GitHub');
     expect(names).toContain('Instagram');
+    expect(names).toContain('Behance');
   });
 
   it('each link has both name and url properties', () => {

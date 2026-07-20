@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate } from '../utils/date';
 
 const lastUpdated = '2026-06-09';
 ---
@@ -12,7 +13,7 @@ const lastUpdated = '2026-06-09';
     <div class="container-narrow max-w-2xl">
       <p class="eyebrow mb-3 sm:mb-4">Fine Print</p>
       <h1 class="mb-6 sm:mb-8">Privacy</h1>
-      <p class="text-sm opacity-60 mb-8 sm:mb-12">Last updated: {lastUpdated}</p>
+      <p class="text-sm opacity-60 mb-8 sm:mb-12">Last updated: {formatDate(lastUpdated)}</p>
 
       <div class="prose max-w-none space-y-6 text-base sm:text-lg opacity-90 leading-relaxed">
         <p>

@@ -6,7 +6,7 @@ Personal website for John D. Williams. Built with Astro, styled with Tailwind CS
 
 - **Framework**: Astro 4.x
 - **Styling**: Tailwind CSS
-- **Fonts**: Libre Baskerville (serif), Source Sans 3 (sans), JetBrains Mono (mono)
+- **Fonts**: IBM Plex Sans (UI), EB Garamond (display serif), JetBrains Mono (code). Libre Baskerville and Source Sans 3 are retired.
 - **Deployment**: Cloudflare Pages
 
 ## Getting Started
@@ -131,3 +131,5 @@ Then add the post metadata to the array in `src/pages/writing.astro`.
 ## License
 
 © John D. Williams. All rights reserved.
+
+Mobile hero art-direction crops are committed assets: regenerate with `npm run build:portraits` when a hero photograph changes.

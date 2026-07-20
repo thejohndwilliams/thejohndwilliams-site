@@ -353,52 +353,6 @@ html[data-theme="black"] {
      the Chrome-only flair at the cost of mobile breakage. If re-added
      later, gate on runtime JS feature-detection, not @supports. */
 
-  /* Mobile bottom tab bar - glass parity with .glass-nav. Same blur
-     and saturate; border-top instead of border-bottom; rim highlight
-     at the top edge (light-from-above convention reads the same on a
-     surface above or below content). */
-  .glass-tabbar {
-    position: relative;
-    background: rgba(10, 10, 10, 0.72);
-    backdrop-filter: blur(40px) saturate(1.8);
-    -webkit-backdrop-filter: blur(40px) saturate(1.8);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04);
-  }
-
-  .glass-tabbar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.09) 0%,
-      rgba(255, 255, 255, 0.025) 35%,
-      transparent 70%
-    );
-    z-index: 0;
-  }
-
-  .glass-tabbar > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Mobile tab items - premium active state: blue-hour lift + glow + dot.
-     Inactive items sit muted; the active tab rises and warms with the sky note. */
-  .bottom-nav-item { position: relative; transition: color .35s ease, opacity .35s ease; }
-  .bottom-nav-item svg { transition: transform .4s cubic-bezier(.22,.61,.36,1), filter .4s ease; }
-  .bottom-nav-item.text-navy-hour { opacity: 1; }
-  .bottom-nav-item.text-navy-hour svg { transform: translateY(-2px) scale(1.08); filter: drop-shadow(0 2px 9px rgba(126,156,184,.45)); }
-  .bottom-nav-item.text-navy-hour::after {
-    content: ''; position: absolute; bottom: 2px; left: 50%; width: 4px; height: 4px;
-    margin-left: -2px; border-radius: 999px; background: #7E9CB8; box-shadow: 0 0 6px rgba(126,156,184,.85);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .bottom-nav-item svg { transition: none; }
-    .bottom-nav-item.text-navy-hour svg { transform: none; }
-  }
 
   /* Reduced-motion - disable pointer-tracked specular animation by
      pinning the variables to the default idle position. The static
@@ -435,6 +389,9 @@ html[data-theme="black"] {
     );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
+    /* P3 fix, 2026-07-19: standard longhand alongside the -webkit path so
+       Firefox composites the border mask instead of painting a solid fill. */
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -872,16 +829,13 @@ html.lenis body { height: auto; }
     0 0 60px rgba(126, 156, 184, 0.18);
 }
 .glass-nav,
-.glass-tabbar,
 #site-header {
   background: rgba(10, 10, 10, 0.44);
   backdrop-filter: blur(44px) saturate(1.85);
   -webkit-backdrop-filter: blur(44px) saturate(1.85);
 }
 .glass-nav { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
-.glass-tabbar { border-top: 1px solid rgba(255, 255, 255, 0.16); }
-.glass-nav::before,
-.glass-tabbar::before {
+.glass-nav::before {
   background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 38%, transparent 72%);
 }
 #site-header {
@@ -897,24 +851,6 @@ html.lenis body { height: auto; }
 
 
 /* Touch sheen - only where there is no pointer; calm periods, low alpha. */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
-  .glass-tabbar { overflow: hidden; }
-  .glass-tabbar::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.12) 50%, transparent 62%);
-    transform: translateX(-120%);
-    animation: glass-sweep 9s ease-in-out infinite;
-  }
-}
-@keyframes glass-sweep {
-  0%   { transform: translateX(-120%); }
-  55%  { transform: translateX(120%); }
-  100% { transform: translateX(120%); }
-}
 
 /* ============================================================
    LIQUID GLASS v2.3 - footer + mobile complications get the material
@@ -1010,11 +946,6 @@ html.lenis body { height: auto; }
    lift, glow, or sweep. The decorative v2.3 nav rules above were
    removed; this is the only nav-item styling.
    ============================================================ */
-.glass-tabbar { overflow: visible; }
-.glass-tabbar::after { content: none; }
-.bottom-nav-item { position: relative; background: transparent; border: 0; box-shadow: none; border-radius: 0; }
-.bottom-nav-item.text-navy-hour::after { content: none; }
-.bottom-nav-item.text-navy-hour svg { transform: none; filter: none; }
 
 /* ---------------------------------------------------------------------------
    Mobile top nav (the section icons live in the header beside JW; there is no
@@ -1544,7 +1475,6 @@ footer.glass-footer:hover::after { opacity: 1; }
 .theme-toggle[aria-pressed="true"] svg {
   filter: drop-shadow(0 0 6px rgba(126,156,184,0.55));
 }
-
 
 
 /* ============================================================
