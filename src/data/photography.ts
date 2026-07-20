@@ -177,7 +177,10 @@ export const categories: PhotoCategory[] = [
 ];
 
 /** Total image count across all categories */
-export const totalImages = categories.reduce((sum, cat) => sum + cat.images.length, 0);
+// P2 fix, 2026-07-19: count DISTINCT files. Showcase categories re-list
+// images from home categories (see the slug lookup below); the raw sum
+// overstated the public count on /photography.
+export const totalImages = new Set(categories.flatMap((cat) => cat.images.map((img) => img.file))).size;
 
 import placeholders from './photo-placeholders.json';
 

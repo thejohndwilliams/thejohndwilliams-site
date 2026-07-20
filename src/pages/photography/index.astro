@@ -419,7 +419,12 @@ const jsonLd = {
       if (initial) mark(initial, false);
     }
 
+    // P2 fix, 2026-07-19: the observer was recreated per visit and never
+    // disconnected, each one pinning the previous visit's detached gallery
+    // subtree. Module-level handle, disconnected on re-init (chipLens pattern).
+    let atmosObserver = null;
     function initAtmosphere() {
+      atmosObserver?.disconnect();
       const overlay = document.getElementById('atmos-overlay');
       if (!overlay) return;
 
@@ -437,7 +442,7 @@ const jsonLd = {
       const catLinks = document.querySelectorAll('.cat-link');
       let currentCat = '';
 
-      const observer = new IntersectionObserver((entries) => {
+      const observer = (atmosObserver = new IntersectionObserver((entries) => {
         let topmost = null;
         let topY = Infinity;
 
@@ -474,7 +479,7 @@ const jsonLd = {
       }, {
         threshold: 0.15,
         rootMargin: '-10% 0px -60% 0px'
-      });
+      }));
 
       sections.forEach(s => observer.observe(s));
     }
@@ -667,6 +672,11 @@ const jsonLd = {
     }
 
     function openLightbox(index: number) {
+      // P2 fix, 2026-07-19: a pending slide swap from a previous session
+      // (Escape mid-slide, reopen) must not fire into this one. Invalidate
+      // the token and cancel the timer before anything else.
+      navToken++;
+      snapComplete();
       updateVisibleItems();
       currentIndex = index;
       const item = visibleItems[currentIndex] as HTMLElement;
@@ -699,6 +709,11 @@ const jsonLd = {
     }
 
     function closeLightbox() {
+      // P2 fix, 2026-07-19: kill any in-flight slide before closing, else the
+      // pending swapIn fires post-close (stale fetches, desynced reopen) and
+      // Escape mid-slide morphs back to the wrong tile.
+      navToken++;
+      snapComplete();
       const src = tileImg(visibleItems[currentIndex] as HTMLElement);
       const hide = () => { lightbox.classList.remove('active'); document.documentElement.classList.remove('lb-open'); unlockScroll(); lastFocused?.focus(); };
       if (canVT() && src) {
@@ -729,6 +744,9 @@ const jsonLd = {
     let animating = false;
     let swapTimer = 0;
     let navToken = 0;
+    // P2 fix, 2026-07-19: the AbortController strips listeners but does not
+    // clear timeouts; a pending swap must die with the page session too.
+    signal.addEventListener('abort', () => { navToken++; window.clearTimeout(swapTimer); });
     const slideMs = () => (reduceMo.matches ? 0 : 170);
     function snapComplete() {
       // jump-cut: finish any running slide instantly so rapid input stays
