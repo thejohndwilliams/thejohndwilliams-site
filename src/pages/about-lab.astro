@@ -7,6 +7,14 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
 // stacked-canvas plate vs the true-3D depth-mapped WebGL point cloud, for
 // every featured photograph. Built for John's in-browser judgement on the
 // preview deployment; not part of the production page set.
+// P1 lock, 2026-07-19: this lab must never ship on the production branch.
+// Cloudflare Pages sets CF_PAGES_BRANCH at build time; on main the route
+// becomes a plain redirect home, so no "Private" copy exists in production
+// HTML. Preview branches and local builds keep the full lab.
+if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
+  return Astro.redirect('/', 308);
+}
+
 const ROWS = [
   { id: 'earth', label: 'Earth · rain-wet leaf', note: 'A dark subject. Luminance buries it; depth stands it forward.' },
   { id: 'structure', label: 'Structure · Shanghai Tower', note: 'Shot against bright sky. Depth keeps the tower near, the sky far.' },

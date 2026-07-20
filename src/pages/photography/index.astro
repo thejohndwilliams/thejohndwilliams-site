@@ -580,6 +580,10 @@ const jsonLd = {
     // so a viewer left open on /photography must not hide the chrome
     // site-wide after navigating away.
     document.documentElement.classList.remove('lb-open');
+    // P1 lock, 2026-07-19: the scroll lock stops the persisted Lenis
+    // singleton; if unlockScroll never ran (history-back with the viewer
+    // open), restart it here. start() is idempotent when already running.
+    (window as any).__lenis?.start?.();
     const lightbox = document.getElementById('lightbox');
     if (!lightbox) return; // other pages: bind nothing, leak nothing
     galleryAbort = new AbortController();
