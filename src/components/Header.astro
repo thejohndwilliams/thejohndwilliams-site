@@ -90,24 +90,32 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     });
   }
 
+  // P2 fix, 2026-07-19: the header persists across view transitions but this
+  // ran on every astro:after-swap, stacking one window scroll listener per
+  // navigation (N listeners each scheduling their own rAF). Bind once at
+  // module scope; re-runs only refresh the initial scrolled state.
+  let glassHeaderBound = false;
   function initGlassHeader() {
     const header = document.getElementById('site-header');
     if (!header) return;
 
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (window.scrollY > 40) {
-            header.classList.add('scrolled');
-          } else {
-            header.classList.remove('scrolled');
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
+    if (!glassHeaderBound) {
+      glassHeaderBound = true;
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            if (window.scrollY > 40) {
+              header.classList.add('scrolled');
+            } else {
+              header.classList.remove('scrolled');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    }
 
     if (window.scrollY > 40) header.classList.add('scrolled');
   }
@@ -119,8 +127,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
   function initThemeToggle() {
     const btns = document.querySelectorAll('.theme-toggle');
     if (!btns.length) return;
-    const meta = document.querySelector('meta[name="theme-color"]');
+    // P3 fix, 2026-07-19: query the meta per sync, not once. The bound-once
+    // click closure outlives head swaps; a captured meta goes detached after
+    // the first navigation and status-bar color writes went nowhere.
     const sync = () => {
+      const meta = document.querySelector('meta[name="theme-color"]');
       const black = document.documentElement.getAttribute('data-theme') === 'black';
       btns.forEach((b) => {
         b.setAttribute('aria-pressed', String(black));

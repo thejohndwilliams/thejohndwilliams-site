@@ -30,9 +30,15 @@ describe('Photography manifest ↔ disk contract', () => {
     expect(missing, `missing variants:\n${missing.join('\n')}`).toEqual([]);
   });
 
-  it('totalImages matches sum of category images (including showcase re-listings)', () => {
-    const sum = categories.reduce((n, c) => n + c.images.length, 0);
-    expect(totalImages).toBe(sum);
+  it('totalImages counts DISTINCT files, not showcase re-listings (P2 fix, 2026-07-19)', () => {
+    // The public /photography line reads "{totalImages} selected"; selected
+    // means distinct photographs. The old lock here codified the raw sum,
+    // which overstated the count whenever a showcase re-listed a home-category
+    // image. Same canon as the slug lookup and keyboard-nav dedup.
+    const distinct = new Set(categories.flatMap((c) => c.images.map((i) => i.file))).size;
+    expect(totalImages).toBe(distinct);
+    const rawSum = categories.reduce((n, c) => n + c.images.length, 0);
+    expect(totalImages).toBeLessThanOrEqual(rawSum);
   });
 });
 
@@ -95,3 +101,4 @@ describe('Placeholder coverage', () => {
     }
   });
 });
+

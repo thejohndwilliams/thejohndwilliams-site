@@ -287,7 +287,12 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, { signal });
       }
 
+      // P3 fix, 2026-07-19: unrevealed elements below the fold kept each old
+      // page tree alive via the never-disconnected observer. Module handle,
+      // disconnected on re-init.
+      let revealObserver = null;
       function initReveal() {
+        revealObserver?.disconnect();
         // Tell the inline failsafe the bundle executed.
         window.__revealReady = true;
         const els = document.querySelectorAll('.reveal, .stagger-children');
@@ -298,7 +303,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           els.forEach((el) => el.classList.add('visible'));
           return;
         }
-        const observer = new IntersectionObserver(
+        const observer = (revealObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
@@ -308,7 +313,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
             });
           },
           { threshold: 0.1, rootMargin: '0px 0px -48px 0px' }
-        );
+        ));
         els.forEach((el) => observer.observe(el));
       }
 

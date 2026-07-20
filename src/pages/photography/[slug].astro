@@ -146,7 +146,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       <a
         href={`/photography/${prevSlug}`}
         id="nav-prev"
-        class="hidden md:flex absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 transition-opacity duration-300"
+        class="hidden md:flex absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 focus-visible:opacity-80 transition-opacity duration-300"
         aria-label="Previous photo"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -156,7 +156,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       <a
         href={`/photography/${nextSlug}`}
         id="nav-next"
-        class="hidden md:flex absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 transition-opacity duration-300"
+        class="hidden md:flex absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 focus-visible:opacity-80 transition-opacity duration-300"
         aria-label="Next photo"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -260,8 +260,8 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
                   decoding="async"
                 />
               </picture>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-all duration-300">
                 <p class="text-[10px] sm:text-xs opacity-70">{rel.alt}</p>
               </div>
             </a>
@@ -286,11 +286,15 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
   {/* EXIF reveal on scroll - IntersectionObserver, no libraries */}
   <script>
+    // P3 fix, 2026-07-19: arrow-key browsing creates one page per photo; an
+    // undisconnected observer per visit pinned each old page's detached rows.
+    let exifObserver = null;
     function initExifReveal() {
+      exifObserver?.disconnect();
       const rows = document.querySelectorAll('.exif-row');
       if (!rows.length) return;
 
-      const observer = new IntersectionObserver((entries) => {
+      const observer = (exifObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             (entry.target as HTMLElement).style.opacity = '1';
@@ -298,7 +302,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
+      }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' }));
 
       rows.forEach(row => observer.observe(row));
     }
@@ -349,8 +353,12 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           if (next) next.style.opacity = '0.6';
         }, { signal });
         hero.addEventListener('mouseleave', () => {
-          if (prev) prev.style.opacity = '0';
-          if (next) next.style.opacity = '0';
+          // P2 fix, 2026-07-19: clear the inline value instead of writing 0.
+          // An inline "opacity: 0" outranked hover:/focus-visible: utilities,
+          // so after any mouse pass over the hero, keyboard focus landed on
+          // an invisible arrow. Empty string hands control back to the CSS.
+          if (prev) prev.style.opacity = '';
+          if (next) next.style.opacity = '';
         }, { signal });
       }
     }

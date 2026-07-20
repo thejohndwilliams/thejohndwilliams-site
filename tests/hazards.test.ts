@@ -143,6 +143,31 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
   });
 });
 
+describe('hazard locks: p2 review fixes (2026-07-19)', () => {
+  const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
+  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const baseL = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
+  const slug = readFileSync(join(SRC, 'pages/photography/[slug].astro'), 'utf8');
+
+  it('glass-shelf scroll listener binds once — per-swap re-binding stacked N listeners on the persisted header', () => {
+    expect(header).toMatch(/glassHeaderBound/);
+  });
+
+  it('lightbox open/close invalidate the slide token — pending swapIn fired post-close and desynced reopen', () => {
+    const open = gallery.slice(gallery.indexOf('function openLightbox'), gallery.indexOf('function closeLightbox'));
+    const close = gallery.slice(gallery.indexOf('function closeLightbox'), gallery.indexOf('function closeLightbox') + 600);
+    expect(open).toContain('navToken++');
+    expect(close).toContain('navToken++');
+    expect(gallery).toMatch(/abort'.*navToken\+\+.*clearTimeout\(swapTimer\)/);
+  });
+
+  it('page observers disconnect on re-init — undisconnected IntersectionObservers pinned detached page trees', () => {
+    expect(gallery).toMatch(/atmosObserver\?\.disconnect\(\)/);
+    expect(baseL).toMatch(/revealObserver\?\.disconnect\(\)/);
+    expect(slug).toMatch(/exifObserver\?\.disconnect\(\)/);
+  });
+});
+
 describe('hazard locks: built output', () => {
   // Runs against dist/, so the build must precede vitest (npm run gate does).
   it('no em-dash in any built page (standing copy law)', () => {
