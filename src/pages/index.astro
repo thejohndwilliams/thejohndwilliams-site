@@ -1,5 +1,6 @@
 ---
 import SocialIcon from '../components/SocialIcon.astro';
+import { socialLinks } from '../utils/date';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const charities = [
@@ -33,44 +34,6 @@ const charities = [
   }
 ];
 
-const socialLinks = [
-  {
-    name: 'LinkedIn',
-    url: 'https://www.linkedin.com/in/john-davis-williams/',
-    description: 'Professional network',
-    icon: '/images/previews/linkedin.svg',
-    hero: '/images/linkedin-hero.webp',
-    heroFallback: '/images/linkedin-hero.jpg',
-    heroAlt: 'Macro photograph of wet moss with water droplets and golden highlights'
-  },
-  {
-    name: 'GitHub',
-    url: 'https://github.com/thejohndwilliams',
-    description: 'Code',
-    icon: '/images/previews/github.svg',
-    hero: '/images/github-hero.webp',
-    heroFallback: '/images/github-hero.jpg',
-    heroAlt: 'Thermal visualization of a floor plan in neon pink and cyan'
-  },
-  {
-    name: 'Instagram',
-    url: 'https://www.instagram.com/thejohndwilliams/',
-    description: 'Photography',
-    icon: '/images/previews/instagram.svg',
-    hero: '/images/instagram-hero.webp',
-    heroFallback: '/images/instagram-hero.jpg',
-    heroAlt: 'Single white cloud against a deep blue night sky'
-  },
-  {
-    name: 'Behance',
-    url: 'https://www.behance.net/killthewizard',
-    description: 'Design',
-    icon: '/images/previews/behance.svg',
-    hero: '/images/behance-hero.webp',
-    heroFallback: '/images/behance-hero.jpg',
-    heroAlt: 'Abstract minimalist silhouettes in soft gray and pale green tones'
-  }
-];
 ---
 
 <BaseLayout title="Home" description="Making visible: threats on a network, patterns in data, light on a moment. Photography, cybersecurity, and data by John D. Williams." ogImage="/og/pages/home.jpg" ogImageWidth={1200} ogImageHeight={630} lcpImage="7r52326" lcpImagePortrait="7r52326">
