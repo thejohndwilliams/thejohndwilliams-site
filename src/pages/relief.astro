@@ -1,0 +1,438 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
+
+/*
+ * /relief — the object axis of the photographs.
+ *
+ * The site already answers "what if a photograph were a place you could walk
+ * into" (the kinetic plates, the splat work). This page answers the other
+ * half: what if it were an object you could pick up. One photograph, taken
+ * all the way through, rather than a survey of many.
+ *
+ * The frame is `structure` (img-7576-enhanced, Shanghai Tower from below).
+ * It is the featured structure plate, it survives the portrait crop better
+ * than any other candidate, and its OG image is already spot-checked by
+ * build.test.ts, so its assets are exercised by the gate.
+ *
+ * ASSET PROVENANCE. Every still and the sweep come from the object-axis
+ * renderer filed with Edition_and_Format_Specification_v1 (relief_render.py
+ * + build_web_relief_assets.py), re-rendered clean for the web: no baked
+ * labels, no contact-sheet background, no instrumentation captions. The
+ * Instagram deliverable is deliberately NOT reused here. That file is
+ * 1080x1920 with the panel inside Instagram's safe rectangle, so a third of
+ * the frame is margin that exists only to clear an app's chrome. The sweep
+ * below is the same 180 frames recropped 4:5 around the panel.
+ * scripts/build-relief-assets.mjs does the AVIF + WebP encode.
+ *
+ * NOT using the lcpImage prop: it resolves paths under
+ * /images/photography/<tier>/ by construction, and these assets live in
+ * /images/relief/. The opening still carries fetchpriority="high" on the
+ * <img> instead, which the parser discovers at the same point in the head-to
+ * -body pass. Extending the shared layout for one page was not worth the
+ * blast radius on a test-locked file.
+ */
+
+const DEPTHS = [
+  { mm: 1, alt: 'The tower rendered as a relief panel one millimetre deep, barely raised from the surface' },
+  { mm: 2, alt: 'The same panel at two millimetres, the facade beginning to catch the light' },
+  { mm: 3, alt: 'The same panel at three millimetres' },
+  { mm: 4, alt: 'The same panel at four millimetres, the depth used for the sweep above' },
+  { mm: 6, alt: 'The same panel at six millimetres, edges throwing visible shadow' },
+  { mm: 9, alt: 'The same panel at nine millimetres, shadows lengthening across the surface' },
+  { mm: 14, alt: 'The same panel at fourteen millimetres, a deep carving casting long shadows' },
+];
+
+// Widths are in inches and drive the layout directly, so the three panels sit
+// at true relative physical scale. The renders themselves are made at a
+// constant pixels-per-inch, which is why the relief genuinely reads shallower
+// on the larger panel rather than merely being drawn smaller.
+const EDITIONS = [
+  { slug: '16x20', label: '16 × 20', w: 16, px: [620, 775], reads: '100%',
+    alt: 'The relief panel at sixteen by twenty inches' },
+  { slug: '20x24', label: '20 × 24', w: 20, px: [775, 930], reads: '80%',
+    alt: 'The same relief at twenty by twenty four inches, the depth reading shallower' },
+  { slug: '24x36', label: '24 × 36', w: 24, px: [930, 1395], reads: '67%',
+    alt: 'The same relief at twenty four by thirty six inches, the depth quietest of the three' },
+];
+---
+
+<BaseLayout
+  title="Relief"
+  description="Photographs cut as bas-relief. The image is carried in a surface a few millimetres deep and stays invisible until light crosses it at a grazing angle."
+  ogImage="/og/photography/img-7576-enhanced.jpg"
+>
+  <section class="py-12 sm:py-16 md:py-20">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3 sm:mb-4">Object studies</p>
+      <h1 class="mb-5 sm:mb-7">A photograph you could hold</h1>
+      <div class="prose max-w-2xl">
+        <p>
+          A print is light recorded on a plane. These studies ask what survives
+          when the ink is taken away and only the surface is left. The
+          photograph becomes a shallow landscape a few millimetres deep,
+          invisible under ordinary room light, and it stays that way until
+          something crosses it at a grazing angle. Then the image arrives.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pb-12 sm:pb-16 md:pb-20">
+    <div class="container-wide">
+      <div class="grid gap-10 md:grid-cols-2 md:gap-16 items-center">
+        <div class="order-2 md:order-1">
+          <p class="eyebrow mb-2">Structure · Shanghai Tower</p>
+          <h2 class="mb-5">The light does the work</h2>
+          <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-md mb-4">
+            Nothing on this panel is printed. The entire image is carried in a
+            surface four millimetres deep, lit from eleven degrees above the
+            plane. One full turn of the light takes six seconds.
+          </p>
+          <p class="text-sm opacity-60 leading-relaxed max-w-md">
+            Watch the facade. Its ribs light and go dark in sequence as the
+            source swings behind them, which is the one thing a printed
+            photograph can never do.
+          </p>
+        </div>
+
+        <figure class="order-1 md:order-2 sweep">
+          <div class="sweep__stage" data-sweep>
+            <picture class="sweep__still">
+              <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
+              <source srcset="/images/relief/sweep-still.webp" type="image/webp" />
+              <img
+                src="/images/relief/sweep-still.webp"
+                alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
+                width="1040"
+                height="1300"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </picture>
+            <video
+              class="sweep__video"
+              data-src="/video/relief-sweep.mp4"
+              width="832"
+              height="1040"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"
+            ></video>
+          </div>
+          <figcaption class="sweep__cap">
+            4 mm relief · light at 11° · one turn, six seconds
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16 md:py-20 section-light">
+    <div class="container-wide">
+      <p class="eyebrow mb-2">The same frame, as space</p>
+      <h2 class="mb-5">And a photograph you can enter</h2>
+      <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-10">
+        The relief is one direction out of a flat image. This is the other.
+        Every point sits at the depth the camera found it, read back out of
+        the photograph itself, so the tower holds its distance from the sky
+        behind it. Sweep across it to turn it. On a phone, scroll and let it
+        roll.
+      </p>
+      <div class="max-w-2xl">
+        <KineticPlate3D category="structure" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16 md:py-20">
+    <div class="container-wide">
+      <p class="eyebrow mb-2">Seven depths</p>
+      <h2 class="mb-5">How deep should a photograph be?</h2>
+      <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-8 sm:mb-10">
+        One frame, one light, seven candidate reliefs. At one millimetre the
+        image is a rumour. At fourteen it is a carving that throws its own
+        shadow across the panel and starts to look like something other than
+        a photograph.
+      </p>
+
+      <ul class="depth-grid">
+        {DEPTHS.map((d) => (
+          <li class="depth">
+            <picture>
+              <source srcset={`/images/relief/depth-${d.mm}mm.avif`} type="image/avif" />
+              <source srcset={`/images/relief/depth-${d.mm}mm.webp`} type="image/webp" />
+              <img
+                src={`/images/relief/depth-${d.mm}mm.webp`}
+                alt={d.alt}
+                width="620"
+                height="775"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <p class="depth__label">{d.mm} mm</p>
+          </li>
+        ))}
+        <li class="depth depth--note">
+          <p>
+            There is no formula here. The three relief ratios in the
+            literature each describe their own author's test piece, and none
+            is offered as guidance. This one gets chosen by looking at a
+            printed sample.
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16 md:py-20 section-light">
+    <div class="container-wide">
+      <p class="eyebrow mb-2">The edition</p>
+      <h2 class="mb-5">Three sizes, one depth</h2>
+      <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-10 sm:mb-14">
+        Sixteen by twenty, twenty by twenty four, and twenty four by thirty
+        six inches, portrait. The relief is cut to the same absolute depth on
+        all three, so it reads deepest on the smallest panel and quietest on
+        the largest. Shown here at true relative scale.
+      </p>
+
+      <div class="edition-rail">
+        {EDITIONS.map((e, i) => (
+          <figure class="edition" style={`--w:${e.w};--c:${i + 1}`}>
+            <picture class="edition__img">
+              <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
+              <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
+              <img
+                src={`/images/relief/edition-${e.slug}.webp`}
+                alt={e.alt}
+                width={e.px[0]}
+                height={e.px[1]}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption class="edition__cap">
+              <span class="edition__size">{e.label}</span>
+              <span class="edition__read">relief reads {e.reads}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16 md:py-20">
+    <div class="container-narrow text-center">
+      <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
+      <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+        Relief panels are cut to order, one photograph at a time. Depth and
+        size are settled against a printed sample first.
+      </p>
+      <p class="text-xs sm:text-sm opacity-60 leading-relaxed mb-6 sm:mb-8">
+        Archival prints of the photograph, by inquiry. Giclée on Hahnemühle
+        Photo Rag.
+      </p>
+      <a
+        href="mailto:jndwcreative@gmail.com?subject=Relief%20inquiry"
+        class="btn btn-primary w-full sm:w-auto"
+      >Inquire</a>
+      <p class="mt-8 sm:mt-10">
+        <a href="/photography" class="text-xs tracking-[0.2em] uppercase text-mute hover:text-cream transition-colors">
+          Back to the photographs
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // The sweep loads and plays only once it is on screen, and never at all
+    // under prefers-reduced-motion: the <video> ships with preload="none" and
+    // no src, so the 1.5 MB file is not fetched until the observer assigns it.
+    // The still underneath is the page's LCP candidate and is what a
+    // reduced-motion visitor keeps.
+    let sweepObserver: IntersectionObserver | null = null;
+    let sweepAbort: AbortController | null = null;
+
+    function initSweep() {
+      // Re-init runs on every view-transition swap. Tear the previous one
+      // down first or the observer pins the detached page tree (the
+      // atmosObserver class of bug, 2026-07-19).
+      sweepObserver?.disconnect();
+      sweepObserver = null;
+      sweepAbort?.abort();
+      sweepAbort = null;
+
+      const stage = document.querySelector('[data-sweep]');
+      if (!stage) return;
+      const video = stage.querySelector('video') as HTMLVideoElement | null;
+      if (!video) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        video.remove();
+        return;
+      }
+
+      sweepAbort = new AbortController();
+      const { signal } = sweepAbort;
+
+      video.addEventListener('playing', () => stage.classList.add('is-playing'), { signal });
+
+      sweepObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (!video.getAttribute('src')) {
+              video.setAttribute('src', video.dataset.src || '');
+            }
+            // Autoplay can reject (low power mode, user setting). The still
+            // stays visible in that case, which is the correct fallback.
+            video.play().catch(() => {});
+          } else if (!video.paused) {
+            video.pause();
+          }
+        }
+      }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+      sweepObserver.observe(stage);
+    }
+
+    initSweep();
+    document.addEventListener('astro:after-swap', initSweep);
+  </script>
+</BaseLayout>
+
+<style>
+  /* ---------------------------------------------------------------- sweep */
+  .sweep {
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+  .sweep__stage {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #0a0a0a;
+  }
+  .sweep__still,
+  .sweep__video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sweep__still img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sweep__video {
+    opacity: 0;
+    transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sweep__stage.is-playing .sweep__video { opacity: 1; }
+  .sweep__cap {
+    margin-top: 0.85rem;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.62);
+    text-align: center;
+  }
+
+  /* ---------------------------------------------------------- depth ladder */
+  .depth-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  @media (min-width: 768px) {
+    .depth-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; }
+  }
+  .depth img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+  }
+  .depth__label {
+    margin-top: 0.55rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(244, 234, 222, 0.7);
+  }
+  /* The eighth cell of a seven-tile contact sheet. Text, not a hole. */
+  .depth--note {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2rem;
+  }
+  .depth--note p {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #787878;
+  }
+
+  /* --------------------------------------------------------- edition scale */
+  /* Two explicit rows so the panel BOTTOMS align on one line regardless of
+     how each caption wraps. --u is the pixels-per-inch of the diagram; --w is
+     the panel's real width in inches, so the layout is the measurement. */
+  .edition-rail {
+    --u: min(1.38vw, 18px);
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: auto auto;
+    justify-content: start;
+    column-gap: calc(var(--u) * 1.3);
+  }
+  .edition { display: contents; }
+  .edition__img {
+    grid-row: 1;
+    grid-column: var(--c);
+    align-self: end;
+    display: block;
+    width: calc(var(--u) * var(--w));
+  }
+  .edition__img img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+  }
+  .edition__cap {
+    grid-row: 2;
+    grid-column: var(--c);
+    width: calc(var(--u) * var(--w));
+    padding-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .edition__size {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(244, 234, 222, 0.75);
+  }
+  .edition__read {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    color: #787878;
+  }
+  @media (max-width: 640px) {
+    .edition__size { font-size: 0.625rem; }
+    .edition__read { font-size: 0.5625rem; }
+  }
+</style>

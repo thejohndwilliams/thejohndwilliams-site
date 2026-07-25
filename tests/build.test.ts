@@ -58,6 +58,35 @@ describe('Astro Build', () => {
     expect(xml).toContain('<image:license>');
   });
 
+  it('emits /relief with its render set — the object-axis surface (2026-07-25)', () => {
+    // The page is only worth shipping if the renders ship with it. These
+    // assets are produced OUTSIDE the repo (relief_render.py needs a
+    // panel-resolution depth pass and a ~900 KB luminance plate per frame),
+    // so nothing in the build regenerates them: a careless `git clean` or a
+    // partial copy would leave a page of broken frames with a green build.
+    expect(fs.existsSync(path.join(distDir, 'relief', 'index.html'))).toBe(true);
+
+    const relief = path.join(distDir, 'images', 'relief');
+    expect(fs.existsSync(relief)).toBe(true);
+    for (const mm of [1, 2, 3, 4, 6, 9, 14]) {
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.avif`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.webp`))).toBe(true);
+    }
+    for (const size of ['16x20', '20x24', '24x36']) {
+      expect(fs.existsSync(path.join(relief, `edition-${size}.avif`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `edition-${size}.webp`))).toBe(true);
+    }
+    // Poster still: the LCP candidate and the reduced-motion visitor's frame.
+    expect(fs.existsSync(path.join(relief, 'sweep-still.avif'))).toBe(true);
+
+    // The sweep itself. Budgeted at ~1.5 MB, roughly six gallery heroes, and
+    // only fetched on intersection. If a re-encode blows past 3 MB the lazy
+    // gate stops being enough and the budget decision needs revisiting.
+    const mp4 = path.join(distDir, 'video', 'relief-sweep.mp4');
+    expect(fs.existsSync(mp4)).toBe(true);
+    expect(fs.statSync(mp4).size).toBeLessThan(3 * 1024 * 1024);
+  });
+
   it('does NOT emit /writing — page was removed', () => {
     const writingPath = path.join(distDir, 'writing', 'index.html');
     expect(fs.existsSync(writingPath)).toBe(false);

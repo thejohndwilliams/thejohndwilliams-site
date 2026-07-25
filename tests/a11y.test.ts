@@ -67,7 +67,7 @@ function audit(html: string): string[] {
   return issues;
 }
 
-const PAGES = ['index.html', 'about/index.html', 'work/index.html', 'photography/index.html'];
+const PAGES = ['index.html', 'about/index.html', 'work/index.html', 'photography/index.html', 'relief/index.html'];
 
 describe('Accessibility — DOM/ARIA smoke test (dom-accessibility-api)', () => {
   beforeAll(async () => {

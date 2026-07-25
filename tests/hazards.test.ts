@@ -143,6 +143,43 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
   });
 });
 
+describe('hazard locks: /relief sweep video (2026-07-25)', () => {
+  // The relief sweep is the first <video> on the site and the single
+  // heaviest asset it serves (~1.5 MB, versus ~150 KB for a gallery hero).
+  // It is only affordable because it is never fetched until it is on screen
+  // and never fetched at all under reduced motion. Every lock below pins one
+  // half of that bargain; losing any one of them turns a quiet page into a
+  // 1.5 MB tax on every visitor, including the ones who asked for stillness.
+  const relief = readFileSync(join(SRC, 'pages/relief.astro'), 'utf8');
+
+  it('the video ships srcless — src is assigned by the observer, not the parser', () => {
+    // preload="none" alone is a hint browsers may ignore; a real src in the
+    // markup is a real request. The guarantee is the missing attribute.
+    expect(relief).toContain('data-src="/video/relief-sweep.mp4"');
+    expect(relief).toMatch(/preload="none"/);
+    expect(relief).not.toMatch(/<video[^>]*\ssrc=/);
+  });
+
+  it('reduced motion removes the video outright — a paused <video> with a src still downloads', () => {
+    const rm = relief.slice(relief.indexOf('prefers-reduced-motion: reduce'));
+    expect(rm.slice(0, 200)).toContain('video.remove()');
+  });
+
+  it('the sweep observer and its listeners tear down on re-init (2026-06-09 detached-tree class)', () => {
+    expect(relief).toMatch(/sweepObserver\?\.disconnect\(\)/);
+    expect(relief).toMatch(/sweepAbort\?\.abort\(\)/);
+    expect(relief).toContain("document.addEventListener('astro:after-swap', initSweep)");
+  });
+
+  it('the still is the LCP candidate — the video is decorative and never the accessible content', () => {
+    // BaseLayout's lcpImage prop builds /images/photography/<tier>/… by
+    // construction and cannot address /images/relief/, so the priority hint
+    // lives on the <img> itself. See the page's frontmatter note.
+    expect(relief).toContain('fetchpriority="high"');
+    expect(relief).toMatch(/<video[^>]{0,400}aria-hidden="true"/);
+  });
+});
+
 describe('hazard locks: p2 review fixes (2026-07-19)', () => {
   const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
   const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
