@@ -168,4 +168,54 @@ const expertise = [
       <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
     </div>
   </section>
+
+  <!-- ACT III - RELIEF · the object axis
+       Act II lifts the photograph into pixels a visitor can take away. This
+       one lifts it into an object. The page was already making the argument
+       ("Lift each experience from its frame"); it just stopped one step
+       short. /relief keeps its own top-level URL: it is the surface strangers
+       arrive at from outside the site, so it is introduced here, not nested. -->
+  <section class="section-light py-12 sm:py-16 md:py-24">
+    <div class="container-narrow mb-8 sm:mb-12">
+      <h2 class="t-sub font-serif mb-3 sm:mb-4">Relief</h2>
+      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Then take it off the screen.</p>
+      <p class="text-sm sm:text-base opacity-55 max-w-xl">
+        The same instinct carried into a surface. A photograph cut as bas-relief a few
+        millimetres deep, with no ink anywhere in it, invisible under ordinary room
+        light and legible only when something crosses it at a grazing angle. Depth
+        extraction, relief compression, and a render pipeline, resolved across three
+        editions.
+      </p>
+    </div>
+    <div class="container-wide reveal">
+      <a href="/relief" class="press-feedback glass-luminous group relative grid md:grid-cols-12 items-center gap-6 md:gap-10 rounded-card ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500 p-5 sm:p-8 md:p-10">
+        <div class="md:col-span-5 lg:col-span-4">
+          <picture>
+            <source type="image/avif" srcset="/images/relief/edition-24x36.avif" />
+            <source type="image/webp" srcset="/images/relief/edition-24x36.webp" />
+            <img
+              src="/images/relief/edition-24x36.webp"
+              alt="A bas-relief panel of the Shanghai Tower seen from below, its facade raised out of a shallow surface and lit from one side"
+              width="930"
+              height="1395"
+              class="w-full h-auto rounded-card transition-transform duration-700 ease-smooth group-hover:scale-[1.02] will-change-transform"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </div>
+        <div class="md:col-span-7 lg:col-span-8">
+          <p class="eyebrow mb-2">Object studies</p>
+          <h3 class="t-sub font-serif mb-2 text-cream">A photograph you could hold</h3>
+          <p class="text-sm opacity-60 leading-relaxed max-w-md mb-4">
+            One frame taken all the way through. Seven depths from one millimetre to
+            fourteen, three editions drawn at literal scale so the layout is the
+            measurement, and a six second sweep of raking light that lights the facade
+            rib by rib.
+          </p>
+          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-navy-hour transition-colors duration-300">See the studies →</span>
+        </div>
+      </a>
+    </div>
+  </section>
 </BaseLayout>

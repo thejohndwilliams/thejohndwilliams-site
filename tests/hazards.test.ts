@@ -241,3 +241,39 @@ describe('hazard locks: built output', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe('hazard locks: /relief is reachable (2026-07-26)', () => {
+  // /relief shipped 2026-07-25 with exactly one inbound link: a 12px muted
+  // line at the bottom of /photography, below the fold and below the Inquire
+  // button. It was a top-level URL nobody could arrive at from inside the
+  // site. Restraint applied to a navigation element is not restraint, it is
+  // a dead end. These locks pin the three entry points that fixed it.
+  const home = readFileSync(join(SRC, 'pages/index.astro'), 'utf8');
+  const work = readFileSync(join(SRC, 'pages/work.astro'), 'utf8');
+  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+
+  it('the home page grid carries a /relief card', () => {
+    expect(home).toMatch(/href="\/relief"/);
+  });
+
+  it('/work closes on the object axis (Act III)', () => {
+    expect(work).toMatch(/href="\/relief"/);
+  });
+
+  it('/photography links the object axis with a photograph, not a 12px line', () => {
+    const idx = gallery.indexOf('href="/relief"');
+    expect(idx).toBeGreaterThan(-1);
+    expect(gallery.slice(idx, idx + 900)).toContain('/images/relief/');
+  });
+
+  it('/relief stays a top-level URL (the link-in-bio target)', () => {
+    expect(existsSync(join(SRC, 'pages/relief.astro'))).toBe(true);
+  });
+
+  it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {
+    for (const [name, body] of [['index', home], ['work', work], ['photography', gallery]] as const) {
+      const hits = Array.from(body.matchAll(/href="\/relief"[^>]*/g)).map((m) => m[0]);
+      for (const h of hits) expect(h, `${name}: relief link must not be a btn-primary`).not.toContain('btn-primary');
+    }
+  });
+});

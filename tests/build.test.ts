@@ -226,6 +226,18 @@ describe('Generated HTML Content', () => {
     photographyHtml = fs.readFileSync(path.join(distDir, 'photography', 'index.html'), 'utf-8');
   }, 60000);
 
+  describe('Reachability of /relief (2026-07-26)', () => {
+    it('every top-level surface that should reach the object axis does', () => {
+      // /relief shipped orphaned: one 12px muted line at the bottom of
+      // /photography was the site's only inbound link to a top-level URL.
+      // Source locks live in hazards.test.ts; this one proves the links
+      // survive the build.
+      expect(indexHtml).toMatch(/href="\/relief\/?"/);
+      expect(workHtml).toMatch(/href="\/relief\/?"/);
+      expect(photographyHtml).toMatch(/href="\/relief\/?"/);
+    });
+  });
+
   describe('Homepage', () => {
     it('contains the site title', () => {
       expect(indexHtml).toContain('John D. Williams');
