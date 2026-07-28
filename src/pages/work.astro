@@ -84,7 +84,7 @@ const expertise = [
           const isWide = i === 0 || i === 3;
           const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
           return (
-            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-navy-hour/30 transition-all duration-500 min-h-[280px] sm:min-h-[340px] flex ${span}`}>
+            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 transition-all duration-500 min-h-[280px] sm:min-h-[340px] flex ${span}`}>
               <picture>
                 <source type="image/avif" srcset={`/images/photography/thumb/${project.image}.avif 400w, /images/photography/gallery/${project.image}.avif 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
                 <source type="image/webp" srcset={`/images/photography/thumb/${project.image}.webp 400w, /images/photography/gallery/${project.image}.webp 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
@@ -102,7 +102,7 @@ const expertise = [
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
                   <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-navy-hour transition-all duration-300 min-h-[44px] flex items-center">
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-cream transition-all duration-300 min-h-[44px] flex items-center">
                       View on GitHub →
                     </a>
                   )}
@@ -158,7 +158,7 @@ const expertise = [
       <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Lift each experience from its frame.</p>
       <p class="text-sm sm:text-base opacity-55 max-w-xl">
         Download custom wallpapers, textures, and color palettes from any frame below, free to take.
-        <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-navy-hour transition-colors duration-300">Inquire</a>
+        <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a>
         for prints, licensing, or the full-resolution files.
       </p>
     </div>
@@ -188,7 +188,7 @@ const expertise = [
       </p>
     </div>
     <div class="container-wide reveal">
-      <a href="/relief" class="press-feedback glass-luminous group relative grid md:grid-cols-12 items-center gap-6 md:gap-10 rounded-card ring-1 ring-white/5 hover:ring-navy-hour/30 active:ring-navy-hour/40 transition-all duration-500 p-5 sm:p-8 md:p-10">
+      <a href="/relief" class="press-feedback glass-luminous group relative grid md:grid-cols-12 items-center gap-6 md:gap-10 rounded-card ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500 p-5 sm:p-8 md:p-10">
         <div class="md:col-span-5 lg:col-span-4">
           <picture>
             <source type="image/avif" srcset="/images/relief/edition-24x36.avif" />
@@ -213,7 +213,7 @@ const expertise = [
             measurement, and a six second sweep of raking light that lights the facade
             rib by rib.
           </p>
-          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-navy-hour transition-colors duration-300">See the studies →</span>
+          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300">See the studies →</span>
         </div>
       </a>
     </div>

@@ -28,8 +28,8 @@ const categoryColors: Record<string, { glow: string; accent: string }> = {
   sky:        { glow: 'rgba(70, 100, 160, 0.08)',  accent: 'rgba(70, 100, 160, 0.04)' },
   earth:      { glow: 'rgba(160, 120, 60, 0.08)',  accent: 'rgba(160, 120, 60, 0.04)' },
   water:      { glow: 'rgba(50, 130, 140, 0.08)',  accent: 'rgba(50, 130, 140, 0.04)' },
-  structure:  { glow: 'rgba(120, 110, 100, 0.06)', accent: 'rgba(120, 110, 100, 0.03)' },
-  light:      { glow: 'rgba(126, 156, 184, 0.07)',  accent: 'rgba(126, 156, 184, 0.035)' },
+  structure:  { glow: 'rgba(120, 110, 100, 0.06)', accent: 'rgba(216, 196, 168, 0.03)' },
+  light:      { glow: 'rgba(244, 234, 222, 0.042)',  accent: 'rgba(244, 234, 222, 0.021)' },
 };
 const bleed = categoryColors[category.id] || categoryColors.structure;
 
@@ -239,7 +239,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           {related.map((rel) => (
             <a
               href={`/photography/${rel.file}`}
-              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-navy-hour/30 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500"
+              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500"
             >
               <picture>
                 <source
@@ -276,7 +276,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="container-narrow text-center">
       <a
         href="/photography"
-        class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-mute hover:text-navy-hour transition-colors duration-300 min-h-[44px]"
+        class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px]"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         Back to gallery

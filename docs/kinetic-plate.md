@@ -1,3 +1,8 @@
+> STATUS (2026-07-28): documents the 2.5D system, now the FALLBACK layer
+> under KineticPlate3D on /about and /relief. Version table ends at v8.3 and
+> is missing the v9.x rows; the dot color it calls "the cream token"
+> (#FDFCFA) predates the 2026-05-31 repalette (cream is #F4EADE).
+
 # Kinetic Plate — architecture and evolution
 
 This document captures the design and build of the **kinetic dot-plot
