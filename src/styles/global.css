@@ -255,7 +255,7 @@ html[data-theme="black"] {
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
       0 8px 40px rgba(0, 0, 0, 0.35),
-      0 0 0 1px rgba(126, 156, 184, 0.06);
+      0 0 0 1px rgba(244, 234, 222, 0.036);
   }
 
   /* Glass panel - larger translucent surfaces (sections, overlays) */
@@ -383,8 +383,8 @@ html[data-theme="black"] {
     padding: 1px;
     background: linear-gradient(
       135deg,
-      rgba(126, 156, 184, 0) 0%,
-      rgba(126, 156, 184, 0.15) 50%,
+      rgba(244, 234, 222, 0) 0%,
+      rgba(244, 234, 222, 0.09) 50%,
       rgba(255, 255, 255, 0.1) 100%
     );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -405,8 +405,8 @@ html[data-theme="black"] {
 
   .glass-luminous:hover {
     box-shadow:
-      0 8px 40px rgba(126, 156, 184, 0.08),
-      0 0 80px rgba(126, 156, 184, 0.03);
+      0 8px 40px rgba(244, 234, 222, 0.048),
+      0 0 80px rgba(244, 234, 222, 0.018);
   }
 
 
@@ -553,7 +553,7 @@ html[data-theme="black"] {
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
       0 12px 30px rgba(0, 0, 0, 0.50),
-      0 0 30px rgba(126, 156, 184, 0.18);
+      0 0 30px rgba(244, 234, 222, 0.108);
   }
 
   /* Subhead utility */
@@ -600,8 +600,8 @@ html[data-theme="black"] {
   }
 
   .prose a:hover {
-    color: #7E9CB8;
-    border-bottom-color: #7E9CB8;
+    color: #F4EADE;
+    border-bottom-color: #F4EADE;
   }
 
   .prose blockquote {
@@ -791,7 +791,7 @@ html.lenis body { height: auto; }
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.28),
     inset 0 0 22px 0 rgba(255, 255, 255, 0.08),
     0 16px 46px rgba(0, 0, 0, 0.50),
-    0 0 36px rgba(126, 156, 184, 0.10);
+    0 0 36px rgba(244, 234, 222, 0.06);
 }
 .glass-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 52%, rgba(255,255,255,0.11) 100%);
@@ -826,7 +826,7 @@ html.lenis body { height: auto; }
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.30),
     inset 0 0 30px 0 rgba(255, 255, 255, 0.10),
     0 22px 60px rgba(0, 0, 0, 0.54),
-    0 0 60px rgba(126, 156, 184, 0.18);
+    0 0 60px rgba(244, 234, 222, 0.108);
 }
 .glass-nav,
 #site-header {
@@ -863,13 +863,13 @@ html.lenis body { height: auto; }
    ============================================================ */
 .glass-footer {
   position: relative;
-  background: linear-gradient(180deg, rgba(126,156,184,0.12) 0%, rgba(126,156,184,0.04) 38%, rgba(0,18,31,0.55) 100%);
+  background: linear-gradient(180deg, rgba(244, 234, 222, 0.072) 0%, rgba(244, 234, 222, 0.024) 38%, rgba(0,18,31,0.55) 100%);
   backdrop-filter: blur(30px) saturate(1.85);
   -webkit-backdrop-filter: blur(30px) saturate(1.85);
   border-top: 1px solid rgba(255,255,255,0.12);
   box-shadow:
     inset 0 1px 0 0 rgba(255,255,255,0.16),
-    inset 0 0 48px 0 rgba(126,156,184,0.06);
+    inset 0 0 48px 0 rgba(244, 234, 222, 0.036);
 }
 .glass-footer::before {
   content: "";
@@ -942,7 +942,7 @@ html.lenis body { height: auto; }
 /* ============================================================
    MOBILE TAB BAR (2026-06-06): single source of truth.
    The bar is glass. Items are bare: icon + label, muted when
-   inactive, blue (navy-hour) when active. No box, bubble, dot,
+   inactive, lit cream when active. No box, bubble, dot,
    lift, glow, or sweep. The decorative v2.3 nav rules above were
    removed; this is the only nav-item styling.
    ============================================================ */
@@ -1060,7 +1060,7 @@ main > section:not(:first-of-type):not([id]) {
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(220px 120px at var(--mx, 50%) var(--my, 50%),
-    rgba(253,252,250,0.10), rgba(126,156,184,0.05) 45%, transparent 72%);
+    rgba(253,252,250,0.10), rgba(244, 234, 222, 0.03) 45%, transparent 72%);
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
@@ -1073,7 +1073,7 @@ footer.glass-footer::after {
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(260px 150px at var(--mx, 50%) var(--my, 50%),
-    rgba(253,252,250,0.09), rgba(126,156,184,0.05) 45%, transparent 72%);
+    rgba(253,252,250,0.09), rgba(244, 234, 222, 0.03) 45%, transparent 72%);
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
@@ -1147,7 +1147,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(140px 70px at var(--mx, 50%) var(--my, 20%),
-    rgba(253,252,250,0.16), rgba(126,156,184,0.07) 45%, transparent 70%);
+    rgba(253,252,250,0.16), rgba(244, 234, 222, 0.042) 45%, transparent 70%);
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
@@ -1167,7 +1167,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   background: conic-gradient(from var(--lens-a, 0deg),
     transparent 0turn, transparent 0.30turn,
     rgba(244,234,222,0.50) 0.37turn,
-    rgba(126,156,184,0.35) 0.43turn,
+    rgba(244, 234, 222, 0.21) 0.43turn,
     transparent 0.50turn, transparent 1turn);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -1211,7 +1211,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   transition: opacity 0.35s ease;
 }
 .glass-disc:hover::after { opacity: 1; }
-.glass-disc:hover { transform: scale(1.05); border-color: rgba(126,156,184,0.35); }
+.glass-disc:hover { transform: scale(1.05); border-color: rgba(244, 234, 222, 0.21); }
 .glass-disc > * { position: relative; z-index: 1; }
 
 /* Lightbox caption plate: dark-tinted glass so cream stays legible
@@ -1288,7 +1288,7 @@ footer.glass-footer:hover::after { opacity: 1; }
     inset 0 1.5px 0 rgba(255,255,255,0.42),
     inset 0 -3px 7px rgba(0,8,16,0.38),
     0 2px 8px rgba(0,0,0,0.30),
-    0 0 10px var(--cl-glow, rgba(126,156,184,0.22));
+    0 0 10px var(--cl-glow, rgba(244, 234, 222, 0.132));
   transition: opacity 0.4s ease, box-shadow 0.6s ease;
 }
 .chip-lens.is-on { opacity: 1; }
@@ -1330,8 +1330,8 @@ footer.glass-footer:hover::after { opacity: 1; }
 /* Backlit core: the lit state. Screen blend lifts it off the crystal. */
 .cl-core {
   background: radial-gradient(62% 85% at 50% 42%,
-    var(--cl-core-hot, rgba(170,200,225,0.50)),
-    var(--cl-core-mid, rgba(126,156,184,0.20)) 55%,
+    var(--cl-core-hot, rgba(244, 234, 222, 0.3)),
+    var(--cl-core-mid, rgba(244, 234, 222, 0.12)) 55%,
     transparent 78%);
   mix-blend-mode: screen;
   animation: lensEmber 4.6s ease-in-out infinite;
@@ -1346,7 +1346,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 .cat-link.cat-active {
   color: #FDFCFA;
   font-weight: 500;
-  text-shadow: 0 0 14px var(--cl-halo, rgba(126,156,184,0.55));
+  text-shadow: 0 0 14px var(--cl-halo, rgba(244, 234, 222, 0.33));
 }
 .cat-link.cat-active:hover { color: #FDFCFA; }
 /* One-shot arrival effects, spawned and WAAPI-driven by the page script. */
@@ -1360,7 +1360,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   z-index: 0;
   background: radial-gradient(circle,
     rgba(253,252,250,0.45),
-    var(--cl-core-mid, rgba(126,156,184,0.30)) 40%,
+    var(--cl-core-mid, rgba(244, 234, 222, 0.18)) 40%,
     transparent 70%);
 }
 .cl-flare {
@@ -1383,7 +1383,7 @@ footer.glass-footer:hover::after { opacity: 1; }
    single-source-of-truth decision holds, reaffirmed 2026-06-10.
    Rim = the same gradient-masked refraction ring as .cl-ring.
    Press = key-sink physics. Lit states stay within the accent
-   rules: ivory remains the CTA light, navy-hour marks active.
+   rules: ivory remains the CTA light; brightness marks active (blue retired 2026-07-28).
    Rings are static (no loops); the sink is discrete interaction
    feedback, consistent with existing unganged hover scales.
    ============================================================ */
@@ -1445,7 +1445,7 @@ footer.glass-footer:hover::after { opacity: 1; }
     inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
     inset 0 -2px 3px 0 rgba(0, 0, 0, 0.35),
     0 8px 22px rgba(0, 0, 0, 0.42),
-    0 0 18px rgba(126, 156, 184, 0.10);
+    0 0 18px rgba(244, 234, 222, 0.06);
 }
 .glass-control {
   border-color: rgba(255, 255, 255, 0.20);
@@ -1453,7 +1453,7 @@ footer.glass-footer:hover::after { opacity: 1; }
     inset 1px 1px 0 0 rgba(255, 255, 255, 0.24),
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.18),
     0 6px 18px rgba(0, 0, 0, 0.30),
-    0 0 12px rgba(126, 156, 184, 0.08);
+    0 0 12px rgba(244, 234, 222, 0.048);
 }
 /* Theme toggle stays bare (John, 2026-06-10): the dim control reads as
    an icon, not a key. It keeps the press sink and the lit state when
@@ -1473,7 +1473,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 /* Lit state: the toggle's core ignites when true black is engaged. */
 .theme-toggle[aria-pressed="true"] svg {
-  filter: drop-shadow(0 0 6px rgba(126,156,184,0.55));
+  filter: drop-shadow(0 0 6px rgba(244, 234, 222, 0.33));
 }
 
 
@@ -1563,14 +1563,14 @@ footer.glass-footer:hover::after { opacity: 1; }
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;     /* border-only ring; no url() masks (iOS-safe) */
   /* Neutral light with the palette's one accent (honest-glass, 2026-07-04):
-     ivory arcs into navy-hour — the sanctioned active-state hue — replacing
+     ivory brightens to full cream in the active state (hue accents retired) — replacing
      the old cyan/violet/magenta rainbow, which was chroma from nowhere. The
      white arcs read now because the translucent key darkens over the scene. */
   background: conic-gradient(from 210deg,
     rgba(253, 252, 250, 0.95),
-    rgba(126, 156, 184, 0.90) 90deg,
+    rgba(244, 234, 222, 0.54) 90deg,
     rgba(253, 252, 250, 0.82) 180deg,
-    rgba(126, 156, 184, 0.92) 270deg,
+    rgba(244, 234, 222, 0.552) 270deg,
     rgba(253, 252, 250, 0.95));
   opacity: 0;
 }
@@ -1584,9 +1584,9 @@ footer.glass-footer:hover::after { opacity: 1; }
 .btn-primary.is-lit .btn-wake,
 .btn-outline.is-lit .btn-wake { opacity: 1; filter: blur(0.4px); animation: none; }
 
-/* Blue-hour underline draws in from the left (links opt in via .link-draw). */
+/* Candle underline draws in from the left (links opt in via .link-draw). */
 .link-draw {
-  background-image: linear-gradient(#7E9CB8, #7E9CB8);
+  background-image: linear-gradient(#F4EADE, #F4EADE);
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1px;

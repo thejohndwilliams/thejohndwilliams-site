@@ -61,9 +61,13 @@ describe('hazard locks: source', () => {
     // photographs, reading as a painted costume ("what glass is supposed to
     // look like") instead of a material response to the scene. Glass borrows;
     // it does not own color. Allowed hues on controls: white/cream neutrals
-    // and navy-hour #7E9CB8 / rgb(126,156,184) for active states.
+    // only. Navy-hour #7E9CB8 joined gold in retirement on 2026-07-28
+    // (John: "Nix it for continuity"): hierarchy is brightness in the cream
+    // family, never hue. Any painted accent chroma below fails the gate.
     const css = readFileSync(join(SRC, 'styles', 'global.css'), 'utf8');
     const banned = [
+      '126,156,184', '126, 156, 184', '#7E9CB8', '#7e9cb8',
+      '170,200,225', '170, 200, 225',
       '64,180,255', '64, 180, 255',
       '255,116,198', '255, 116, 198',
       '198,150,255', '198, 150, 255',

@@ -1,3 +1,7 @@
+> STATUS (2026-07-28): SHIPPED. The decisions this scope lists as open were
+> made (raw WebGL2, luminance-as-depth, render-on-demand) and the renderer
+> is on main. Kept as design-intent history.
+
 # KineticPlate true-3D rework — scope
 
 Status: SCOPE (not started). Author: audit session 2026-06-09.

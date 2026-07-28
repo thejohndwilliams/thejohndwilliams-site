@@ -22,7 +22,9 @@ export default {
         },
         navy: {
           DEFAULT: '#001F3F',
-          hour: '#7E9CB8', // blue-hour — accent for active states + fine lines (replaces gold)
+          // hour: '#7E9CB8' — RETIRED 2026-07-28. The blue followed gold out.
+          // Hierarchy is brightness in the cream family now; active = lit
+          // ivory, hover = cream ring. Do not reintroduce a hue accent.
           deep: '#00121F',
         },
         charcoal: {

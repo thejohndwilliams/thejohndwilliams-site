@@ -8,8 +8,10 @@ file holds the standing truth. Update both when they drift.
 ## What this site is
 
 Public Astro portfolio for John D. Williams: photography sales, security and
-data work shown with discipline, professional credibility. Voice: quiet
-luxury, restraint, "Making visible." robots.txt blocks AI scrapers; /llms.txt
+data work shown with discipline, professional credibility. Voice: dark luxury
+(quiet luxury), restraint, "Making visible." The register law lives in
+design/VOICE.md (adopted 2026-07-11) and its mechanical subset is enforced
+by tests/hazards.test.ts; where this file and VOICE.md disagree, VOICE.md wins. robots.txt blocks AI scrapers; /llms.txt
 addresses agents directly.
 
 ## Stack
@@ -17,7 +19,7 @@ addresses agents directly.
 - Astro 4.16, static output. Tailwind 3.4. vitest, incl. `tests/hazards.test.ts`
   prose-rule locks (green is the gate; the count grows). Playwright e2e in
   `e2e/` runs chromium + webkit + iphone. Node pinned to 24 (`.nvmrc`;
-  node 25 breaks suite imports SILENTLY — `scripts/check-node.mjs` guards). Build currently emits 105 pages; the exact counts
+  node 25 breaks suite imports SILENTLY — `scripts/check-node.mjs` guards). Build page count lives in tests/build.test.ts (the doc copy of the number is always stale); the exact counts
   asserted in `tests/build.test.ts` are the source of truth, not this file.
 - Fonts, self-hosted: IBM Plex Sans (UI), EB Garamond (display serif voice),
   JetBrains Mono (code). Source Sans 3 and Libre Baskerville are RETIRED.
@@ -41,21 +43,29 @@ npm run test:e2e             # Playwright
 
 ## Palette (current since 2026-05-31)
 
-- `midnight` #0a0a0a background, `cream` #FDFCFA foreground: untouchable.
-- `ivory` #F4EADE: primary accent. Replaced gold everywhere, including the JW mark.
+- `midnight` #0a0a0a background: untouchable. `cream` #F4EADE is the ivory
+  foreground family (steps 100-700); there is no separate `ivory` token, and
+  #FDFCFA survives only as raw literals in the kinetic dot color. The cream
+  family replaced gold everywhere, including the JW mark.
 - `navy-hour` (blue-hour) #7E9CB8: accent for active states and fine lines.
 - `stone` #A89F8C secondary. `mute` #787878 muted prose (AA on midnight).
   `charcoal` #1A1A1A separators.
 - GOLD IS RETIRED. #B8973F and its light/dark variants must not return.
+- NAVY-HOUR IS RETIRED (2026-07-28). #7E9CB8 followed gold out; there is no
+  hue accent. Hierarchy is brightness in the cream family: lit = active,
+  the candle is the only light. Test-locked in hazards.test.ts.
 - Contrast floor WCAG AA. Never opacity-40 or lower on prose; use text-mute.
 
 ## Style laws (standing rules)
 
 - NO em-dash anywhere in public copy. Periods, commas, colons.
 - No font-light / weight 300 (not loaded).
-- Hero is two lines only: verb eyebrow + "John D. Williams". Never
-  credentials, never triplets.
-- Verb eyebrows: making visible / noticing / building / rising.
+- Home hero: verb eyebrow + "John D. Williams" + the finished-identity line
+  ("Enterprise operations, satellite communications. Fine-art photographer.",
+  Phase 0, owner-approved). Never unfinished credentials, never triplets.
+- Page-identity hero eyebrows are verbs: making visible / noticing / building.
+  ("rising" is BANNED, test-locked, VOICE.md rule 2.) Section and utility
+  eyebrows are professional nouns (About, Object studies, The edition).
 - Photo titles one word, lowercase. Scripture pairing adjacent, not literal;
   ESV default, KJV sparingly.
 - No emojis, no exclamation marks, no engagement-begging.
@@ -153,12 +163,8 @@ If you cannot run that skill, do not push public copy changes.
 
 - Earth/leaf LiquidPlate brightness (visual, preview-first).
 - MDX /writing surface (needs 2-3 essays; one draft exists).
-- KineticPlate true-3D rework: Phase 0 spike DONE, lives on preview branch
-  `kinetic-3d-spike-2026-06-09` (route /about-3d-spike, noindexed) — a real
-  WebGL2 point cloud (KineticPlate3D.astro), verdict proceed to Phase 1.
-  Direction fixed: raw WebGL2 (zero-dep), luminance-as-depth v1, render-on-
-  demand. See docs/kinetic-plate-3d-scope.md + 05_Decisions in the vault.
-  The current /about still uses the 2.5D KineticPlate (the fallback).
+- KineticPlate3D SHIPPED to main (on /about and /relief) with the 2.5D plate
+  as in-DOM fallback; the spike-era notes are history. See docs/kinetic-plate*.md.
 - Heavy hero re-derivation (img-0078, 7r51108-enhanced-sr, img-0075,
   dscf0783): RESOLVED 2026-06-09 — re-derived from the actual iCloud masters
   and compared pixel crops: equal/larger files at IDENTICAL quality. Current

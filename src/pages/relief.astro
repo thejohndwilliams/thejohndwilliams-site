@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
+import KineticPlate from '../components/KineticPlate.astro';
 
 /*
  * /relief — the object axis of the photographs.
@@ -80,7 +81,11 @@ const EDITIONS = [
 
   <section class="pb-12 sm:pb-16 md:pb-20">
     <div class="container-wide">
-      <div class="grid gap-10 md:grid-cols-2 md:gap-16 items-center">
+      {/* grid-cols-1 is load-bearing: without an explicit base track the
+          implicit auto column sizes to the sweep figure's max-content
+          (26rem), overflowing 390px phones and dragging the whole document
+          wide (doctrine audit, 2026-07-28). */}
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 items-center">
         <div class="order-2 md:order-1">
           <p class="eyebrow mb-2">Structure · Shanghai Tower</p>
           <h2 class="mb-5">The light does the work</h2>
@@ -143,6 +148,7 @@ const EDITIONS = [
       </p>
       <div class="max-w-2xl">
         <KineticPlate3D category="structure" />
+        <KineticPlate category="structure" class="plate-fallback" />
       </div>
     </div>
   </section>
@@ -306,7 +312,7 @@ const EDITIONS = [
 <style>
   /* ---------------------------------------------------------------- sweep */
   .sweep {
-    max-width: 26rem;
+    max-width: min(26rem, 100%);
     margin-inline: auto;
   }
   .sweep__stage {
@@ -435,4 +441,11 @@ const EDITIONS = [
     .edition__size { font-size: 0.625rem; }
     .edition__read { font-size: 0.5625rem; }
   }
+
+  /* WebGL fallback swap (about.astro pattern; doctrine audit 2026-07-28):
+     the 2.5D plate shows only when the 3D context cannot be created, so
+     no-WebGL visitors get the photograph instead of an empty region. */
+  .plate-fallback { display: none !important; }
+  .kplate3d[data-webgl="unsupported"] { display: none !important; }
+  .kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
 </style>
