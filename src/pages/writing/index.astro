@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Austere index by doctrine (roadmap Phase 1): date, category, title. No
+// excerpts, no hero images, no share buttons. Published essays only, newest
+// first. Drafts (draft: true) never render or build a route.
+const essays = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+
+<BaseLayout
+  title="Writing"
+  description="Essays on engineering forensics, operations discipline, and craft by John D. Williams."
+>
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal max-w-2xl mb-10 sm:mb-16">
+        <p class="eyebrow mb-3 sm:mb-4">Writing</p>
+        <h1 class="mb-5 sm:mb-7">Notes on the work</h1>
+        <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl">
+          Engineering forensics, operations discipline, and craft. The
+          discipline, written down.
+        </p>
+      </div>
+
+      {essays.length === 0 ? (
+        <p class="text-sm opacity-50">The first essays are on the way to this page.</p>
+      ) : (
+        <ul class="reveal border-t border-white/10">
+          {essays.map((essay) => (
+            <li class="border-b border-white/10">
+              <a
+                href={`/writing/${essay.slug}`}
+                class="group grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-1 sm:gap-6 py-5 sm:py-7 items-baseline"
+              >
+                <span class="text-[11px] tracking-[0.18em] uppercase opacity-50 tabular-nums">
+                  {fmt(essay.data.pubDate)}
+                </span>
+                <span class="block">
+                  <span class="block text-[11px] tracking-[0.18em] uppercase opacity-50 mb-1">{essay.data.category}</span>
+                  <span class="block t-sub font-serif tracking-tight opacity-90 group-hover:text-cream group-hover:opacity-100 transition-all duration-300">{essay.data.title}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</BaseLayout>

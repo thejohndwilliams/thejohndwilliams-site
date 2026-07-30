@@ -87,9 +87,16 @@ describe('Astro Build', () => {
     expect(fs.statSync(mp4).size).toBeLessThan(3 * 1024 * 1024);
   });
 
-  it('does NOT emit /writing — page was removed', () => {
+  it('emits the /writing index (surface shipped Phase 1, 2026-07-28)', () => {
     const writingPath = path.join(distDir, 'writing', 'index.html');
-    expect(fs.existsSync(writingPath)).toBe(false);
+    expect(fs.existsSync(writingPath)).toBe(true);
+  });
+
+  it('publishes making-visible and does NOT build a route for any draft essay', () => {
+    // Published essay routes to /writing/<slug>/. Drafts (draft: true) must
+    // never emit a page — a draft cannot leak via a guessed URL.
+    expect(fs.existsSync(path.join(distDir, 'writing', 'making-visible', 'index.html'))).toBe(true);
+    expect(fs.existsSync(path.join(distDir, 'writing', 'the-transparent-lightbox', 'index.html'))).toBe(false);
   });
 
   it('generates per-photo OG images under /og/photography/', () => {
