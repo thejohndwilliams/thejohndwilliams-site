@@ -63,9 +63,11 @@ npm run test:e2e             # Playwright
 - Home hero: verb eyebrow + "John D. Williams" + the finished-identity line
   ("Enterprise operations, satellite communications. Fine-art photographer.",
   Phase 0, owner-approved). Never unfinished credentials, never triplets.
-- Page-identity hero eyebrows are verbs: making visible / noticing / building.
-  ("rising" is BANNED, test-locked, VOICE.md rule 2.) Section and utility
-  eyebrows are professional nouns (About, Object studies, The edition).
+- Page-identity hero eyebrows are verbs: making visible / noticing /
+  building / rising (owner ruling 2026-07-28 restored "rising" as the
+  fourth verb of the sequence; it is continuing action, not a status
+  label). Section and utility eyebrows are professional nouns (Object
+  studies, The edition, Fine Print).
 - Photo titles one word, lowercase. Scripture pairing adjacent, not literal;
   ESV default, KJV sparingly.
 - No emojis, no exclamation marks, no engagement-begging.

@@ -232,9 +232,13 @@ describe('hazard locks: built output', () => {
     // essay can still say "on the way to the airport" mid-sentence; only the
     // clause-terminal promise form is banned.
     const bannedLower = ['(in progress)', 'coming soon', 'on the way.', 'not a hobby', 'life intervened', '3.86'];
-    // Case-sensitive: "Rising" as rendered element text (eyebrow/heading).
-    // Lowercase "rising" stays legal in captions and alt text.
-    const bannedExact = ['>Rising<'];
+    // Owner ruling 2026-07-28: "Rising" is the fourth verb of the page
+    // eyebrow sequence (making visible / noticing / building / rising) and
+    // is LEGAL as the About hero eyebrow. The 2026-07-11 audit read it as
+    // an ascent status label; John: "it should read Rising just above my
+    // name. Defeats the spirit otherwise." Ascent NOUNS/labels stay banned
+    // via the phrase list above; no exact-match element ban remains.
+    const bannedExact: string[] = [];
     const offenders: string[] = [];
     for (const p of walk(DIST, ['.html'])) {
       const body = readFileSync(p, 'utf8');
