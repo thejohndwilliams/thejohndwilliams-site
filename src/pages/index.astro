@@ -62,7 +62,7 @@ const charities = [
         data-dawn="/images/photography/hero/7r52314.webp"
         data-midday="/images/photography/hero/7r52326.webp"
         data-golden="/images/photography/hero/img-6552.webp"
-        data-night="/images/photography/hero/dscf0530.webp"
+        data-night="/images/photography/hero/gv-1fd48bd9.webp"
       />
     </picture>
     <div
@@ -96,14 +96,14 @@ const charities = [
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
-      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
+      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5">
         {/* Photography - hero card, spans 2 rows on desktop */}
-        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
+        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
           <img
             src="/images/photography/gallery/7r51848.webp"
             srcset="/images/photography/thumb/7r51848.webp 400w, /images/photography/gallery/7r51848.webp 1200w, /images/photography/hero/7r51848.webp 2400w"
             sizes="(max-width: 767px) 100vw, 58vw"
-            alt="A storm shelf at dusk, one ember of sunset at the horizon" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+            alt="A storm shelf at dusk, one ember of sunset at the horizon" class="absolute inset-0 w-full h-full object-cover object-[center_62%] transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
             <h3 class="t-sub font-serif mb-1.5 group-hover:text-cream transition-colors duration-300">Photography</h3>
@@ -142,9 +142,9 @@ const charities = [
             portrait and a 21:9 crop would cut the panel in half. */}
         <a href="/relief" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[21/9] md:col-span-12 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
           <picture>
-            <source type="image/avif" srcset="/images/photography/thumb/img-7576-enhanced.avif 400w, /images/photography/gallery/img-7576-enhanced.avif 1200w, /images/photography/hero/img-7576-enhanced.avif 2400w" sizes="100vw" />
-            <source type="image/webp" srcset="/images/photography/thumb/img-7576-enhanced.webp 400w, /images/photography/gallery/img-7576-enhanced.webp 1200w, /images/photography/hero/img-7576-enhanced.webp 2400w" sizes="100vw" />
-            <img src="/images/photography/gallery/img-7576-enhanced.webp" alt="Shanghai Tower seen from below, its ribbed facade twisting up into cloud" class="w-full h-full object-cover object-center transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+            <source type="image/avif"  sizes="100vw" />
+            <source type="image/webp"  sizes="100vw" />
+            <img src="/images/relief/sweep-still.webp" alt="The relief panel, raked by light" class="w-full h-full object-cover object-[center_30%] object-center transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
           </picture>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
@@ -160,7 +160,7 @@ const charities = [
   <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">In Service</h2>
-      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
+      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-5">
         {charities.map((org, i) => {
           const isWide = i === 0 || i === 3;
           const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
@@ -212,7 +212,7 @@ const charities = [
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">Connect</h2>
-      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-2 sm:gap-3 md:gap-4">
+      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-5">
         {socialLinks.map((link, i) => {
           const isWide = i === 0 || i === 3;
           const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
