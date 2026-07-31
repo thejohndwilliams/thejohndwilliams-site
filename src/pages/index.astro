@@ -128,21 +128,26 @@ const charities = [
         {/* Work */}
         <a href="/work" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
           <img
-            src="/images/photography/gallery/dscf0580.webp"
-            srcset="/images/photography/thumb/dscf0580.webp 400w, /images/photography/gallery/dscf0580.webp 1200w"
+            src="/images/photography/gallery/dscf1928.webp"
+            srcset="/images/photography/thumb/dscf1928.webp 400w, /images/photography/gallery/dscf1928.webp 1200w"
             sizes="(max-width: 767px) 100vw, 42vw"
-            alt="A stone path through a narrow lane at dusk" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
+            alt="Windows lit at dusk across the water" class="w-full h-full object-cover object-[center_32%] transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
             <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">Work</h3>
             <p class="text-xs opacity-60">Data, security, operations.</p>
           </div>
         </a>
-        {/* Relief - the object axis. Third card of the right-hand stack: at
-            5 columns the 1040px source is shown smaller than native, so the
-            plaster texture stays crisp instead of upscale-grainy. */}
+        {/* Relief - the object axis. Third card of the right-hand stack. The
+            asset is a purpose-rendered 16:10 detail of the carved hull (native
+            1280x800, bench recipe, register-graded) - it is the cell's exact
+            ratio, so the material fills the tile with no crop and renders
+            below native width at every breakpoint. */}
         <a href="/relief" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
-          <img src="/images/relief/sweep-still.webp" alt="The relief panel, raked by light" class="w-full h-full object-cover object-[center_30%] transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+          <picture>
+            <source type="image/avif" srcset="/images/relief/card.avif" />
+            <img src="/images/relief/card.webp" alt="A tower carved as plaster relief, raked by one low light" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+          </picture>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
             <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">Relief</h3>
