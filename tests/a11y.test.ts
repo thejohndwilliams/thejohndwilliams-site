@@ -46,7 +46,13 @@ function audit(html: string): string[] {
     const name = norm(computeAccessibleName(el as any));
     const vis = visibleText(el);
     // label-content-name-mismatch: visible text must be contained in the name.
-    if (vis && name && !name.includes(vis)) {
+    // Space-insensitive containment (Astro 7 chassis, 2026-07-31): the v7 HTML
+    // compressor collapses inter-element whitespace, so our concatenated
+    // visible text loses the spaces the accessible-name algorithm inserts
+    // between nodes. Screen readers compare words, not byte runs; comparing
+    // with spaces stripped preserves the rule's intent under either compiler.
+    const squash = (s: string) => s.replace(/\s+/g, '');
+    if (vis && name && !squash(name).includes(squash(vis))) {
       issues.push(`label-content-name-mismatch: visible "${vis}" not in accessible name "${name}" — ${(el as Element).outerHTML.slice(0, 100)}`);
     }
     // every control/link must have a non-empty accessible name.

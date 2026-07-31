@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from "astro:transitions";
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
@@ -164,7 +164,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     })} />
 
     {/* View Transitions - cinematic page-to-page feel */}
-    <ViewTransitions />
+    <ClientRouter />
 
     {/* Directional page transitions - pages occupy a spatial strip.
          Clicking right in the nav slides content left; clicking left
