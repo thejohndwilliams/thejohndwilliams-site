@@ -29,8 +29,8 @@ const charities = [
     name: 'St. Jude',
     mission: 'Treatment and research; no family ever billed.',
     url: 'https://www.stjude.org/',
-    image: 'dscf1928',
-    alt: 'A shoreline at dusk, windows lit beyond the trees'
+    image: '7r51505-enhanced-sr',
+    alt: 'A bee tending a lemon blossom in dark leaves'
   }
 ];
 
@@ -62,7 +62,7 @@ const charities = [
         data-dawn="/images/photography/hero/7r52314.webp"
         data-midday="/images/photography/hero/7r52326.webp"
         data-golden="/images/photography/hero/img-6552.webp"
-        data-night="/images/photography/hero/gv-1fd48bd9.webp"
+        data-night="/images/photography/hero/7r52268.webp"
       />
     </picture>
     <div
@@ -97,8 +97,10 @@ const charities = [
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
       <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5">
-        {/* Photography - hero card, spans 2 rows on desktop */}
-        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-2 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
+        {/* Photography - the flagship. Spans all three rows of the right-hand
+            stack; the image is absolutely positioned so the three 16:10 cards
+            alone define the grid's row heights. */}
+        <a href="/photography" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-3 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
           <img
             src="/images/photography/gallery/7r51848.webp"
             srcset="/images/photography/thumb/7r51848.webp 400w, /images/photography/gallery/7r51848.webp 1200w, /images/photography/hero/7r51848.webp 2400w"
@@ -136,20 +138,15 @@ const charities = [
             <p class="text-xs opacity-60">Data, security, operations.</p>
           </div>
         </a>
-        {/* Relief - the object axis. Full width beneath the three, so it reads as
-            a fourth destination rather than a peer of the three surfaces. The
-            source photograph is used here, not a relief render: every render is
-            portrait and a 21:9 crop would cut the panel in half. */}
-        <a href="/relief" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[21/9] md:col-span-12 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
-          <picture>
-            <source type="image/avif"  sizes="100vw" />
-            <source type="image/webp"  sizes="100vw" />
-            <img src="/images/relief/sweep-still.webp" alt="The relief panel, raked by light" class="w-full h-full object-cover object-[center_30%] object-center transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
-          </picture>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-8">
+        {/* Relief - the object axis. Third card of the right-hand stack: at
+            5 columns the 1040px source is shown smaller than native, so the
+            plaster texture stays crisp instead of upscale-grainy. */}
+        <a href="/relief" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
+          <img src="/images/relief/sweep-still.webp" alt="The relief panel, raked by light" class="w-full h-full object-cover object-[center_30%] transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
             <h3 class="t-sub font-serif mb-1 group-hover:text-cream transition-colors duration-300">Relief</h3>
-            <p class="text-xs sm:text-sm opacity-60">A photograph cut as a surface, a few millimetres deep.</p>
+            <p class="text-xs opacity-60">A photograph cut as a surface, a few millimetres deep.</p>
           </div>
         </a>
       </div>
