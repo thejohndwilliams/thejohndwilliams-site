@@ -47,6 +47,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+// Local component imports: script-setup auto-registers them for the template,
+// tree-shaken, no reliance on an app-level plugin entrypoint. (Round-3 gate
+// catch: the appEntrypoint plugin never applied, leaving <q-btn> unresolved.)
+import { QBtn, QToggle } from 'quasar';
 import { version as quasarVersion } from 'quasar/package.json';
 import 'quasar/dist/quasar.prod.css';
 
