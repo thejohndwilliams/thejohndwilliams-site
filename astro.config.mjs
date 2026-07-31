@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import { categories } from './src/data/photography.ts';
 
@@ -20,7 +19,6 @@ for (const cat of categories) {
 export default defineConfig({
   site: SITE,
   integrations: [
-    tailwind(),
     sitemap({
       // Keep unlinked preview/lab routes out of the production sitemap.
       filter: (page) => !page.includes('/about-lab'),
