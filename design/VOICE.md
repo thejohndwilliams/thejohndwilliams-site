@@ -13,8 +13,11 @@ is enforced by reading every public string aloud before it ships.
 1. Lead with finished identity. Name plus two present-tense roles inside the
    first fifteen words of the site. Identity is declared once, on the home
    hero; every page after assumes it.
-2. Ban ascent labels. No rising, aspiring, emerging, pursuing, or any label
-   that describes a climb rather than a station.
+2. Ban ascent labels. No aspiring, emerging, pursuing, or any label that
+   describes a climb rather than a station. Owner ruling (2026-07-28): the
+   page eyebrow sequence making visible / noticing / building / rising is
+   exempt; those are verbs of continuing action, the site's quiet poem,
+   and "Rising" stands above the name on About.
 3. Omit unfinished credentials. No "(in progress)", no GPA, no certifications
    or commissions that are not yet held.
 4. Delete interrupted-life explanations. No "life intervened", no detours
