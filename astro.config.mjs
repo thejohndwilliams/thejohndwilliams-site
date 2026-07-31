@@ -1,6 +1,10 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
+// FOUNDATION PROOF (2026-07-30, throwaway branch): Vue islands mounted inside
+// the existing Astro shell, Quasar components included, zero changes to any
+// production page. Demonstrates the escape hatch is real; never merge.
+import vue from '@astrojs/vue';
 import { categories } from './src/data/photography.ts';
 
 const SITE = 'https://thejohndwilliams.com';
@@ -20,6 +24,7 @@ for (const cat of categories) {
 export default defineConfig({
   site: SITE,
   integrations: [
+    vue({ appEntrypoint: '/src/vue-app' }),
     tailwind(),
     sitemap({
       // Keep unlinked preview/lab routes out of the production sitemap.

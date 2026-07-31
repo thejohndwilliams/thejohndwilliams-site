@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
+import FoundationProof from '../components/FoundationProof.vue';
 
 // Unlinked, noindexed comparison lab. Side-by-side: the current 2.5D
 // stacked-canvas plate vs the true-3D depth-mapped WebGL point cloud, for
@@ -96,6 +97,17 @@ const ROWS = [
     // plates mount asynchronously (they fetch geometry); apply once they're up
     setTimeout(() => apply(range ? Number(range.value) : 0.3), 700);
   </script>
+
+  {/* FOUNDATION PROOF (2026-07-30, throwaway branch): a Vue 3 + Quasar
+      island inside the Astro shell. Interactive evidence for the framework
+      evaluation; never merges to main. */}
+  <section class="py-16 md:py-24">
+    <div class="container-wide">
+      {/* client:only - Quasar's install() wants its own SSR context, which a
+          non-Quasar prerenderer does not provide; hydrate purely in-browser. */}
+      <FoundationProof client:only="vue" />
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
