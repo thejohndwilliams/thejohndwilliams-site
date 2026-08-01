@@ -1,7 +1,7 @@
 # Legacy routes for the experiments wing (owner naming ruling 2026-07-31:
 # the wing is Beyond). Real 301s so printed bio links and any shared preview
 # links keep resolving.
-/relief /beyond 301
-/relief/ /beyond 301
+/relief /beyond#relief 301
+/relief/ /beyond#relief 301
 /labs /beyond 301
 /labs/ /beyond 301

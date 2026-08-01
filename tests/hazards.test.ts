@@ -281,7 +281,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
     // link-in-bio URLs printed on cards and profiles must keep resolving:
     // public/_redirects gives Cloudflare Pages a server-side 301.
     const redirects = readFileSync(join(SRC, '../public/_redirects'), 'utf8');
-    expect(redirects).toMatch(/^\/relief\s+\/beyond\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\s+\/beyond#relief\s+301$/m);
     expect(redirects).toMatch(/^\/labs\s+\/beyond\s+301$/m);
   });
 
