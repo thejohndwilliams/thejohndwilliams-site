@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate from '../components/KineticPlate.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
+
+// LABS (owner directive 2026-07-31): one home for the photography
+// experiments. Merges the depth/hologram comparison work (from the private
+// lab, which keeps its production gate and P1 lock) with the relief - the
+// object axis - discussed in more depth than the work page's resume view.
+// Work stays the living resume of domains; Labs is where the experiments
+// live and are explained.
+const ROWS = [
+  { id: 'earth', label: 'Earth · rain-wet leaf', note: 'A dark subject. Luminance buries it; depth stands it forward.' },
+  { id: 'structure', label: 'Structure · Shanghai Tower', note: 'Shot against bright sky. Depth keeps the tower near, the sky far.' },
+  { id: 'sky', label: 'Sky · thunderheads', note: 'The nearest billows read closest; the void recedes to black.' },
+  { id: 'water', label: 'Water · El Arco', note: 'A distant scene. The arch holds its place in real space.' },
+] as const;
+---
+
+<BaseLayout
+  title="Labs"
+  description="Photography experiments by John D. Williams: frames rebuilt as holograms and true point clouds, and photographs cut as physical bas-relief. Where the work leaves the frame."
+>
+  <section class="py-12 sm:py-16 md:py-20 overflow-hidden">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3 sm:mb-4">Building</p>
+      <h1 class="mb-5 sm:mb-7">Labs</h1>
+      <div class="prose max-w-2xl">
+        <p>
+          Experiments in what a photograph can become once it leaves the
+          frame. Each one starts the same way: a finished photograph, taken
+          seriously enough to ask what else it holds. Depth, first. Then
+          surface.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8 sm:py-10">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3">Depth studies</p>
+      <div class="prose max-w-2xl">
+        <p>
+          The same photographs, twice. On the left, a hologram: the frame cut
+          into stacked planes that slide against each other as you move. On
+          the right, a point cloud: every dot sitting at the true depth the
+          photograph holds, baked from its depth pass. One fakes relief
+          beautifully; the other actually has it.
+        </p>
+        <p class="text-sm opacity-60">
+          Sweep across a plate to orbit it; release mid-turn and it carries,
+          then settles. On a phone, the clouds roll with the page. Reduced
+          motion holds a still frame.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {ROWS.map((row, i) => (
+    <section class={`py-10 sm:py-14 md:py-16 ${i % 2 === 1 ? 'section-light' : ''}`}>
+      <div class="container-wide">
+        <p class="eyebrow mb-2">{row.label}</p>
+        <p class="text-sm opacity-55 mb-8 max-w-xl">{row.note}</p>
+        <div class="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
+          <div>
+            <KineticPlate category={row.id} />
+            <p class="plate-tag">Hologram · stacked planes</p>
+          </div>
+          <div class="study-3d">
+            <KineticPlate3D category={row.id} />
+            <p class="plate-tag">Point cloud · true depth</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {/* THE RELIEF - the object axis, merged in per the owner's Labs ruling.
+      The depth studies above are its prerequisite: once a frame knows its
+      depth, it can be cut. /relief remains the standalone deep-dive (the
+      surface strangers arrive at); this section is its home in the story. */}
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow mb-8 sm:mb-12">
+      <p class="eyebrow mb-3">The relief</p>
+      <div class="prose max-w-2xl">
+        <p>
+          Where the depth work stops being a render. A photograph cut as
+          bas-relief a few millimetres deep, with no ink anywhere in it,
+          invisible under ordinary room light and legible only when something
+          crosses it at a grazing angle. The point cloud above is the
+          blueprint; the panel is the proof.
+        </p>
+        <p class="text-sm opacity-60">
+          Seven depths surveyed from one millimetre to fourteen. Three
+          editions drawn at literal scale, so the layout is the measurement.
+          A six second sweep of raking light that lights the facade rib by
+          rib.
+        </p>
+      </div>
+    </div>
+    <div class="container-narrow reveal">
+      <a href="/relief" class="press-feedback group relative grid sm:grid-cols-12 items-stretch rounded-card overflow-hidden border border-white/10 hover:border-cream/25 transition-colors duration-500">
+        <div class="sm:col-span-4 md:col-span-3 relative min-h-[220px] sm:min-h-0">
+          <picture>
+            <source type="image/avif" srcset="/images/relief/edition-24x36.avif" />
+            <source type="image/webp" srcset="/images/relief/edition-24x36.webp" />
+            <img
+              src="/images/relief/edition-24x36.webp"
+              alt="A bas-relief panel of the Shanghai Tower seen from below, its facade raised out of a shallow surface and lit from one side"
+              width="930"
+              height="1395"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </div>
+        <div class="sm:col-span-8 md:col-span-9 p-6 sm:p-8">
+          <p class="eyebrow mb-2">Object studies</p>
+          <h3 class="t-sub font-serif mb-2 text-cream">A photograph you could hold</h3>
+          <p class="text-sm opacity-60 leading-relaxed max-w-md mb-5">
+            The full studies: every depth, every edition at scale, and the
+            sweep of light that develops the surface.
+          </p>
+          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300">See the studies →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+<style is:global>
+  .plate-tag {
+    margin-top: 1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.62);
+  }
+  /* If WebGL2 is unavailable the point cloud cannot mount; the hologram
+     column carries the row alone rather than showing a dead figure. */
+  .study-3d:has(.kplate3d[data-webgl="unsupported"]) { display: none; }
+</style>
+</BaseLayout>
