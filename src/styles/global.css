@@ -8,6 +8,17 @@
 :root {
   --bg-base: #0a0a0a;
   --bg-elevated: #141414;
+  /* MATERIAL TOKENS (Glass Build A2, 2026-07-31). The rest/lit grammar as
+     single-source values: every glass surface rests near-silent and earns
+     light on attention. Owner ruling from the quiet-rim hero review
+     ("night and day"). Edit HERE, never in component blocks. */
+  --m-rest-border: rgba(255, 255, 255, 0.10);
+  --m-rest-inset: rgba(255, 255, 255, 0.11);
+  --m-rest-glow: rgba(244, 234, 222, 0.04);
+  --m-lit-border: rgba(244, 234, 222, 0.28);
+  --m-lit-inset: rgba(255, 255, 255, 0.22);
+  --m-lit-glow: rgba(244, 234, 222, 0.07);
+  --ring-rest: 0.34; /* shared crystal ring resting opacity */
 }
 html[data-theme="black"] {
   --bg-base: #000000;
@@ -540,20 +551,20 @@ html[data-theme="black"] {
     background: linear-gradient(180deg, rgba(42, 44, 50, 0.46) 0%, rgba(16, 17, 21, 0.58) 100%);
     backdrop-filter: blur(14px) saturate(1.6);
     -webkit-backdrop-filter: blur(14px) saturate(1.6);
-    border: 1px solid rgba(255, 255, 255, 0.20);
+    border: 1px solid var(--m-rest-border);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.26),
-      inset 0 -2px 3px 0 rgba(0, 0, 0, 0.35),
-      0 8px 22px rgba(0, 0, 0, 0.42);
+      inset 0 1px 0 0 var(--m-rest-inset),
+      inset 0 -2px 3px 0 rgba(0, 0, 0, 0.22),
+      0 8px 22px rgba(0, 0, 0, 0.34);
   }
 
   .btn-outline:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.30);
+    border-color: var(--m-lit-border);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
-      0 12px 30px rgba(0, 0, 0, 0.50),
-      0 0 30px rgba(244, 234, 222, 0.108);
+      inset 0 1px 0 0 var(--m-lit-inset),
+      0 12px 30px rgba(0, 0, 0, 0.46),
+      0 0 30px var(--m-lit-glow);
   }
 
   /* Subhead utility */
@@ -906,14 +917,14 @@ html.lenis body { height: auto; }
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(20px) saturate(1.85);
   -webkit-backdrop-filter: blur(20px) saturate(1.85);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--m-rest-border);
   box-shadow:
-    inset 1px 1px 0 0 rgba(255, 255, 255, 0.20),
+    inset 1px 1px 0 0 var(--m-rest-inset),
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.18),
     0 6px 18px rgba(0, 0, 0, 0.30);
   transition: background .3s, border-color .3s, box-shadow .3s, opacity .3s, transform .3s;
 }
-.glass-control:hover { background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.22); }
+.glass-control:hover { background: rgba(255, 255, 255, 0.10); border-color: var(--m-lit-border); box-shadow: inset 1px 1px 0 0 var(--m-lit-inset), inset -1px -1px 0 0 rgba(0, 0, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.34), 0 0 14px var(--m-lit-glow); }
 
 /* ============================================================
    EYEBROW - page kicker over hero photos. Legible-by-default:
@@ -1283,9 +1294,12 @@ footer.glass-footer:hover::after { opacity: 1; }
   background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03) 58%, rgba(255,255,255,0.06));
   backdrop-filter: blur(8px) saturate(1.6) brightness(1.06);
   -webkit-backdrop-filter: blur(8px) saturate(1.6) brightness(1.06);
-  border: 1px solid rgba(255,255,255,0.34);
+  /* A2 candlelight redesign (owner: complications "no longer make sense"
+     against the quiet register): the vessel trades its chrome ring for a
+     cream hairline; the light lives in the core, not the rim. */
+  border: 1px solid var(--m-lit-border);
   box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,0.42),
+    inset 0 1.5px 0 rgba(255,255,255,0.18),
     inset 0 -3px 7px rgba(0,8,16,0.38),
     0 2px 8px rgba(0,0,0,0.30),
     0 0 10px var(--cl-glow, rgba(244, 234, 222, 0.132));
@@ -1305,27 +1319,24 @@ footer.glass-footer:hover::after { opacity: 1; }
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  backdrop-filter: blur(1.5px) brightness(1.55) saturate(1.3);
-  -webkit-backdrop-filter: blur(1.5px) brightness(1.55) saturate(1.3);
+  backdrop-filter: blur(1.5px) brightness(1.25) saturate(1.2);
+  -webkit-backdrop-filter: blur(1.5px) brightness(1.25) saturate(1.2);
 }
-/* Specular double flare: hard light upper-left, soft answer lower-right,
-   faint prismatic drift from white through cool to warm ivory. */
+/* A2 candlelight redesign: the specular double flare (chrome jewelry, and
+   the last home of the retired cool-blue tints 220,230,250) is replaced by
+   one soft cream kiss where the vessel catches its own core light. One
+   light per surface: the flame within, a single honest catch above. */
 .cl-arcs {
   padding: 1.2px;
-  background: conic-gradient(from 210deg,
-    transparent 0deg,
-    rgba(255,255,255,0.85) 28deg,
-    rgba(220,230,250,0.25) 52deg,
-    transparent 90deg,
-    transparent 175deg,
-    rgba(255,255,255,0.55) 210deg,
-    rgba(244,234,222,0.18) 235deg,
-    transparent 270deg);
+  background: radial-gradient(42% 58% at 50% 6%,
+    rgba(244,234,222,0.30),
+    rgba(244,234,222,0.08) 55%,
+    transparent 78%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 /* Backlit core: the lit state. Screen blend lifts it off the crystal. */
 .cl-core {
@@ -1370,7 +1381,9 @@ footer.glass-footer:hover::after { opacity: 1; }
   border-radius: 9999px;
   pointer-events: none;
   z-index: 0;
-  border: 1.5px solid var(--cl-flare-edge, rgba(190,210,230,0.65));
+  /* A2: arrival flare fallback was cool-blue 190,210,230 (a blue-retirement
+     survivor hiding in a var default); the flare is now candle-cream. */
+  border: 1.5px solid var(--cl-flare-edge, rgba(244,234,222,0.55));
 }
 @media (prefers-reduced-motion: reduce) {
   .cl-core { animation: none; opacity: 0.8; }
@@ -1413,7 +1426,17 @@ footer.glass-footer:hover::after { opacity: 1; }
   backdrop-filter: blur(1.5px) brightness(1.4) saturate(1.25);
   -webkit-backdrop-filter: blur(1.5px) brightness(1.4) saturate(1.25);
   z-index: 1;
+  /* A2 rest/lit: the ring rests dim on every dark-glass surface and
+     relights on attention. Token, not per-component override. */
+  opacity: var(--ring-rest);
+  transition: opacity 0.35s ease;
 }
+/* The ivory key is the single flame (owner law): its ring never rests. */
+.btn-primary { --ring-rest: 1; }
+/* Attention relights the crystal. */
+.btn-outline:hover, .btn-outline:focus-visible, .btn-outline.is-lit,
+.glass-control:hover, .glass-control:focus-visible,
+.glass-disc:hover, .glass-disc:focus-visible { --ring-rest: 0.8; }
 /* Idle crystal presence (v1.1, John's review 2026-06-10): the first
    pass mapped the lens's interaction physics onto buttons but left
    idle bodies untouched; the material's thickness lives in the idle
@@ -1436,24 +1459,24 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .btn-outline {
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.10), transparent 55%),
+    radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.06), transparent 55%),
     linear-gradient(180deg, rgba(42, 44, 50, 0.46) 0%, rgba(16, 17, 21, 0.58) 100%);
   backdrop-filter: blur(14px) saturate(1.6);
   -webkit-backdrop-filter: blur(14px) saturate(1.6);
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: var(--m-rest-border);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.34),
-    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.35),
-    0 8px 22px rgba(0, 0, 0, 0.42),
-    0 0 18px rgba(244, 234, 222, 0.06);
+    inset 0 1px 0 0 var(--m-rest-inset),
+    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.22),
+    0 8px 22px rgba(0, 0, 0, 0.34),
+    0 0 18px var(--m-rest-glow);
 }
 .glass-control {
-  border-color: rgba(255, 255, 255, 0.20);
+  border-color: var(--m-rest-border);
   box-shadow:
-    inset 1px 1px 0 0 rgba(255, 255, 255, 0.24),
+    inset 1px 1px 0 0 var(--m-rest-inset),
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.18),
     0 6px 18px rgba(0, 0, 0, 0.30),
-    0 0 12px rgba(244, 234, 222, 0.048);
+    0 0 12px var(--m-rest-glow);
 }
 /* Theme toggle stays bare (John, 2026-06-10): the dim control reads as
    an icon, not a key. It keeps the press sink and the lit state when
@@ -1518,11 +1541,27 @@ footer.glass-footer:hover::after { opacity: 1; }
   transform-origin: 50% 28%;
   animation: btn-breathe 6.5s ease-in-out infinite;
 }
-.btn-primary:hover::after, .btn-primary:focus-visible::after, .btn-primary.is-lit::after,
-.btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
+.btn-primary:hover::after, .btn-primary:focus-visible::after, .btn-primary.is-lit::after {
   animation-duration: 4.5s;
   background:
     radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.92) 0%, rgba(253, 252, 250, 0.36) 42%, transparent 72%);
+}
+/* A2 rest/lit (relocated from the former end-of-file quiet-rim block): the
+   outline key's specular rests at a fifth of the ivory key's weight and
+   blooms on attention. The ivory key above keeps full presence by law. */
+@keyframes btn-breathe-quiet {
+  0%, 100% { opacity: 0.13; transform: scale(1)    translateY(0); }
+  50%      { opacity: 0.21; transform: scale(1.04) translateY(-1px); }
+}
+.btn-outline::after {
+  animation-name: btn-breathe-quiet;
+  background:
+    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.42) 0%, rgba(253, 252, 250, 0.14) 42%, transparent 72%);
+}
+.btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
+  animation-duration: 4.5s;
+  background:
+    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.68) 0%, rgba(253, 252, 250, 0.24) 42%, transparent 72%);
 }
 
 /* The bubble inflates into translucence on approach: a hair more
@@ -1607,45 +1646,13 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 
 /* ============================================================
-   QUIET RIM (experiment, 2026-07-30 - John's hero review).
-   Owner observation: over the near-black hero the backdrop blur
-   has nothing to borrow, so the visible material was the painted
-   rim - border, conic crystal ring, breathing specular - reading
-   as chrome, louder than the register. This section quiets the
-   OUTLINE pills only: hairline + type at rest, the glass still
-   present and still answering hover. The ivory key (btn-primary),
-   chip lens, and shared crystal layers are untouched.
-   Cascade note: placed at end of file so equal-specificity
-   overrides win; delete this block to restore the loud rim.
+   QUIET RIM (2026-07-30) - CONSOLIDATED 2026-07-31 (A2).
+   The end-of-file override chain that carried the quiet rest state
+   has been folded into single sources: values live in the :root
+   material tokens (the m-rest, m-lit, and ring-rest families); the outline
+   key's canonical blocks and the shared crystal-ring rule now read
+   those tokens directly; the quiet specular lives beside the wave-2
+   definition it modifies. Nothing overrides by file position any
+   more - that class of trap is retired. This tombstone remains so
+   history's cascade note has a forwarding address.
    ============================================================ */
-.btn-outline {
-  border-color: rgba(255, 255, 255, 0.10);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.11),
-    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.22),
-    0 8px 22px rgba(0, 0, 0, 0.34);
-}
-.btn-outline::before { opacity: 0.34; }   /* conic crystal ring, dimmed whole */
-@keyframes btn-breathe-quiet {
-  0%, 100% { opacity: 0.13; transform: scale(1)    translateY(0); }
-  50%      { opacity: 0.21; transform: scale(1.04) translateY(-1px); }
-}
-.btn-outline::after {
-  animation-name: btn-breathe-quiet;
-  background:
-    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.42) 0%, rgba(253, 252, 250, 0.14) 42%, transparent 72%);
-}
-/* Approach still earns light: hover restores most of the presence,
-   so the quiet is a resting state, not a dead one. */
-.btn-outline:hover, .btn-outline:focus-visible {
-  border-color: rgba(255, 255, 255, 0.20);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    0 12px 30px rgba(0, 0, 0, 0.46),
-    0 0 30px rgba(244, 234, 222, 0.07);
-}
-.btn-outline:hover::before, .btn-outline:focus-visible::before { opacity: 0.8; }
-.btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
-  background:
-    radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.68) 0%, rgba(253, 252, 250, 0.24) 42%, transparent 72%);
-}
