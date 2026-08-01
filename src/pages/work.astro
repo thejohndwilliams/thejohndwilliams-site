@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
 
 
 const projects = [
@@ -70,6 +71,21 @@ const expertise = [
     </div>
   </section>
 
+  {/* THE PRACTICE - risen from the page's foot (owner order 2026-08-01):
+      the consulting line and the resume, in the material, directly under
+      Selected Work. The inquiry now lives in the footer. */}
+  <section class="py-8 sm:py-10">
+    <div class="container-narrow">
+      <div class="reveal flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8">
+        <p class="text-sm sm:text-base opacity-55 flex-1">
+          Consulting in data engineering, cybersecurity, and operational
+          analytics.
+        </p>
+        <GlassPillGL label="Resume (PDF)" href="/files/Williams-John-D-Resume.pdf" variant="c" class="shrink-0" />
+      </div>
+    </div>
+  </section>
+
   <!-- ACT I - THE WORK · image-backed bento -->
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
@@ -125,19 +141,6 @@ const expertise = [
       {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
           loud. One flame, one whisper: the resume becomes a drawn-underline
           text link; the inquiry keeps the ivory, compact. */}
-      <div class="reveal mt-10 sm:mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8">
-        <p class="text-sm sm:text-base opacity-55 flex-1">
-          Consulting in data engineering, cybersecurity, and operational
-          analytics.
-        </p>
-        <a href="/files/Williams-John-D-Resume.pdf" class="link-draw shrink-0 text-xs tracking-[0.15em] uppercase opacity-70 hover:opacity-100 transition-opacity duration-300 whitespace-nowrap py-2">
-          Resume (PDF)
-        </a>
-        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary btn-sm shrink-0 w-full sm:w-auto justify-center">
-          Inquire
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
-      </div>
     </div>
   </section>
 

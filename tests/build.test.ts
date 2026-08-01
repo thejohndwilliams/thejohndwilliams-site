@@ -444,7 +444,7 @@ describe('Glass lab bench (Glass Build B v1)', () => {
   it('builds the bench locally with all four materials', () => {
     const html = fs.readFileSync(path.join(distDir, 'glass-lab/index.html'), 'utf8');
     expect(html).toContain('data-glass-bench');
-    expect((html.match(/data-gpill/g) || []).length).toBe(3); // 1 wall bench + 2 cloud bench (one material now)
+    expect((html.match(/data-gpill/g) || []).length).toBe(4); // 1 wall + 2 cloud + footer
     expect(html).toContain('field\u0020computation on a uniform grid'.replace('\u0020',' '));
     expect(html).toContain('noindex');
   });
@@ -454,7 +454,29 @@ describe('Glass Build B promotion: hero complications are refractive C', () => {
   it('home hero carries the bench and both glass pills', () => {
     const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
     expect(html).toContain('data-glass-bench');
-    expect((html.match(/data-gpill/g) || []).length).toBe(2);
-    expect((html.match(/data-variant="c"/g) || []).length).toBe(2);
+    expect((html.match(/data-gpill/g) || []).length).toBe(3); // hero pair + footer
+    expect((html.match(/data-variant="c"/g) || []).length).toBe(3);
+  });
+});
+
+describe('The spread (owner order 2026-08-01): the material takes its seats', () => {
+  it('work: the practice strip sits under Selected Work with a glass resume', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+    const heroIdx = work.indexOf('Selected Work');
+    const stripIdx = work.indexOf('Consulting in data engineering');
+    expect(stripIdx).toBeGreaterThan(heroIdx);
+    expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
+    expect(work).toContain('Resume (PDF)');
+  });
+  it('about: the consulting card is retired; More and Inquire stand under the name', () => {
+    const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
+    expect(about).not.toContain('I take on select consulting work');
+    expect((about.match(/data-gpill/g) || []).length).toBe(3); // More + Inquire + footer
+  });
+  it('footer: the inquiry stands beside the verse on every page', () => {
+    const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
+    const footIdx = beyond.indexOf('John 15:13');
+    expect(footIdx).toBeGreaterThan(-1);
+    expect(beyond.slice(footIdx - 2000).includes('data-gpill')).toBe(true);
   });
 });

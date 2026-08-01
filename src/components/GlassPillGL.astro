@@ -377,6 +377,10 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     const mem = (navigator as any).deviceMemory;
     if (!fine || (mem !== undefined && mem < 4)) return;
     document.querySelectorAll<HTMLElement>('[data-gpill]').forEach((pill) => {
+      // The footer persists across ClientRouter swaps; its pill must not
+      // re-initialize a second context on every navigation.
+      if (pill.dataset.gpillInit) return;
+      pill.dataset.gpillInit = '1';
       const bench = pill.closest('[data-glass-bench]');
       const img = bench?.querySelector('img') as HTMLImageElement | null;
       if (!img) { initPill(pill, null); return; }

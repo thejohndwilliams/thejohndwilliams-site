@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 ---
@@ -16,7 +17,7 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
   <!-- Scroll progress indicator -->
 
   <!-- HERO - Portrait with full-bleed image -->
-  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden">
+  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden" data-glass-bench>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/john-portrait-bw.avif" />
       <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/john-portrait-bw.webp" />
@@ -46,6 +47,12 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Rising</p>
         <h1 class="mb-5 sm:mb-8">John D. Williams</h1>
+      </div>
+      {/* Owner order 2026-08-01: the material under the name - More home,
+          Inquire as ever. They bend the portrait behind them. */}
+      <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+        <GlassPillGL label="More" href="/" variant="c" class="w-full sm:w-auto justify-center" />
+        <GlassPillGL label="Inquire" href="mailto:jndwcreative@gmail.com" variant="c" class="w-full sm:w-auto justify-center" />
       </div>
     </div>
   </section>
@@ -140,25 +147,6 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
   </section>
 
   <!-- CTA -->
-  <section class="py-10 sm:py-16 md:py-24">
-    <div class="container-narrow">
-      {/* A2.1 (owner ruling 2026-07-31): the heavy glass plate floated in a
-          void. Bento-minimal instead: a hairline cell on the page grid, quiet
-          material, one compact flame. */}
-      <div class="reveal max-w-lg rounded-card border border-white/10 p-6 sm:p-8">
-        <h2 class="t-sub font-serif mb-3 sm:mb-4">Consulting</h2>
-        <p class="text-sm sm:text-base opacity-50 mb-6">
-          I take on select consulting work in data engineering, cybersecurity
-          operations, and technical strategy.
-        </p>
-        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary btn-sm">
-          Inquire
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
 <style is:global>
   /* The true-3D plate is primary; the 2.5D plate is a graceful fallback,
      shown only when WebGL2 is unavailable (KineticPlate3D marks its figure
