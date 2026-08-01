@@ -299,11 +299,17 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     // expose the knobs. The owner's eye drives; values get locked in code.
     if (document.querySelector('[data-glass-tune]')) {
       const w = window as any;
-      (w.__gpills = w.__gpills || []).push({
+      w.__gtuneState = w.__gtuneState || {};
+      const me = {
         set(name: string, val: number) { gl!.uniform1f(U(name), val); },
         draw() { frame(performance.now()); },
-      });
+      };
+      // Late pills (lazy benches below the fold) inherit the tuned state
+      // the moment they register - the console governs all glass equally.
+      Object.entries(w.__gtuneState as Record<string, number>).forEach(([k, v]) => me.set(k, v));
+      (w.__gpills = w.__gpills || []).push(me);
       w.__glassTune = (name: string, val: number) => {
+        w.__gtuneState[name] = val;
         (w.__gpills as any[]).forEach((g) => { g.set(name, val); g.draw(); });
       };
     }
