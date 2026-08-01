@@ -2,6 +2,7 @@
 import SocialIcon from '../components/SocialIcon.astro';
 import { socialLinks } from '../utils/date';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
 
 const charities = [
   {
@@ -39,7 +40,7 @@ const charities = [
 <BaseLayout title="Home" description="Making visible: threats on a network, patterns in data, light on a moment. Photography, cybersecurity, and data by John D. Williams." ogImage="/og/pages/home.jpg" ogImageWidth={1200} ogImageHeight={630} lcpImage="7r52326" lcpImagePortrait="7r52326">
 
   {/* HERO - Full-bleed cloudscape with left-aligned identity */}
-  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden">
+  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/7r52326.avif" />
       <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/7r52326.webp" />
@@ -78,15 +79,14 @@ const charities = [
         </p>
       </div>
 
+      {/* Glass Build B promotion (owner verdict 2026-08-01: variant C).
+          The cloud complications become true refractive glass - the pills
+          bend the hero photograph behind them, per the June ruling. Both are
+          secondaries; the nav's ivory key keeps the single flame. On touch
+          or low tiers the component leaves the token CSS pill. */}
       <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
-        <a href="/about" class="btn btn-outline w-full sm:w-auto justify-center">
-          About me
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
-        <a href="/photography" class="btn btn-outline w-full sm:w-auto">
-          Photography
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
+        <GlassPillGL label="About me" variant="c" href="/about" class="w-full sm:w-auto justify-center" />
+        <GlassPillGL label="Photography" variant="c" href="/photography" class="w-full sm:w-auto justify-center" />
       </div>
     </div>
   </section>

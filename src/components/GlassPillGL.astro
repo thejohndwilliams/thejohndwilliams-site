@@ -30,11 +30,12 @@ interface Props {
   label: string;
   variant: 'a' | 'b' | 'c';
   href?: string;
+  class?: string;
 }
-const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
+const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' } = Astro.props;
 ---
 
-<a href={href} class="gpill press-feedback" data-variant={variant} data-gpill>
+<a href={href} class={`gpill press-feedback ${cls}`} data-variant={variant} data-gpill>
   <canvas class="gpill-gl" aria-hidden="true"></canvas>
   <span class="gpill-label">
     {label}
@@ -238,12 +239,18 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
     const U = (n: string) => gl.getUniformLocation(prog, n);
 
     const tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    function upload() {
+      gl!.bindTexture(gl!.TEXTURE_2D, tex);
+      gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
+      gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, img);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MIN_FILTER, gl!.LINEAR);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_S, gl!.CLAMP_TO_EDGE);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE);
+    }
+    upload();
+    // The home hero rotates its photograph by hour; when the img swaps, the
+    // glass must bend the NEW light, not a stale texture.
+    img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); });
 
     let uvScaleAvg = 0;
     function layout() {
@@ -313,6 +320,12 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
   }
 
   function initAll() {
+    // Promotion tier gate (O2 law: runtime and capability decide, not hope).
+    // Touch devices keep the CSS pill: the pointer specular has nothing to
+    // anchor to, and the mobile GPU budget belongs to the photographs.
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const mem = (navigator as any).deviceMemory;
+    if (!fine || (mem !== undefined && mem < 4)) return;
     document.querySelectorAll<HTMLElement>('[data-gpill]').forEach((pill) => {
       const bench = pill.closest('[data-glass-bench]');
       const img = bench?.querySelector('img') as HTMLImageElement | null;

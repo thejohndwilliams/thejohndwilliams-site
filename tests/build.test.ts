@@ -449,3 +449,12 @@ describe('Glass lab bench (Glass Build B v1)', () => {
     expect(html).toContain('noindex');
   });
 });
+
+describe('Glass Build B promotion: hero complications are refractive C', () => {
+  it('home hero carries the bench and both glass pills', () => {
+    const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
+    expect(html).toContain('data-glass-bench');
+    expect((html.match(/data-gpill/g) || []).length).toBe(2);
+    expect((html.match(/data-variant="c"/g) || []).length).toBe(2);
+  });
+});
