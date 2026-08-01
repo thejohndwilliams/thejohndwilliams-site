@@ -5,3 +5,8 @@
 /relief/ /beyond#relief 301
 /labs /beyond 301
 /labs/ /beyond 301
+
+# Writing landing re-homed under Work (owner architecture 2026-07-31).
+# Essay pages keep clean /writing/<slug> addresses.
+/writing /work#writing 301
+/writing/ /work#writing 301

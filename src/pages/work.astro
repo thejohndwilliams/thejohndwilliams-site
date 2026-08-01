@@ -1,6 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 
+
+// The desk (owner architecture 2026-07-31: writings live in Work). Drafts
+// never list; date, category, title, one line - austere by law.
+const essays = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+const fmtEssay = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' });
 
 const projects = [
   {
@@ -119,6 +127,24 @@ const expertise = [
           ))}
         </div>
       </div>
+      {essays.length > 0 && (
+        <div id="writing" class="reveal mt-12 sm:mt-16 pt-8 border-t border-white/10 scroll-mt-24">
+          <p class="eyebrow mb-5 sm:mb-6">Writing</p>
+          <ul class="space-y-6 max-w-2xl">
+            {essays.map((essay) => (
+              <li>
+                <p class="text-[11px] tracking-[0.18em] uppercase opacity-45 mb-1.5">
+                  {essay.data.category} <span class="opacity-40">&middot;</span> {fmtEssay(essay.data.pubDate)}
+                </p>
+                <a href={`/writing/${essay.id}`} class="link-draw font-serif text-lg sm:text-xl text-cream/90 hover:text-cream">
+                  {essay.data.title}
+                </a>
+                <p class="text-sm opacity-55 mt-1.5 leading-relaxed">{essay.data.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <p class="reveal mt-8 sm:mt-10 text-sm opacity-60">
         The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>

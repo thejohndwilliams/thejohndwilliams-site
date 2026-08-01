@@ -439,3 +439,22 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('bg-\\[\\#0a0a0a\\]\\/\\[0\\.92\\]{background-color:#0a0a0aeb}');
   });
 });
+
+describe('The desk: writing lives in Work (owner architecture 2026-07-31)', () => {
+  it('publishes Essay 01 at its clean address', () => {
+    const html = fs.readFileSync(path.join(distDir, 'writing/making-visible/index.html'), 'utf8');
+    expect(html).toContain('Making Visible');
+  });
+  it('never builds a route for a draft essay', () => {
+    expect(fs.existsSync(path.join(distDir, 'writing/the-transparent-lightbox/index.html'))).toBe(false);
+  });
+  it('lists the desk on /work and reaches the essay', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+    expect(work).toContain('id="writing"');
+    expect(work).toContain('href="/writing/making-visible"');
+  });
+  it('301s the retired standalone landing to the desk', () => {
+    const redirects = fs.readFileSync(path.join(distDir, '_redirects'), 'utf8');
+    expect(redirects).toMatch(/^\/writing\s+\/work#writing\s+301$/m);
+  });
+});

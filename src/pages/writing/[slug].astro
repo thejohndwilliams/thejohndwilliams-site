@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+// Published essays get a route; drafts never build one (a draft cannot leak
+// via a guessed URL - lock-tested in build.test.ts).
+export async function getStaticPaths() {
+  const essays = await getCollection('writing', ({ data }) => !data.draft);
+  return essays.map((essay) => ({ params: { slug: essay.id }, props: { essay } }));
+}
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+
+<BaseLayout title={essay.data.title} description={essay.data.description}>
+  <article class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow">
+      <header class="reveal max-w-2xl mb-8 sm:mb-12">
+        <p class="text-[11px] tracking-[0.18em] uppercase opacity-50 mb-3">
+          {essay.data.category} <span class="opacity-40">&middot;</span> {fmt(essay.data.pubDate)}
+        </p>
+        <h1 class="mb-0">{essay.data.title}</h1>
+      </header>
+      <div class="reveal prose max-w-2xl">
+        <Content />
+      </div>
+      <div class="reveal max-w-2xl mt-12 sm:mt-16 pt-8 border-t border-white/10">
+        <a href="/work#writing" class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          All writing
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
