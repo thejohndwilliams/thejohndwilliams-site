@@ -108,7 +108,8 @@
           {
             "maxLength": 5
           }
-        ]
+        ],
+        "forced-reflow-insight": "warn"
       }
     },
     "upload": {

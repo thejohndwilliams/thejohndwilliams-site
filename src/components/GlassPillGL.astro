@@ -31,11 +31,13 @@ interface Props {
   variant: 'a' | 'b' | 'c';
   href?: string;
   class?: string;
+  /** Descriptive accessible name when the visible label is terse ("More"). */
+  ariaLabel?: string;
 }
-const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' } = Astro.props;
+const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '', ariaLabel } = Astro.props;
 ---
 
-<a href={href} class={`gpill press-feedback ${cls}`} data-variant={variant} data-gpill>
+<a href={href} class={`gpill press-feedback ${cls}`} data-variant={variant} data-gpill aria-label={ariaLabel}>
   <canvas class="gpill-gl" aria-hidden="true"></canvas>
   <span class="gpill-label">
     {label}
