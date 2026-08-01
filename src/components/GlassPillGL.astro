@@ -140,9 +140,9 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
 
     // Height field: curvature lives at the rim (Gaussian bump in distance),
     // the center stays optically flat - lens edge, clear middle.
-    float breath = 1.0 + uBreath * 0.08 * sin(uTime * 0.55);
-    float sigma = 0.048 * breath;
-    float rimBump = exp(-pow((d + 0.042) / sigma, 2.0));
+    float breath = 1.0 + uBreath * 0.06 * sin(uTime * 0.55);
+    float sigma = 0.020 * breath;
+    float rimBump = exp(-pow((d + 0.016) / sigma, 2.0));
 
     // Backdrop luminance (one tap, unbent) tempers the rim: cream holds
     // over dark ground, restrains over bright - the light must never blow.
@@ -157,7 +157,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
       sdRoundedBox(p + vec2(e, 0.0), b, r) - sdRoundedBox(p - vec2(e, 0.0), b, r),
       sdRoundedBox(p + vec2(0.0, e), b, r) - sdRoundedBox(p - vec2(0.0, e), b, r)
     ) / (2.0 * e);
-    float slope = 1.12 * rimBump;
+    float slope = 2.1 * rimBump;  // strong bend, hair-thin zone: edge sparkle, flat face
     vec3 n = normalize(vec3(-g * slope, 1.0));
 
     // Snell through one thin interface, per channel (dispersion).
@@ -178,9 +178,9 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     // bright wall). A tinted ellipse in the glass center gives the type its
     // footing - luminance-aware like the rim: near-invisible over dark
     // ground, up to a third of the light absorbed over bright.
-    vec2 q = p / vec2(max(b.x * 0.92, 0.2), 0.55);
+    vec2 q = p / vec2(max(b.x * 1.1, 0.2), 0.85);
     float smoke = exp(-dot(q, q));
-    float ink = smoke * (0.04 + 0.22 * smoothstep(0.40, 0.85, lumB));
+    float ink = smoke * (0.03 + 0.18 * smoothstep(0.40, 0.85, lumB));
     col *= (1.0 - ink);
 
     // Schlick Fresnel rim, cream - the site's single light.
@@ -190,8 +190,8 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     col += cream * F * uRim * rimTemper;
 
     // Fixed key glint (upper rim) + pointer-tracked Gaussian specular.
-    float keyGlint = rimBump * exp(-pow((p.y + 0.34) / 0.14, 2.0)) * 0.05;
-    col += cream * keyGlint * rimTemper;
+    // (key glint retired 2026-08-01: it painted an inner arc - the Fresnel
+    //  hair at the silhouette is the only edge light now)
     if (uSpec > 0.0) {
       vec2 pp = (vec2(uPointer.x, uPointer.y) - 0.5) * uAspect;
       float s2 = 0.030;
