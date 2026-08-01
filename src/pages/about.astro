@@ -142,14 +142,16 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
   <!-- CTA -->
   <section class="py-10 sm:py-16 md:py-24">
     <div class="container-narrow">
-      <div class="reveal glass-card p-6 sm:p-8 md:p-10 max-w-lg">
-        <span class="lens-ring" aria-hidden="true"></span>
+      {/* A2.1 (owner ruling 2026-07-31): the heavy glass plate floated in a
+          void. Bento-minimal instead: a hairline cell on the page grid, quiet
+          material, one compact flame. */}
+      <div class="reveal max-w-lg rounded-card border border-white/10 p-6 sm:p-8">
         <h2 class="t-sub font-serif mb-3 sm:mb-4">Consulting</h2>
-        <p class="text-sm sm:text-base opacity-50 mb-6 sm:mb-8">
+        <p class="text-sm sm:text-base opacity-50 mb-6">
           I take on select consulting work in data engineering, cybersecurity
           operations, and technical strategy.
         </p>
-        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary">
+        <a href="mailto:jndwcreative@gmail.com" class="btn btn-primary btn-sm">
           Inquire
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
         </a>

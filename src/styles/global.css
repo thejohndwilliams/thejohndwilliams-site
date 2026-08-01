@@ -515,6 +515,17 @@ html[data-theme="black"] {
     }
   }
 
+  /* Compact key (A2.1): the discreet size for in-content flames - inquiry
+     cells, CTA bands - where the full pill overwhelmed its surroundings.
+     Still 36px tall: comfortably tappable, visibly quieter. */
+  .btn-sm {
+    min-height: 2.25rem;
+    padding: 0.5rem 1.125rem;
+    font-size: 0.66rem;
+    gap: 0.4rem;
+  }
+  .btn-sm svg { width: 0.75rem; height: 0.75rem; }
+
   /* Honest-glass decision, 2026-07-04 (vault: Honest_Glass_Buttons): glass
      is colorless — everything it shows is borrowed from the scene. The ivory
      key is now TRANSLUCENT cream over a real backdrop blur, so the

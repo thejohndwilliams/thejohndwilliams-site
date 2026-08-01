@@ -416,7 +416,13 @@ describe('Liquid Glass CSS', () => {
       path.join(distDir, 'photography', 'index.html'),
       'utf-8'
     );
-    expect(html).toContain('id="chip-lens"');
+    // A2.1 owner ruling (2026-07-31): the capsule rail and its lens vessel
+    // are retired from the category index - "way too loud... rethink the
+    // entire pill aesthetic." The index is bare text; the lit word is the
+    // selection. This lock now guards the ABSENCE of the vessel and the
+    // presence of the bare list.
+    expect(html).not.toContain('id="chip-lens"');
+    expect(html).toContain('id="cat-list"');
     expect(html).toContain('cat-link');
   });
 
