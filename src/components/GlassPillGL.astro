@@ -62,6 +62,11 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     transition: border-color 0.5s ease, box-shadow 0.5s ease;
   }
   .gpill:hover { border-color: var(--m-lit-border); box-shadow: inset 0 1px 0 var(--m-lit-inset), 0 0 28px var(--m-lit-glow); }
+  /* One object, never a pill layered on a pill (owner catch 2026-08-01):
+     when the shader owns the material, the CSS chrome stands down entirely.
+     The Fresnel rim IS the ring; the pointer specular IS the hover. */
+  .gpill.gpill-live,
+  .gpill.gpill-live:hover { border-color: transparent; background: transparent; box-shadow: none; }
   .gpill-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
   /* backdrop-filter law (vault, Liquid_Glass 2026-06-09): content above the
      glass paints only with position:relative + z-index. Same law holds for
@@ -235,6 +240,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
 
     let prog: WebGLProgram;
     try { prog = makeProgram(gl); } catch { canvas.remove(); return; }
+    pill.classList.add('gpill-live');
     gl.useProgram(prog);
     const U = (n: string) => gl.getUniformLocation(prog, n);
 
