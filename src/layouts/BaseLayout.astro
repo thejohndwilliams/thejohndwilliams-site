@@ -406,8 +406,9 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         if (clean === '/') return 0;
         if (clean.startsWith('/photography')) return 1;
         if (clean === '/work') return 2;
-        if (clean === '/about') return 3;
-        if (clean === '/privacy') return 4;
+        if (clean.startsWith('/labs') || clean === '/relief') return 3;
+        if (clean === '/about') return 4;
+        if (clean === '/privacy') return 5;
         return 99;
       }
 

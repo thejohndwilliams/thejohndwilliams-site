@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
+import LiquidPlate from '../components/LiquidPlate.astro';
+import ReliefStudies from '../components/ReliefStudies.astro';
 
 // LABS (owner directive 2026-07-31): one home for the photography
 // experiments. Merges the depth/hologram comparison work (from the private
@@ -75,58 +77,27 @@ const ROWS = [
     </section>
   ))}
 
-  {/* THE RELIEF - the object axis, merged in per the owner's Labs ruling.
-      The depth studies above are its prerequisite: once a frame knows its
-      depth, it can be cut. /relief remains the standalone deep-dive (the
-      surface strangers arrive at); this section is its home in the story. */}
-  <section class="py-12 sm:py-16 md:py-24">
-    <div class="container-narrow mb-8 sm:mb-12">
-      <p class="eyebrow mb-3">The relief</p>
-      <div class="prose max-w-2xl">
-        <p>
-          Where the depth work stops being a render. A photograph cut as
-          bas-relief a few millimetres deep, with no ink anywhere in it,
-          invisible under ordinary room light and legible only when something
-          crosses it at a grazing angle. The point cloud above is the
-          blueprint; the panel is the proof.
-        </p>
-        <p class="text-sm opacity-60">
-          Seven depths surveyed from one millimetre to fourteen. Three
-          editions drawn at literal scale, so the layout is the measurement.
-          A six second sweep of raking light that lights the facade rib by
-          rib.
-        </p>
-      </div>
+  {/* BEYOND PHOTOGRAPHY - moved from the work page (owner architecture:
+      Labs hijacks all the photography work). Pixels a visitor can take. */}
+  <section class="py-12 sm:py-16 md:py-24 section-light">
+    <div class="container-narrow mb-10 sm:mb-14">
+      <h2 class="t-sub font-serif mb-3 sm:mb-4">Beyond Photography</h2>
+      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Texture and Gaussian studies.</p>
+      <p class="text-sm sm:text-base opacity-55 max-w-xl">
+        The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take. <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a> for prints, licensing, or the full-resolution files.
+      </p>
     </div>
-    <div class="container-narrow reveal">
-      <a href="/relief" class="press-feedback group relative grid sm:grid-cols-12 items-stretch rounded-card overflow-hidden border border-white/10 hover:border-cream/25 transition-colors duration-500">
-        <div class="sm:col-span-4 md:col-span-3 relative min-h-[220px] sm:min-h-0">
-          <picture>
-            <source type="image/avif" srcset="/images/relief/edition-24x36.avif" />
-            <source type="image/webp" srcset="/images/relief/edition-24x36.webp" />
-            <img
-              src="/images/relief/edition-24x36.webp"
-              alt="A bas-relief panel of the Shanghai Tower seen from below, its facade raised out of a shallow surface and lit from one side"
-              width="930"
-              height="1395"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-        </div>
-        <div class="sm:col-span-8 md:col-span-9 p-6 sm:p-8">
-          <p class="eyebrow mb-2">Object studies</p>
-          <h3 class="t-sub font-serif mb-2 text-cream">A photograph you could hold</h3>
-          <p class="text-sm opacity-60 leading-relaxed max-w-md mb-5">
-            The full studies: every depth, every edition at scale, and the
-            sweep of light that develops the surface.
-          </p>
-          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300">See the studies →</span>
-        </div>
-      </a>
+    <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
+      <div class="reveal"><LiquidPlate src="img-6552" alt="Last light over a ridge at dusk" label="Sky" note="Last light, going down behind the ridge." index={0} /></div>
+      <div class="reveal"><LiquidPlate src="7r51018-enhanced-sr" alt="Rain beaded across a dark green leaf" label="Earth" note="Rain on a leaf. The surface, up close." index={1} reverse /></div>
+      <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
     </div>
   </section>
+
+  {/* THE RELIEF - folded in whole (owner: 'Fold Relief into labs'). The
+      object axis as the finale: depth learned, pixels lifted, then the
+      photograph cut as a surface you could hold. */}
+  <ReliefStudies />
 
 <style is:global>
   .plate-tag {

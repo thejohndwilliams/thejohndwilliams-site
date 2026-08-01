@@ -154,7 +154,9 @@ describe('hazard locks: /relief sweep video (2026-07-25)', () => {
   // and never fetched at all under reduced motion. Every lock below pins one
   // half of that bargain; losing any one of them turns a quiet page into a
   // 1.5 MB tax on every visitor, including the ones who asked for stillness.
-  const relief = readFileSync(join(SRC, 'pages/relief.astro'), 'utf8');
+  // Relief folded into Labs (owner ruling 2026-07-31): the body lives in
+  // the ReliefStudies component now; every lock below still applies to it.
+  const relief = readFileSync(join(SRC, 'components/ReliefStudies.astro'), 'utf8');
 
   it('the video ships srcless — src is assigned by the observer, not the parser', () => {
     // preload="none" alone is a hint browsers may ignore; a real src in the
@@ -250,7 +252,7 @@ describe('hazard locks: built output', () => {
   });
 });
 
-describe('hazard locks: /relief is reachable (2026-07-26)', () => {
+describe('hazard locks: /labs is reachable (relief folded 2026-07-31)', () => {
   // /relief shipped 2026-07-25 with exactly one inbound link: a 12px muted
   // line at the bottom of /photography, below the fold and below the Inquire
   // button. It was a top-level URL nobody could arrive at from inside the
@@ -260,22 +262,26 @@ describe('hazard locks: /relief is reachable (2026-07-26)', () => {
   const work = readFileSync(join(SRC, 'pages/work.astro'), 'utf8');
   const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
 
-  it('the home page grid carries a /relief card', () => {
-    expect(home).toMatch(/href="\/relief"/);
+  it('the home page grid carries a /labs card', () => {
+    expect(home).toMatch(/href="\/labs"/);
   });
 
-  it('/work closes on the object axis (Act III)', () => {
-    expect(work).toMatch(/href="\/relief"/);
+  it('/work hands off to the Labs by name', () => {
+    expect(work).toMatch(/href="\/labs"/);
   });
 
   it('/photography links the object axis with a photograph, not a 12px line', () => {
-    const idx = gallery.indexOf('href="/relief"');
+    const idx = gallery.indexOf('href="/labs"');
     expect(idx).toBeGreaterThan(-1);
     expect(gallery.slice(idx, idx + 900)).toContain('/images/relief/');
   });
 
-  it('/relief stays a top-level URL (the link-in-bio target)', () => {
-    expect(existsSync(join(SRC, 'pages/relief.astro'))).toBe(true);
+  it('/relief bio links survive the fold: a real 301 to /labs ships', () => {
+    // The relief page folded into /labs (owner ruling 2026-07-31). The
+    // link-in-bio URLs printed on cards and profiles must keep resolving:
+    // public/_redirects gives Cloudflare Pages a server-side 301.
+    const redirects = readFileSync(join(SRC, '../public/_redirects'), 'utf8');
+    expect(redirects).toMatch(/^\/relief\s+\/labs\s+301$/m);
   });
 
   it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {

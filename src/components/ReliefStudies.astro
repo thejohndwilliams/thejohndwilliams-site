@@ -1,7 +1,10 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import KineticPlate3D from '../components/KineticPlate3D.astro';
-import KineticPlate from '../components/KineticPlate.astro';
+/* ReliefStudies (A2.5, owner ruling 2026-07-31: 'Fold Relief into labs'):
+ * the whole /relief page body, componentized so the Labs page composes it.
+ * /relief now 301s to /labs via public/_redirects. All original notes kept below. */
+
+import KineticPlate3D from './KineticPlate3D.astro';
+import KineticPlate from './KineticPlate.astro';
 
 /*
  * /relief — the object axis of the photographs.
@@ -58,15 +61,10 @@ const EDITIONS = [
 ];
 ---
 
-<BaseLayout
-  title="Relief"
-  description="Photographs cut as bas-relief. The image is carried in a surface a few millimetres deep and stays invisible until light crosses it at a grazing angle."
-  ogImage="/og/photography/img-7576-enhanced.jpg"
->
-  <section class="py-12 sm:py-16 md:py-20">
+<section class="py-12 sm:py-16 md:py-20">
     <div class="container-narrow">
       <p class="eyebrow mb-3 sm:mb-4">Object studies</p>
-      <h1 class="mb-5 sm:mb-7">A photograph you could hold</h1>
+      <h2 class="mb-5 sm:mb-7">A photograph you could hold</h2>
       <div class="prose max-w-2xl">
         <p>
           A print is light recorded on a plane. These studies ask what survives
@@ -307,7 +305,7 @@ const EDITIONS = [
     initSweep();
     document.addEventListener('astro:after-swap', initSweep);
   </script>
-</BaseLayout>
+
 
 <style>
   /* ---------------------------------------------------------------- sweep */

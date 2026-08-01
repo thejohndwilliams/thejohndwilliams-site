@@ -1,18 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LiquidPlate from '../components/LiquidPlate.astro';
-import KineticPlate from '../components/KineticPlate.astro';
-import KineticPlate3D from '../components/KineticPlate3D.astro';
 
-// Depth studies (owner directive 2026-07-31): the about-lab plate work
-// graduates from the unlinked lab into Beyond Photography proper - the
-// photograph carrying its own depth, before the palettes and textures.
-const depthStudies = [
-  { id: 'earth', label: 'Earth · rain-wet leaf' },
-  { id: 'structure', label: 'Structure · Shanghai Tower' },
-  { id: 'sky', label: 'Sky · thunderheads' },
-  { id: 'water', label: 'Water · El Arco' },
-] as const;
 
 const projects = [
   {
@@ -57,7 +45,7 @@ const expertise = [
 
 <BaseLayout
   title="Work"
-  description="Selected projects by John D. Williams: data engineering, cybersecurity, and operations. Plus Beyond Photography, an experiment turning his photographs into palettes, wallpapers, and textures."
+  description="The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come."
   ogImage="/og/pages/work.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
@@ -131,6 +119,9 @@ const expertise = [
           ))}
         </div>
       </div>
+      <p class="reveal mt-8 sm:mt-10 text-sm opacity-60">
+        The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/labs" class="link-draw text-cream/85 hover:text-cream">the Labs</a>.
+      </p>
       {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
           loud. One flame, one whisper: the resume becomes a drawn-underline
           text link; the inquiry keeps the ivory, compact. */}
@@ -172,107 +163,5 @@ const expertise = [
     </div>
   </section>
 
-  <!-- ACT II - BEYOND PHOTOGRAPHY -->
-  <section class="py-12 sm:py-16 md:py-24">
-    {/* A2.3 (owner: "merge stacks... it doesn't flow"): one header stack.
-        Title stays; the serif line names the work; a single paragraph
-        carries downloads, studies, and the inquiry with explicit spacing
-        (the v7 compressor was eating the whitespace around the old inline
-        link: "take.Inquirefor"). */}
-    <div class="container-narrow mb-10 sm:mb-14">
-      <h2 class="t-sub font-serif mb-3 sm:mb-4">Beyond Photography</h2>
-      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Texture and Gaussian studies.</p>
-      <p class="text-sm sm:text-base opacity-55 max-w-xl">
-        Each frame learns its own depth before it becomes anything else. Below: photographs rebuilt as point clouds, then wallpapers, textures, and color palettes drawn from the same frames, free to take. <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a> for prints, licensing, or the full-resolution files.
-      </p>
-    </div>
-
-    <div class="container-wide mb-16 sm:mb-24 md:mb-28">
-      <div class="stagger-children grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8">
-        {depthStudies.map((s) => (
-          <div class="reveal">
-            <KineticPlate3D category={s.id} />
-            <KineticPlate category={s.id} class="plate-fallback" />
-            <p class="mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60">{s.label}</p>
-          </div>
-        ))}
-      </div>
-      {/* The experiments live in the Labs (owner architecture 2026-07-31:
-          Work is the living resume; Labs hosts the experiments in depth -
-          every frame as hologram AND point cloud, plus the relief). */}
-      <p class="reveal mt-8 sm:mt-10 text-sm opacity-60">
-        Each frame also exists as a hologram of stacked planes. <a href="/labs" class="link-draw text-cream/85 hover:text-cream">Visit the Labs for both renders side by side</a>.
-      </p>
-    </div>
-
-    <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
-      <div class="reveal"><LiquidPlate src="img-6552" alt="Last light over a ridge at dusk" label="Sky" note="Last light, going down behind the ridge." index={0} /></div>
-      <div class="reveal"><LiquidPlate src="7r51018-enhanced-sr" alt="Rain beaded across a dark green leaf" label="Earth" note="Rain on a leaf. The surface, up close." index={1} reverse /></div>
-      <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
-    </div>
-  </section>
-
-  <!-- ACT III - RELIEF · the object axis
-       Act II lifts the photograph into pixels a visitor can take away. This
-       one lifts it into an object. The page was already making the argument
-       ("Lift each experience from its frame"); it just stopped one step
-       short. /relief keeps its own top-level URL: it is the surface strangers
-       arrive at from outside the site, so it is introduced here, not nested. -->
-  <section class="section-light py-12 sm:py-16 md:py-24">
-    <div class="container-narrow mb-8 sm:mb-12">
-      <h2 class="t-sub font-serif mb-3 sm:mb-4">Relief</h2>
-      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Then take it off the screen.</p>
-      <p class="text-sm sm:text-base opacity-55 max-w-xl">
-        The same instinct carried into a surface. A photograph cut as bas-relief a few
-        millimetres deep, with no ink anywhere in it, invisible under ordinary room
-        light and legible only when something crosses it at a grazing angle. Depth
-        extraction, relief compression, and a render pipeline, resolved across three
-        editions.
-      </p>
-    </div>
-    {/* A2.1 redesign (owner, 2026-07-31): the heavy padded glass plate
-        floated its render in a void. Bento-minimal cell instead - hairline
-        border, the panel flush to the cell edge like the index cards, text
-        beside it. Flows from the depth studies above: depth learned, then
-        depth cut into a surface. */}
-    <div class="container-narrow reveal">
-      <a href="/relief" class="press-feedback group relative grid sm:grid-cols-12 items-stretch rounded-card overflow-hidden border border-white/10 hover:border-cream/25 transition-colors duration-500">
-        <div class="sm:col-span-4 md:col-span-3 relative min-h-[220px] sm:min-h-0">
-          <picture>
-            <source type="image/avif" srcset="/images/relief/edition-24x36.avif" />
-            <source type="image/webp" srcset="/images/relief/edition-24x36.webp" />
-            <img
-              src="/images/relief/edition-24x36.webp"
-              alt="A bas-relief panel of the Shanghai Tower seen from below, its facade raised out of a shallow surface and lit from one side"
-              width="930"
-              height="1395"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-        </div>
-        <div class="sm:col-span-8 md:col-span-9 p-6 sm:p-8">
-          <p class="eyebrow mb-2">Object studies</p>
-          <h3 class="t-sub font-serif mb-2 text-cream">A photograph you could hold</h3>
-          <p class="text-sm opacity-60 leading-relaxed max-w-md mb-5">
-            One frame taken all the way through. Seven depths from one millimetre to
-            fourteen, three editions drawn at literal scale so the layout is the
-            measurement, and a six second sweep of raking light that lights the facade
-            rib by rib.
-          </p>
-          <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300">See the studies →</span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-<style is:global>
-  /* Depth-plate fallback wiring (same contract as the about page): the
-     true-3D plate is primary; the 2.5D plate appears only when WebGL2 is
-     unavailable (KineticPlate3D marks its figure data-webgl="unsupported"). */
-  .plate-fallback { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
-</style>
+  
 </BaseLayout>

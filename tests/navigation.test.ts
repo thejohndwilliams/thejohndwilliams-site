@@ -3,7 +3,7 @@ import { navItems, socialLinks } from '../src/utils/date';
 
 describe('navItems', () => {
   it('has the correct number of navigation items', () => {
-    expect(navItems).toHaveLength(3);
+    expect(navItems).toHaveLength(4);
   });
 
   it('contains all required navigation pages', () => {
@@ -23,7 +23,7 @@ describe('navItems', () => {
 
   it('nav items are ordered Photography, Work, About', () => {
     const names = navItems.map((item) => item.name);
-    expect(names).toEqual(['Photography', 'Work', 'About']);
+    expect(names).toEqual(['Photography', 'Work', 'Labs', 'About']);
   });
   it('does not include Links in primary navigation', () => {
     const names = navItems.map((item) => item.name);
