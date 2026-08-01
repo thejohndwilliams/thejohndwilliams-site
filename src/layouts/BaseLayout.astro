@@ -431,11 +431,25 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
          window.__lenis so in-page anchors can scrollTo past the sticky header. */}
     <script>
       import Lenis from 'lenis';
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      gsap.registerPlugin(ScrollTrigger);
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
         (window as any).__lenis = lenis;
-        const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
-        requestAnimationFrame(raf);
+        // A3 (2026-08-01): ONE clock. Lenis rides the GSAP ticker and
+        // ScrollTrigger listens to Lenis - the canonical bridge (not
+        // scrollerProxy). The old standalone requestAnimationFrame loop is
+        // retired; two clocks would drift and double-drive the scroll.
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time: number) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+        document.addEventListener('astro:before-swap', () => {
+          // Triggers belong to the outgoing page tree. Kill them all here;
+          // each page re-choreographs on astro:page-load.
+          ScrollTrigger.getAll().forEach((t) => t.kill());
+          ScrollTrigger.clearScrollMemory();
+        });
         document.addEventListener('astro:after-swap', () => {
           // P1 lock, 2026-07-19: the lightbox scroll lock stops this persisted
           // Lenis instance and sets html.lb-open. History-traversing away with

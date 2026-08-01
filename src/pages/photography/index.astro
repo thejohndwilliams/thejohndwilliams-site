@@ -533,6 +533,60 @@ const jsonLd = {
     document.addEventListener('astro:after-swap', () => { initChipLens(); initAtmosphere(); initCatScroll(); });
   </script>
 
+
+<script>
+  /* A3 - the first Dear Bruce sequence (owner mandate: photography index
+     light-reveals owned by the scroll). Two acts, scrubbed; everything the
+     IntersectionObserver system already owns (tile reveals) is untouched.
+     Reduced motion: this module no-ops and the one-shot reveal grammar of
+     BaseLayout carries the page exactly as before. */
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initChoreo() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Page gate: only the photography index carries the category list.
+    if (!document.getElementById('cat-list')) return;
+
+    const lockup = document.querySelector('.hero-lockup');
+    const hero = lockup?.closest('section');
+    if (hero && lockup) {
+      const img = hero.querySelector('picture img');
+      const h1 = lockup.querySelector('h1');
+      // Act I - the hero breathes out. As the visitor leaves the hero, the
+      // lockup lifts and dims, the title's letterforms open, the photograph
+      // presses a step closer. Owned by the scroll, not the clock.
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.85 },
+      });
+      tl.to(lockup, { y: -44, opacity: 0.25, ease: 'none' }, 0);
+      if (h1) tl.to(h1, { letterSpacing: '0.06em', ease: 'none' }, 0);
+      if (img) tl.to(img, { scale: 1.06, transformOrigin: '50% 60%', ease: 'none' }, 0);
+    }
+
+    // Act II - each gallery section's heading drifts against the scroll
+    // (parallax on the header wrapper; the IO reveal keeps the opacity).
+    document.querySelectorAll('.gallery-section[data-category]').forEach((sec) => {
+      const head = sec.querySelector('h2')?.parentElement;
+      if (!head) return;
+      gsap.fromTo(
+        head,
+        { y: 26 },
+        {
+          y: -10,
+          ease: 'none',
+          scrollTrigger: { trigger: sec, start: 'top 85%', end: 'top 30%', scrub: 0.7 },
+        }
+      );
+    });
+
+    ScrollTrigger.refresh();
+  }
+
+  document.addEventListener('astro:page-load', initChoreo);
+</script>
+
 </BaseLayout>
 
 <style>
