@@ -205,7 +205,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
 
     // Owner ruling: the crown must read EVERYWHERE - strong over dark
     // ground (where the old additive vanished), restrained over bright.
-    col += cream * uGrad * (1.0 - f.y) * (0.06 + 0.12 * (1.0 - lumB));
+    col += cream * uGrad * (1.0 - f.y) * (0.03 + 0.15 * (1.0 - lumB));
 
     fragColor = vec4(col * mask, mask);  // premultiplied
   }`;
@@ -309,7 +309,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     gl.uniform1f(U('uRidge'), 0.0);
     gl.uniform1f(U('uSigma'), 0.054);
     gl.uniform1f(U('uSlope'), 3.45);
-    gl.uniform1f(U('uSmokeMax'), 0.0);
+    gl.uniform1f(U('uSmokeMax'), 0.18); // polish: engages only over bright ground
     gl.uniform1i(U('uTex'), 0);
     // Lab tuning registry: only pages that opt in with [data-glass-tune]
     // expose the knobs. The owner's eye drives; values get locked in code.
