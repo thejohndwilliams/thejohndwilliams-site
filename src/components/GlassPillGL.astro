@@ -120,6 +120,10 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
   uniform float uSpec;     // pointer specular gain
   uniform float uBreath;   // slow living modulation
   uniform float uGrad;     // cream gradient gain
+  uniform float uRidge;    // wall inset from silhouette
+  uniform float uSigma;    // wall width
+  uniform float uSlope;    // bend strength inside the wall
+  uniform float uSmokeMax; // smoked-core ceiling over bright ground
 
   // IQ rounded-box signed distance (Inigo Quilez, distance functions).
   float sdRoundedBox(vec2 p, vec2 b, float r) {
@@ -141,8 +145,8 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     // Height field: curvature lives at the rim (Gaussian bump in distance),
     // the center stays optically flat - lens edge, clear middle.
     float breath = 1.0 + uBreath * 0.06 * sin(uTime * 0.55);
-    float sigma = 0.020 * breath;
-    float rimBump = exp(-pow((d + 0.016) / sigma, 2.0));
+    float sigma = uSigma * breath;
+    float rimBump = exp(-pow((d + uRidge) / sigma, 2.0));
 
     // Backdrop luminance (one tap, unbent) tempers the rim: cream holds
     // over dark ground, restrains over bright - the light must never blow.
@@ -157,7 +161,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
       sdRoundedBox(p + vec2(e, 0.0), b, r) - sdRoundedBox(p - vec2(e, 0.0), b, r),
       sdRoundedBox(p + vec2(0.0, e), b, r) - sdRoundedBox(p - vec2(0.0, e), b, r)
     ) / (2.0 * e);
-    float slope = 2.1 * rimBump;  // strong bend, hair-thin zone: edge sparkle, flat face
+    float slope = uSlope * rimBump;
     vec3 n = normalize(vec3(-g * slope, 1.0));
 
     // Snell through one thin interface, per channel (dispersion).
@@ -180,7 +184,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     // ground, up to a third of the light absorbed over bright.
     vec2 q = p / vec2(max(b.x * 1.1, 0.2), 0.85);
     float smoke = exp(-dot(q, q));
-    float ink = smoke * (0.03 + 0.18 * smoothstep(0.40, 0.85, lumB));
+    float ink = smoke * (0.03 + uSmokeMax * smoothstep(0.40, 0.85, lumB));
     col *= (1.0 - ink);
 
     // Schlick Fresnel rim, cream - the site's single light.
@@ -286,7 +290,23 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     gl.uniform1f(U('uSpec'), v.spec);
     gl.uniform1f(U('uBreath'), reduce ? 0 : v.breath);
     gl.uniform1f(U('uGrad'), v.grad);
+    gl.uniform1f(U('uRidge'), 0.016);
+    gl.uniform1f(U('uSigma'), 0.020);
+    gl.uniform1f(U('uSlope'), 2.1);
+    gl.uniform1f(U('uSmokeMax'), 0.18);
     gl.uniform1i(U('uTex'), 0);
+    // Lab tuning registry: only pages that opt in with [data-glass-tune]
+    // expose the knobs. The owner's eye drives; values get locked in code.
+    if (document.querySelector('[data-glass-tune]')) {
+      const w = window as any;
+      (w.__gpills = w.__gpills || []).push({
+        set(name: string, val: number) { gl!.uniform1f(U(name), val); },
+        draw() { frame(performance.now()); },
+      });
+      w.__glassTune = (name: string, val: number) => {
+        (w.__gpills as any[]).forEach((g) => { g.set(name, val); g.draw(); });
+      };
+    }
 
     let px = 0.5, py = 0.5, amt = 0, amtTarget = 0;
     pill.addEventListener('pointermove', (ev) => {

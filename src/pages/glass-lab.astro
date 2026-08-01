@@ -91,6 +91,45 @@ if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
     </div>
   </section>
 
+  {/* BENCH II - the home hero's own ground. Tune where it will live. */}
+  <section class="relative overflow-hidden" data-glass-bench>
+    <div class="relative min-h-[55vh] sm:min-h-[65vh]">
+      <picture>
+        <source type="image/avif" srcset="/images/photography/gallery/7r52326.avif 1200w, /images/photography/hero/7r52326.avif 2400w" sizes="100vw" />
+        <source type="image/webp" srcset="/images/photography/gallery/7r52326.webp 1200w, /images/photography/hero/7r52326.webp 2400w" sizes="100vw" />
+        <img src="/images/photography/hero/7r52326.webp" alt="Towering cumulus clouds against a dark sky" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-[#0a0a0a]/40"></div>
+      <div class="relative z-10 min-h-[55vh] sm:min-h-[65vh] flex items-center">
+        <div class="container-narrow w-full">
+          <div class="flex flex-col sm:flex-row gap-6 sm:gap-10 items-start">
+            <div class="flex flex-col items-start gap-3">
+              <GlassPillGL label="About me" variant="c" />
+              <p class="plate-tag">C &middot; over the hero's own cloud</p>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+              <GlassPillGL label="Photography" variant="c" />
+              <p class="plate-tag">C &middot; the promotion, as it ships</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* THE CONSOLE - your eye drives; screenshot or copy the numbers back. */}
+  <section class="py-10 sm:py-14" data-glass-tune>
+    <div class="container-narrow">
+      <div class="border-t border-white/5 pt-8 max-w-2xl">
+        <p class="eyebrow mb-4">The console</p>
+        <p class="text-sm opacity-55 mb-6">Every slider drives the live shader on all six pills above. When it looks right, copy the line below the sliders and send it back - the values get locked into the site.</p>
+        <div id="tune-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5 max-w-xl text-sm"></div>
+        <p class="mt-6 text-[11px] tracking-[0.14em] uppercase opacity-45">The line</p>
+        <code id="tune-readout" class="block mt-2 text-xs opacity-80 select-all break-all"></code>
+      </div>
+    </div>
+  </section>
+
   {/* THE WORKING */}
   <section class="py-14 sm:py-20">
     <div class="container-narrow">
@@ -115,4 +154,52 @@ if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
       </div>
     </div>
   </section>
+
+<script>
+  /* The console: sliders -> live uniforms via window.__glassTune. */
+  const KNOBS: Array<[string, string, number, number, number, number]> = [
+    // uniform, label, min, max, step, default
+    ['uRidge', 'Wall inset', 0.0, 0.10, 0.002, 0.016],
+    ['uSigma', 'Wall width', 0.004, 0.10, 0.002, 0.020],
+    ['uSlope', 'Bend', 0.0, 3.5, 0.05, 2.1],
+    ['uRim', 'Edge light', 0.0, 1.6, 0.05, 0.9],
+    ['uSmokeMax', 'Smoke', 0.0, 0.5, 0.01, 0.18],
+    ['uGrad', 'Crown gradient', 0.0, 1.0, 0.05, 1.0],
+  ];
+  function initConsole() {
+    const panel = document.getElementById('tune-panel');
+    const readout = document.getElementById('tune-readout');
+    if (!panel || !readout || panel.childElementCount > 0) return;
+    const state: Record<string, number> = {};
+    const update = () => {
+      readout.textContent = Object.entries(state)
+        .map(([k, v]) => `${k}=${v.toFixed(3)}`)
+        .join('  ');
+    };
+    KNOBS.forEach(([name, label, min, max, step, def]) => {
+      state[name] = def;
+      const wrap = document.createElement('label');
+      wrap.className = 'flex flex-col gap-1.5';
+      const row = document.createElement('span');
+      row.className = 'flex justify-between opacity-70';
+      const t = document.createElement('span'); t.textContent = label;
+      const val = document.createElement('span'); val.textContent = String(def);
+      row.append(t, val);
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = String(min); input.max = String(max); input.step = String(step); input.value = String(def);
+      input.addEventListener('input', () => {
+        const v = parseFloat(input.value);
+        state[name] = v; val.textContent = v.toFixed(3);
+        (window as any).__glassTune?.(name, v);
+        update();
+      });
+      wrap.append(row, input);
+      panel.append(wrap);
+    });
+    update();
+  }
+  document.addEventListener('astro:page-load', initConsole);
+</script>
+
 </BaseLayout>

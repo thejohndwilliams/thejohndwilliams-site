@@ -444,7 +444,7 @@ describe('Glass lab bench (Glass Build B v1)', () => {
   it('builds the bench locally with all four materials', () => {
     const html = fs.readFileSync(path.join(distDir, 'glass-lab/index.html'), 'utf8');
     expect(html).toContain('data-glass-bench');
-    expect((html.match(/data-gpill/g) || []).length).toBe(3);
+    expect((html.match(/data-gpill/g) || []).length).toBe(5); // 3 wall bench + 2 cloud bench
     expect(html).toContain('field\u0020computation on a uniform grid'.replace('\u0020',' '));
     expect(html).toContain('noindex');
   });
