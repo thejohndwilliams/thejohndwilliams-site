@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KineticPlate from '../components/KineticPlate.astro';
+import KineticPlate3D from '../components/KineticPlate3D.astro';
+
+// STUDIES (public, owner directive 2026-07-31): the comparison work
+// graduates from the private lab into a linkable page. Each photograph is
+// shown both ways: the holographic parallax plate (stacked planes) beside
+// the true point cloud (depth-mapped geometry). The lab route keeps its
+// production gate and its P1 lock; this page is the curated public face.
+const ROWS = [
+  { id: 'earth', label: 'Earth · rain-wet leaf', note: 'A dark subject. Luminance buries it; depth stands it forward.' },
+  { id: 'structure', label: 'Structure · Shanghai Tower', note: 'Shot against bright sky. Depth keeps the tower near, the sky far.' },
+  { id: 'sky', label: 'Sky · thunderheads', note: 'The nearest billows read closest; the void recedes to black.' },
+  { id: 'water', label: 'Water · El Arco', note: 'A distant scene. The arch holds its place in real space.' },
+] as const;
+---
+
+<BaseLayout
+  title="Depth Studies"
+  description="Photographs rebuilt as holograms and point clouds. Each frame shown both ways: holographic parallax beside true depth-mapped geometry, derived from the photograph's own depth pass."
+>
+  <section class="py-12 sm:py-16 md:py-20 overflow-hidden">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3 sm:mb-4">Building</p>
+      <h1 class="mb-5 sm:mb-7">Depth studies</h1>
+      <div class="prose max-w-2xl">
+        <p>
+          The same photographs, twice. On the left, a hologram: the frame cut
+          into stacked planes that slide against each other as you move. On
+          the right, a point cloud: every dot sitting at the true depth the
+          photograph holds, baked from its depth pass. One fakes relief
+          beautifully; the other actually has it.
+        </p>
+        <p class="text-sm opacity-60">
+          Sweep across a plate to orbit it; release mid-turn and it carries,
+          then settles. On a phone, the clouds roll with the page. Reduced
+          motion holds a still frame.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {ROWS.map((row, i) => (
+    <section class={`py-10 sm:py-14 md:py-16 ${i % 2 === 1 ? 'section-light' : ''}`}>
+      <div class="container-wide">
+        <p class="eyebrow mb-2">{row.label}</p>
+        <p class="text-sm opacity-55 mb-8 max-w-xl">{row.note}</p>
+        <div class="grid gap-10 md:grid-cols-2 md:gap-12 items-start">
+          <div>
+            <KineticPlate category={row.id} />
+            <p class="plate-tag">Hologram · stacked planes</p>
+          </div>
+          <div class="study-3d">
+            <KineticPlate3D category={row.id} />
+            <p class="plate-tag">Point cloud · true depth</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="py-12 sm:py-16">
+    <div class="container-narrow">
+      <p class="text-sm opacity-55 max-w-xl">
+        These studies feed the object axis: once a frame knows its depth, it
+        can be cut as a physical surface.
+        <a href="/relief" class="link-draw text-cream/85 hover:text-cream">See the relief</a>.
+      </p>
+    </div>
+  </section>
+
+<style is:global>
+  .plate-tag {
+    margin-top: 1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.62);
+  }
+  /* If WebGL2 is unavailable the point cloud cannot mount; the hologram
+     column carries the row alone rather than showing a dead figure. */
+  .study-3d:has(.kplate3d[data-webgl="unsupported"]) { display: none; }
+</style>
+</BaseLayout>

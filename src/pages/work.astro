@@ -171,29 +171,20 @@ const expertise = [
 
   <!-- ACT II - BEYOND PHOTOGRAPHY -->
   <section class="py-12 sm:py-16 md:py-24">
-    <div class="container-narrow mb-10 sm:mb-16">
+    {/* A2.3 (owner: "merge stacks... it doesn't flow"): one header stack.
+        Title stays; the serif line names the work; a single paragraph
+        carries downloads, studies, and the inquiry with explicit spacing
+        (the v7 compressor was eating the whitespace around the old inline
+        link: "take.Inquirefor"). */}
+    <div class="container-narrow mb-10 sm:mb-14">
       <h2 class="t-sub font-serif mb-3 sm:mb-4">Beyond Photography</h2>
-      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Lift each experience from its frame.</p>
+      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Texture and Gaussian studies.</p>
       <p class="text-sm sm:text-base opacity-55 max-w-xl">
-        Download custom wallpapers, textures, and color palettes from any frame below, free to take.
-        <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a>
-        for prints, licensing, or the full-resolution files.
+        Each frame learns its own depth before it becomes anything else. Below: photographs rebuilt as point clouds, then wallpapers, textures, and color palettes drawn from the same frames, free to take. <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a> for prints, licensing, or the full-resolution files.
       </p>
     </div>
 
-    {/* DEPTH STUDIES (owner directive 2026-07-31): the photograph carrying
-        its own depth. True-3D point clouds derived from each frame's depth
-        pass, tilting with the cursor; the 2.5D plate stands in when WebGL2
-        is unavailable. Graduated here from the unlinked comparison lab. */}
     <div class="container-wide mb-16 sm:mb-24 md:mb-28">
-      <div class="reveal mb-6 sm:mb-8 max-w-xl">
-        <p class="eyebrow mb-2">Depth studies</p>
-        <p class="text-sm sm:text-base opacity-55">
-          Before a frame becomes a wallpaper or a surface, it learns its own
-          depth. Four photographs rebuilt as point clouds from their depth
-          passes; they lean as you move.
-        </p>
-      </div>
       <div class="stagger-children grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8">
         {depthStudies.map((s) => (
           <div class="reveal">
@@ -203,6 +194,12 @@ const expertise = [
           </div>
         ))}
       </div>
+      {/* The full comparisons live on their own page: every frame shown as
+          hologram AND point cloud, side by side (owner: the 2D holographic
+          renders must be included). */}
+      <p class="reveal mt-8 sm:mt-10 text-sm opacity-60">
+        Each frame also exists as a hologram of stacked planes. <a href="/studies" class="link-draw text-cream/85 hover:text-cream">See both renders side by side</a>.
+      </p>
     </div>
 
     <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
