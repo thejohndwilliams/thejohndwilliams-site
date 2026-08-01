@@ -1,0 +1,306 @@
+---
+/* GlassPillGL (Glass Build B, v1 - 2026-08-01)
+ * A pill that BENDS the photograph behind it (owner ruling, June 2026:
+ * "the pill needs to be a glass pill that bends the light coming from my
+ * work behind it" - refraction, never tint).
+ *
+ * THE WORKING - first principles, named:
+ *   Geometry   IQ rounded-box signed distance -> a height field whose
+ *              curvature concentrates at the rim (Gaussian bump in d),
+ *              flat and clear at the center. Real lens edges, calm middle.
+ *   Refraction Snell's law via GLSL refract(), incident ray (0,0,-1),
+ *              one thin interface. Screen-space displacement of the
+ *              backdrop sample - an approximation, and an honest one.
+ *   Dispersion Per-channel index of refraction (R/G/B sample slightly
+ *              different bent rays), the same reason a prism rainbows.
+ *   Rim        Schlick's approximation of Fresnel reflectance,
+ *              F = F0 + (1-F0)(1-cos t)^5, F0 = 0.04 (glass in air),
+ *              tinted cream - the site's one light.
+ *   Specular   Gaussian falloff around the pointer, weighted by rim
+ *              curvature. exp(-r^2/s^2) - the same kernel as the blur
+ *              the Beyond envelope documents.
+ *   Backdrop   The KNOWN hero asset re-sampled as a texture; UV window
+ *              computed from the object-fit:cover geometry. Never
+ *              html2canvas, never a DOM capture.
+ * Fallback: no WebGL2 -> the canvas is removed and the anchor's CSS
+ * glass (the site's material tokens) carries the pill. Reduced motion:
+ * one static frame, no clock, no pointer.
+ */
+interface Props {
+  label: string;
+  variant: 'a' | 'b' | 'c';
+  href?: string;
+}
+const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
+---
+
+<a href={href} class="gpill press-feedback" data-variant={variant} data-gpill>
+  <canvas class="gpill-gl" aria-hidden="true"></canvas>
+  <span class="gpill-label">
+    {label}
+    <svg class="gpill-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+  </span>
+</a>
+
+<style>
+  .gpill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.85rem 1.9rem;
+    border-radius: 9999px;
+    overflow: hidden;
+    isolation: isolate;
+    /* CSS fallback body = the site's rest-state material; the canvas
+       replaces the backdrop when WebGL2 is present. */
+    border: 1px solid var(--m-rest-border);
+    box-shadow: inset 0 1px 0 var(--m-rest-inset), 0 0 24px var(--m-rest-glow);
+    background: rgba(255, 255, 255, 0.04);
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+  }
+  .gpill:hover { border-color: var(--m-lit-border); box-shadow: inset 0 1px 0 var(--m-lit-inset), 0 0 28px var(--m-lit-glow); }
+  .gpill-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  /* backdrop-filter law (vault, Liquid_Glass 2026-06-09): content above the
+     glass paints only with position:relative + z-index. Same law holds for
+     a canvas backdrop. */
+  .gpill-label {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(244, 234, 222, 0.92);
+    text-shadow: 0 1px 10px rgba(7, 8, 10, 0.55);
+  }
+  .gpill-arrow { width: 1rem; height: 1rem; transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  .gpill:hover .gpill-arrow { transform: translateX(4px); }
+</style>
+
+<script>
+  const VERT = `#version 300 es
+  precision highp float;
+  out vec2 vUv;
+  void main() {
+    vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    vUv = p;
+    gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+  }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  in vec2 vUv;
+  out vec4 fragColor;
+  uniform sampler2D uTex;
+  uniform vec2 uAspect;    // (cssW/cssH, 1)
+  uniform vec2 uUV0;       // texture uv of the canvas' top-left (top-based v)
+  uniform vec2 uUVScale;   // uv span of the whole canvas
+  uniform vec2 uPointer;   // top-based, 0..1 in canvas space
+  uniform float uPointerAmt;
+  uniform float uTime;
+  uniform float uBendUV;   // refraction displacement, in uv units
+  uniform float uDisp;     // chromatic dispersion on/off
+  uniform float uRim;      // Fresnel rim gain
+  uniform float uSpec;     // pointer specular gain
+  uniform float uBreath;   // slow living modulation
+  uniform float uGrad;     // cream gradient gain
+
+  // IQ rounded-box signed distance (Inigo Quilez, distance functions).
+  float sdRoundedBox(vec2 p, vec2 b, float r) {
+    vec2 q = abs(p) - b + r;
+    return min(max(q.x, q.y), 0.0) + length(max(q, vec2(0.0))) - r;
+  }
+
+  void main() {
+    // Top-based frame position, height-normalized geometry.
+    vec2 f = vec2(vUv.x, 1.0 - vUv.y);          // 0..1, y down
+    vec2 p = (f - 0.5) * uAspect;               // centered, y in [-0.5, 0.5]
+    float r = 0.5 - 0.02;                        // capsule
+    vec2 b = uAspect * 0.5 - 0.02;
+    float d = sdRoundedBox(p, b, r);             // < 0 inside
+    float aa = 1.5 * fwidth(d);
+    float mask = 1.0 - smoothstep(-aa, aa, d);
+    if (mask <= 0.0) { fragColor = vec4(0.0); return; }
+
+    // Height field: curvature lives at the rim (Gaussian bump in distance),
+    // the center stays optically flat - lens edge, clear middle.
+    float breath = 1.0 + uBreath * 0.14 * sin(uTime * 0.55);
+    float sigma = 0.085 * breath;
+    float rimBump = exp(-pow((d + 0.075) / sigma, 2.0));
+
+    // Surface normal from the numeric gradient of the distance field
+    // (central differences), tilted by rim slope.
+    float e = 0.004;
+    vec2 g = vec2(
+      sdRoundedBox(p + vec2(e, 0.0), b, r) - sdRoundedBox(p - vec2(e, 0.0), b, r),
+      sdRoundedBox(p + vec2(0.0, e), b, r) - sdRoundedBox(p - vec2(0.0, e), b, r)
+    ) / (2.0 * e);
+    float slope = 1.9 * rimBump;
+    vec3 n = normalize(vec3(-g * slope, 1.0));
+
+    // Snell through one thin interface, per channel (dispersion).
+    vec2 uvBase = uUV0 + f * uUVScale;
+    float bend = uBendUV;
+    vec3 iorOff = vec3(0.0, 0.014, 0.028) * uDisp;
+    vec3 col;
+    for (int c = 0; c < 3; c++) {
+      float eta = 1.0 / (1.45 + iorOff[c]);
+      vec3 refr = refract(vec3(0.0, 0.0, -1.0), n, eta);
+      vec2 uv = clamp(uvBase + refr.xy * bend, 0.0, 1.0);
+      col[c] = texture(uTex, uv)[c];
+    }
+
+    // A breath of clarity: the glass slightly lifts the backdrop's floor.
+    col = col * 0.94 + 0.02;
+
+    // Schlick Fresnel rim, cream - the site's single light.
+    float cosT = clamp(n.z, 0.0, 1.0);
+    float F = 0.04 + 0.96 * pow(1.0 - cosT, 5.0);
+    vec3 cream = vec3(0.957, 0.918, 0.871);
+    col += cream * F * uRim;
+
+    // Fixed key glint (upper rim) + pointer-tracked Gaussian specular.
+    float keyGlint = rimBump * exp(-pow((p.y + 0.30) / 0.22, 2.0)) * 0.10;
+    col += cream * keyGlint;
+    if (uSpec > 0.0) {
+      vec2 pp = (vec2(uPointer.x, uPointer.y) - 0.5) * uAspect;
+      float s2 = 0.030;
+      float spec = exp(-dot(p - pp, p - pp) / s2) * (0.35 + 0.65 * rimBump);
+      col += cream * spec * uSpec * uPointerAmt * 0.5;
+    }
+
+    // Owner ruling: stronger gradient. A quiet cream fall from the crown.
+    col = mix(col, col + cream * 0.10, uGrad * (1.0 - f.y) * 0.9);
+
+    fragColor = vec4(col * mask, mask);  // premultiplied
+  }`;
+
+  function makeProgram(gl: WebGL2RenderingContext) {
+    const compile = (type: number, src: string) => {
+      const sh = gl.createShader(type)!;
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(sh) || 'shader');
+      }
+      return sh;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('link');
+    return prog;
+  }
+
+  const VARIANTS: Record<string, { disp: number; rim: number; spec: number; breath: number; grad: number; bendPx: number }> = {
+    a: { disp: 0, rim: 0.35, spec: 0, breath: 0, grad: 0, bendPx: 14 },
+    b: { disp: 1, rim: 0.8, spec: 0, breath: 0, grad: 0, bendPx: 20 },
+    c: { disp: 1, rim: 0.9, spec: 1, breath: 1, grad: 1, bendPx: 22 },
+  };
+
+  function initPill(pill: HTMLElement, img: HTMLImageElement) {
+    const canvas = pill.querySelector('canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl2', { alpha: true, antialias: false, premultipliedAlpha: true });
+    if (!gl) { canvas.remove(); return; }   // CSS glass carries the pill
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const v = VARIANTS[pill.dataset.variant || 'b'] || VARIANTS.b;
+
+    let prog: WebGLProgram;
+    try { prog = makeProgram(gl); } catch { canvas.remove(); return; }
+    gl.useProgram(prog);
+    const U = (n: string) => gl.getUniformLocation(prog, n);
+
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    let uvScaleAvg = 0;
+    function layout() {
+      const cr = canvas!.getBoundingClientRect();
+      const ir = img.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas!.width = Math.max(2, Math.round(cr.width * dpr * 0.75));   // O2 law: low internal res
+      canvas!.height = Math.max(2, Math.round(cr.height * dpr * 0.75));
+      gl!.viewport(0, 0, canvas!.width, canvas!.height);
+      // object-fit: cover geometry -> the uv window this canvas sees.
+      const s = Math.max(ir.width / img.naturalWidth, ir.height / img.naturalHeight);
+      const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+      const ox = (dw - ir.width) / 2, oy = (dh - ir.height) / 2;
+      const u0 = (cr.left - ir.left + ox) / dw;
+      const v0 = (cr.top - ir.top + oy) / dh;
+      gl!.uniform2f(U('uUV0'), u0, v0);
+      gl!.uniform2f(U('uUVScale'), cr.width / dw, cr.height / dh);
+      gl!.uniform2f(U('uAspect'), cr.width / cr.height, 1.0);
+      uvScaleAvg = (cr.width / dw + cr.height / dh) / 2;
+      gl!.uniform1f(U('uBendUV'), (v.bendPx / ((cr.width + cr.height) / 2)) * uvScaleAvg * 60.0);
+    }
+
+    gl.uniform1f(U('uDisp'), v.disp);
+    gl.uniform1f(U('uRim'), v.rim);
+    gl.uniform1f(U('uSpec'), v.spec);
+    gl.uniform1f(U('uBreath'), reduce ? 0 : v.breath);
+    gl.uniform1f(U('uGrad'), v.grad);
+    gl.uniform1i(U('uTex'), 0);
+
+    let px = 0.5, py = 0.5, amt = 0, amtTarget = 0;
+    pill.addEventListener('pointermove', (ev) => {
+      const cr = canvas.getBoundingClientRect();
+      px = (ev.clientX - cr.left) / cr.width;
+      py = (ev.clientY - cr.top) / cr.height;
+      amtTarget = 1;
+    });
+    pill.addEventListener('pointerleave', () => { amtTarget = 0; });
+
+    const t0 = performance.now();
+    function frame(now: number) {
+      amt += (amtTarget - amt) * 0.12;
+      gl!.uniform2f(U('uPointer'), px, py);
+      gl!.uniform1f(U('uPointerAmt'), amt);
+      gl!.uniform1f(U('uTime'), (now - t0) / 1000);
+      gl!.clearColor(0, 0, 0, 0);
+      gl!.clear(gl!.COLOR_BUFFER_BIT);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+    }
+
+    layout();
+    frame(t0);
+
+    if (reduce) return; // one static frame; no clock, no pointer chase
+
+    // RAF only while visible (O2: runtime is the authority; idle costs zero).
+    let raf = 0;
+    let running = false;
+    const loop = (now: number) => { frame(now); raf = requestAnimationFrame(loop); };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting && !running) { running = true; raf = requestAnimationFrame(loop); }
+        else if (!en.isIntersecting && running) { running = false; cancelAnimationFrame(raf); }
+      });
+    }, { threshold: 0.05 });
+    io.observe(pill);
+    window.addEventListener('resize', () => { layout(); }, { passive: true });
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-gpill]').forEach((pill) => {
+      const bench = pill.closest('[data-glass-bench]');
+      const img = bench?.querySelector('img') as HTMLImageElement | null;
+      if (!img) return;
+      const go = () => initPill(pill, img);
+      if (img.complete && img.naturalWidth > 0) go();
+      else img.addEventListener('load', go, { once: true });
+    });
+  }
+  document.addEventListener('astro:page-load', initAll);
+</script>

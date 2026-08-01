@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
+
+// Unlinked, noindexed shader-glass bench. Side-by-side: the site's CSS
+// glass (material tokens) beside three grades of true refractive glass,
+// over the same photograph, for John's in-browser judgement.
+// Same production gate as about-lab (P1 lock pattern, 2026-07-19): on the
+// main branch this route is a plain redirect home; preview branches and
+// local builds keep the full bench.
+if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
+  return Astro.redirect('/', 308);
+}
+---
+
+<BaseLayout
+  title="Glass Lab"
+  description="Private shader-glass bench."
+  noindex={true}
+>
+  {/* STATEMENT */}
+  <section class="py-12 sm:py-16 md:py-20">
+    <div class="container-narrow">
+      <p class="eyebrow mb-3 sm:mb-4">Lab &middot; Shader Glass</p>
+      <h1 class="mb-5 sm:mb-7">Glass that bends the work</h1>
+      <p class="font-serif italic text-sm text-cream/45 max-w-2xl mb-6">
+        A fragment shader evaluating a material response per-pixel is field
+        computation on a uniform grid.
+      </p>
+      <div class="prose max-w-2xl">
+        <p>
+          Four pills over the same photograph. The first is the site's
+          current material: CSS glass, tokens and hairlines. The other three
+          are true refractive glass, written from first principles: the
+          photograph itself is re-sampled through a curved surface, so the
+          wall's ribs bend at the rim the way they would through a real
+          lens. Judge them against each other, over the same light.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* THE BENCH - one photograph, four materials */}
+  <section class="relative overflow-hidden" data-glass-bench>
+    <div class="relative min-h-[70vh] sm:min-h-[78vh]">
+      <picture>
+        <source
+          type="image/avif"
+          srcset="/images/photography/gallery/dscf1022.avif 1200w, /images/photography/hero/dscf1022.avif 2400w"
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcset="/images/photography/gallery/dscf1022.webp 1200w, /images/photography/hero/dscf1022.webp 2400w"
+          sizes="100vw"
+        />
+        <img
+          src="/images/photography/hero/dscf1022.webp"
+          alt="A wall combed into vertical ribs of light and shadow"
+          class="absolute inset-0 w-full h-full object-cover"
+          fetchpriority="high"
+        />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/70 via-transparent to-[#0a0a0a]/30"></div>
+
+      <div class="relative z-10 min-h-[70vh] sm:min-h-[78vh] flex items-center">
+        <div class="container-narrow w-full">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 items-start">
+            <div class="flex flex-col items-start gap-3">
+              <a href="mailto:jndwcreative@gmail.com" class="btn btn-outline btn-sm">
+                Inquire
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </a>
+              <p class="plate-tag">Reference &middot; CSS glass, today's material</p>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+              <GlassPillGL label="Inquire" variant="a" />
+              <p class="plate-tag">A &middot; Refraction only</p>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+              <GlassPillGL label="Inquire" variant="b" />
+              <p class="plate-tag">B &middot; + dispersion, Fresnel rim</p>
+            </div>
+            <div class="flex flex-col items-start gap-3">
+              <GlassPillGL label="Inquire" variant="c" />
+              <p class="plate-tag">C &middot; + pointer light, breath, gradient</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* THE WORKING */}
+  <section class="py-14 sm:py-20">
+    <div class="container-narrow">
+      <div class="border-t border-white/5 pt-8 sm:pt-10 max-w-2xl">
+        <p class="eyebrow mb-3">The working</p>
+        <p class="text-sm sm:text-base opacity-55 leading-relaxed mb-4">
+          Snell's law through one thin interface, per color channel, so the
+          red, green, and blue rays part company at the rim. Schlick's
+          approximation of Fresnel reflectance holds the cream edge. The
+          surface is a signed-distance capsule whose curvature is a Gaussian
+          bump at the rim: lens at the edges, clear in the middle. The
+          pointer light falls off as a Gaussian, the same kernel as the
+          blur in the Beyond envelope.
+        </p>
+        <p class="text-sm sm:text-base opacity-55 leading-relaxed">
+          The backdrop is the photograph itself, re-sampled from the known
+          asset with the crop geometry computed, never captured from the
+          page. Without WebGL2 the pill falls back to the site's CSS glass.
+          Under reduced motion it renders one still frame and stops the
+          clock. Offscreen it costs nothing.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

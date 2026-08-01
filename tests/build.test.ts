@@ -439,3 +439,13 @@ describe('Liquid Glass CSS', () => {
     expect(cssBundle).toContain('bg-\\[\\#0a0a0a\\]\\/\\[0\\.92\\]{background-color:#0a0a0aeb}');
   });
 });
+
+describe('Glass lab bench (Glass Build B v1)', () => {
+  it('builds the bench locally with all four materials', () => {
+    const html = fs.readFileSync(path.join(distDir, 'glass-lab/index.html'), 'utf8');
+    expect(html).toContain('data-glass-bench');
+    expect((html.match(/data-gpill/g) || []).length).toBe(3);
+    expect(html).toContain('field\u0020computation on a uniform grid'.replace('\u0020',' '));
+    expect(html).toContain('noindex');
+  });
+});
