@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
 ---
 
 <BaseLayout title="Not Found">
@@ -7,7 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="container-narrow text-center">
       <h1 class="t-display font-serif mb-6">404</h1>
       <p class="text-xl opacity-70 mb-8">This page doesn't exist.</p>
-      <a href="/" class="btn btn-outline">Return home</a>
+      <GlassPillGL label="Return home" href="/" variant="c" />
     </div>
   </section>
 </BaseLayout>

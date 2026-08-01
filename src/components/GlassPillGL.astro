@@ -203,8 +203,9 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
       col += cream * spec * uSpec * uPointerAmt * 0.5;
     }
 
-    // Owner ruling: stronger gradient. A quiet cream fall from the crown.
-    col = mix(col, col + cream * 0.10, uGrad * (1.0 - f.y) * 0.9);
+    // Owner ruling: the crown must read EVERYWHERE - strong over dark
+    // ground (where the old additive vanished), restrained over bright.
+    col += cream * uGrad * (1.0 - f.y) * (0.06 + 0.12 * (1.0 - lumB));
 
     fragColor = vec4(col * mask, mask);  // premultiplied
   }`;
@@ -227,13 +228,14 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     return prog;
   }
 
-  const VARIANTS: Record<string, { disp: number; rim: number; spec: number; breath: number; grad: number; bendPx: number }> = {
-    a: { disp: 0, rim: 0.35, spec: 0, breath: 0, grad: 0, bendPx: 14 },
-    b: { disp: 1, rim: 0.8, spec: 0, breath: 0, grad: 0, bendPx: 20 },
-    c: { disp: 1, rim: 0.9, spec: 1, breath: 1, grad: 1, bendPx: 22 },
-  };
+  // THE LINE (owner-tuned on the console, 2026-08-01, locked verbatim):
+  // uRidge=0.000 uSigma=0.054 uSlope=3.450 uRim=0.000 uSmokeMax=0.000 uGrad=0.950
+  // One material now. The a/b/c props remain for markup compatibility; all
+  // grades render the Line.
+  const LINE = { disp: 1, rim: 0.0, spec: 1, breath: 1, grad: 0.95, bendPx: 22 };
+  const VARIANTS: Record<string, typeof LINE> = { a: LINE, b: LINE, c: LINE };
 
-  function initPill(pill: HTMLElement, img: HTMLImageElement) {
+  function initPill(pill: HTMLElement, img: HTMLImageElement | null) {
     const canvas = pill.querySelector('canvas') as HTMLCanvasElement | null;
     if (!canvas) return;
     const gl = canvas.getContext('webgl2', { alpha: true, antialias: false, premultipliedAlpha: true });
@@ -252,7 +254,14 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     function upload() {
       gl!.bindTexture(gl!.TEXTURE_2D, tex);
       gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
-      gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, img);
+      if (img) {
+        gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, img);
+      } else {
+        // No photograph behind this pill: the material stands on the site's
+        // own onyx. Chrome edge, clear body, crown - the About-me-over-black
+        // reading, anywhere on the site.
+        gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, 1, 1, 0, gl!.RGBA, gl!.UNSIGNED_BYTE, new Uint8Array([10, 11, 13, 255]));
+      }
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MIN_FILTER, gl!.LINEAR);
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_S, gl!.CLAMP_TO_EDGE);
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE);
@@ -260,18 +269,25 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     upload();
     // The home hero rotates its photograph by hour; when the img swaps, the
     // glass must bend the NEW light, not a stale texture.
-    img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); });
+    if (img) img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); });
 
     let uvScaleAvg = 0;
     function layout() {
       const cr = canvas!.getBoundingClientRect();
-      const ir = img.getBoundingClientRect();
+      const ir = img ? img.getBoundingClientRect() : cr;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       // Full DPR (was 0.75x): two tiny canvases afford it, and a soft edge
       // reads as a WIDE wall - crispness is what makes the wall thin.
       canvas!.width = Math.max(2, Math.round(cr.width * dpr));
       canvas!.height = Math.max(2, Math.round(cr.height * dpr));
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
+      if (!img) {
+        gl!.uniform2f(U('uUV0'), 0.5, 0.5);
+        gl!.uniform2f(U('uUVScale'), 0.0, 0.0);
+        gl!.uniform2f(U('uAspect'), cr.width / cr.height, 1.0);
+        gl!.uniform1f(U('uBendUV'), 0.0);
+        return;
+      }
       // object-fit: cover geometry -> the uv window this canvas sees.
       const s = Math.max(ir.width / img.naturalWidth, ir.height / img.naturalHeight);
       const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
@@ -290,10 +306,10 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     gl.uniform1f(U('uSpec'), v.spec);
     gl.uniform1f(U('uBreath'), reduce ? 0 : v.breath);
     gl.uniform1f(U('uGrad'), v.grad);
-    gl.uniform1f(U('uRidge'), 0.016);
-    gl.uniform1f(U('uSigma'), 0.020);
-    gl.uniform1f(U('uSlope'), 2.1);
-    gl.uniform1f(U('uSmokeMax'), 0.18);
+    gl.uniform1f(U('uRidge'), 0.0);
+    gl.uniform1f(U('uSigma'), 0.054);
+    gl.uniform1f(U('uSlope'), 3.45);
+    gl.uniform1f(U('uSmokeMax'), 0.0);
     gl.uniform1i(U('uTex'), 0);
     // Lab tuning registry: only pages that opt in with [data-glass-tune]
     // expose the knobs. The owner's eye drives; values get locked in code.
@@ -363,7 +379,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '' 
     document.querySelectorAll<HTMLElement>('[data-gpill]').forEach((pill) => {
       const bench = pill.closest('[data-glass-bench]');
       const img = bench?.querySelector('img') as HTMLImageElement | null;
-      if (!img) return;
+      if (!img) { initPill(pill, null); return; }
       const go = () => initPill(pill, img);
       if (img.complete && img.naturalWidth > 0) go();
       else img.addEventListener('load', go, { once: true });

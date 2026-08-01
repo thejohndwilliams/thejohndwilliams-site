@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import GlassPillGL from '../../components/GlassPillGL.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
 import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages, getPlaceholder } from '../../data/photography';
 
@@ -216,12 +217,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
             >
               Inquire about this print
             </a>
-            <a
-              href="/photography"
-              class="btn btn-outline"
-            >
-              Browse all prints
-            </a>
+            <GlassPillGL label="Browse all prints" href="/photography" variant="c" />
           </div>
         </div>
       </div>
