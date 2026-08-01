@@ -87,6 +87,11 @@ const ROWS = [
         then settles. On a phone, the clouds roll with the page. Reduced
         motion holds a still frame.
       </p>
+      <p class="font-serif italic text-sm text-cream/45 max-w-2xl mt-4">
+        One photograph in. A depth estimate per pixel. The image cut into
+        planes or scattered into points, displaced along the axis the camera
+        never recorded.
+      </p>
     </div>
   </section>
 
@@ -117,6 +122,11 @@ const ROWS = [
       <p class="text-sm sm:text-base opacity-55 max-w-xl">
         The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take. <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a> for prints, licensing, or the full-resolution files.
       </p>
+      <p class="font-serif italic text-sm text-cream/45 max-w-xl mt-4">
+        The blur behind each plate is a Gaussian convolution &mdash; the
+        closed-form solution to the heat equation. Light diffuses through the
+        glass the way heat moves through a solid.
+      </p>
     </div>
     <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
       <div class="reveal"><LiquidPlate src="img-6552" alt="Last light over a ridge at dusk" label="Sky" note="Last light, going down behind the ridge." index={0} /></div>
@@ -128,6 +138,24 @@ const ROWS = [
   {/* ACT III - THE OBJECT. The relief, folded in whole: depth learned,
       pixels lifted, then the photograph cut as a surface you could hold. */}
   <ReliefStudies />
+
+  {/* THE ENVELOPE - the working, shown. Bounds verified against global.css
+      actuals (max blur 44px, max saturate 1.85) and the WCAG AA contrast
+      floor the a11y harness enforces. One sentence by design; if this block
+      ever grows a second paragraph, it has failed (owner ruling 2026-07-31). */}
+  <section class="py-14 sm:py-20">
+    <div class="container-narrow">
+      <div class="border-t border-white/5 pt-8 sm:pt-10 max-w-2xl">
+        <p class="eyebrow mb-3">The envelope</p>
+        <p class="text-sm sm:text-base opacity-55 leading-relaxed">
+          Every material on this site holds calibrated bounds: blur no higher
+          than 44 pixels, saturation no higher than 1.85, text contrast at or
+          above 4.5:1 at every tested opacity. Settings that survived a sweep,
+          not settings that looked good once.
+        </p>
+      </div>
+    </div>
+  </section>
 
 <style is:global>
   .plate-tag {
