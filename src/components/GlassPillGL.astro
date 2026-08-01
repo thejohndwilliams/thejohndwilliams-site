@@ -72,10 +72,16 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8rem;
+    font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(244, 234, 222, 0.92);
-    text-shadow: 0 1px 10px rgba(7, 8, 10, 0.55);
+    color: rgba(244, 234, 222, 1);
+    /* The halo is the contrast mechanism over refractive glass: a tight dark
+       ring around each stroke, then two soft falls. */
+    text-shadow:
+      0 1px 2px rgba(7, 8, 10, 0.85),
+      0 0 10px rgba(7, 8, 10, 0.65),
+      0 0 22px rgba(7, 8, 10, 0.45);
   }
   .gpill-arrow { width: 1rem; height: 1rem; transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
   .gpill:hover .gpill-arrow { transform: translateX(4px); }
@@ -161,6 +167,15 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com' } = Astro.props;
 
     // A breath of clarity: the glass slightly lifts the backdrop's floor.
     col = col * 0.96 + 0.012;
+
+    // Smoked core (owner note 2026-08-01: label was hard to read over the
+    // bright wall). A tinted ellipse in the glass center gives the type its
+    // footing - luminance-aware like the rim: near-invisible over dark
+    // ground, up to a third of the light absorbed over bright.
+    vec2 q = p / vec2(max(b.x * 0.78, 0.2), 0.36);
+    float smoke = exp(-dot(q, q));
+    float ink = smoke * (0.05 + 0.30 * smoothstep(0.40, 0.85, lumB));
+    col *= (1.0 - ink);
 
     // Schlick Fresnel rim, cream - the site's single light.
     float cosT = clamp(n.z, 0.0, 1.0);
