@@ -1253,6 +1253,16 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .glass-plate-lb > * { position: relative; z-index: 1; }
 
+/* Bare category index (A2.1): the scroll container the retired rail used to
+   be. No negative margins, no undefined utilities - explicit containment and
+   scrollbar suppression for every engine. */
+.nav-index {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.nav-index::-webkit-scrollbar { display: none; }
+
 .btn-outline { position: relative; }
 /* (old diagonal ::after sweep removed 2026-06-30 — replaced by the
    rim-orbit light in the liquid-glass wave-2 section below) */
