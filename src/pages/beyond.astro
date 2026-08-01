@@ -20,41 +20,73 @@ const ROWS = [
 ---
 
 <BaseLayout
-  title="Labs"
-  description="Photography experiments by John D. Williams: frames rebuilt as holograms and true point clouds, and photographs cut as physical bas-relief. Where the work leaves the frame."
+  title="Beyond"
+  description="Beyond the frame: photographs rebuilt as holograms and true point clouds, textures and Gaussian studies to take home, and images cut as physical bas-relief. The experiments of John D. Williams."
+  ogImage="/og/photography/gv-3b61b429.jpg"
 >
-  <section class="py-12 sm:py-16 md:py-20 overflow-hidden">
+  {/* HERO - the house pattern: banner, verb, name. The verb liturgy runs
+      making visible / noticing / building / rising; this wing's act is
+      LIFTING - its own inherited sentence is "Lift each experience from
+      its frame." Banner: the last light beyond the ridge (gv-3b61b429),
+      a threshold in the dark register. */}
+  <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/gv-3b61b429.avif 400w, /images/photography/gallery/gv-3b61b429.avif 1200w, /images/photography/hero/gv-3b61b429.avif 2400w"
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="/images/photography/thumb/gv-3b61b429.webp 400w, /images/photography/gallery/gv-3b61b429.webp 1200w, /images/photography/hero/gv-3b61b429.webp 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/hero/gv-3b61b429.webp"
+        alt="A lone tree in silhouette against the last light of sunset beyond a dark ridge"
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
+    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-10 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Lifting</p>
+        <h1 class="t-title font-serif mb-4 sm:mb-6 tracking-tight">Beyond</h1>
+      </div>
+    </div>
+  </section>
+
+  {/* STATEMENT - one block, then three acts: depth, texture, object. */}
+  <section class="py-12 sm:py-16 md:py-20">
     <div class="container-narrow">
-      <p class="eyebrow mb-3 sm:mb-4">Building</p>
-      <h1 class="mb-5 sm:mb-7">Labs</h1>
       <div class="prose max-w-2xl">
         <p>
           Experiments in what a photograph can become once it leaves the
           frame. Each one starts the same way: a finished photograph, taken
           seriously enough to ask what else it holds. Depth, first. Then
-          surface.
+          texture. Then surface.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="py-8 sm:py-10">
+  {/* ACT I - THE DEPTH */}
+  <section class="pt-4 pb-6 sm:pb-8">
     <div class="container-narrow">
-      <p class="eyebrow mb-3">Depth studies</p>
-      <div class="prose max-w-2xl">
-        <p>
-          The same photographs, twice. On the left, a hologram: the frame cut
-          into stacked planes that slide against each other as you move. On
-          the right, a point cloud: every dot sitting at the true depth the
-          photograph holds, baked from its depth pass. One fakes relief
-          beautifully; the other actually has it.
-        </p>
-        <p class="text-sm opacity-60">
-          Sweep across a plate to orbit it; release mid-turn and it carries,
-          then settles. On a phone, the clouds roll with the page. Reduced
-          motion holds a still frame.
-        </p>
-      </div>
+      <h2 class="t-sub font-serif mb-3 sm:mb-4">The depth studies</h2>
+      <p class="text-sm sm:text-base opacity-55 max-w-2xl mb-2">
+        The same photographs, twice. On the left, a hologram: the frame cut
+        into stacked planes that slide against each other as you move. On the
+        right, a point cloud: every dot sitting at the true depth the
+        photograph holds, baked from its depth pass. One fakes relief
+        beautifully; the other actually has it.
+      </p>
+      <p class="text-sm opacity-60 max-w-2xl">
+        Sweep across a plate to orbit it; release mid-turn and it carries,
+        then settles. On a phone, the clouds roll with the page. Reduced
+        motion holds a still frame.
+      </p>
     </div>
   </section>
 
@@ -77,12 +109,11 @@ const ROWS = [
     </section>
   ))}
 
-  {/* BEYOND PHOTOGRAPHY - moved from the work page (owner architecture:
-      Labs hijacks all the photography work). Pixels a visitor can take. */}
+  {/* ACT II - TEXTURE. Pixels a visitor can take (moved from the work page). */}
   <section class="py-12 sm:py-16 md:py-24 section-light">
     <div class="container-narrow mb-10 sm:mb-14">
-      <h2 class="t-sub font-serif mb-3 sm:mb-4">Beyond Photography</h2>
-      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Texture and Gaussian studies.</p>
+      <h2 class="t-sub font-serif mb-3 sm:mb-4">Texture and Gaussian studies</h2>
+      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Take one home.</p>
       <p class="text-sm sm:text-base opacity-55 max-w-xl">
         The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take. <a href="mailto:jndwcreative@gmail.com?subject=Beyond%20Photography" class="text-cream/80 underline underline-offset-4 hover:text-cream transition-colors duration-300">Inquire</a> for prints, licensing, or the full-resolution files.
       </p>
@@ -94,9 +125,8 @@ const ROWS = [
     </div>
   </section>
 
-  {/* THE RELIEF - folded in whole (owner: 'Fold Relief into labs'). The
-      object axis as the finale: depth learned, pixels lifted, then the
-      photograph cut as a surface you could hold. */}
+  {/* ACT III - THE OBJECT. The relief, folded in whole: depth learned,
+      pixels lifted, then the photograph cut as a surface you could hold. */}
   <ReliefStudies />
 
 <style is:global>

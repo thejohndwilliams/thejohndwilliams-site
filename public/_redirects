@@ -1,4 +1,7 @@
-# /relief folded into /labs (owner ruling 2026-07-31). Cloudflare Pages
-# serves this as a real 301 so old links and any indexed URLs carry over.
-/relief /labs 301
-/relief/ /labs 301
+# Legacy routes for the experiments wing (owner naming ruling 2026-07-31:
+# the wing is Beyond). Real 301s so printed bio links and any shared preview
+# links keep resolving.
+/relief /beyond 301
+/relief/ /beyond 301
+/labs /beyond 301
+/labs/ /beyond 301

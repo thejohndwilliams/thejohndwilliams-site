@@ -58,13 +58,13 @@ describe('Astro Build', () => {
     expect(xml).toContain('<image:license>');
   });
 
-  it('emits /labs carrying the relief render set (folded per owner ruling 2026-07-31)', () => {
+  it('emits /beyond carrying the relief render set (the experiments wing)', () => {
     // The page is only worth shipping if the renders ship with it. These
     // assets are produced OUTSIDE the repo (relief_render.py needs a
     // panel-resolution depth pass and a ~900 KB luminance plate per frame),
     // so nothing in the build regenerates them: a careless `git clean` or a
     // partial copy would leave a page of broken frames with a green build.
-    expect(fs.existsSync(path.join(distDir, 'labs', 'index.html'))).toBe(true);
+    expect(fs.existsSync(path.join(distDir, 'beyond', 'index.html'))).toBe(true);
 
     const relief = path.join(distDir, 'images', 'relief');
     expect(fs.existsSync(relief)).toBe(true);
@@ -226,15 +226,15 @@ describe('Generated HTML Content', () => {
     photographyHtml = fs.readFileSync(path.join(distDir, 'photography', 'index.html'), 'utf-8');
   }, 60000);
 
-  describe('Reachability of /labs (relief folded, 2026-07-31)', () => {
+  describe('Reachability of /beyond (the experiments wing)', () => {
     it('every top-level surface that should reach the object axis does', () => {
       // /relief shipped orphaned: one 12px muted line at the bottom of
       // /photography was the site's only inbound link to a top-level URL.
       // Source locks live in hazards.test.ts; this one proves the links
       // survive the build.
-      expect(indexHtml).toMatch(/href="\/labs\/?"/);
-      expect(workHtml).toMatch(/href="\/labs\/?"/);
-      expect(photographyHtml).toMatch(/href="\/labs\/?"/);
+      expect(indexHtml).toMatch(/href="\/beyond\/?"/);
+      expect(workHtml).toMatch(/href="\/beyond\/?"/);
+      expect(photographyHtml).toMatch(/href="\/beyond\/?"/);
     });
   });
 

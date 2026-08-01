@@ -23,7 +23,7 @@ describe('navItems', () => {
 
   it('nav items are ordered Photography, Work, About', () => {
     const names = navItems.map((item) => item.name);
-    expect(names).toEqual(['Photography', 'Work', 'Labs', 'About']);
+    expect(names).toEqual(['Photography', 'Work', 'Beyond', 'About']);
   });
   it('does not include Links in primary navigation', () => {
     const names = navItems.map((item) => item.name);

@@ -252,7 +252,7 @@ describe('hazard locks: built output', () => {
   });
 });
 
-describe('hazard locks: /labs is reachable (relief folded 2026-07-31)', () => {
+describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)', () => {
   // /relief shipped 2026-07-25 with exactly one inbound link: a 12px muted
   // line at the bottom of /photography, below the fold and below the Inquire
   // button. It was a top-level URL nobody could arrive at from inside the
@@ -262,26 +262,27 @@ describe('hazard locks: /labs is reachable (relief folded 2026-07-31)', () => {
   const work = readFileSync(join(SRC, 'pages/work.astro'), 'utf8');
   const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
 
-  it('the home page grid carries a /labs card', () => {
-    expect(home).toMatch(/href="\/labs"/);
+  it('the home page grid carries a /beyond card', () => {
+    expect(home).toMatch(/href="\/beyond"/);
   });
 
-  it('/work hands off to the Labs by name', () => {
-    expect(work).toMatch(/href="\/labs"/);
+  it('/work hands off to Beyond by name', () => {
+    expect(work).toMatch(/href="\/beyond"/);
   });
 
   it('/photography links the object axis with a photograph, not a 12px line', () => {
-    const idx = gallery.indexOf('href="/labs"');
+    const idx = gallery.indexOf('href="/beyond"');
     expect(idx).toBeGreaterThan(-1);
     expect(gallery.slice(idx, idx + 900)).toContain('/images/relief/');
   });
 
-  it('/relief bio links survive the fold: a real 301 to /labs ships', () => {
-    // The relief page folded into /labs (owner ruling 2026-07-31). The
+  it('/relief bio links survive the fold: real 301s to /beyond ship', () => {
+    // The relief page folded onward to /beyond (owner rulings 2026-07-31). The
     // link-in-bio URLs printed on cards and profiles must keep resolving:
     // public/_redirects gives Cloudflare Pages a server-side 301.
     const redirects = readFileSync(join(SRC, '../public/_redirects'), 'utf8');
-    expect(redirects).toMatch(/^\/relief\s+\/labs\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\s+\/beyond\s+301$/m);
+    expect(redirects).toMatch(/^\/labs\s+\/beyond\s+301$/m);
   });
 
   it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {
