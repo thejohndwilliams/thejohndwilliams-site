@@ -18,6 +18,18 @@ for (const cat of categories) {
 
 export default defineConfig({
   site: SITE,
+  vite: {
+    build: {
+      // Glass regression fix (2026-08-15): LightningCSS collapsed paired
+      // backdrop-filter declarations to -webkit-only, and Chrome 151
+      // removed the -webkit-backdrop-filter alias - most CSS glass was
+      // silently dead in current Chrome on production. esbuild minifies
+      // without prefix rewriting: both declarations survive, unprefixed
+      // wins where both parse, -webkit- carries old Safari. Verified by
+      // injected-stylesheet computed-style test in Chrome 151.
+      cssMinify: 'esbuild',
+    },
+  },
   integrations: [
     sitemap({
       // Keep unlinked preview/lab routes out of the production sitemap.
