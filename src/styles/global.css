@@ -18,7 +18,20 @@
   --m-lit-border: rgba(244, 234, 222, 0.28);
   --m-lit-inset: rgba(255, 255, 255, 0.22);
   --m-lit-glow: rgba(244, 234, 222, 0.07);
-  --ring-rest: 0.34; /* shared crystal ring resting opacity */
+  --ring-rest: 0.34;
+  /* Glass research 2026-08-15: the blur/saturate scale, named. Values are
+     the LIVE shipped tiers (audit-verified); consolidation beyond naming
+     needs the owner's eye. Bounds law: blur <= 44px, saturate <= 1.85
+     (WebKit degrades quietly past sigma 20 / ~27.4MP backdrop area). */
+  --blur-hairline: 1.5px;  --blur-lens: 8px;    --blur-tag: 14px;
+  --blur-key: 16px;        --blur-control: 20px; --blur-rail: 24px;
+  --blur-link: 28px;       --blur-card: 30px;   --blur-panel: 34px;
+  --blur-nav: 40px;        --blur-header: 44px;
+  --sat-max: 1.85;         --sat-mid: 1.6;      --sat-lens: 1.2;
+  /* The seventh ingredient (study 2026-08-15): grain inside the glass.
+     Defeats 8-bit banding on the onyx base; the strongest anti-clone
+     lever. White fractal noise at 5% alpha, tiled. */
+  --glass-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"); /* shared crystal ring resting opacity */
 }
 html[data-theme="black"] {
   --bg-base: #000000;
@@ -209,20 +222,11 @@ html[data-theme="black"] {
 
   /* Glass card - primary container with luminous edge */
   .glass-card {
+    /* Material values live in the unlayered v2.2 block below
+       (audit 2026-08-15: the layered 28px/1.8 copies were outvoted
+       and misleading - deleted so greps read the truth). */
     position: relative;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.01) 50%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    backdrop-filter: blur(28px) saturate(1.8);
-    -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
-      0 4px 24px rgba(0, 0, 0, 0.2);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -271,18 +275,8 @@ html[data-theme="black"] {
 
   /* Glass panel - larger translucent surfaces (sections, overlays) */
   .glass-panel {
+    /* Material values live in the unlayered v2.2 block below. */
     position: relative;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.03) 0%,
-      rgba(255, 255, 255, 0.01) 100%
-    );
-    backdrop-filter: blur(28px) saturate(1.8);
-    -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-      0 2px 16px rgba(0, 0, 0, 0.15);
   }
 
   .glass-panel::before {
@@ -816,14 +810,14 @@ html.lenis body { height: auto; }
     0 0 36px rgba(244, 234, 222, 0.06);
 }
 .glass-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 52%, rgba(255,255,255,0.11) 100%);
-  backdrop-filter: blur(30px) saturate(1.85);
-  -webkit-backdrop-filter: blur(30px) saturate(1.85);
+  background: var(--glass-grain), linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 52%, rgba(255,255,255,0.11) 100%);
+  backdrop-filter: blur(var(--blur-card)) saturate(var(--sat-max));
+  -webkit-backdrop-filter: blur(var(--blur-card)) saturate(var(--sat-max));
 }
 .glass-panel {
-  background: linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.05) 100%);
-  backdrop-filter: blur(34px) saturate(1.85);
-  -webkit-backdrop-filter: blur(34px) saturate(1.85);
+  background: var(--glass-grain), linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(var(--blur-panel)) saturate(var(--sat-max));
+  -webkit-backdrop-filter: blur(var(--blur-panel)) saturate(var(--sat-max));
 }
 .glass-card::before {
   opacity: 1;
@@ -1243,9 +1237,13 @@ footer.glass-footer:hover::after { opacity: 1; }
      placement; overriding it pulled the plate into the flex row and
      shoved the photo off-center (caught 2026-06-09). Children get their
      own positioning for the z-guard. */
-  background: rgba(10,10,10,0.45);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  /* Contrast closed form (study 2026-08-15): cream text over a worst-case
+     WHITE photograph needs a black scrim >= 53.47% for 4.5:1. 0.45 gave
+     3.35:1 worst-case. Blur cannot fix this - tint is the legibility
+     control; blur attenuates the luminance pedestal only logarithmically. */
+  background: var(--glass-grain), linear-gradient(rgba(10,10,10,0.55), rgba(10,10,10,0.55));
+  backdrop-filter: blur(var(--blur-rail)) saturate(var(--sat-mid));
+  -webkit-backdrop-filter: blur(var(--blur-rail)) saturate(var(--sat-mid));
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 0.9rem;
   padding: 0.55rem 1.1rem;
@@ -1677,3 +1675,47 @@ footer.glass-footer:hover::after { opacity: 1; }
    more - that class of trap is retired. This tombstone remains so
    history's cascade note has a forwarding address.
    ============================================================ */
+
+
+/* ============================================================
+   GLASS RESEARCH APPLIES - 2026-08-15
+   ============================================================ */
+
+/* T2a rim lens, promoted from .cl-ring (the audit's best asset): a
+   gradient-masked band that carries its OWN small backdrop-filter -
+   genuine local optical bend, no url(), safe everywhere incl. iOS.
+   Apply to any rounded chrome via <span class="rim-lens"> or the
+   pseudo recipe in GlassPillGL. */
+.rim-lens {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: var(--rim-lens-w, 2.5px);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  backdrop-filter: blur(var(--blur-hairline)) brightness(1.25) saturate(var(--sat-lens));
+  -webkit-backdrop-filter: blur(var(--blur-hairline)) brightness(1.25) saturate(var(--sat-lens));
+}
+
+/* Register the specular's pointer variables so the highlight glides
+   instead of jumping (study pitfall list: unregistered custom properties
+   do not interpolate). */
+@property --mx { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+@property --my { syntax: '<percentage>'; inherits: false; initial-value: -20%; }
+
+/* T0 floor: when the user asks for reduced transparency, glass becomes a
+   near-opaque plate at full contrast. Shipped macOS chrome is ~99.5%
+   opaque; honesty costs nothing here. Chromium fires this today; design
+   holds even where the query never fires. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card, .glass-panel, .glass-footer, .glass-nav, .glass-tag,
+  .glass-control, .glass-chip-rail, .glass-plate-lb, #site-header {
+    background: rgba(12, 13, 15, 0.97) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .rim-lens { display: none !important; }
+}
