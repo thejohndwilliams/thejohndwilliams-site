@@ -52,3 +52,6 @@ visual-diff/
 
 # axe a11y test scratch build
 dist-a11y-test/
+
+# Traffic reports (scripts/traffic-report.mjs --md; point-in-time exports)
+Traffic_Report_*.md

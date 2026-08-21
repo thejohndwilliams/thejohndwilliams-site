@@ -26,6 +26,7 @@
     "kinetic:setup": "node scripts/kinetic/setup.mjs",
     "kinetic:build": "node scripts/kinetic/build.mjs",
     "preview:status": "node scripts/preview-status.mjs",
+    "traffic:report": "node scripts/traffic-report.mjs",
     "visual:baseline": "node scripts/visual-regress.mjs --update",
     "visual:check": "node scripts/visual-regress.mjs"
   },
