@@ -1,0 +1,49 @@
+---
+title: "The Shape of a Week"
+description: "A field note on operational forecasting. Demand is not random, it has a shape, and forecasting is only noticing that shape early enough to matter."
+pubDate: 2026-08-14
+draft: false
+tags: ["essay", "attention", "operations", "data"]
+heroImage: "dsc-0131"
+heroAlt: "Storm front massing over open water"
+---
+
+The first thing you learn running enterprise operations is that the work arrives in weather.
+
+Not evenly. Not randomly either, which is the part people miss. A queue of incoming problems looks like chaos from inside a single shift, the way a storm looks like chaos from inside it. Step back far enough and the chaos resolves into a front with a leading edge, a direction of travel, and an hour it will arrive. The work has a shape. Almost nobody looks for it, because when you are inside the weather you are busy getting wet.
+
+I built forecasting tools because the ones we needed did not exist. The motive was ordinary. I got tired of being surprised by Tuesdays.
+
+## Surprise is a measurable failure
+
+In incident command, surprise has a cost you can name. Every hour you did not see coming is an hour staffed by whoever happened to be there, working from whatever context they happened to have. The problem is rarely that a team cannot handle the volume. The problem is that the volume shows up in a shape nobody planned for, and the mismatch between the shape of the work and the shape of the response is where quality goes to die.
+
+So the question stops being how much is coming. It becomes when, in what form, and how sure are we.
+
+That reframing is the entire discipline. It is also, and I did not expect this, a photographer's question. When I am waiting on light I am not asking whether the sun will set. I am asking when the color will break, how long it will hold, and where I need to be standing before it does. Forecasting a queue and forecasting a sky are the same act performed on different data.
+
+## What a forecast is actually for
+
+A forecast is not a prediction. It is a prepared mind.
+
+This distinction matters because people evaluate forecasts on whether the number was right, and that is the least interesting property a forecast has. A forecast that is wrong by a comfortable margin but correctly identifies that Wednesday afternoon will be heavier than Wednesday morning has already done its job. Somebody moved. Somebody was in position. The value was captured before the accuracy was ever measured.
+
+The forecasts I trust least are the confident ones. A model that never widens its own error bars is not modeling reality, it is modeling my desire for reassurance. Honest uncertainty is more operationally useful than false precision, because a team can plan around a range and cannot plan around a lie.
+
+## The residue
+
+Most of the actual labor was not modeling. It was the residue: logs that disagreed, exports with three different date formats, categories that meant one thing in one system and something else in another, the accumulated sediment of tools that were never built to talk to each other. Weeks of it.
+
+That work is invisible and it is the whole job. You cannot notice a pattern through a dirty window. Every hour spent making the raw material honest is an hour that buys you the ability to see at all, and there is no shortcut, and it is the part that decides whether anything downstream is true.
+
+## What it taught me
+
+Three things carried past the work into everything else.
+
+Patterns announce themselves early and quietly. The signal that a week is going sideways is almost never dramatic at the moment it first appears. It is a small deviation you could plausibly ignore. Learning which small deviations to take seriously is not analysis, it is attention, and it is trainable.
+
+Being early is worth more than being right. A rough read delivered while there is still time to act beats a precise one delivered after. This is true of incidents and it is true of most things.
+
+And the tool is never the point. The dashboard is a place the noticing gets written down. If the noticing did not happen, the dashboard is a very expensive way to be surprised on schedule.
+
+I think about the storm front often. From underneath, it is only bad weather. From a distance, it is a shape moving at a knowable speed toward a place you can name. Nothing about the storm changed. Where you were standing did.

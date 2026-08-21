@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import mdx from '@astrojs/mdx';
 import { categories } from './src/data/photography.ts';
 
 const SITE = 'https://thejohndwilliams.com';
@@ -31,6 +32,9 @@ export default defineConfig({
     },
   },
   integrations: [
+    // MDX so essays can embed the site's own components (a Photo, a plate,
+    // a pull-quote) and read like the rest of the site, not a generic blog.
+    mdx(),
     sitemap({
       // Keep unlinked preview/lab routes out of the production sitemap.
       filter: (page) => !page.includes('/about-lab'),

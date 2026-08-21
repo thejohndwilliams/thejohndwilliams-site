@@ -3,7 +3,11 @@ import { navItems, socialLinks } from '../src/utils/date';
 
 describe('navItems', () => {
   it('has the correct number of navigation items', () => {
-    expect(navItems).toHaveLength(4);
+    // 5 as of 2026-08-21: Writing joined the primary nav when the essay
+    // surface shipped. Desktop nav only; the mobile tab bar is a separate
+    // hardcoded set in Header.astro and deliberately stays at four plus
+    // Inquire, because a fifth tab is tight at 390px.
+    expect(navItems).toHaveLength(5);
   });
 
   it('contains all required navigation pages', () => {
@@ -21,9 +25,11 @@ describe('navItems', () => {
   });
 
 
-  it('nav items are ordered Photography, Work, About', () => {
+  it('nav items are ordered Photography, Writing, Work, Beyond, About', () => {
+    // Order is narrative: the eye, the word, the record, the experiments,
+    // the person.
     const names = navItems.map((item) => item.name);
-    expect(names).toEqual(['Photography', 'Work', 'Beyond', 'About']);
+    expect(names).toEqual(['Photography', 'Writing', 'Work', 'Beyond', 'About']);
   });
   it('does not include Links in primary navigation', () => {
     const names = navItems.map((item) => item.name);

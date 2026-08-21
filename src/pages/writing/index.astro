@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedWriting, readingTime, formatEssayDate } from '../../utils/writing';
+
+// WRITING - the word surface. Deliberately photograph-free above the fold:
+// every other wing of the site opens on an image, so the one wing whose
+// subject is language earns its entrance in type alone. The verb liturgy
+// (making visible / noticing / building / lifting) takes NAMING here: the
+// act after a thing is made visible is saying what it is.
+const essays = await getPublishedWriting();
+---
+
+<BaseLayout
+  title="Writing"
+  description="Essays on attention: making things visible in networks, in data, and in the natural world. By John D. Williams."
+>
+  {/* HERO - type only, generous rest. Slowness is the brand. */}
+  <section class="px-6 sm:px-10 lg:px-20 pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-20">
+    <div class="reveal max-w-3xl">
+      <p class="eyebrow mb-3 sm:mb-4">Naming</p>
+      <h1 class="t-title font-serif mb-6 sm:mb-8 tracking-tight">Writing</h1>
+      <p class="t-sub text-cream/70 max-w-2xl">
+        Notes on attention. The same discipline runs through a network, a
+        dataset, and a photograph: find the shape in the raw material, then
+        make it legible to someone who has to act.
+      </p>
+    </div>
+  </section>
+
+  {/* INDEX - one rule between entries, no competing light. The essay title
+      is the only interactive element in each row; per the control grammar,
+      Inquire keeps the sole ivory CTA on the site. */}
+  <section class="px-6 sm:px-10 lg:px-20 pb-24 sm:pb-32">
+    <div class="max-w-3xl">
+      {essays.length === 0 ? (
+        <p class="text-mute">The first essays are in preparation.</p>
+      ) : (
+        <ol class="stagger-children border-t border-cream/10">
+          {essays.map((essay) => (
+            <li class="border-b border-cream/10">
+              <article class="py-8 sm:py-10">
+                <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-3">
+                  <time datetime={essay.data.pubDate.toISOString().slice(0, 10)} class="eyebrow">
+                    {formatEssayDate(essay.data.pubDate)}
+                  </time>
+                  <span class="text-mute text-sm">{readingTime(essay.body)} min read</span>
+                </div>
+                <h2 class="t-section font-serif mb-3 tracking-tight">
+                  <a
+                    href={`/writing/${essay.id}/`}
+                    class="text-cream border-b border-transparent hover:border-navy-hour transition-colors duration-300"
+                  >
+                    {essay.data.title}
+                  </a>
+                </h2>
+                <p class="text-cream/70 leading-relaxed max-w-2xl">
+                  {essay.data.description}
+                </p>
+              </article>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  </section>
+</BaseLayout>

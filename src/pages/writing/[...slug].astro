@@ -1,0 +1,130 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getPublishedWriting,
+  readingTime,
+  formatEssayDate,
+  essayOgImage,
+} from '../../utils/writing';
+
+export async function getStaticPaths() {
+  const essays = await getPublishedWriting();
+  // Newest-first ordering, so "previous" means older and "next" means newer.
+  return essays.map((essay, i) => ({
+    params: { slug: essay.id },
+    props: {
+      essay,
+      newer: i > 0 ? essays[i - 1] : undefined,
+      older: i < essays.length - 1 ? essays[i + 1] : undefined,
+    },
+  }));
+}
+
+const { essay, newer, older } = Astro.props;
+const { Content } = await render(essay);
+const { title, description, pubDate, updatedDate, heroImage, heroAlt } = essay.data;
+
+const canonical = new URL(`/writing/${essay.id}/`, Astro.site ?? 'https://thejohndwilliams.com');
+const ogImage = essayOgImage(heroImage);
+
+// Article schema, authored by the same Person the site already declares.
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate ? { dateModified: updatedDate.toISOString() } : {}),
+  author: {
+    '@type': 'Person',
+    name: 'John D. Williams',
+    url: 'https://thejohndwilliams.com/about/',
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'John D. Williams',
+  },
+  mainEntityOfPage: canonical.href,
+  image: new URL(ogImage, Astro.site ?? 'https://thejohndwilliams.com').href,
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  lcpImage={heroImage}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+
+  {heroImage && (
+    <section class="relative min-h-[40vh] sm:min-h-[50vh] md:min-h-[60vh] flex items-end overflow-hidden">
+      <picture>
+        <source
+          type="image/avif"
+          srcset={`/images/photography/thumb/${heroImage}.avif 400w, /images/photography/gallery/${heroImage}.avif 1200w, /images/photography/hero/${heroImage}.avif 2400w`}
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcset={`/images/photography/thumb/${heroImage}.webp 400w, /images/photography/gallery/${heroImage}.webp 1200w, /images/photography/hero/${heroImage}.webp 2400w`}
+          sizes="100vw"
+        />
+        <img
+          src={`/images/photography/hero/${heroImage}.webp`}
+          alt={heroAlt ?? ''}
+          class="absolute inset-0 w-full h-full object-cover"
+          fetchpriority="high"
+        />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
+    </section>
+  )}
+
+  <article class="px-6 sm:px-10 lg:px-20">
+    {/* TITLE BLOCK */}
+    <header class={`max-w-3xl ${heroImage ? 'pt-12 sm:pt-16' : 'pt-32 sm:pt-40 md:pt-48'} pb-8 sm:pb-10`}>
+      <div class="reveal">
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-4">
+          <time datetime={pubDate.toISOString().slice(0, 10)} class="eyebrow">
+            {formatEssayDate(pubDate)}
+          </time>
+          <span class="text-mute text-sm">{readingTime(essay.body)} min read</span>
+        </div>
+        <h1 class="t-title font-serif mb-5 sm:mb-6 tracking-tight">{title}</h1>
+        <p class="t-sub text-cream/70 max-w-2xl">{description}</p>
+      </div>
+    </header>
+
+    {/* BODY */}
+    <div class="prose max-w-2xl pb-16 sm:pb-20">
+      <Content />
+    </div>
+
+    {/* CONTINUE - quiet, no competing light */}
+    {(newer || older) && (
+      <nav
+        class="max-w-2xl border-t border-cream/10 py-10 sm:py-12 mb-24 sm:mb-32 flex flex-col sm:flex-row gap-8 sm:gap-12 justify-between"
+        aria-label="More writing"
+      >
+        {older && (
+          <a href={`/writing/${older.id}/`} class="group max-w-xs">
+            <span class="eyebrow block mb-2">Previous</span>
+            <span class="font-serif text-cream/80 group-hover:text-cream transition-colors duration-300">
+              {older.data.title}
+            </span>
+          </a>
+        )}
+        {newer && (
+          <a href={`/writing/${newer.id}/`} class="group max-w-xs sm:text-right sm:ml-auto">
+            <span class="eyebrow block mb-2">Next</span>
+            <span class="font-serif text-cream/80 group-hover:text-cream transition-colors duration-300">
+              {newer.data.title}
+            </span>
+          </a>
+        )}
+      </nav>
+    )}
+  </article>
+</BaseLayout>

@@ -87,9 +87,74 @@ describe('Astro Build', () => {
     expect(fs.statSync(mp4).size).toBeLessThan(3 * 1024 * 1024);
   });
 
-  it('does NOT emit /writing — page was removed', () => {
-    const writingPath = path.join(distDir, 'writing', 'index.html');
-    expect(fs.existsSync(writingPath)).toBe(false);
+  // DELIBERATE FLIP (2026-08-21): /writing was asserted absent from
+  // 901ac58 until now, because the route was a bare redirect stub and an
+  // empty surface carries a canonicalization penalty. The writing surface
+  // now ships with published essays, so the lock inverts: assert the
+  // surface emits, lists published work, hides drafts, and feeds RSS.
+  describe('/writing surface', () => {
+    it('emits the writing index', () => {
+      expect(fs.existsSync(path.join(distDir, 'writing', 'index.html'))).toBe(true);
+    });
+
+    it('lists every published essay on the index', () => {
+      const html = fs.readFileSync(path.join(distDir, 'writing', 'index.html'), 'utf-8');
+      const slugs = fs
+        .readdirSync(path.join(process.cwd(), 'src', 'content', 'writing'))
+        .filter((f) => f.endsWith('.mdx'))
+        .map((f) => f.replace(/\.mdx$/, ''));
+      const published = slugs.filter((slug) => {
+        const src = fs.readFileSync(
+          path.join(process.cwd(), 'src', 'content', 'writing', `${slug}.mdx`),
+          'utf-8',
+        );
+        return /^draft:\s*false\s*$/m.test(src);
+      });
+      expect(published.length).toBeGreaterThanOrEqual(2);
+      published.forEach((slug) => {
+        expect(html).toContain(`/writing/${slug}/`);
+        expect(fs.existsSync(path.join(distDir, 'writing', slug, 'index.html'))).toBe(true);
+      });
+    });
+
+    it('never emits a draft essay', () => {
+      const dir = path.join(process.cwd(), 'src', 'content', 'writing');
+      const drafts = fs
+        .readdirSync(dir)
+        .filter((f) => f.endsWith('.mdx'))
+        .filter((f) => /^draft:\s*true\s*$/m.test(fs.readFileSync(path.join(dir, f), 'utf-8')))
+        .map((f) => f.replace(/\.mdx$/, ''));
+      drafts.forEach((slug) => {
+        expect(fs.existsSync(path.join(distDir, 'writing', slug, 'index.html'))).toBe(false);
+      });
+    });
+
+    it('emits an RSS feed carrying the published essays', () => {
+      const rssPath = path.join(distDir, 'rss.xml');
+      expect(fs.existsSync(rssPath)).toBe(true);
+      const xml = fs.readFileSync(rssPath, 'utf-8');
+      expect(xml).toContain('<item>');
+      expect(xml).toContain('/writing/');
+    });
+
+    it('carries Article schema on an essay page', () => {
+      const essay = path.join(distDir, 'writing', 'making-visible', 'index.html');
+      expect(fs.existsSync(essay)).toBe(true);
+      const html = fs.readFileSync(essay, 'utf-8');
+      expect(html).toContain('"@type":"Article"');
+      expect(html).toContain('John D. Williams');
+    });
+
+    it('keeps public essay copy free of em-dashes', () => {
+      // Site copy register: zero em-dashes in public copy.
+      const dir = path.join(process.cwd(), 'src', 'content', 'writing');
+      fs.readdirSync(dir)
+        .filter((f) => f.endsWith('.mdx'))
+        .forEach((f) => {
+          const src = fs.readFileSync(path.join(dir, f), 'utf-8');
+          expect(src.includes('—'), `${f} contains an em-dash`).toBe(false);
+        });
+    });
   });
 
   it('generates per-photo OG images under /og/photography/', () => {
