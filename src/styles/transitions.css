@@ -1,0 +1,52 @@
+/* Directional page transitions - pages occupy a spatial strip.
+   Clicking right in the nav slides content left; clicking left
+   slides right. Gives each page a physical address.
+   Bundled stylesheet (not an inline <style> tag) so style-src
+   does not need this block as unsafe-inline. */
+/* Directional dissolve keyframes */
+@keyframes page-drift-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-40px); }
+}
+@keyframes page-drift-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes page-drift-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(40px); }
+}
+@keyframes page-drift-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Default direction: forward (drift left) */
+::view-transition-old(page) {
+  animation: page-drift-out-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+::view-transition-new(page) {
+  animation: page-drift-in-right 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+/* Reverse direction: backward (drift right) */
+html.nav-back ::view-transition-old(page) {
+  animation: page-drift-out-right 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+html.nav-back ::view-transition-new(page) {
+  animation: page-drift-in-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+/* Reduced motion: crossfade only, no spatial drift */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page),
+  html.nav-back ::view-transition-old(page) {
+    animation: none;
+    opacity: 0;
+  }
+  ::view-transition-new(page),
+  html.nav-back ::view-transition-new(page) {
+    animation: none;
+    opacity: 1;
+  }
+}
