@@ -44,7 +44,7 @@ export default defineConfig({
           item.img = canonicalPhotos.map(p => ({
             url: `${SITE}/images/photography/hero/${p.file}.webp`,
             caption: p.alt,
-            title: `${p.alt} — ${p.category}`,
+            title: `${p.alt} - ${p.category}`,
             license: `${SITE}/photography`,
           }));
           return item;
@@ -59,7 +59,7 @@ export default defineConfig({
             item.img = [{
               url: `${SITE}/images/photography/hero/${photo.file}.webp`,
               caption: photo.alt,
-              title: `${photo.alt} — ${photo.category}`,
+              title: `${photo.alt} - ${photo.category}`,
               license: `${SITE}/photography`,
             }];
           }
@@ -71,7 +71,7 @@ export default defineConfig({
   output: 'static',
   build: {
     assets: '_assets',
-    // 'auto' — REVERTED from 'always' on 2026-07-02 after a production
+    // 'auto' - REVERTED from 'always' on 2026-07-02 after a production
     // incident. 'always' replaced the single site-wide external bundle with
     // per-page inline subsets: the photography lightbox's arbitrary-value
     // utilities (bg-[#0a0a0a]/92 and friends) did not survive the split on
