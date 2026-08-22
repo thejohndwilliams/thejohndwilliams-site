@@ -28,6 +28,12 @@ export default defineConfig({
       // wins where both parse, -webkit- carries old Safari. Verified by
       // injected-stylesheet computed-style test in Chrome 151.
       cssMinify: 'esbuild',
+      // 2026-08-22: script-src has no unsafe-inline. Vite's default inline
+      // threshold emitted hoisted page scripts as <script type="module">
+      // blocks. CSP blocked them. Nav, back-to-top, button wake, reveal,
+      // and /beyond sweep died. CI stayed green because it serves dist
+      // without _headers. Zero inlines every module to a file.
+      assetsInlineLimit: 0,
     },
   },
   integrations: [
