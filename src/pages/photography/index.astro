@@ -689,6 +689,9 @@ const jsonLd = {
       );
     }
     const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    const chromeBtns = [closeBtn, prevBtn, nextBtn].filter(Boolean) as HTMLElement[];
     let currentIndex = 0;
     let visibleItems: Element[] = [];
     let lastFocused: HTMLElement | null = null;
@@ -697,7 +700,25 @@ const jsonLd = {
     const canVT = () => typeof (document as any).startViewTransition === 'function' && !reduceMo.matches;
     const tileImg = (item: any): HTMLElement | null => item ? item.querySelector('img') : null;
     const lenis = () => (window as any).__lenis;
-    function armIdle() { lightbox.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => lightbox.classList.add('idle'), 2000); }
+    // Idle chrome is visually gone (opacity 0, pointer-events none) but
+    // buttons stay in the tab order unless we take them out of it.
+    function setChromeIdle(idle: boolean) {
+      lightbox.classList.toggle('idle', idle);
+      for (const el of chromeBtns) {
+        if (idle) {
+          el.setAttribute('inert', '');
+          el.tabIndex = -1;
+        } else {
+          el.removeAttribute('inert');
+          el.removeAttribute('tabindex');
+        }
+      }
+      if (idle) {
+        const ae = document.activeElement as HTMLElement | null;
+        if (ae && chromeBtns.includes(ae)) ae.blur();
+      }
+    }
+    function armIdle() { setChromeIdle(false); clearTimeout(idleT); idleT = setTimeout(() => setChromeIdle(true), 2000); }
 
     // iOS-proof scroll lock: fix the body in place and pause Lenis. overflow
     // alone does not stop touch scroll or rubber-banding on iOS Safari.
@@ -896,8 +917,8 @@ const jsonLd = {
     });
 
     closeBtn?.addEventListener('click', closeLightbox, { signal });
-    document.getElementById('lightbox-prev')?.addEventListener('click', () => navigate(-1), { signal });
-    document.getElementById('lightbox-next')?.addEventListener('click', () => navigate(1), { signal });
+    prevBtn?.addEventListener('click', () => navigate(-1), { signal });
+    nextBtn?.addEventListener('click', () => navigate(1), { signal });
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); }, { signal });
 
     // Develop-from-black: dim not-yet-loaded gallery photos, restore on load.
@@ -918,7 +939,7 @@ const jsonLd = {
       if (e.key === 'ArrowRight') navigate(1);
       if (e.key === 'Tab') {
         const f = (Array.from(lightbox.querySelectorAll('button')) as HTMLElement[])
-          .filter((b) => b.offsetParent !== null);
+          .filter((b) => b.offsetParent !== null && !b.hasAttribute('inert') && b.tabIndex !== -1);
         if (f.length) {
           const first = f[0], last = f[f.length - 1];
           if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
