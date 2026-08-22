@@ -44,7 +44,9 @@ const {
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://thejohndwilliams.com');
+const siteOrigin = Astro.site || 'https://thejohndwilliams.com';
+// 404 and other noindex pages must not advertise themselves as canonical.
+const canonicalURL = new URL(noindex ? '/' : Astro.url.pathname, siteOrigin);
 const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com');
 ---
 
@@ -106,7 +108,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
             preload whose `type` they support, so pairing AVIF + WebP preloads
             made dual-format engines (all evergreen browsers) download the LCP
             image twice: ~108 KB wasted on desktop, ~36 KB on mobile, measured
-            against production 2026-07-01. Engines without AVIF (Safari ≤16.3)
+            against production 2026-08-01. Engines without AVIF (Safari ≤16.3)
             skip the typed preload and still discover the WebP through the
             <picture> element at parse time.
             imagesrcset MUST mirror every AVIF candidate the <picture> tag can

@@ -68,5 +68,6 @@ Disallow: /
 User-agent: *
 Allow: /
 Disallow: /about-lab
+Disallow: /glass-lab
 
 Sitemap: https://thejohndwilliams.com/sitemap-index.xml

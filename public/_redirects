@@ -5,3 +5,9 @@
 /relief/ /beyond#relief 301
 /labs /beyond 301
 /labs/ /beyond 301
+
+# Single host: www is a duplicate of apex (review 2026-08-22).
+https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
+
+# Humans and some tools still request /sitemap.xml.
+/sitemap.xml /sitemap-index.xml 301
