@@ -1,0 +1,16 @@
+<style>
+  :global(#lightbox.active) { display: flex; }
+  :global(#lightbox) { touch-action: none; }
+
+  :global(html.lb-open #site-header) {
+    translate: 0 -120%;
+    pointer-events: none;
+  }
+  :global(html.lb-open #back-to-top) {
+    translate: 0 150%;
+    pointer-events: none;
+  }
+
+  :global(#lightbox button), :global(#lightbox #lightbox-caption), :global(#lightbox #lightbox-meta) { transition: opacity .6s ease; }
+  :global(#lightbox.idle button), :global(#lightbox.idle #lightbox-caption), :global(#lightbox.idle #lightbox-meta) { opacity: 0; pointer-events: none; }
+</style>
