@@ -126,7 +126,7 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
   // Tri-fleet code review P1s. Each lock pins the FIX pattern in source so a
   // refactor cannot silently reintroduce the defect class.
   const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
-  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const galleryRuntime = readFileSync(join(SRC, 'scripts/photography-gallery.ts'), 'utf8');
   const lab = readFileSync(join(SRC, 'pages/about-lab.astro'), 'utf8');
 
   it('initBottomNav tears down via AbortController — per-swap window listeners retained detached page trees (2026-06-09 class)', () => {
@@ -138,7 +138,7 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
     const afterSwap = base.slice(base.indexOf("astro:after-swap', () => {", base.indexOf('import Lenis')));
     expect(afterSwap).toContain("classList.remove('lb-open')");
     expect(afterSwap).toContain('lenis.start?.()');
-    expect(gallery).toContain('__lenis?.start?.()');
+    expect(galleryRuntime).toContain('__lenis?.start?.()');
   });
 
   it('glass-lab is gated off the production branch - shader bench must never ship on main', () => {
@@ -197,7 +197,8 @@ describe('hazard locks: /relief sweep video (2026-07-25)', () => {
 
 describe('hazard locks: p2 review fixes (2026-07-19)', () => {
   const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
-  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const gallery = readFileSync(join(SRC, 'scripts/photography-gallery.ts'), 'utf8');
+  const galleryAtmos = readFileSync(join(SRC, 'scripts/photography-atmos.ts'), 'utf8');
   const baseL = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
   const slug = readFileSync(join(SRC, 'pages/photography/[slug].astro'), 'utf8');
 
@@ -214,7 +215,7 @@ describe('hazard locks: p2 review fixes (2026-07-19)', () => {
   });
 
   it('page observers disconnect on re-init — undisconnected IntersectionObservers pinned detached page trees', () => {
-    expect(gallery).toMatch(/atmosObserver\?\.disconnect\(\)/);
+    expect(galleryAtmos).toMatch(/atmosObserver\?\.disconnect\(\)/);
     expect(baseL).toMatch(/revealObserver\?\.disconnect\(\)/);
     expect(slug).toMatch(/exifObserver\?\.disconnect\(\)/);
   });
