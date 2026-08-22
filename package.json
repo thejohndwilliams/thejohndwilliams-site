@@ -39,7 +39,7 @@
     "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.705.0",
+    "@aws-sdk/client-s3": "^3.1113.0",
     "@playwright/test": "^1.57.0",
     "@vitest/coverage-v8": "^4.0.17",
     "autoprefixer": "^10.5.4",
