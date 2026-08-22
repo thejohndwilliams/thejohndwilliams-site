@@ -259,6 +259,25 @@ describe('hazard locks: built output', () => {
     }
     expect(offenders).toEqual([]);
   });
+
+  it('style-src self without unsafe-inline forbids page <style> on /beyond and /work (2026-08-22 unstyled pages)', () => {
+    const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
+    const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
+    if (/style-src 'self' 'unsafe-inline'/.test(csp)) return;
+    expect(csp).toMatch(/style-src 'self'/);
+    if (!existsSync(DIST)) {
+      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      return;
+    }
+    // Owner 2026-08-22: ClientRouter may emit view-transition-old(page|logo)
+    // scopes. Those are not page paint. Any other <style> is the bust.
+    for (const page of ['beyond', 'work']) {
+      const html = readFileSync(join(DIST, page, 'index.html'), 'utf8');
+      const blocks = html.match(/<style[\s\S]*?<\/style>/g) || [];
+      const pageCss = blocks.filter((b) => !/view-transition-old\((?:page|logo)\)/.test(b));
+      expect(pageCss, `${page} non-transition <style>`).toEqual([]);
+    }
+  });
 });
 
 describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)', () => {
@@ -303,6 +322,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
 });
 
 describe('hazard locks: CSP style-src (2026-08-22)', () => {
+  // This block also covers script-src.
   const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
   const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
   const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
@@ -317,5 +337,21 @@ describe('hazard locks: CSP style-src (2026-08-22)', () => {
   it('glass-lens SVG uses classes, not a style attribute', () => {
     expect(base).toContain('id="glass-lens"');
     expect(base).not.toMatch(/<svg[^>]*style=/);
+  });
+
+  it('script-src without unsafe-inline forbids inline module and bare script tags on home, work, beyond (2026-08-22 CSP vs built output)', () => {
+    const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
+    const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
+    if (/script-src[^;]*unsafe-inline/.test(csp)) return;
+    expect(csp).toMatch(/script-src 'self'/);
+    if (!existsSync(DIST)) {
+      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      return;
+    }
+    for (const rel of ['index.html', join('work', 'index.html'), join('beyond', 'index.html')]) {
+      const html = readFileSync(join(DIST, rel), 'utf8');
+      expect(html.includes('<script type="module">'), `${rel} inline module`).toBe(false);
+      expect(html.includes('<script>'), `${rel} bare script`).toBe(false);
+    }
   });
 });
