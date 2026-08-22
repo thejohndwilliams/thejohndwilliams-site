@@ -84,6 +84,13 @@ export default defineConfig({
     // opens the lightbox after a view-transition navigation. If the ~13 KB
     // render-blocking <link> needs to go, pursue a critical-CSS split or an
     // Astro upgrade instead.
-    inlineStylesheets: 'auto',
+    // 2026-08-22: 'auto' still emitted small per-page stylesheets as inline
+    // <style> blocks (3 on /beyond, 2 on /work). feat(csp) 5f6a5e6 set
+    // style-src 'self', which blocks every inline <style>. Relief/edition-rail
+    // and work cards rendered unstyled. CI stayed green: no test asserted
+    // served HTML. 'never' forces every stylesheet external, which style-src
+    // 'self' permits, and matches the 2026-07-02 external-bundle rule above.
+    // Do not restore style-src 'unsafe-inline'. The build output was the bug.
+    inlineStylesheets: 'never',
   },
 });
