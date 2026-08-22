@@ -1,30 +1,7 @@
 <style>
-  :global(.scrollbar-hide::-webkit-scrollbar) { display: none; }
-  :global(.scrollbar-hide) { -ms-overflow-style: none; scrollbar-width: none; }
-
-  :global(.gallery-section[data-hidden="true"]) { display: none; }
-
   :global(#lightbox.active) { display: flex; }
   :global(#lightbox) { touch-action: none; }
 
-  /* Site chrome yields to the open viewer. The page content (lightbox
-     included) lives inside the smooth-scroll fixed wrapper, whose stacking
-     context traps the dialog's z-50 beneath the root-level sticky header
-     (z-40) — so the nav painted OVER the modal (2026-07-02 incident).
-     Rather than fight compositor stacking, fixed chrome fades out while
-     the dialog is open: correct aria-modal behavior anyway. Transition
-     declared on the hidden state only — graceful fade-out on open,
-     instant return on close, no tampering with the elements' own
-     transition stacks. :global() because header/tabbar/back-to-top live
-     in the layout, outside this page's scope attribute. */
-  /* Channel choice matters: opacity is owned by the header's scroll
-     controller (inline writes) and visibility got wedged by transition-all
-     on a persisted element — both fight. `translate` is the independent
-     transform property: nothing else on the site writes it, the elements'
-     own transition-all animates the slide both directions, no !important.
-     State key is html.lb-open, toggled by the lightbox controller —
-     body:has(#lightbox.active) proved unreliable (stale :has invalidation
-     in Chrome on close; never applied at all in headless CI). */
   :global(html.lb-open #site-header) {
     translate: 0 -120%;
     pointer-events: none;
@@ -34,44 +11,6 @@
     pointer-events: none;
   }
 
-  /* Light-reveal (experiment, 2026-07-03 — vault: Monokern_Workflow_Adoption).
-     The cursor develops the print. Spec: base = the graded tile as shipped;
-     revealed = a warm lift rendered by backdrop-filter on a pseudo-layer (no
-     second image, zero added bytes) through a feathered radial mask that
-     follows --mx/--my; motion = the mask follows the pointer via the rAF
-     tracker in the gallery controller; touch and reduced-motion never bind
-     the tracker, so hover shows only a soft centered lift there. Gradient
-     mask, never url() (iOS hazard); backdrop-filter with functions only
-     (url() banned). One light per surface: the lit tile IS the active tile.
-     ::before because .glass-luminous owns ::after; z-index 1 lifts it above
-     the static <picture> (the hover scrim and caption also sit under it —
-     they warm slightly inside the beam; John judges on preview). */
-  @media (hover: hover) and (pointer: fine) {
-    :global(.gallery-item::before) {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.45s ease;
-      backdrop-filter: brightness(1.18) saturate(1.12) sepia(0.05);
-      -webkit-backdrop-filter: brightness(1.18) saturate(1.12) sepia(0.05);
-      -webkit-mask-image: radial-gradient(130px 130px at var(--mx, 50%) var(--my, 50%), rgba(0,0,0,0.9), rgba(0,0,0,0.35) 55%, transparent 78%);
-      mask-image: radial-gradient(130px 130px at var(--mx, 50%) var(--my, 50%), rgba(0,0,0,0.9), rgba(0,0,0,0.35) 55%, transparent 78%);
-    }
-    :global(.gallery-item:hover::before) { opacity: 1; }
-  }
-
-  /* Develop-from-black: photos settle up out of shadow as they load. JS adds
-     .developing only to not-yet-loaded imgs and removes on load - a JS failure
-     can never hide them (visible by default). */
-  :global(.photo-grid img) { transition: filter 1.1s cubic-bezier(.22,.61,.36,1), opacity 1.1s cubic-bezier(.22,.61,.36,1); }
-  :global(.photo-grid img.developing) { filter: brightness(.5) saturate(.9); opacity: .55; }
-  @media (prefers-reduced-motion: reduce) { :global(.photo-grid img.developing) { filter: none; opacity: 1; } }
-
-  /* Immersive viewer: shared-element morph (tile <-> full photo) + idle chrome fade. */
-  :global(::view-transition-old(lb-photo)), :global(::view-transition-new(lb-photo)) { animation-duration: .5s; mix-blend-mode: normal; }
   :global(#lightbox button), :global(#lightbox #lightbox-caption), :global(#lightbox #lightbox-meta) { transition: opacity .6s ease; }
   :global(#lightbox.idle button), :global(#lightbox.idle #lightbox-caption), :global(#lightbox.idle #lightbox-meta) { opacity: 0; pointer-events: none; }
 </style>
