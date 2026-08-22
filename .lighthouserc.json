@@ -82,6 +82,7 @@
         "viewport": "error",
         "csp-xss": "off",
         "unused-javascript": "off",
+        "unused-css-rules": "warn",
         "uses-rel-preconnect": "off",
         "preload-lcp-image": "off",
         "non-composited-animations": "warn",
