@@ -71,13 +71,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     {/* Apply saved dim/true-black background preference before first paint
          (no flash). Swaps only the solid background tone, never the palette. */}
-    <script is:inline>
-      try {
-        if (localStorage.getItem('jw-theme') === 'black') {
-          document.documentElement.setAttribute('data-theme', 'black');
-        }
-      } catch (e) {}
-    </script>
+    <script is:inline src="/js/theme.js"></script>
 
     {/* iOS standalone-mode (Add to Home Screen) - matches theme-color
          so the status bar blends with the page; black-translucent
@@ -385,20 +379,11 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       });
     </script>
 
-    {/* Reveal failsafe - inline (NOT bundled), so it runs even if the main
-        module fails to load/parse on older mobile Safari or a flaky chunk.
-        If the bundle never set __revealReady, force all reveal content
-        visible so images can never be stuck invisible. */}
-    <script is:inline>
-      addEventListener('load', function () {
-        setTimeout(function () {
-          if (window.__revealReady) return;
-          document.querySelectorAll('.reveal, .stagger-children').forEach(function (el) {
-            el.classList.add('visible');
-          });
-        }, 1500);
-      });
-    </script>
+    {/* Reveal failsafe - classic /js/reveal-failsafe.js (NOT bundled), so it
+        runs even if the main module fails to load/parse on older mobile Safari
+        or a flaky chunk. If the bundle never set __revealReady, force all
+        reveal content visible so images can never be stuck invisible. */}
+    <script is:inline src="/js/reveal-failsafe.js"></script>
 
     {/* Transition direction detector - determines spatial relationship
          between current and target page to set drift direction. */}
