@@ -301,3 +301,21 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
     }
   });
 });
+
+describe('hazard locks: CSP style-src (2026-08-22)', () => {
+  const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
+  const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
+  const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
+
+  it('style-src is self only; style-src-attr carries unsafe-inline; script-src has no unsafe-inline', () => {
+    expect(csp).toMatch(/style-src 'self'/);
+    expect(csp).not.toMatch(/style-src 'self' 'unsafe-inline'/);
+    expect(csp).toMatch(/style-src-attr 'unsafe-inline'/);
+    expect(csp).not.toMatch(/script-src[^;]*unsafe-inline/);
+  });
+
+  it('glass-lens SVG uses classes, not a style attribute', () => {
+    expect(base).toContain('id="glass-lens"');
+    expect(base).not.toMatch(/<svg[^>]*style=/);
+  });
+});
