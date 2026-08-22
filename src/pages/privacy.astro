@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate } from '../utils/date';
 
-const lastUpdated = '2026-06-09';
+const lastUpdated = '2026-08-22';
 ---
 
 <BaseLayout
@@ -31,10 +31,11 @@ const lastUpdated = '2026-06-09';
           any other purpose.
         </p>
         <p>
-          No client-side analytics script runs here. No ad networks or tracking
-          pixels either. Aggregate traffic counts come from Cloudflare's edge,
-          derived from the server-side logs described above, never from code in
-          your browser. No cookies are set by the application itself. Your
+          Cloudflare Web Analytics may inject a first-party beacon (Cloudflare Insights)
+          in the browser. The site Content-Security-Policy allows
+          <code>static.cloudflareinsights.com</code> and <code>cloudflareinsights.com</code>
+          for that reason. That beacon is not an ad network. It is used for aggregate
+          page-view counts. No cookies are set by the application itself. Your
           browser may receive Cloudflare security cookies (e.g. <code>__cf_bm</code>)
           which are used to distinguish humans from bots and expire after 30
           minutes of inactivity.
@@ -59,9 +60,9 @@ const lastUpdated = '2026-06-09';
         <p>
           If you are in the EU, UK, or California, you have the right to ask what
           data I hold about you, correct inaccuracies, request deletion, and refuse
-          further processing. Given what this site collects (effectively server logs
-          and any email you sent me), responding to these requests is straightforward.
-          Write to the contact address below.
+          further processing. Given what this site collects (effectively server logs,
+          optional Insights page views, and any email you sent me), responding to these
+          requests is straightforward. Write to the contact address below.
         </p>
 
         <h2 class="t-section font-serif pt-4">AI training</h2>
