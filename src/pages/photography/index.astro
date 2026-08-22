@@ -1,1 +1,558 @@
-FULL_CONTENT_FROM_DISK_SEE_NEXT
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
+import { categories, totalImages, getPlaceholder } from '../../data/photography';
+
+const SITE = 'https://thejohndwilliams.com';
+
+// JSON-LD ImageGallery schema - dedup by file so showcase re-listings
+// (e.g. `light` re-displaying images from `earth`/`water`) don't emit duplicate
+// ImageObject entries with conflicting names.
+const seenSchemaFiles = new Set<string>();
+const allImages = categories.flatMap(cat =>
+  cat.images.filter(img => {
+    if (seenSchemaFiles.has(img.file)) return false;
+    seenSchemaFiles.add(img.file);
+    return true;
+  }).map(img => {
+    const meta = getPhotoMeta(img.file);
+    const obj: Record<string, unknown> = {
+      '@type': 'ImageObject',
+      contentUrl: `${SITE}/images/photography/hero/${img.file}.webp`,
+      thumbnailUrl: `${SITE}/images/photography/thumb/${img.file}.webp`,
+      name: img.alt,
+      description: img.alt,
+      creator: { '@type': 'Person', name: 'John D. Williams' },
+      copyrightHolder: { '@type': 'Person', name: 'John D. Williams' },
+      creditText: 'John D. Williams',
+      license: `${SITE}/photography`,
+      acquireLicensePage: 'mailto:jndwcreative@gmail.com',
+      copyrightNotice: `© John D. Williams`,
+      keywords: [cat.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
+    };
+    if (meta.captureDate) obj.datePublished = meta.captureDate;
+    if (meta.location) obj.contentLocation = { '@type': 'Place', name: meta.location };
+    return obj;
+  })
+);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  name: 'Photography · John D. Williams',
+  description: 'Fine art photography by John D. Williams. Sky, earth, water, structure, and light, shot on Sony Alpha and Fujifilm X-Series.',
+  url: `${SITE}/photography`,
+  author: { '@type': 'Person', name: 'John D. Williams', url: SITE },
+  image: allImages,
+};
+---
+
+<BaseLayout
+  title="Photography"
+  description="Fine art photography by John D. Williams. Sky, earth, water, structure, and light, shot on Sony Alpha and Fujifilm X-Series."
+  ogImage="/og/pages/photography.jpg"
+  ogImageWidth={1200}
+  ogImageHeight={630}
+  lcpImage="img-1066"
+  lcpImagePortrait="img-1066"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+  {/* Scroll-linked atmosphere overlay */}
+  <div id="atmos-overlay" class="fixed inset-0 pointer-events-none z-0 transition-[background-color] duration-1000 ease-out" aria-hidden="true"></div>
+
+  {/* HERO - Featured image full-bleed */}
+  <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
+    <picture>
+      <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/img-1066.avif" />
+      <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/img-1066.webp" />
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/img-1066.avif 400w, /images/photography/gallery/img-1066.avif 1200w, /images/photography/hero/img-1066.avif 2400w"
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset="/images/photography/thumb/img-1066.webp 400w, /images/photography/gallery/img-1066.webp 1200w, /images/photography/hero/img-1066.webp 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/hero/img-1066.webp"
+        alt="A single tree beneath a darkening storm"
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
+    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-10 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Noticing</p>
+        <h1 class="t-title font-serif mb-4 sm:mb-6 tracking-tight">Photography</h1>
+      </div>
+    </div>
+  </section>
+
+  {/* CATEGORY CONTENTS - quiet, non-sticky wayfinding (not a persistent
+      filter). Scrolls away with the page so no chrome follows the work; each
+      link smooth-scrolls to its section via the global scroll-behavior. The
+      sticky glass filter bar was retired here 2026-05-30. */}
+  {/* Category index (A2.1 redesign, owner ruling 2026-07-31: the capsule
+      rail read as a loud UI boat, "terrible... way too loud... awkwardly off
+      center"). Bare text, left-aligned to the section grid - the same law the
+      top nav lives by (2026-06-06: nav items stay bare). The lit word IS the
+      selection; no vessel, no chrome, no container. */}
+  <nav class="border-y border-white/5 py-4 sm:py-5" aria-label="Browse by category">
+    <div class="container-narrow">
+        <ul id="cat-list" class="nav-index flex items-center justify-start gap-6 sm:gap-9 max-w-full overflow-x-auto">
+        {categories.map((cat) => (
+          <li>
+            <a
+              href={`#gallery-${cat.id}`}
+              class="cat-link text-xs sm:text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 whitespace-nowrap py-2 min-h-[44px] flex items-center"
+              data-cat={cat.id}
+            >
+              {cat.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+
+  {/* GALLERY SECTIONS */}
+  {categories.map((cat, catIndex) => (
+    <section
+      class={`gallery-section scroll-mt-[84px] md:scroll-mt-[120px] py-10 sm:py-16 md:py-24 ${catIndex % 2 === 0 ? '' : 'section-light'}`}
+      data-category={cat.id}
+      id={`gallery-${cat.id}`}
+    >
+      <div class="container-wide">
+        <div class="reveal mb-6 sm:mb-10 md:mb-14">
+          <h2 class="t-section font-serif mb-1 sm:mb-2 tracking-tight">{cat.name}</h2>
+          <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
+        </div>
+
+        <div class="photo-grid columns-2 md:columns-3 gap-2 sm:gap-3 md:gap-4">
+          {cat.images.map((img, i) => {
+            // Tile takes the photograph's true aspect ratio (no crop) + LQIP blur
+            // underneath. Triptych rows; framing preserved.
+            const ph = getPlaceholder(img.file);
+            const ratio = ph && ph.width && ph.height
+              ? (ph.width / ph.height).toFixed(4)
+              : (img.orientation === 'portrait' ? '0.75' : '1.5');
+            const lqipStyle = `aspect-ratio: ${ratio};`
+              + (ph ? ` background-image: url('${ph.lqip}'); background-size: cover; background-position: center;` : '');
+
+            return (
+              <a
+                href={`/photography/${img.file}`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden block w-full break-inside-avoid mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer`}
+                data-src={`/images/photography/hero/${img.file}.webp`}
+                data-alt={img.alt}
+                data-file={img.file}
+                data-meta={formatMetaLine(getPhotoMeta(img.file))}
+                style={lqipStyle}
+              >
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcset={`/images/photography/thumb/${img.file}.avif 400w, /images/photography/gallery/${img.file}.avif 1200w`}
+                    sizes="(max-width: 767px) 50vw, 33vw"
+                  />
+                  <source
+                    type="image/webp"
+                    srcset={`/images/photography/thumb/${img.file}.webp 400w, /images/photography/gallery/${img.file}.webp 1200w`}
+                    sizes="(max-width: 767px) 50vw, 33vw"
+                  />
+                  <img
+                    src={`/images/photography/gallery/${img.file}.webp`}
+                    alt={img.alt}
+                    class={`w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-[1.03] will-change-transform`}
+                    loading={catIndex === 0 && i < 4 ? 'eager' : 'lazy'}
+                    decoding={catIndex === 0 && i < 4 ? 'auto' : 'async'}
+                    width={ph?.width}
+                    height={ph?.height}
+                  />
+                </picture>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                {/* Caption is visual-only; img.alt already provides the accessible name for the link,
+                    so expose this to sighted users only. Prevents axe image-redundant-alt from firing
+                    when the same string appears as both alt and adjacent visible text. */}
+                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300 pointer-events-none" aria-hidden="true">
+                  <p class="text-[10px] sm:text-xs text-cream">{img.alt}</p>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {/* LIGHTBOX - touch-friendly with swipe support */}
+  {/* Backdrop alpha MUST be bracketed: bg-[#0a0a0a]/92 is not valid Tailwind
+      (92 is absent from the default opacity scale) and silently generates
+      NOTHING — the backdrop shipped transparent from 2026-04-16 until the
+      2026-07-02 incident caught it. hazards.test.ts now scans for bare
+      non-scale alpha modifiers. */}
+  <div id="lightbox" class="fixed inset-0 z-50 bg-[#0a0a0a]/[0.92] backdrop-blur-2xl hidden items-center justify-center" role="dialog" aria-modal="true" aria-label="Image viewer">
+    {/* Control geometry is authored on the 8pt spacing grid (tailwind.config
+        remap: 3=24px, 4=32px, 6=48px). The original w-11/w-12 classes predate
+        the remap and silently doubled to 88/96px discs. */}
+    <button id="lightbox-close" class="glass-disc absolute top-3 right-3 sm:top-6 sm:right-6 z-10 w-6 h-6 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Close">
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <button id="lightbox-prev" class="glass-disc hidden sm:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-6 h-6 items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Previous image">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button id="lightbox-next" class="glass-disc hidden sm:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-6 h-6 items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300" aria-label="Next image">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+    <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
+    <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
+      <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
+      <p id="lightbox-meta" class="text-[10px] sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
+    </div>
+  </div>
+
+  {/* ABOUT / EQUIPMENT / COLLECTING */}
+  <section class="section-light py-12 sm:py-16 md:py-24">
+    <div class="container-narrow">
+      <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
+        <div>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Equipment</p>
+          <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Sony Alpha 7R V</p>
+          <p class="text-xs sm:text-sm opacity-60 mb-4 sm:mb-6">Landscape, macro, and fine art work.</p>
+          <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Fujifilm X100VI</p>
+          <p class="text-xs sm:text-sm opacity-60">Street, travel, and night photography.</p>
+        </div>
+        <div>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Philosophy</p>
+          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
+            A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject; attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
+          </p>
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
+          <p class="text-xs tracking-[0.15em] uppercase opacity-60 mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
+          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+            Archival prints, <a href="mailto:jndwcreative@gmail.com?subject=Print%20inquiry" class="link-draw text-cream/85 hover:text-cream">by inquiry</a>.
+          </p>
+          <p class="text-xs sm:text-sm opacity-60 leading-relaxed">
+            Giclée on Hahnemühle Photo Rag.
+          </p>
+          {/* A2.1 (owner ruling 2026-07-31): the floating pill is retired
+              from this colophon - "tasteful with text." The sentence carries
+              the inquiry; the nav's ivory key remains the page's flame. */}
+          {/* Object axis. Still not a second ivory CTA (Inquire holds the only
+              light on this surface), but a photograph rather than a 12px line:
+              the first version shipped as text so quiet nobody found the page.
+              Navigation gets an image here, the same as every other surface. */}
+          <a href="/beyond" class="press-feedback glass-luminous group relative mt-8 sm:mt-10 flex items-stretch gap-4 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
+            <picture class="shrink-0 block w-20 sm:w-24 self-stretch">
+              <source type="image/avif" srcset="/images/relief/edition-16x20.avif" />
+              <source type="image/webp" srcset="/images/relief/edition-16x20.webp" />
+              <img src="/images/relief/edition-16x20.webp" alt="A bas-relief panel of the Shanghai Tower, its facade raised out of a shallow surface and lit from one side" width="620" height="775" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+            </picture>
+            <span class="flex flex-col justify-center py-4 pr-4 sm:pr-5">
+              <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300 mb-1.5">Photographs cut as relief</span>
+              <span class="text-xs sm:text-sm opacity-55 leading-relaxed">No ink. The image is carried in a surface a few millimetres deep and arrives only when light crosses it.</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* SCRIPTURE - the full verse as an intentional moment; the footer carries the short citation */}
+  <section class="py-16 sm:py-20 md:py-24">
+    <div class="container-narrow text-center reveal">
+      <p class="font-serif italic text-cream opacity-80 text-xl sm:text-2xl md:text-[2rem] leading-relaxed max-w-2xl mx-auto">
+        &ldquo;Greater love has no one than this: to lay down one&rsquo;s life for one&rsquo;s friends.&rdquo;
+      </p>
+    </div>
+  </section>
+
+  {/* Scroll-linked category atmosphere */}
+  <script>
+    let chipLensMark: ((cat: string, fast: boolean) => void) | null = null;
+    let chipLensAbort: AbortController | null = null;
+
+    // Chip lens (2026-06-10): the rail's selection complication. One
+    // animation in flight, all listeners through an AbortController
+    // aborted on re-init, per the interaction hygiene rule.
+    function initChipLens() {
+      chipLensAbort?.abort();
+      chipLensAbort = null;
+      chipLensMark = null;
+      // A2.1: the lens vessel is retired from the category index (bare-text
+      // ruling). The marker keeps working lens-free: hasLens gates every
+      // geometry/tint operation so the lit word carries the selection alone.
+      const lens = document.getElementById('chip-lens');
+      const ul = document.getElementById('cat-list');
+      const links = Array.from(document.querySelectorAll('.cat-link')) as HTMLElement[];
+      if (!ul || !links.length) return;
+      const hasLens = !!lens;
+      chipLensAbort = new AbortController();
+      const { signal } = chipLensAbort;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Blue retirement, 2026-07-28: the lens no longer paints category hues.
+      // One warm candle neutral everywhere; the photograph supplies the color.
+      const TINTS: Record<string, string> = {
+        sky: '216,196,168',
+        earth: '216,196,168',
+        water: '216,196,168',
+        structure: '216,196,168',
+        light: '216,196,168',
+      };
+
+      let cur: { x: number; w: number } | null = null;
+      let anim: Animation | null = null;
+      let activeCat = '';
+      let clickLock: { cat: string; until: number } | null = null;
+
+      const measure = (el: HTMLElement) => {
+        const ur = ul.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        return { x: r.left - ur.left + ul.scrollLeft - 9, w: r.width + 18 };
+      };
+      const setStatic = (t: { x: number; w: number }) => {
+        if (!lens) return;
+        lens.style.width = t.w + 'px';
+        lens.style.transform = `translate3d(${t.x}px, -50%, 0)`;
+      };
+      const setTint = (cat: string) => {
+        const t = TINTS[cat] || TINTS.sky;
+        if (lens) {
+          lens.style.setProperty('--cl-glow', `rgba(${t},0.26)`);
+          lens.style.setProperty('--cl-core-hot', `rgba(${t},0.50)`);
+          lens.style.setProperty('--cl-core-mid', `rgba(${t},0.20)`);
+        }
+        ul.style.setProperty('--cl-halo', `rgba(${t},0.55)`);
+        ul.style.setProperty('--cl-flare-edge', `rgba(${t},0.70)`);
+      };
+      const spawn = (cls: string, t: { x: number; w: number }, frames: Keyframe[], dur: number) => {
+        const s = document.createElement('span');
+        s.className = cls;
+        if (cls === 'cl-bloom') {
+          s.style.left = t.x + t.w / 2 - 24 + 'px';
+        } else {
+          s.style.left = t.x + 'px';
+          s.style.width = t.w + 'px';
+        }
+        ul.appendChild(s);
+        s.animate(frames, { duration: dur, easing: 'cubic-bezier(0.2,0.6,0.3,1)' }).onfinish = () => s.remove();
+      };
+
+      function mark(cat: string, fast: boolean) {
+        if (clickLock) {
+          if (Date.now() > clickLock.until) clickLock = null;
+          else if (clickLock.cat !== cat) return;
+          else clickLock = null;
+        }
+        if (cat === activeCat) return;
+        activeCat = cat;
+        const target = (links.find((l) => l.dataset.cat === cat) as HTMLElement | undefined) || null;
+        links.forEach((l) => {
+          const on = l === target;
+          l.classList.toggle('cat-active', on);
+          l.classList.toggle('text-mute', !on);
+          if (on) l.setAttribute('aria-current', 'true');
+          else l.removeAttribute('aria-current');
+        });
+        if (!target) return;
+        setTint(cat);
+        const t = measure(target);
+        // Mobile overflow: keep the lit word centred whether or not a lens exists.
+        if (ul.scrollWidth > ul.clientWidth) {
+          ul.scrollTo({
+            left: Math.max(0, t.x - (ul.clientWidth - t.w) / 2),
+            behavior: reduce ? 'auto' : 'smooth',
+          });
+        }
+        if (!lens) { cur = null; return; }
+        lens.classList.add('is-on');
+        if (reduce || !cur) {
+          anim?.cancel();
+          setStatic(t);
+          cur = t;
+          return;
+        }
+        const d = Math.abs(t.x - cur.x);
+        if (d < 1) {
+          setStatic(t);
+          cur = t;
+          return;
+        }
+        const dur = fast ? 460 : 720;
+        const st = 1 + Math.min(d / (cur.w * 3 || 220), 0.55);
+        anim?.cancel();
+        anim = lens.animate(
+          [
+            { transform: `translate3d(${cur.x}px, -50%, 0) scaleX(1) scaleY(1)`, width: cur.w + 'px', easing: 'cubic-bezier(0.45,0,0.3,1)' },
+            { transform: `translate3d(${(cur.x + t.x) / 2}px, -50%, 0) scaleX(${st}) scaleY(0.88)`, width: (cur.w + t.w) / 2 + 'px', offset: 0.5, easing: 'cubic-bezier(0.25,0.1,0.2,1.1)' },
+            { transform: `translate3d(${t.x}px, -50%, 0) scaleX(0.98) scaleY(1.05)`, width: t.w + 'px', offset: 0.84, easing: 'ease-out' },
+            { transform: `translate3d(${t.x}px, -50%, 0) scaleX(1) scaleY(1)`, width: t.w + 'px' },
+          ],
+          { duration: dur, fill: 'forwards' }
+        );
+        cur = t;
+        if (fast) {
+          spawn('cl-bloom', t, [
+            { transform: 'translateY(-50%) scale(0.3)', opacity: 0.6 },
+            { transform: 'translateY(-50%) scale(1.8)', opacity: 0 },
+          ], 680);
+          spawn('cl-flare', t, [
+            { transform: 'translateY(-50%) scale(1, 1)', opacity: 0.8 },
+            { transform: 'translateY(-50%) scale(1.4, 1.15)', opacity: 0 },
+          ], 560);
+        }
+      }
+
+      chipLensMark = mark;
+      // Click = intent: travel now, then suppress the intermediate
+      // categories the observer reports while Lenis glides past them.
+      links.forEach((l) => {
+        l.addEventListener('click', () => {
+          const cat = l.dataset.cat || '';
+          clickLock = null;
+          mark(cat, true);
+          clickLock = { cat, until: Date.now() + 1600 };
+        }, { signal });
+      });
+      window.addEventListener('resize', () => {
+        if (!hasLens) return;
+        const el = links.find((l) => l.dataset.cat === activeCat);
+        if (!el) return;
+        anim?.cancel();
+        const t = measure(el);
+        setStatic(t);
+        cur = t;
+      }, { signal });
+      document.fonts?.ready?.then(() => {
+        if (!hasLens || signal.aborted || !activeCat) return;
+        const el = links.find((l) => l.dataset.cat === activeCat);
+        if (!el) return;
+        anim?.cancel();
+        const t = measure(el);
+        setStatic(t);
+        cur = t;
+      });
+      const initial = location.hash.match(/^#gallery-(\w+)/)?.[1] || links[0].dataset.cat || '';
+      if (initial) mark(initial, false);
+    }
+
+    // P2 fix, 2026-07-19: the observer was recreated per visit and never
+    // disconnected, each one pinning the previous visit's detached gallery
+    // subtree. Module-level handle, disconnected on re-init (chipLens pattern).
+    let atmosObserver = null;
+    function initAtmosphere() {
+      atmosObserver?.disconnect();
+      const overlay = document.getElementById('atmos-overlay');
+      if (!overlay) return;
+
+      const colors = {
+        sky:        'rgba(216, 196, 168, 0.02)',
+        earth:      'rgba(216, 196, 168, 0.02)',
+        water:      'rgba(216, 196, 168, 0.02)',
+        structure:  'rgba(216, 196, 168, 0.02)',
+        light:      'rgba(244, 234, 222, 0.018)',
+      };
+
+      const sections = document.querySelectorAll('.gallery-section[data-category]');
+      if (!sections.length) return;
+
+      const catLinks = document.querySelectorAll('.cat-link');
+      let currentCat = '';
+
+      const observer = (atmosObserver = new IntersectionObserver((entries) => {
+        let topmost = null;
+        let topY = Infinity;
+
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const rect = entry.boundingClientRect;
+            if (rect.top < topY) {
+              topY = rect.top;
+              topmost = entry.target;
+            }
+          }
+        });
+
+        if (topmost) {
+          const cat = topmost.getAttribute('data-category');
+          if (cat && cat !== currentCat) {
+            currentCat = cat;
+            overlay.style.backgroundColor = colors[cat] || 'transparent';
+            // Reflect scroll position in the contents row: the lens
+            // glides to the category under the viewport (calm travel).
+            if (chipLensMark) {
+              chipLensMark(cat, false);
+            } else {
+              catLinks.forEach((l) => {
+                const on = (l as HTMLElement).dataset.cat === cat;
+                l.classList.toggle('text-cream', on);
+                l.classList.toggle('text-mute', !on);
+                if (on) l.setAttribute('aria-current', 'true');
+                else l.removeAttribute('aria-current');
+              });
+            }
+          }
+        }
+      }, {
+        threshold: 0.15,
+        rootMargin: '-10% 0px -60% 0px'
+      }));
+
+      sections.forEach(s => observer.observe(s));
+    }
+
+    function initCatScroll() {
+      document.querySelectorAll('.cat-link').forEach((a) => {
+        const el = a as HTMLElement;
+        if (el.dataset.lenisBound) return;
+        el.dataset.lenisBound = '1';
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href') || '';
+          if (!href.startsWith('#')) return;
+          const target = document.querySelector(href);
+          const lenis = (window as any).__lenis;
+          if (target && lenis) { e.preventDefault(); lenis.scrollTo(target, { offset: -100 }); }
+        });
+      });
+    }
+
+    initChipLens();
+    initAtmosphere();
+    initCatScroll();
+    document.addEventListener('astro:after-swap', () => { initChipLens(); initAtmosphere(); initCatScroll(); });
+  </script>
+
+</BaseLayout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .gallery-section[data-hidden="true"] { display: none; }
+
+  #lightbox.active { display: flex; }
+  #lightbox { touch-action: none; }
+
+  /* Site chrome yields to the open viewer. The page content (lightbox
+     included) lives inside the smooth-scroll fixed wrapper, whose stacking
+     context traps the dialog's z-50 beneath the root-level sticky header
+     (z-40) — so the nav painted OVER the modal (2026-07-02 incident).
+     Rather than fight compositor stacking, fixed chrome fades out while
+     the dialog is open: correct aria-modal behavior anyway. Transition
+     declared on the hidden state only — graceful fade-out on open,
+     instant return on close, no tampering with the elements' own
+     transition stacks. :global() because header/tabbar/back-to-top live
+     in the layout, outside this page's scope attribute. */
+  /* Channel choice matters: opacity is owned by the header's scroll
+     controller (inline writes) and visib
