@@ -189,7 +189,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
             <dl class="space-y-3" id="exif-list">
               {exifDetails.map(({ label, value }, i) => (
                 <div
-                  class="exif-row flex items-baseline justify-between gap-4 opacity-0 translate-y-2"
+                  class="exif-row flex items-baseline justify-between gap-4"
                   style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
                 >
                   <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
