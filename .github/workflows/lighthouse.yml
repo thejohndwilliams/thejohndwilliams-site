@@ -11,11 +11,8 @@ on:
     branches: [main]
 
 env:
-  # Force actions/checkout + actions/setup-node to run with Node 24
-  # internally (their bundled Node 20 runtime is deprecated June 2026).
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
-# P3 hardening, 2026-07-19: least-privilege token; these jobs only read.
 permissions:
   contents: read
 
@@ -40,4 +37,4 @@ jobs:
         with:
           configPath: ./.lighthouserc.json
           uploadArtifacts: true
-          temporaryPublicStorage: true
+          temporaryPublicStorage: false
