@@ -17,61 +17,16 @@
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
-        "categories:performance": [
-          "warn",
-          {
-            "minScore": 0.9
-          }
-        ],
-        "categories:accessibility": [
-          "error",
-          {
-            "minScore": 0.95
-          }
-        ],
-        "categories:best-practices": [
-          "warn",
-          {
-            "minScore": 0.9
-          }
-        ],
-        "categories:seo": [
-          "error",
-          {
-            "minScore": 0.95
-          }
-        ],
-        "largest-contentful-paint": [
-          "warn",
-          {
-            "maxNumericValue": 2500
-          }
-        ],
-        "cumulative-layout-shift": [
-          "error",
-          {
-            "maxNumericValue": 0.1
-          }
-        ],
-        "total-blocking-time": [
-          "warn",
-          {
-            "maxNumericValue": 300
-          }
-        ],
-        "speed-index": [
-          "warn",
-          {
-            "maxNumericValue": 3400
-          }
-        ],
+        "categories:performance": ["warn", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "categories:seo": ["error", { "minScore": 0.95 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 300 }],
+        "speed-index": ["warn", { "maxNumericValue": 3400 }],
         "uses-long-cache-ttl": "off",
-        "color-contrast": [
-          "warn",
-          {
-            "minScore": 0.9
-          }
-        ],
+        "color-contrast": ["warn", { "minScore": 0.9 }],
         "document-title": "error",
         "meta-description": "error",
         "html-has-lang": "error",
@@ -82,33 +37,14 @@
         "viewport": "error",
         "csp-xss": "off",
         "unused-javascript": "off",
+        "unused-css-rules": "warn",
         "uses-rel-preconnect": "off",
         "preload-lcp-image": "off",
         "non-composited-animations": "warn",
-        "image-delivery-insight": [
-          "warn",
-          {
-            "minScore": 0.5
-          }
-        ],
-        "network-dependency-tree-insight": [
-          "warn",
-          {
-            "minScore": 0.5
-          }
-        ],
-        "render-blocking-insight": [
-          "warn",
-          {
-            "minScore": 0.5
-          }
-        ],
-        "uses-responsive-images": [
-          "warn",
-          {
-            "maxLength": 5
-          }
-        ],
+        "image-delivery-insight": ["warn", { "minScore": 0.5 }],
+        "network-dependency-tree-insight": ["warn", { "minScore": 0.5 }],
+        "render-blocking-insight": ["warn", { "maxLength": 0 }],
+        "uses-responsive-images": ["warn", { "maxLength": 5 }],
         "forced-reflow-insight": "warn"
       }
     },
