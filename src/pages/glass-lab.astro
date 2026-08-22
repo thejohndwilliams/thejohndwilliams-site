@@ -8,7 +8,9 @@ import GlassPillGL from '../components/GlassPillGL.astro';
 // Same production gate as about-lab (P1 lock pattern, 2026-07-19): on the
 // main branch this route is a plain redirect home; preview branches and
 // local builds keep the full bench.
-if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
+// Pages production (main, or missing branch) never emits the lab.
+// Local and CI omit CF_PAGES, so tests still see the full bench.
+if (process.env.CF_PAGES === '1' && (process.env.CF_PAGES_BRANCH || 'main') === 'main') {
   return Astro.redirect('/', 308);
 }
 ---

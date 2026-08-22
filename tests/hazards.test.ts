@@ -143,13 +143,15 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
 
   it('glass-lab is gated off the production branch - shader bench must never ship on main', () => {
     const glab = readFileSync(join(SRC, 'pages/glass-lab.astro'), 'utf8');
-    expect(glab).toContain("CF_PAGES_BRANCH ?? '') === 'main'");
+    expect(glab).toContain("CF_PAGES === '1'");
+    expect(glab).toContain("(process.env.CF_PAGES_BRANCH || 'main') === 'main'");
     expect(glab).toMatch(/Astro\.redirect\(['"]\/['"]/);
     expect(glab).toContain('noindex={true}');
   });
 
   it('about-lab is gated off the production branch — "Private" lab copy served publicly on main', () => {
-    expect(lab).toMatch(/CF_PAGES_BRANCH[\s\S]{0,80}=== 'main'/);
+    expect(lab).toContain("CF_PAGES === '1'");
+    expect(lab).toContain("(process.env.CF_PAGES_BRANCH || 'main') === 'main'");
     expect(lab).toContain("Astro.redirect('/', 308)");
   });
 });

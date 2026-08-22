@@ -11,7 +11,9 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
 // Cloudflare Pages sets CF_PAGES_BRANCH at build time; on main the route
 // becomes a plain redirect home, so no "Private" copy exists in production
 // HTML. Preview branches and local builds keep the full lab.
-if ((process.env.CF_PAGES_BRANCH ?? '') === 'main') {
+// Pages production (main, or missing branch) never emits the lab.
+// Local and CI omit CF_PAGES, so tests still see the full bench.
+if (process.env.CF_PAGES === '1' && (process.env.CF_PAGES_BRANCH || 'main') === 'main') {
   return Astro.redirect('/', 308);
 }
 
