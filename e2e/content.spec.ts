@@ -66,7 +66,7 @@ test.describe('Links (bio)', () => {
     const res = await page.goto('/links/');
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toContainText('John D. Williams');
-    await expect(page.locator('a[href="/photography"]')).toBeVisible();
+    await expect(page.locator('#content a[href="/photography"]')).toBeVisible();
     await expect(page.locator('a[href*="linkedin.com"]').first()).toBeVisible();
   });
 });
