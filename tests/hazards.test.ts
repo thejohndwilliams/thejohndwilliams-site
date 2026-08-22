@@ -126,7 +126,7 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
   // Tri-fleet code review P1s. Each lock pins the FIX pattern in source so a
   // refactor cannot silently reintroduce the defect class.
   const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
-  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const galleryRuntime = readFileSync(join(SRC, 'scripts/photography-gallery.ts'), 'utf8');
   const lab = readFileSync(join(SRC, 'pages/about-lab.astro'), 'utf8');
 
   it('initBottomNav tears down via AbortController — per-swap window listeners retained detached page trees (2026-06-09 class)', () => {
@@ -138,7 +138,7 @@ describe('hazard locks: p1 review fixes (2026-07-19)', () => {
     const afterSwap = base.slice(base.indexOf("astro:after-swap', () => {", base.indexOf('import Lenis')));
     expect(afterSwap).toContain("classList.remove('lb-open')");
     expect(afterSwap).toContain('lenis.start?.()');
-    expect(gallery).toContain('__lenis?.start?.()');
+    expect(galleryRuntime).toContain('__lenis?.start?.()');
   });
 
   it('glass-lab is gated off the production branch - shader bench must never ship on main', () => {
@@ -197,7 +197,8 @@ describe('hazard locks: /relief sweep video (2026-07-25)', () => {
 
 describe('hazard locks: p2 review fixes (2026-07-19)', () => {
   const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
-  const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
+  const gallery = readFileSync(join(SRC, 'scripts/photography-gallery.ts'), 'utf8');
+  const galleryAtmos = readFileSync(join(SRC, 'scripts/photography-atmos.ts'), 'utf8');
   const baseL = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
   const slug = readFileSync(join(SRC, 'pages/photography/[slug].astro'), 'utf8');
 
@@ -214,7 +215,7 @@ describe('hazard locks: p2 review fixes (2026-07-19)', () => {
   });
 
   it('page observers disconnect on re-init — undisconnected IntersectionObservers pinned detached page trees', () => {
-    expect(gallery).toMatch(/atmosObserver\?\.disconnect\(\)/);
+    expect(galleryAtmos).toMatch(/atmosObserver\?\.disconnect\(\)/);
     expect(baseL).toMatch(/revealObserver\?\.disconnect\(\)/);
     expect(slug).toMatch(/exifObserver\?\.disconnect\(\)/);
   });
@@ -258,6 +259,25 @@ describe('hazard locks: built output', () => {
       for (const phrase of bannedExact) if (body.includes(phrase)) offenders.push(`${p.slice(ROOT.length)} :: ${phrase}`);
     }
     expect(offenders).toEqual([]);
+  });
+
+  it('style-src self without unsafe-inline forbids page <style> on /beyond and /work (2026-08-22 unstyled pages)', () => {
+    const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
+    const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
+    if (/style-src 'self' 'unsafe-inline'/.test(csp)) return;
+    expect(csp).toMatch(/style-src 'self'/);
+    if (!existsSync(DIST)) {
+      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      return;
+    }
+    // Owner 2026-08-22: ClientRouter may emit view-transition-old(page|logo)
+    // scopes. Those are not page paint. Any other <style> is the bust.
+    for (const page of ['beyond', 'work']) {
+      const html = readFileSync(join(DIST, page, 'index.html'), 'utf8');
+      const blocks = html.match(/<style[\s\S]*?<\/style>/g) || [];
+      const pageCss = blocks.filter((b) => !/view-transition-old\((?:page|logo)\)/.test(b));
+      expect(pageCss, `${page} non-transition <style>`).toEqual([]);
+    }
   });
 });
 
@@ -303,6 +323,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
 });
 
 describe('hazard locks: CSP style-src (2026-08-22)', () => {
+  // This block also covers script-src.
   const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
   const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
   const base = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
@@ -317,5 +338,21 @@ describe('hazard locks: CSP style-src (2026-08-22)', () => {
   it('glass-lens SVG uses classes, not a style attribute', () => {
     expect(base).toContain('id="glass-lens"');
     expect(base).not.toMatch(/<svg[^>]*style=/);
+  });
+
+  it('script-src without unsafe-inline forbids inline module and bare script tags on home, work, beyond (2026-08-22 CSP vs built output)', () => {
+    const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
+    const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
+    if (/script-src[^;]*unsafe-inline/.test(csp)) return;
+    expect(csp).toMatch(/script-src 'self'/);
+    if (!existsSync(DIST)) {
+      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      return;
+    }
+    for (const rel of ['index.html', join('work', 'index.html'), join('beyond', 'index.html')]) {
+      const html = readFileSync(join(DIST, rel), 'utf8');
+      expect(html.includes('<script type="module">'), `${rel} inline module`).toBe(false);
+      expect(html.includes('<script>'), `${rel} bare script`).toBe(false);
+    }
   });
 });
