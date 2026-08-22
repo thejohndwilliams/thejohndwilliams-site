@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
+import { navItems, socialLinks } from '../utils/date';
+---
+
+<BaseLayout
+  title="Links"
+  description="John D. Williams — photography, work, and where to reach me."
+>
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow max-w-xl">
+      <p class="eyebrow mb-3 sm:mb-4">Connect</p>
+      <h1 class="mb-4">John D. Williams</h1>
+      <p class="text-lg opacity-70 mb-10 sm:mb-12">Photography. Operations. The work.</p>
+
+      <ul class="space-y-3 mb-10">
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="block glass-card px-5 py-4 text-cream hover:opacity-100 opacity-90"
+            >
+              {item.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <ul class="space-y-3 mb-12">
+        {socialLinks.map((item) => (
+          <li>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block glass-card px-5 py-4"
+            >
+              <span class="block text-cream">{item.name}</span>
+              <span class="block text-sm opacity-60">{item.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <GlassPillGL label="Inquire" href="mailto:jndwcreative@gmail.com" variant="c" />
+    </div>
+  </section>
+</BaseLayout>
