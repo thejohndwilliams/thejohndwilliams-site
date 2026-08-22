@@ -80,7 +80,7 @@
         "robots-txt": "warn",
         "tap-targets": "off",
         "viewport": "error",
-        "csp-xss": "off",
+        "csp-xss": "error",
         "unused-javascript": "off",
         "unused-css-rules": "warn",
         "uses-rel-preconnect": "off",
