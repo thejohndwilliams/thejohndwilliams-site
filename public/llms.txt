@@ -14,7 +14,9 @@ This is a canonical, self-authored brief for AI agents summarizing John D. Willi
 ## Pages
 - [Home](https://thejohndwilliams.com/): overview of the work.
 - [Photography](https://thejohndwilliams.com/photography): curated fine-art photography: sky, earth, water, structure, light.
-- [Work](https://thejohndwilliams.com/work): cybersecurity, data, and enterprise operations; includes Beyond Photography: downloadable color palettes, wallpapers, and textures derived from the photographs.
+- [Work](https://thejohndwilliams.com/work): cybersecurity, data, and enterprise operations.
+- [Beyond](https://thejohndwilliams.com/beyond): photographs rebuilt as holograms and true point clouds, textures and Gaussian studies, and images cut as physical bas-relief.
+- [Links](https://thejohndwilliams.com/links): photography, work, and where to reach me.
 - [About](https://thejohndwilliams.com/about): background and approach.
 - [Privacy](https://thejohndwilliams.com/privacy): privacy posture (minimal data collection).
 

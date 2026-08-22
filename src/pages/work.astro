@@ -10,7 +10,8 @@ const projects = [
     tags: ['Python', 'Forecasting', 'Holt-Winters', 'Operations'],
     outcome: 'Used in production for workforce planning',
     github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard',
-    image: 'gv-1fd48bd9'
+    image: 'gv-1fd48bd9',
+    alt: 'Glass tower rising into the night'
   },
   {
     title: 'Job Application Analytics',
@@ -18,7 +19,8 @@ const projects = [
     tags: ['Python', 'Machine Learning', 'Data Analysis', 'Statistics'],
     outcome: 'Identified actionable patterns across 580+ applications',
     github: 'https://github.com/thejohndwilliams/jobappanalysis',
-    image: 'dscf1059'
+    image: 'dscf1059',
+    alt: 'A spire against a bruised twilight'
   },
   {
     title: 'Government Cybersecurity Assessment',
@@ -26,7 +28,8 @@ const projects = [
     tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Cybersecurity'],
     outcome: 'Full threat model with prioritized remediation roadmap',
     github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment',
-    image: 'dsc-0329'
+    image: 'dsc-0329',
+    alt: 'Light through a derelict hall'
   },
   {
     title: 'Healthcare Security Strategy',
@@ -34,7 +37,8 @@ const projects = [
     tags: ['NIST CSF', 'NIST 800-53', 'Capstone', 'Compliance'],
     outcome: 'Baylor University MBA Cybersecurity Capstone',
     github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
-    image: 'dscf0423'
+    image: 'dscf0423',
+    alt: 'Japanese alleyway at night'
   }
 ];
 
@@ -96,7 +100,7 @@ const expertise = [
               <picture>
                 <source type="image/avif" srcset={`/images/photography/thumb/${project.image}.avif 400w, /images/photography/gallery/${project.image}.avif 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
                 <source type="image/webp" srcset={`/images/photography/thumb/${project.image}.webp 400w, /images/photography/gallery/${project.image}.webp 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
-                <img src={`/images/photography/gallery/${project.image}.webp`} alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
+                <img src={`/images/photography/gallery/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 will-change-transform" loading="lazy" decoding="async" />
               </picture>
               <div class="absolute inset-0" style="background-image: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.84) 36%, rgba(10,10,10,0.52) 70%, rgba(10,10,10,0.22) 100%);"></div>
               <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
