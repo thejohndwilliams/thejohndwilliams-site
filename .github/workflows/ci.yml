@@ -2,7 +2,7 @@ name: CI
 
 # Build + full test gate on every PR and EVERY push, any branch.
 # Lighthouse runs separately in lighthouse.yml. Added 2026-06-11:
-# before this, NOTHING enforced vitest or Playwright on GitHub —
+# before this, NOTHING enforced vitest or Playwright on GitHub --
 # gates ran only in whichever local environment happened to work.
 # Widened from main-only pushes on 2026-07-03: the house workflow ships
 # preview branches without PRs, so six lightbox-fix commits (including a
@@ -30,8 +30,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
           cache: 'npm'
@@ -56,8 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
           cache: 'npm'
