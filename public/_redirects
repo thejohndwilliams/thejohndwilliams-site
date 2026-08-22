@@ -11,3 +11,9 @@ https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
 
 # Humans and some tools still request /sitemap.xml.
 /sitemap.xml /sitemap-index.xml 301
+
+# Lab routes: never serve the Astro HTML interstitial on production.
+/about-lab / 301
+/about-lab/ / 301
+/glass-lab /beyond/ 301
+/glass-lab/ /beyond/ 301

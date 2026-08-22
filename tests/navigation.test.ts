@@ -15,9 +15,9 @@ describe('navItems', () => {
 
   it('has correct href paths for all items', () => {
     const hrefs = navItems.map((item) => item.href);
-    expect(hrefs).toContain('/about');
-    expect(hrefs).toContain('/work');
-    expect(hrefs).toContain('/photography');
+    expect(hrefs).toContain('/about/');
+    expect(hrefs).toContain('/work/');
+    expect(hrefs).toContain('/photography/');
   });
 
 
