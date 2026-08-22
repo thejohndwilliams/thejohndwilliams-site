@@ -50,3 +50,12 @@ html.nav-back ::view-transition-new(page) {
     opacity: 1;
   }
 }
+
+/* Back-to-top used to set element.style (opacity/transform). Class toggle
+   so stylesheet style-src can stay 'self'. CSSOM --mx/--my still uses
+   style-src-attr. */
+#back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
