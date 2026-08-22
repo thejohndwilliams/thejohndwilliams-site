@@ -1,6 +1,7 @@
 # Cloudflare Pages _headers
-# Replaces vercel.json (unused — site deploys on Cloudflare Pages).
+# Replaces vercel.json (unused - site deploys on Cloudflare Pages).
 # One blank line separates rule groups. Two-space indent for headers.
+# Access-Control-Allow-Origin overrides the Pages platform default of *.
 
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.thejohndwilliams.com; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
@@ -10,6 +11,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
+  Access-Control-Allow-Origin: https://thejohndwilliams.com
 
 /_assets/*
   Cache-Control: public, max-age=31536000, immutable
