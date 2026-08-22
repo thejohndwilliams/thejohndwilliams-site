@@ -6,6 +6,12 @@
 /labs /beyond 301
 /labs/ /beyond 301
 
+# Lab routes: never serve the Astro HTML interstitial on production.
+/about-lab / 301
+/about-lab/ / 301
+/glass-lab /beyond/ 301
+/glass-lab/ /beyond/ 301
+
 # Single host: www is a duplicate of apex (review 2026-08-22).
 https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
 
