@@ -22,9 +22,7 @@ const related = getRelatedImages(image.file, 4);
 
 const SITE = 'https://thejohndwilliams.com';
 
-// ─── Ambient Color Bleed: category-driven palette ───
-// Each category maps to a subtle color that bleeds into the page background.
-// These are intentional, not extracted - the semantics drive the atmosphere.
+// Ambient Color Bleed: category-driven palette
 const categoryColors: Record<string, { glow: string; accent: string }> = {
   sky:        { glow: 'rgba(70, 100, 160, 0.08)',  accent: 'rgba(70, 100, 160, 0.04)' },
   earth:      { glow: 'rgba(160, 120, 60, 0.08)',  accent: 'rgba(160, 120, 60, 0.04)' },
@@ -34,13 +32,11 @@ const categoryColors: Record<string, { glow: string; accent: string }> = {
 };
 const bleed = categoryColors[category.id] || categoryColors.structure;
 
-// ─── Keyboard navigation: prev/next in sequential order ───
 const allSlugs = getAllSlugsSequential();
 const currentIdx = allSlugs.indexOf(image.file);
 const prevSlug = currentIdx > 0 ? allSlugs[currentIdx - 1] : null;
 const nextSlug = currentIdx < allSlugs.length - 1 ? allSlugs[currentIdx + 1] : null;
 
-// JSON-LD for individual image
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ImageObject',
@@ -64,7 +60,6 @@ const jsonLd = {
   },
 };
 
-// Build EXIF detail lines
 const exifDetails: Array<{ label: string; value: string }> = [];
 if (meta.camera) exifDetails.push({ label: 'Camera', value: meta.camera });
 if (meta.lens) exifDetails.push({ label: 'Lens', value: meta.lens });
@@ -91,14 +86,13 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-  {/* Ambient Color Bleed - subtle radial glow behind the hero, driven by category */}
   <div
     class="fixed inset-0 pointer-events-none z-0"
     aria-hidden="true"
     style={`background: radial-gradient(ellipse 80% 60% at 50% 30%, ${bleed.glow}, ${bleed.accent}, transparent 70%);`}
   ></div>
 
-  {/* FULL-BLEED HERO IMAGE */}
+  <div data-glass-bench>
   <section
     class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10"
     style={(() => {
@@ -128,12 +122,10 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
-    {/* Print preview frame - ghost overlay, visible when CTA is hovered */}
     <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
       <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
     </div>
 
-    {/* Back nav + keyboard hint */}
     <a
       href="/photography"
       class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
@@ -142,7 +134,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       Gallery
     </a>
 
-    {/* Keyboard nav arrows (desktop only, visible on hover) */}
     {prevSlug && (
       <a
         href={`/photography/${prevSlug}`}
@@ -177,12 +168,9 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  {/* DETAILS + EXIF + CTA */}
   <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
     <div class="container-narrow">
       <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
-
-        {/* EXIF Technical Details - staggered reveal on scroll */}
         {exifDetails.length > 0 && (
           <div>
             <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
@@ -200,31 +188,29 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           </div>
         )}
 
-        {/* Print / Licensing CTA */}
         <div>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Acquire</p>
           <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
             Available as a limited edition archival print.
           </p>
-          {/* Edition of 25 scarcity signal */}
           <p class="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
             Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
           </p>
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row sm:flex-nowrap sm:items-stretch gap-3">
             <a
               href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`}
-              class="btn btn-primary"
+              class="btn btn-primary w-full sm:w-auto justify-center"
             >
               Inquire about this print
             </a>
-            <GlassPillGL label="Browse all prints" href="/photography" variant="c" />
+            <GlassPillGL label="Browse all prints" href="/photography" variant="c" class="w-full sm:w-auto justify-center self-stretch" />
           </div>
         </div>
       </div>
     </div>
   </section>
+  </div>
 
-  {/* RELATED IMAGES */}
   {related.length > 0 && (
     <section class="py-10 sm:py-16 md:py-20 relative z-10">
       <div class="container-wide">
@@ -235,7 +221,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           {related.map((rel) => (
             <a
               href={`/photography/${rel.file}`}
-              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500"
+              class="glass-luminous group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500"
             >
               <picture>
                 <source
@@ -267,7 +253,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </section>
   )}
 
-  {/* Back to Gallery CTA */}
   <section class="pb-12 sm:pb-16 md:pb-20 relative z-10">
     <div class="container-narrow text-center">
       <a
@@ -280,10 +265,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  {/* EXIF reveal on scroll - IntersectionObserver, no libraries */}
   <script>
-    // P3 fix, 2026-07-19: arrow-key browsing creates one page per photo; an
-    // undisconnected observer per visit pinned each old page's detached rows.
     let exifObserver = null;
     function initExifReveal() {
       exifObserver?.disconnect();
@@ -307,13 +289,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     document.addEventListener('astro:after-swap', initExifReveal);
   </script>
 
-  {/* Keyboard navigation - arrow keys between photo pages */}
   <script>
-    // AbortController hygiene: this module runs once per session, but
-    // initKeyboardNav re-runs on every astro:after-swap (site-wide). The
-    // document-level keydown previously accumulated one handler per page
-    // visit, each closure retaining the detached page DOM. Same failure
-    // class as the gallery lightbox crash (fixed 2026-06-09).
     let kbAbort: AbortController | null = null;
 
     function initKeyboardNav() {
@@ -326,7 +302,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       const { signal } = kbAbort;
 
       function handleKey(e: KeyboardEvent) {
-        // Don't intercept if user is in an input or modifier keys held
         if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
         if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
 
@@ -341,7 +316,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
       document.addEventListener('keydown', handleKey, { signal });
 
-      // Show arrows on any mouse movement in hero area (desktop affordance)
       const hero = document.querySelector('section:first-of-type');
       if (hero) {
         hero.addEventListener('mouseenter', () => {
@@ -349,10 +323,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           if (next) next.style.opacity = '0.6';
         }, { signal });
         hero.addEventListener('mouseleave', () => {
-          // P2 fix, 2026-07-19: clear the inline value instead of writing 0.
-          // An inline "opacity: 0" outranked hover:/focus-visible: utilities,
-          // so after any mouse pass over the hero, keyboard focus landed on
-          // an invisible arrow. Empty string hands control back to the CSS.
           if (prev) prev.style.opacity = '';
           if (next) next.style.opacity = '';
         }, { signal });
@@ -363,7 +333,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     document.addEventListener('astro:after-swap', initKeyboardNav);
   </script>
 
-  {/* Print preview on hover - desktop only, CSS-driven */}
   <style>
     @media (hover: hover) {
       .print-cta-hover:hover ~ #print-frame,
@@ -378,7 +347,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       const frame = document.getElementById('print-frame');
       if (!btn || !frame) return;
 
-      // Only on desktop with hover capability
       if (!window.matchMedia('(hover: hover)').matches) return;
 
       btn.addEventListener('mouseenter', () => {
