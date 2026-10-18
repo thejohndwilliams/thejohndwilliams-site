@@ -235,7 +235,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           {related.map((rel) => (
             <a
               href={`/photography/${rel.file}`}
-              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500"
+              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,outline,outline-offset] duration-500 ease-smooth"
             >
               <picture>
                 <source
@@ -257,7 +257,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
                 />
               </picture>
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-all duration-300">
+              <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth">
                 <p class="text-[10px] sm:text-xs opacity-70">{rel.alt}</p>
               </div>
             </a>
