@@ -178,7 +178,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-cream focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
     <Header />
-    <main id="content" class="flex-grow" transition:name="page">
+    <main id="content" class="flex-grow">
       <slot />
     </main>
     <Footer />
@@ -337,8 +337,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       });
     </script>
 
-    {/* Transition direction detector - determines spatial relationship
-         between current and target page to set drift direction. */}
+    {/* Transition direction detector. Pages sit on a spatial strip.
+         The swap copies html attributes from the incoming document, so a
+         class set on the outgoing document is gone before the drift starts.
+         The flag is applied to newDocument in before-swap. */}
     <script>
       function getPagePosition(path: string): number {
         const clean = path.replace(/\/$/, '') || '/';
@@ -351,17 +353,39 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         return 99;
       }
 
+      let back = false;
+      let navGen = 0;
+
       document.addEventListener('astro:before-preparation', (ev: any) => {
-        const from = getPagePosition(window.location.pathname);
-        const to = getPagePosition(new URL(ev.to, window.location.origin).pathname);
-        if (to < from) {
-          document.documentElement.classList.add('nav-back');
-        } else {
-          document.documentElement.classList.remove('nav-back');
+        navGen += 1;
+        document.documentElement.classList.remove('nav-back');
+        back = false;
+        // Popstate has already moved location to the destination, so
+        // location and ev.to match. The page we left is ev.from.
+        const fromPath = (ev.from && ev.from.pathname) || window.location.pathname;
+        const toPath = (ev.to && ev.to.pathname) || window.location.pathname;
+        const from = getPagePosition(fromPath);
+        const to = getPagePosition(toPath);
+        back = to < from;
+      });
+
+      document.addEventListener('astro:before-swap', (ev: any) => {
+        ev.newDocument.documentElement.classList.toggle('nav-back', back);
+        // Astro 7.1.6 has no astro:after-transition. The view transition
+        // finished promise is that moment. Dispatch so the cleanup below
+        // runs when the drift ends. A newer preparation bumps navGen so a
+        // skipped transition cannot clear the class mid-flight.
+        const mine = navGen;
+        const finished = ev.viewTransition && ev.viewTransition.finished;
+        if (finished && typeof finished.finally === 'function') {
+          finished.finally(() => {
+            if (mine !== navGen) return;
+            document.dispatchEvent(new Event('astro:after-transition'));
+          });
         }
       });
 
-      document.addEventListener('astro:after-swap', () => {
+      document.addEventListener('astro:after-transition', () => {
         document.documentElement.classList.remove('nav-back');
       });
     </script>

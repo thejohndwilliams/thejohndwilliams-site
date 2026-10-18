@@ -10,7 +10,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       {/* The monogram stays the mark. aria-hidden keeps those two letters out of
           the accessible name: the fixed label does not contain "JW", and the
           label-in-name lock requires visible text to sit inside the name. */}
-      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] flex items-center" transition:name="logo" aria-label="John D. Williams, home">
+      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] flex items-center" aria-label="John D. Williams, home">
         <span aria-hidden="true">JW</span>
       </a>
 

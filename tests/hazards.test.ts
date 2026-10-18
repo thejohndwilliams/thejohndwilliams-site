@@ -261,22 +261,24 @@ describe('hazard locks: built output', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('style-src self without unsafe-inline forbids page <style> on /beyond and /work (2026-08-22 unstyled pages)', () => {
+  it('style-src self without unsafe-inline forbids page <style>', () => {
     const headers = readFileSync(join(ROOT, 'public', '_headers'), 'utf8');
     const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy')) || '';
     if (/style-src 'self' 'unsafe-inline'/.test(csp)) return;
     expect(csp).toMatch(/style-src 'self'/);
+    const transitions = readFileSync(join(SRC, 'styles', 'transitions.css'), 'utf8');
+    expect(transitions).toContain('view-transition-name: page');
     if (!existsSync(DIST)) {
-      console.warn('hazards: dist/ missing — run the build first for full coverage');
+      console.warn('hazards: dist/ missing. Run the build first for full coverage');
       return;
     }
-    // Owner 2026-08-22: ClientRouter may emit view-transition-old(page|logo)
-    // scopes. Those are not page paint. Any other <style> is the bust.
-    for (const page of ['beyond', 'work']) {
-      const html = readFileSync(join(DIST, page, 'index.html'), 'utf8');
+    // transition:name used to emit inline view-transition scopes. style-src
+    // 'self' refuses those blocks, so the built pages must carry none.
+    for (const rel of ['index.html', join('beyond', 'index.html'), join('work', 'index.html')]) {
+      const html = readFileSync(join(DIST, rel), 'utf8');
       const blocks = html.match(/<style[\s\S]*?<\/style>/g) || [];
-      const pageCss = blocks.filter((b) => !/view-transition-old\((?:page|logo)\)/.test(b));
-      expect(pageCss, `${page} non-transition <style>`).toEqual([]);
+      expect(blocks, `${rel} <style>`).toEqual([]);
+      expect(html, `${rel} transition scope`).not.toContain('data-astro-transition-scope');
     }
   });
 });
