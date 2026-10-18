@@ -417,56 +417,120 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <script>
       import Lenis from 'lenis';
 
-      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      let lenis: any;
-      let rafId = 0;
+      // The module stays alive across client navigations. A second run would
+      // stack another Lenis and another set of window listeners.
+      const lenisRoot = window as any;
+      if (!lenisRoot.__lenisBoot) {
+        lenisRoot.__lenisBoot = true;
 
-      const tick = (time: number) => {
-        const current = lenis;
-        if (!current) return;
-        current.raf(time);
-        if (lenis !== current) return;
-        rafId = requestAnimationFrame(tick);
-      };
+        const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let lenis: any;
+        let rafId = 0;
+        let loopOn = false;
+        let idleSince = -1;
+        const IDLE_MS = 200;
 
-      function createLenis() {
-        if (lenis) return;
-        lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-        (window as any).__lenis = lenis;
-        rafId = requestAnimationFrame(tick);
-      }
-
-      function destroyLenis() {
-        if (rafId) {
-          cancelAnimationFrame(rafId);
+        const tick = (time: number) => {
           rafId = 0;
+          const current = lenis;
+          if (!loopOn || !current) return;
+          if (document.hidden) {
+            stopLoop();
+            return;
+          }
+          current.raf(time);
+          if (!loopOn || lenis !== current) return;
+          // isScrolling is false, "native", or "smooth". Only a settled false
+          // starts the idle clock. Native and smooth keep the loop.
+          if (current.isScrolling !== false) {
+            idleSince = -1;
+          } else if (idleSince < 0) {
+            idleSince = time;
+          } else if (time - idleSince >= IDLE_MS) {
+            stopLoop();
+            return;
+          }
+          rafId = requestAnimationFrame(tick);
+        };
+
+        function startLoop() {
+          if (!lenis || lenis.isStopped || document.hidden || motionQuery.matches) return;
+          loopOn = true;
+          idleSince = -1;
+          if (!rafId) rafId = requestAnimationFrame(tick);
         }
-        if (lenis) {
-          lenis.destroy();
-          lenis = undefined;
+
+        function stopLoop() {
+          loopOn = false;
+          idleSince = -1;
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
         }
-        (window as any).__lenis = undefined;
+
+        function createLenis() {
+          if (lenis) return;
+          lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+          const scrollTo = lenis.scrollTo.bind(lenis);
+          lenis.scrollTo = (target: any, options?: any) => {
+            startLoop();
+            return scrollTo(target, options);
+          };
+          const start = lenis.start.bind(lenis);
+          lenis.start = () => {
+            start();
+            startLoop();
+          };
+          const stop = lenis.stop.bind(lenis);
+          lenis.stop = () => {
+            stop();
+            stopLoop();
+          };
+          lenisRoot.__lenis = lenis;
+        }
+
+        function destroyLenis() {
+          stopLoop();
+          if (lenis) {
+            lenis.destroy();
+            lenis = undefined;
+          }
+          lenisRoot.__lenis = undefined;
+        }
+
+        if (!motionQuery.matches) createLenis();
+        motionQuery.addEventListener('change', () => {
+          if (motionQuery.matches) destroyLenis();
+          else createLenis();
+        });
+
+        const wake = () => startLoop();
+        window.addEventListener('wheel', wake, { passive: true });
+        window.addEventListener('touchstart', wake, { passive: true });
+        window.addEventListener('keydown', wake);
+        // Covers scrollbar drags, back-to-top, and anchor jumps that are not
+        // lenis.scrollTo. Scroll events stop when the page is still.
+        window.addEventListener('scroll', wake, { passive: true });
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) stopLoop();
+          else startLoop();
+        });
+
+        document.addEventListener('astro:after-swap', () => {
+          // P1 lock, 2026-07-19: the lightbox scroll lock stops this persisted
+          // Lenis instance and sets html.lb-open. History-traversing away with
+          // the viewer open skipped unlockScroll, leaving wheel input dead and
+          // the chrome hidden on the next page. <html> and Lenis both persist,
+          // so the swap handler is the one owner that always runs. When reduced
+          // motion is on, lenis is absent and this is a no-op.
+          document.documentElement.classList.remove('lb-open');
+          if (lenis) {
+            lenis.start?.();
+            lenis.scrollTo(0, { immediate: true });
+          }
+        });
       }
-
-      if (!motionQuery.matches) createLenis();
-      motionQuery.addEventListener('change', () => {
-        if (motionQuery.matches) destroyLenis();
-        else createLenis();
-      });
-
-      document.addEventListener('astro:after-swap', () => {
-        // P1 lock, 2026-07-19: the lightbox scroll lock stops this persisted
-        // Lenis instance and sets html.lb-open. History-traversing away with
-        // the viewer open skipped unlockScroll, leaving wheel input dead and
-        // the chrome hidden on the next page. <html> and Lenis both persist,
-        // so the swap handler is the one owner that always runs. When reduced
-        // motion is on, lenis is absent and this is a no-op.
-        document.documentElement.classList.remove('lb-open');
-        if (lenis) {
-          lenis.start?.();
-          lenis.scrollTo(0, { immediate: true });
-        }
-      });
     </script>
     {/* Inject the encircle-then-dissolve wake element into every crystal button
          so the tuned ::before rim and ::after specular stay untouched. */}
