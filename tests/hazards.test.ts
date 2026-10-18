@@ -294,7 +294,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
   const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
 
   it('the home page grid carries a /beyond card', () => {
-    expect(home).toMatch(/href="\/beyond"/);
+    expect(home).toMatch(/href="\/beyond\/"/);
   });
 
   it('/work hands off to Beyond by name', () => {
@@ -302,7 +302,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
   });
 
   it('/photography links the object axis with a photograph, not a 12px line', () => {
-    const idx = gallery.indexOf('href="/beyond"');
+    const idx = gallery.indexOf('href="/beyond/"');
     expect(idx).toBeGreaterThan(-1);
     expect(gallery.slice(idx, idx + 900)).toContain('/images/relief/');
   });
