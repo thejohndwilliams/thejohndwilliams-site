@@ -870,8 +870,8 @@ html.lenis body { height: auto; }
 
 /* ============================================================
    LIQUID GLASS v2.3 - footer + mobile complications get the material
-   Desktop footer: flat navy slab -> dimensional blue-hour glass (kept
-   "to a degree" - retains blue identity, no longer flat). Mobile bottom
+   Desktop footer: dimensional glass, cream wash settling into midnight.
+   Mobile bottom
    nav: each tab complication becomes a subtle glass key, the active one a
    blue-hour glass pill; Inquire stays the ivory CTA ("the light") but now
    a glossy, dimensional glass key. Unlayered; cross-browser safe
@@ -879,7 +879,7 @@ html.lenis body { height: auto; }
    ============================================================ */
 .glass-footer {
   position: relative;
-  background: linear-gradient(180deg, rgba(244, 234, 222, 0.072) 0%, rgba(244, 234, 222, 0.024) 38%, rgba(0,18,31,0.55) 100%);
+  background: linear-gradient(180deg, rgba(244, 234, 222, 0.072) 0%, rgba(244, 234, 222, 0.024) 38%, rgba(10, 10, 10, 0.55) 100%);
   backdrop-filter: blur(30px) saturate(1.85);
   -webkit-backdrop-filter: blur(30px) saturate(1.85);
   border-top: 1px solid rgba(255,255,255,0.12);
