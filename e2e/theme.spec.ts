@@ -16,7 +16,7 @@ test.describe('Theme across client navigation', () => {
       (window as Window & { __clientNav?: string }).__clientNav = 'alive';
     });
 
-    await page.locator('header a[href="/about"]:visible').first().click();
+    await page.locator('header a[href="/about/"]:visible').first().click();
     await expect(page).toHaveURL(/\/about\/?$/);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'black');
     await expect(page.locator('button.theme-toggle:visible').first()).toHaveAttribute(

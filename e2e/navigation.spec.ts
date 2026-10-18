@@ -12,21 +12,21 @@ test.describe('Navigation', () => {
 
   test('can navigate to About', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header a[href="/about"]:visible').first().click();
+    await page.locator('header a[href="/about/"]:visible').first().click();
     await expect(page).toHaveURL(/\/about\/?$/);
     await expect(page).toHaveTitle(/About/);
   });
 
   test('can navigate to Work', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header a[href="/work"]:visible').first().click();
+    await page.locator('header a[href="/work/"]:visible').first().click();
     await expect(page).toHaveURL(/\/work\/?$/);
     await expect(page.locator('h1')).toContainText('Selected Work');
   });
 
   test('can navigate to Photography', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header a[href="/photography"]:visible').first().click();
+    await page.locator('header a[href="/photography/"]:visible').first().click();
     await expect(page).toHaveURL(/\/photography\/?$/);
     await expect(page).toHaveTitle(/Photography/);
   });

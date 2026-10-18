@@ -32,10 +32,10 @@ export function getCurrentYear(): number {
  * Navigation items for the header component.
  */
 export const navItems = [
-  { name: 'Photography', href: '/photography' },
-  { name: 'Work', href: '/work' },
-  { name: 'Beyond', href: '/beyond' },
-  { name: 'About', href: '/about' },
+  { name: 'Photography', href: '/photography/' },
+  { name: 'Work', href: '/work/' },
+  { name: 'Beyond', href: '/beyond/' },
+  { name: 'About', href: '/about/' },
 ] as const;
 
 /**

@@ -77,6 +77,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     {/* iOS standalone-mode (Add to Home Screen) - matches theme-color
          so the status bar blends with the page; black-translucent
          lets the hero photograph extend behind it. */}
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="John D. Williams" />
@@ -128,10 +129,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
     {/* Open Graph */}
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="John D. Williams" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:alt" content={description} />
     <meta property="og:image:width" content={String(ogImageWidth)} />
     <meta property="og:image:height" content={String(ogImageHeight)} />
 
@@ -140,6 +144,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={description} />
 
     <title>{fullTitle}</title>
 
@@ -164,7 +169,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <ClientRouter />
 
   </head>
-  <body class="min-h-screen flex flex-col pb-32 md:pb-0">
+  <body class="min-h-screen flex flex-col">
     {/* Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
          Kept for future use; currently unreferenced because iOS Safari
          cannot resolve backdrop-filter: url() at paint time. */}
@@ -189,6 +194,8 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       id="back-to-top"
       class="hidden md:flex fixed bottom-8 right-4 sm:right-6 z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full glass-control items-center justify-center opacity-0 pointer-events-none translate-y-4 transition-[opacity,transform,pointer-events] duration-300 ease-smooth"
       aria-label="Back to top"
+      tabindex="-1"
+      aria-hidden="true"
     >
       <svg class="w-4 h-4 sm:w-5 sm:h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 15l7-7 7 7" />
@@ -209,21 +216,35 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         if (!btn) return;
         bottomNavAbort = new AbortController();
         const signal = bottomNavAbort.signal;
+        const setBackToTop = (visible) => {
+          btn.classList.toggle('is-visible', visible);
+          if (visible) {
+            btn.tabIndex = 0;
+            btn.setAttribute('aria-hidden', 'false');
+          } else {
+            if (document.activeElement === btn) btn.blur();
+            btn.tabIndex = -1;
+            btn.setAttribute('aria-hidden', 'true');
+          }
+        };
         let ticking = false;
+        const syncBackToTop = () => {
+          setBackToTop(window.innerWidth >= 768 && window.scrollY > 600);
+        };
         window.addEventListener('scroll', () => {
           if (!ticking) {
             window.requestAnimationFrame(() => {
-              if (window.innerWidth >= 768 && window.scrollY > 600) {
-                btn.classList.add('is-visible');
-              } else {
-                btn.classList.remove('is-visible');
-              }
+              syncBackToTop();
               ticking = false;
             });
             ticking = true;
           }
         }, { passive: true, signal });
-        btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, { signal });
+        syncBackToTop();
+        btn.addEventListener('click', () => {
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        }, { signal });
       }
 
       // P3 fix, 2026-07-19: unrevealed elements below the fold kept each old

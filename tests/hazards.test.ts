@@ -186,11 +186,14 @@ describe('hazard locks: /relief sweep video (2026-07-25)', () => {
     expect(relief).toContain("document.addEventListener('astro:after-swap', initSweep)");
   });
 
-  it('the still is the LCP candidate — the video is decorative and never the accessible content', () => {
-    // BaseLayout's lcpImage prop builds /images/photography/<tier>/… by
-    // construction and cannot address /images/relief/, so the priority hint
-    // lives on the <img> itself. See the page's frontmatter note.
-    expect(relief).toContain('fetchpriority="high"');
+  it('the sweep still stays below the Beyond hero and the video stays decorative', () => {
+    // Beyond's hero is the LCP. This still is after the depth and texture
+    // acts, so a high fetch priority here both fails offscreen-images and
+    // competes with the preloaded hero. The video is never the accessible content.
+    const still = relief.slice(relief.indexOf('sweep__still'), relief.indexOf('sweep__video'));
+    expect(still).toContain('loading="lazy"');
+    expect(still).toContain('decoding="async"');
+    expect(still).not.toContain('fetchpriority');
     expect(relief).toMatch(/<video[^>]{0,400}aria-hidden="true"/);
   });
 });
@@ -294,15 +297,15 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
   const gallery = readFileSync(join(SRC, 'pages/photography/index.astro'), 'utf8');
 
   it('the home page grid carries a /beyond card', () => {
-    expect(home).toMatch(/href="\/beyond"/);
+    expect(home).toMatch(/href="\/beyond\/"/);
   });
 
   it('/work hands off to Beyond by name', () => {
-    expect(work).toMatch(/href="\/beyond"/);
+    expect(work).toMatch(/href="\/beyond\/"/);
   });
 
   it('/photography links the object axis with a photograph, not a 12px line', () => {
-    const idx = gallery.indexOf('href="/beyond"');
+    const idx = gallery.indexOf('href="/beyond/"');
     expect(idx).toBeGreaterThan(-1);
     expect(gallery.slice(idx, idx + 900)).toContain('/images/relief/');
   });
@@ -310,10 +313,13 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
   it('/relief bio links survive the fold: real 301s to /beyond ship', () => {
     // The relief page folded onward to /beyond (owner rulings 2026-07-31). The
     // link-in-bio URLs printed on cards and profiles must keep resolving:
-    // public/_redirects gives Cloudflare Pages a server-side 301.
+    // public/_redirects gives Cloudflare Pages a server-side 301. Targets
+    // include the trailing slash so the hop lands on the canonical URL.
     const redirects = readFileSync(join(SRC, '../public/_redirects'), 'utf8');
-    expect(redirects).toMatch(/^\/relief\s+\/beyond#relief\s+301$/m);
-    expect(redirects).toMatch(/^\/labs\s+\/beyond\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\s+\/beyond\/#relief\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\/\s+\/beyond\/#relief\s+301$/m);
+    expect(redirects).toMatch(/^\/labs\s+\/beyond\/\s+301$/m);
+    expect(redirects).toMatch(/^\/labs\/\s+\/beyond\/\s+301$/m);
   });
 
   it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {

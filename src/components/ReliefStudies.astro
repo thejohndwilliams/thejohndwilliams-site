@@ -31,10 +31,9 @@ import KineticPlate from './KineticPlate.astro';
  *
  * NOT using the lcpImage prop: it resolves paths under
  * /images/photography/<tier>/ by construction, and these assets live in
- * /images/relief/. The opening still carries fetchpriority="high" on the
- * <img> instead, which the parser discovers at the same point in the head-to
- * -body pass. Extending the shared layout for one page was not worth the
- * blast radius on a test-locked file.
+ * /images/relief/. On /beyond the hero is the LCP. This still sits below
+ * the depth and texture acts, so it loads lazy and does not take
+ * fetchpriority from the hero.
  */
 
 const DEPTHS = [
@@ -109,7 +108,7 @@ const EDITIONS = [
                 alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
                 width="1040"
                 height="1300"
-                fetchpriority="high"
+                loading="lazy"
                 decoding="async"
               />
             </picture>
@@ -244,7 +243,7 @@ const EDITIONS = [
         class="btn btn-primary w-full sm:w-auto"
       >Inquire</a>
       <p class="mt-8 sm:mt-10">
-        <a href="/photography" class="text-xs tracking-[0.2em] uppercase text-mute hover:text-cream transition-colors">
+        <a href="/photography/" class="text-xs tracking-[0.2em] uppercase text-mute hover:text-cream transition-colors">
           Back to the photographs
         </a>
       </p>

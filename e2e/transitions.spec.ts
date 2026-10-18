@@ -50,7 +50,7 @@ test.describe('directional page drift', () => {
   test('forward nav drifts out left, history back drifts out right', async ({ page }) => {
     await page.goto('/');
     await armDriftSampler(page);
-    await page.locator('header a[href="/about"]:visible').first().click();
+    await page.locator('header a[href="/about/"]:visible').first().click();
     await expect(page).toHaveURL(/\/about\/?$/);
     await expect.poll(async () => driftNames(page), { timeout: 3000 }).toContain('page-drift-out-left');
     // Let the forward drift finish before the back gesture. Sampling as soon
@@ -71,7 +71,7 @@ test.describe('directional page drift', () => {
       await page.goto('/');
       expect(await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
       await armDriftSampler(page);
-      await page.locator('header a[href="/about"]:visible').first().click();
+      await page.locator('header a[href="/about/"]:visible').first().click();
       await expect(page).toHaveURL(/\/about\/?$/);
       // Cover the 300ms drift window, then confirm no drift names landed.
       await page.waitForTimeout(600);

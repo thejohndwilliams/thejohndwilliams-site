@@ -14,7 +14,7 @@ test.describe('Mobile navigation (top glass header)', () => {
     await page.goto('/');
     const items = page.locator('header .m-nav-item:visible');
     expect(await items.count()).toBeGreaterThanOrEqual(3);
-    await page.locator('header .m-nav-item[href="/about"]').click();
+    await page.locator('header .m-nav-item[href="/about/"]').click();
     await expect(page).toHaveURL(/\/about\/?$/);
   });
 

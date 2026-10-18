@@ -244,9 +244,9 @@ describe('Generated HTML Content', () => {
     });
 
     it('contains navigation links', () => {
-      expect(indexHtml).toContain('href="/about"');
-      expect(indexHtml).toContain('href="/work"');
-      expect(indexHtml).toContain('href="/photography"');
+      expect(indexHtml).toContain('href="/about/"');
+      expect(indexHtml).toContain('href="/work/"');
+      expect(indexHtml).toContain('href="/photography/"');
     });
 
     it('contains social links in the footer', () => {

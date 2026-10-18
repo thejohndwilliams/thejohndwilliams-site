@@ -101,7 +101,7 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
 
   test('composes correctly after a view-transition navigation', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header a[href="/photography"]:visible').first().click();
+    await page.locator('header a[href="/photography/"]:visible').first().click();
     await expect(page).toHaveURL(/\/photography\/?$/);
     // Let the head swap (and any aborted-transition fallout) settle.
     await page.waitForTimeout(800);

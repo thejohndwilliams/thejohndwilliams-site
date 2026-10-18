@@ -12,7 +12,7 @@ const { slug } = Astro.params;
 const entry = getPhotoBySlug(slug!);
 
 if (!entry) {
-  return Astro.redirect('/photography');
+  return Astro.redirect('/photography/');
 }
 
 const { image, category } = entry;
@@ -52,7 +52,7 @@ const jsonLd = {
   copyrightHolder: { '@type': 'Person', name: 'John D. Williams' },
   creditText: 'John D. Williams',
   copyrightNotice: '© John D. Williams',
-  license: `${SITE}/photography`,
+  license: `${SITE}/photography/`,
   acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`,
   keywords: [category.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
   ...(meta.captureDate ? { datePublished: meta.captureDate } : {}),
@@ -60,7 +60,7 @@ const jsonLd = {
   isPartOf: {
     '@type': 'ImageGallery',
     name: `${category.name} · Photography by John D. Williams`,
-    url: `${SITE}/photography#gallery-${category.id}`,
+    url: `${SITE}/photography/#gallery-${category.id}`,
   },
 };
 
@@ -135,7 +135,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
     {/* Back nav + keyboard hint */}
     <a
-      href="/photography"
+      href="/photography/"
       class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -145,7 +145,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     {/* Keyboard nav arrows (desktop only, visible on hover) */}
     {prevSlug && (
       <a
-        href={`/photography/${prevSlug}`}
+        href={`/photography/${prevSlug}/`}
         id="nav-prev"
         class="hidden md:flex absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 focus-visible:opacity-80 transition-opacity duration-300"
         aria-label="Previous photo"
@@ -155,7 +155,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     )}
     {nextSlug && (
       <a
-        href={`/photography/${nextSlug}`}
+        href={`/photography/${nextSlug}/`}
         id="nav-next"
         class="hidden md:flex absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full glass-control opacity-0 hover:opacity-80 focus-visible:opacity-80 transition-opacity duration-300"
         aria-label="Next photo"
@@ -167,7 +167,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
       <div class="reveal max-w-2xl">
         <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-2 sm:mb-3">
-          <a href={`/photography#gallery-${category.id}`} class="hover:opacity-100 transition-opacity duration-300">{category.name}</a>
+          <a href={`/photography/#gallery-${category.id}`} class="hover:opacity-100 transition-opacity duration-300">{category.name}</a>
         </p>
         <h1 class="t-section font-serif tracking-tight mb-2 sm:mb-3">{image.alt}</h1>
         {metaLine && (
@@ -217,7 +217,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
             >
               Inquire about this print
             </a>
-            <GlassPillGL label="Browse all prints" href="/photography" variant="c" />
+            <GlassPillGL label="Browse all prints" href="/photography/" variant="c" />
           </div>
         </div>
       </div>
@@ -234,7 +234,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         <div class="stagger-children grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {related.map((rel) => (
             <a
-              href={`/photography/${rel.file}`}
+              href={`/photography/${rel.file}/`}
               class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,outline,outline-offset] duration-500 ease-smooth"
             >
               <picture>
@@ -271,7 +271,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
   <section class="pb-12 sm:pb-16 md:pb-20 relative z-10">
     <div class="container-narrow text-center">
       <a
-        href="/photography"
+        href="/photography/"
         class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px]"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
