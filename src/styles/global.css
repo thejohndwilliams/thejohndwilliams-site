@@ -115,6 +115,21 @@ html[data-theme="black"] {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* One keyboard ring, cream on midnight. :where() keeps the type list
+     at zero specificity so Tailwind focus-visible:outline-none on tiles,
+     and any skip-link rule, keep winning. :focus-visible only: no :focus,
+     so nav items and the theme toggle stay bare until the keyboard lands. */
+  :where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 1.5px solid rgba(244, 234, 222, 0.7);
+    outline-offset: 3px;
+  }
+
+  /* Clipped scroll rails crop a positive offset. Pull the ring inside
+     .nav-index and any overflow-hidden parent of a focusable child. */
+  :where(.nav-index, .overflow-hidden) :where(a, button, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline-offset: -2px;
+  }
+
   p {
     color: rgba(244, 234, 222, 0.7);
   }
