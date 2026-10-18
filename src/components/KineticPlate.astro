@@ -334,6 +334,8 @@ const plateSrc = `/data/kinetic/${category}.json`;
 </style>
 
 <script>
+  import { fetchKineticJson } from '../scripts/kinetic-json';
+
   type Plate = { cols: number; rows: number; grid: number[]; alt: string };
 
   /**
@@ -452,8 +454,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
     if (!src) return () => {};
     let cancelled = false;
     let teardown: () => void = () => {};
-    fetch(src, { priority: 'low' } as any)
-      .then((r) => r.json())
+    fetchKineticJson(src)
       .then((data: Plate) => {
         if (cancelled) return;
         if (!data || !data.grid || !data.cols || !data.rows) return;
@@ -809,7 +810,18 @@ const plateSrc = `/data/kinetic/${category}.json`;
     applyScroll();
 
     const onScroll = () => scheduleScroll();
-    const onResize = () => { resize(); refreshFigCache(); drawAll(); applyScroll(); };
+    // Debounce resize paints. The first frame is already drawn above.
+    // A burst of resize events waits 150 ms, then sizes and paints once.
+    let resizeTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        resize();
+        refreshFigCache();
+        drawAll();
+        applyScroll();
+      }, 150);
+    };
 
     window.addEventListener('resize', onResize, { passive: true });
     if (!reduced) {
@@ -821,6 +833,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
     }
 
     return () => {
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onScroll);
       fig.removeEventListener('pointermove', onPointerMove);
@@ -829,17 +842,51 @@ const plateSrc = `/data/kinetic/${category}.json`;
   }
 
   let teardowns: Array<() => void> = [];
-  const mountAll = () => {
+  let fallbackWatchers: MutationObserver[] = [];
+
+  function mountPlate(el: HTMLElement): void {
+    teardowns.push(initKineticPlate(el));
+  }
+
+  // The 2.5D plate is the fallback beside a KineticPlate3D figure.
+  // CSS keeps .plate-fallback at display:none until that sibling sets
+  // data-webgl="unsupported". Skip the hidden one so its eight canvases
+  // never take a 2D context. Mount it when the attribute lands.
+  function watchHiddenFallback(el: HTMLElement, k3: HTMLElement): void {
+    if (k3.getAttribute('data-webgl') === 'unsupported') {
+      mountPlate(el);
+      return;
+    }
+    const obs = new MutationObserver(() => {
+      if (k3.getAttribute('data-webgl') !== 'unsupported') return;
+      obs.disconnect();
+      mountPlate(el);
+    });
+    obs.observe(k3, { attributes: true, attributeFilter: ['data-webgl'] });
+    fallbackWatchers.push(obs);
+  }
+
+  function releasePlates(): void {
+    fallbackWatchers.forEach((obs) => obs.disconnect());
+    fallbackWatchers = [];
     teardowns.forEach((fn) => fn());
     teardowns = [];
+  }
+
+  const mountAll = () => {
+    releasePlates();
     document.querySelectorAll<HTMLElement>('.kinetic-plate').forEach((el) => {
-      teardowns.push(initKineticPlate(el));
+      if (window.getComputedStyle(el).display === 'none') {
+        const prev = el.previousElementSibling;
+        if (prev instanceof HTMLElement && prev.classList.contains('kplate3d')) {
+          watchHiddenFallback(el, prev);
+        }
+        return;
+      }
+      mountPlate(el);
     });
   };
   mountAll();
   document.addEventListener('astro:after-swap', mountAll);
-  document.addEventListener('astro:before-swap', () => {
-    teardowns.forEach((fn) => fn());
-    teardowns = [];
-  });
+  document.addEventListener('astro:before-swap', releasePlates);
 </script>

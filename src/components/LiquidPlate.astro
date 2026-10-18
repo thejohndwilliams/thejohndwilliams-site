@@ -277,17 +277,42 @@ const hero = tier('hero', 'webp');
       if (fidAttr) {
         img.style.filter = 'url(#' + fidAttr + ')';
         fig.classList.add('is-fine');
-        let raf = 0, t = Math.random() * 6, cur = 0, hover = false;
-        const loop = () => { t += 0.025; const idle = 1.6 + Math.sin(t) * 1.0; const aim = hover ? 9 : idle;
-          cur += (aim - cur) * 0.08; fe.setAttribute('scale', cur.toFixed(2)); raf = requestAnimationFrame(loop); };
-        raf = requestAnimationFrame(loop);
+        let raf = 0, t = Math.random() * 6, cur = 0, hover = false, looping = false;
+        // Idle displacement is unchanged while the figure is on screen:
+        // t steps 0.025, idle is 1.6 + sin(t), hover aims at 9, lerp is 0.08.
+        // The loop simply does not run when the figure misses the viewport.
+        const loop = () => {
+          if (!looping) return;
+          t += 0.025; const idle = 1.6 + Math.sin(t) * 1.0; const aim = hover ? 9 : idle;
+          cur += (aim - cur) * 0.08; fe.setAttribute('scale', cur.toFixed(2));
+          if (looping) raf = requestAnimationFrame(loop);
+        };
+        const startLoop = () => {
+          if (looping) return;
+          looping = true;
+          raf = requestAnimationFrame(loop);
+        };
+        const stopLoop = () => {
+          looping = false;
+          if (!raf) return;
+          cancelAnimationFrame(raf);
+          raf = 0;
+        };
+        const motionIo = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => { if (entry.isIntersecting) startLoop(); else stopLoop(); });
+        });
+        motionIo.observe(fig);
+        const r0 = fig.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const vw = window.innerWidth || document.documentElement.clientWidth;
+        if (r0.bottom > 0 && r0.right > 0 && r0.top < vh && r0.left < vw) startLoop();
         const onMove = (e: PointerEvent) => { const r = fig.getBoundingClientRect();
           sheen.style.setProperty('--lx', (((e.clientX - r.left) / r.width) * 100).toFixed(1) + '%');
           sheen.style.setProperty('--ly', (((e.clientY - r.top) / r.height) * 100).toFixed(1) + '%'); hover = true; };
         const onLeave = () => { hover = false; };
         fig.addEventListener('pointermove', onMove, { passive: true });
         fig.addEventListener('pointerleave', onLeave, { passive: true });
-        cleanups.push(() => { cancelAnimationFrame(raf); fig.removeEventListener('pointermove', onMove);
+        cleanups.push(() => { stopLoop(); motionIo.disconnect(); fig.removeEventListener('pointermove', onMove);
           fig.removeEventListener('pointerleave', onLeave); img.style.filter = ''; fig.classList.remove('is-fine'); });
       }
     }
