@@ -354,8 +354,10 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       }
 
       let back = false;
+      let navGen = 0;
 
       document.addEventListener('astro:before-preparation', (ev: any) => {
+        navGen += 1;
         document.documentElement.classList.remove('nav-back');
         back = false;
         // Popstate has already moved location to the destination, so
@@ -371,10 +373,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         ev.newDocument.documentElement.classList.toggle('nav-back', back);
         // Astro 7.1.6 has no astro:after-transition. The view transition
         // finished promise is that moment. Dispatch so the cleanup below
-        // runs when the drift ends, including when the transition skips.
+        // runs when the drift ends. A newer preparation bumps navGen so a
+        // skipped transition cannot clear the class mid-flight.
+        const mine = navGen;
         const finished = ev.viewTransition && ev.viewTransition.finished;
         if (finished && typeof finished.finally === 'function') {
           finished.finally(() => {
+            if (mine !== navGen) return;
             document.dispatchEvent(new Event('astro:after-transition'));
           });
         }

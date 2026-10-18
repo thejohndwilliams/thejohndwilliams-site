@@ -6,10 +6,12 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function armDriftSampler(page: Page) {
   await page.evaluate(() => {
-    const w = window as Window & { __driftNames?: string[] };
+    const w = window as Window & { __driftNames?: string[]; __driftGen?: number };
+    const gen = (w.__driftGen = (w.__driftGen || 0) + 1);
     w.__driftNames = [];
     const seen = new Set<string>();
     const grab = () => {
+      if (w.__driftGen !== gen) return;
       for (const anim of document.getAnimations()) {
         const effect = anim.effect;
         if (!effect || !('pseudoElement' in effect)) continue;
@@ -23,6 +25,7 @@ async function armDriftSampler(page: Page) {
     };
     const until = performance.now() + 2500;
     const loop = () => {
+      if (w.__driftGen !== gen) return;
       grab();
       if (performance.now() < until) requestAnimationFrame(loop);
     };
@@ -50,6 +53,9 @@ test.describe('directional page drift', () => {
     await page.locator('header a[href="/about"]:visible').first().click();
     await expect(page).toHaveURL(/\/about\/?$/);
     await expect.poll(async () => driftNames(page), { timeout: 3000 }).toContain('page-drift-out-left');
+    // Let the forward drift finish before the back gesture. Sampling as soon
+    // as the name appears aborts the in-flight transition.
+    await page.waitForTimeout(400);
 
     await armDriftSampler(page);
     await page.goBack();
@@ -61,7 +67,9 @@ test.describe('directional page drift', () => {
     test.use({ reducedMotion: 'reduce' });
 
     test('reduced motion has no drift animation names', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto('/');
+      expect(await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
       await armDriftSampler(page);
       await page.locator('header a[href="/about"]:visible').first().click();
       await expect(page).toHaveURL(/\/about\/?$/);
