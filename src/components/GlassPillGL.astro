@@ -548,9 +548,19 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     };
     pillSessions.push({ pill, stop: stopPill });
 
-    // The home hero rotates its photograph by hour; when the img swaps, the
-    // glass must bend the NEW light, not a stale texture.
-    if (img) img.addEventListener('load', () => { void present(); }, { signal: pillAbort.signal });
+    // The home hero decodes the hour's photograph, dissolves a cover layer,
+    // then commits one src. Refresh this pill once on that commit. A picture
+    // source update can fire load more than once, so the hero does not
+    // refresh from load. The 1024px cap stays inside upload().
+    if (img && img.id === 'hero-img') {
+      img.addEventListener('hero-slot-commit', () => {
+        const n = Number(img.getAttribute('data-tex-refresh') || '0') + 1;
+        img.setAttribute('data-tex-refresh', String(n));
+        void present();
+      }, { signal: pillAbort.signal });
+    } else if (img) {
+      img.addEventListener('load', () => { void present(); }, { signal: pillAbort.signal });
+    }
 
     void present();
 
