@@ -51,10 +51,11 @@ test('no-js lists every depth subject and shows the first pair', async ({ browse
     await expect(page.locator('[data-depth-slot] .kplate3d')).toHaveCount(1);
     await expect(page.locator('[data-depth-slot] .kinetic-plate')).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Earth' })).toHaveCount(0);
-    await expect(page.getByText('Earth · rain-wet leaf')).toBeVisible();
-    await expect(page.getByText('Structure · Shanghai Tower')).toBeVisible();
-    await expect(page.getByText('Sky · thunderheads')).toBeVisible();
-    await expect(page.getByText('Water · El Arco')).toBeVisible();
+    const notes = page.locator('#depth [data-study-note]');
+    await expect(notes).toHaveCount(4);
+    for (const id of ['earth', 'structure', 'sky', 'water']) {
+      await expect(page.locator(`#depth [data-study-note="${id}"]`)).toBeVisible();
+    }
   } finally {
     await context.close();
   }
