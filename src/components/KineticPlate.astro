@@ -506,10 +506,16 @@ const plateSrc = `/data/kinetic/${category}.json`;
     setDensity();
 
     let width = 0, height = 0;
-    const resize = () => {
+    let paintedW = 0, paintedH = 0;
+    let painted = false;
+    // A skipped content-visibility section reports a 0 rect. Forcing that
+    // up to 1x1 locked every off-screen hologram until the window resized.
+    // Return false and leave the previous backing store alone.
+    const resize = (): boolean => {
       const rect = fig.getBoundingClientRect();
-      width = Math.max(1, rect.width);
-      height = Math.max(1, rect.height);
+      if (rect.width < 1 || rect.height < 1) return false;
+      width = rect.width;
+      height = rect.height;
       const deviceDpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
       for (let i = 0; i < LAYERS.length; i++) {
         const dpr = LAYERS[i].capDpr ? 1 : deviceDpr;
@@ -533,8 +539,8 @@ const plateSrc = `/data/kinetic/${category}.json`;
         chromaCtxs[i].setTransform(1, 0, 0, 1, 0, 0);
       }
       setDensity();
+      return true;
     };
-    resize();
 
     /**
      * Scroll-driven parallax signal. Returns a number in roughly
@@ -687,14 +693,56 @@ const plateSrc = `/data/kinetic/${category}.json`;
     // v9.1: also refresh the figure cache on visibility re-entry so any
     // layout shift that happened off-screen (images loading, etc.) is
     // picked up before the next scroll frame uses the stale Y.
+    // The first intersecting entry also measures. Mount often runs while
+    // content-visibility has skipped layout, so the rect is still 0.
     let visible = true;
+    let sawLaidOut = false;
+    const plateAbort = new AbortController();
+    let io: IntersectionObserver | null = null;
+    let ro: ResizeObserver | null = null;
+    let resizeTimer = 0;
+    let layoutRaf = 0;
+
+    const paintIfLaidOut = (): boolean => {
+      if (!resize()) return false;
+      window.clearTimeout(resizeTimer);
+      refreshFigCache();
+      drawAll();
+      applyScroll();
+      painted = true;
+      paintedW = width;
+      paintedH = height;
+      sawLaidOut = true;
+      return true;
+    };
+
+    // Same 150ms wait as the #68 window-resize path. A burst of size
+    // changes paints once. Zero-size entries never reach this.
+    const schedulePaint = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        paintIfLaidOut();
+      }, 150);
+    };
+
+    const paintWhenVisible = () => {
+      if (sawLaidOut) return;
+      if (paintIfLaidOut()) return;
+      if (layoutRaf) return;
+      layoutRaf = requestAnimationFrame(() => {
+        layoutRaf = 0;
+        if (!sawLaidOut) paintIfLaidOut();
+      });
+    };
+
     if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(
+      io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
             const wasVisible = visible;
             visible = e.isIntersecting;
             if (visible && !wasVisible) refreshFigCache();
+            if (e.isIntersecting) paintWhenVisible();
           }
         },
         { rootMargin: '200px' },
@@ -803,41 +851,44 @@ const plateSrc = `/data/kinetic/${category}.json`;
       scheduleTilt();
     };
 
-    // Initial paint + seed scroll position so the plate sits at its
-    // current viewport-progress offset before the user scrolls.
-    refreshFigCache();
-    drawAll();
-    applyScroll();
+    // Initial paint when the figure is already laid out (the first plate,
+    // and any plate whose section is not skipped). Off-screen plates stay
+    // unpainted until the intersection or resize observer sees a real box.
+    paintIfLaidOut();
 
     const onScroll = () => scheduleScroll();
-    // Debounce resize paints. The first frame is already drawn above.
-    // A burst of resize events waits 150 ms, then sizes and paints once.
-    let resizeTimer = 0;
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        resize();
-        refreshFigCache();
-        drawAll();
-        applyScroll();
-      }, 150);
-    };
+    const onResize = () => schedulePaint();
 
-    window.addEventListener('resize', onResize, { passive: true });
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const box = entry.contentRect;
+          if (box.width < 1 || box.height < 1) continue;
+          if (painted && Math.abs(box.width - paintedW) < 1 && Math.abs(box.height - paintedH) < 1) continue;
+          if (!painted) paintIfLaidOut();
+          else schedulePaint();
+        }
+      });
+      ro.observe(fig);
+    }
+
+    window.addEventListener('resize', onResize, { passive: true, signal: plateAbort.signal });
     if (!reduced) {
-      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true, signal: plateAbort.signal });
       if (finePointer) {
-        fig.addEventListener('pointermove', onPointerMove, { passive: true });
-        fig.addEventListener('pointerleave', onPointerLeave, { passive: true });
+        fig.addEventListener('pointermove', onPointerMove, { passive: true, signal: plateAbort.signal });
+        fig.addEventListener('pointerleave', onPointerLeave, { passive: true, signal: plateAbort.signal });
       }
     }
 
     return () => {
+      plateAbort.abort();
       window.clearTimeout(resizeTimer);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onScroll);
-      fig.removeEventListener('pointermove', onPointerMove);
-      fig.removeEventListener('pointerleave', onPointerLeave);
+      if (layoutRaf) cancelAnimationFrame(layoutRaf);
+      io?.disconnect();
+      ro?.disconnect();
+      ro = null;
+      io = null;
     };
   }
 
