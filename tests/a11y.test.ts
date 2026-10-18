@@ -43,6 +43,10 @@ function audit(html: string): string[] {
   const controls = Array.from(doc.querySelectorAll(SEL));
 
   for (const el of controls) {
+    // aria-hidden removes the control from the accessibility tree. The
+    // back-to-top button ships hidden (tabindex -1, aria-hidden) until
+    // scroll reveals it, so it has no name to compute while hidden.
+    if ((el as Element).closest('[aria-hidden="true"]')) continue;
     const name = norm(computeAccessibleName(el as any));
     const vis = visibleText(el);
     // label-content-name-mismatch: visible text must be contained in the name.
