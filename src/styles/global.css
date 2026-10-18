@@ -753,6 +753,11 @@ html[data-theme="black"] {
       transition: none !important;
     }
   }
+
+  /* No script means the .visible class never arrives. Show the content. */
+  @media (scripting: none) {
+    .reveal, .stagger-children > * { opacity: 1; transform: none; }
+  }
 }
 
 
@@ -1730,8 +1735,13 @@ footer.glass-footer:hover::after { opacity: 1; }
    holds even where the query never fires. */
 @media (prefers-reduced-transparency: reduce) {
   .glass-card, .glass-panel, .glass-footer, .glass-nav, .glass-tag,
-  .glass-control, .glass-chip-rail, .glass-plate-lb, #site-header {
+  .glass-control, .glass-chip-rail, .glass-plate-lb, #site-header,
+  .glass-disc {
     background: rgba(12, 13, 15, 0.97) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .glass-disc, .btn-primary, .btn-outline {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }

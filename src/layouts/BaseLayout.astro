@@ -365,27 +365,63 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         document.documentElement.classList.remove('nav-back');
       });
     </script>
-    {/* Lenis - patient smooth scroll (Reverent Dark "slowness is the brand").
-         Desktop wheel; touch stays native. Off under reduced-motion. Exposed as
-         window.__lenis so in-page anchors can scrollTo past the sticky header. */}
+    {/* Lenis: patient smooth scroll (Reverent Dark "slowness is the brand").
+         Desktop wheel; touch stays native. Off under reduced-motion, including
+         a live preference change. Exposed as window.__lenis so in-page anchors
+         can scrollTo past the sticky header. */}
     <script>
       import Lenis from 'lenis';
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+
+      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let lenis: any;
+      let rafId = 0;
+
+      const tick = (time: number) => {
+        const current = lenis;
+        if (!current) return;
+        current.raf(time);
+        if (lenis !== current) return;
+        rafId = requestAnimationFrame(tick);
+      };
+
+      function createLenis() {
+        if (lenis) return;
+        lenis = new Lenis({ duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
         (window as any).__lenis = lenis;
-        const raf = (time: number) => { lenis.raf(time); requestAnimationFrame(raf); };
-        requestAnimationFrame(raf);
-        document.addEventListener('astro:after-swap', () => {
-          // P1 lock, 2026-07-19: the lightbox scroll lock stops this persisted
-          // Lenis instance and sets html.lb-open. History-traversing away with
-          // the viewer open skipped unlockScroll, leaving wheel input dead and
-          // the chrome hidden on the next page. <html> and Lenis both persist,
-          // so the swap handler is the one owner that always runs.
-          document.documentElement.classList.remove('lb-open');
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function destroyLenis() {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+        if (lenis) {
+          lenis.destroy();
+          lenis = undefined;
+        }
+        (window as any).__lenis = undefined;
+      }
+
+      if (!motionQuery.matches) createLenis();
+      motionQuery.addEventListener('change', () => {
+        if (motionQuery.matches) destroyLenis();
+        else createLenis();
+      });
+
+      document.addEventListener('astro:after-swap', () => {
+        // P1 lock, 2026-07-19: the lightbox scroll lock stops this persisted
+        // Lenis instance and sets html.lb-open. History-traversing away with
+        // the viewer open skipped unlockScroll, leaving wheel input dead and
+        // the chrome hidden on the next page. <html> and Lenis both persist,
+        // so the swap handler is the one owner that always runs. When reduced
+        // motion is on, lenis is absent and this is a no-op.
+        document.documentElement.classList.remove('lb-open');
+        if (lenis) {
           lenis.start?.();
           lenis.scrollTo(0, { immediate: true });
-        });
-      }
+        }
+      });
     </script>
     {/* Inject the encircle-then-dissolve wake element into every crystal button
          so the tuned ::before rim and ::after specular stay untouched. */}
