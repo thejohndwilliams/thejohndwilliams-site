@@ -21,7 +21,7 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
       <div class="hidden md:flex items-center gap-8">
         <ul class="flex items-center gap-8">
           {navItems.map((item) => {
-            const isActive = currentPath === item.href;
+            const isActive = currentPath === item.href.replace(/\/$/, '');
             return (
               <li>
                 <a
