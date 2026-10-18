@@ -282,14 +282,16 @@ describe('Generated HTML Content', () => {
         .filter((f) => f.endsWith('.css'))
         .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
         .join('\n');
-      expect(css).toContain('.hero-scrim');
-      const grad = css.match(/linear-gradient\(to right,[^)]*\)/);
-      expect(grad, 'hero scrim gradient missing from the shipped CSS').toBeTruthy();
-      const body = (grad as RegExpMatchArray)[0];
-      expect(body).toMatch(/rgba\(10,\s*10,\s*10,\s*0?\.92\)\s*0%/);
-      expect(body).toMatch(/rgba\(10,\s*10,\s*10,\s*0\)\s*100%/);
-      const stops = body.match(/rgba\(/g) || [];
+      const rule = css.match(/\.hero-scrim\{[^}]*\}/);
+      expect(rule, 'hero scrim rule missing from the shipped CSS').toBeTruthy();
+      const body = (rule as RegExpMatchArray)[0];
+      // esbuild rewrites rgba(10,10,10,.92) to #0a0a0aeb and drops stop
+      // positions that even spacing already implies. Endpoints stay.
+      expect(body).toMatch(/#0a0a0aeb|rgba\(10,\s*10,\s*10,\s*\.?92\)/);
+      expect(body).toMatch(/#0a0a0a00|rgba\(10,\s*10,\s*10,\s*0\)/);
+      const stops = body.match(/#0a0a0a[0-9a-f]{2}|rgba\(/gi) || [];
       expect(stops.length).toBeGreaterThanOrEqual(10);
+      expect(css).toContain('--hero-scrim-grain');
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
