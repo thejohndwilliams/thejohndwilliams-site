@@ -500,36 +500,6 @@ html[data-theme="black"] {
   .photo-protect::selection { background: transparent; }
   .photo-protect::-moz-selection { background: transparent; }
 
-  /* Link cards - glass-infused */
-  .link-card {
-    display: block;
-    padding: 1rem 1.5rem;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.01) 100%
-    );
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0.75rem;
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .link-card:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.07) 0%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    border-color: rgba(255, 255, 255, 0.14);
-    transform: translateY(-2px);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
-      0 8px 32px rgba(0, 0, 0, 0.25);
-  }
-
   /* Gold retired 2026-05-31 - tonal ivory mark + blue-hour accent. */
 
   /* Buttons - 44px min touch target on mobile, 8pt grid aligned */
@@ -719,15 +689,7 @@ html[data-theme="black"] {
   /* ============================================================
      SECTION PACING - Apple-style alternating dark/light
      ============================================================ */
-  .section-dark {
-    background-color: var(--bg-base);
-  }
-
   .section-light {
-    background-color: var(--bg-elevated);
-  }
-
-  .section-elevated {
     background-color: var(--bg-elevated);
   }
 
@@ -753,10 +715,7 @@ html[data-theme="black"] {
     transform: translateY(0);
   }
 
-  .reveal-delay-1 { transition-delay: 100ms; }
   .reveal-delay-2 { transition-delay: 200ms; }
-  .reveal-delay-3 { transition-delay: 300ms; }
-  .reveal-delay-4 { transition-delay: 400ms; }
 
   /* Stagger children */
   .stagger-children > * {
@@ -817,25 +776,10 @@ html[data-theme="black"] {
 }
 
 
-/* ============================================================
-   HEADER SCROLLED STATE -- quiet-luxury pass
-   The site header is a solid shelf (not glass) when scrolled. As of
-   2026-05-30 the /photography category bar is non-sticky editorial
-   wayfinding (anchor links, no glass, scrolls away with the page), so
-   the header is the only persistent chrome - no double-blur stacking.
-   ============================================================ */
-#site-header.scrolled {
-  background: rgba(10, 10, 10, 0.92);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-
 /* Dim <-> true-black: smooth the solid-surface swap. The global
    prefers-reduced-motion rule neutralizes this transition. */
 body,
-.section-dark,
-.section-light,
-.section-elevated {
+.section-light {
   transition: background-color 0.4s var(--ease-smooth);
 }
 
@@ -968,17 +912,6 @@ html.lenis body { height: auto; }
 /* Mobile complications - each a glass key */
 /* (removed: v2.3 per-item nav key) */
 /* (removed: v2.3 active nav box) */
-
-/* Inquire - glossy ivory glass CTA (stays the warm "light", now dimensional) */
-.inquire-pill {
-  background: linear-gradient(180deg, #FBF6EE 0%, #F4EADE 52%, #ECDFCB 100%);
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255,255,255,0.85),
-    inset 0 -2px 2px 0 rgba(0,0,0,0.08),
-    0 10px 24px rgba(0,0,0,0.45),
-    0 0 22px rgba(244,234,222,0.16);
-}
 
 /* ============================================================
    UNIFIED CONTROLS - small glass icon buttons (back-to-top,
@@ -1126,7 +1059,7 @@ main > section:not(:first-of-type):not([id]) {
 
 /* ============================================================
    GLASS COMPLICATIONS — SITE-WIDE EXTENSION (2026-06-09)
-   Carries the photography vocabulary (pointer caustic, lens-ring,
+   Carries the photography vocabulary (pointer caustic,
    light sweep) onto the persistent header/footer and CTA surfaces.
    Discipline: matches photography exactly — CONTROLS and PANELS get
    glass life; image tiles stay clean (as the gallery tiles do). Same
@@ -1180,12 +1113,6 @@ footer.glass-footer:hover::after { opacity: 1; }
    stops under prefers-reduced-motion.
    ============================================================ */
 
-@property --lens-a {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
 /* Complication rail: one glass capsule holding the category links. */
 .glass-chip-rail {
   position: relative;
@@ -1238,30 +1165,6 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .glass-chip-rail:hover::after { opacity: 1; }
 .glass-chip-rail > * { position: relative; z-index: 1; }
-
-/* Lens ring: light bending around the complication's edge. A soft
-   conic segment circles the rim on a 14s orbit. Gradient mask keeps
-   it to a 1px band (mask-image url() stays banned; gradients are
-   iOS-safe). Engines without @property render a static segment. */
-.lens-ring {
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  pointer-events: none;
-  padding: 1px;
-  background: conic-gradient(from var(--lens-a, 0deg),
-    transparent 0turn, transparent 0.30turn,
-    rgba(244,234,222,0.50) 0.37turn,
-    rgba(244, 234, 222, 0.21) 0.43turn,
-    transparent 0.50turn, transparent 1turn);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  animation: lensSweep 14s linear infinite;
-  opacity: 0.8;
-  z-index: 2;
-}
 
 /* Lightbox chrome: glass discs that breathe at idle and answer the
    cursor. Sized by their existing utility classes (>=44px). */
@@ -1338,9 +1241,6 @@ footer.glass-footer:hover::after { opacity: 1; }
   from { background-position: 0 0, 0% 0; }
   to { background-position: 0 0, 100% 0; }
 }
-@keyframes lensSweep {
-  to { --lens-a: 360deg; }
-}
 @keyframes glassBreath {
   0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 18px rgba(0,0,0,0.30); }
   50% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 4px 22px rgba(0,0,0,0.34); }
@@ -1348,7 +1248,6 @@ footer.glass-footer:hover::after { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .glass-chip-rail::before { animation: none; }
-  .lens-ring { animation: none; }
   .glass-disc { animation: none; }
   .btn-outline::after { display: none; }
 }
@@ -1522,7 +1421,7 @@ footer.glass-footer:hover::after { opacity: 1; }
 /* The ivory key is the single flame (owner law): its ring never rests. */
 .btn-primary { --ring-rest: 1; }
 /* Attention relights the crystal. */
-.btn-outline:hover, .btn-outline:focus-visible, .btn-outline.is-lit,
+.btn-outline:hover, .btn-outline:focus-visible,
 .glass-control:hover, .glass-control:focus-visible,
 .glass-disc:hover, .glass-disc:focus-visible { --ring-rest: 0.8; }
 /* Idle crystal presence (v1.1, John's review 2026-06-10): the first
@@ -1629,7 +1528,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   transform-origin: 50% 28%;
   animation: btn-breathe 6.5s ease-in-out infinite;
 }
-.btn-primary:hover::after, .btn-primary:focus-visible::after, .btn-primary.is-lit::after {
+.btn-primary:hover::after, .btn-primary:focus-visible::after {
   animation-duration: 4.5s;
   background:
     radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.92) 0%, rgba(253, 252, 250, 0.36) 42%, transparent 72%);
@@ -1646,7 +1545,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   background:
     radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.42) 0%, rgba(253, 252, 250, 0.14) 42%, transparent 72%);
 }
-.btn-outline:hover::after, .btn-outline:focus-visible::after, .btn-outline.is-lit::after {
+.btn-outline:hover::after, .btn-outline:focus-visible::after {
   animation-duration: 4.5s;
   background:
     radial-gradient(60% 90% at 50% 14%, rgba(255, 255, 255, 0.68) 0%, rgba(253, 252, 250, 0.24) 42%, transparent 72%);
@@ -1665,8 +1564,8 @@ footer.glass-footer:hover::after { opacity: 1; }
 
 /* The arrow glides forward once and holds (a quiet lean, no loop). */
 .btn svg { transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
-.btn-primary:hover svg, .btn-primary:focus-visible svg, .btn-primary.is-lit svg,
-.btn-outline:hover svg, .btn-outline:focus-visible svg, .btn-outline.is-lit svg { transform: translateX(4px); }
+.btn-primary:hover svg, .btn-primary:focus-visible svg,
+.btn-outline:hover svg, .btn-outline:focus-visible svg { transform: translateX(4px); }
 
 /* Encircle-then-dissolve wake: a chromatic rim contour lights up around the
    key on approach, then melts inward and dissolves into the glass — light
@@ -1707,9 +1606,6 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 .btn-primary:focus-visible .btn-wake,
 .btn-outline:focus-visible .btn-wake { animation: encircle-dissolve 1.15s var(--ease-smooth) forwards; }
-/* material-lab capture: freeze at the encircle peak (the ring lit around the rim) */
-.btn-primary.is-lit .btn-wake,
-.btn-outline.is-lit .btn-wake { opacity: 1; filter: blur(0.4px); animation: none; }
 
 /* Candle underline draws in from the left (links opt in via .link-draw). */
 .link-draw {
