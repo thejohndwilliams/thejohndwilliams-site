@@ -147,7 +147,7 @@ const jsonLd = {
             return (
               <a
                 href={`/photography/${img.file}`}
-                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden block w-full break-inside-avoid mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-all duration-500 cursor-pointer`}
+                class={`gallery-item photo-protect press-feedback glass-luminous group relative overflow-hidden block w-full break-inside-avoid mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth cursor-pointer`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
                 data-alt={img.alt}
                 data-file={img.file}
@@ -179,7 +179,7 @@ const jsonLd = {
                 {/* Caption is visual-only; img.alt already provides the accessible name for the link,
                     so expose this to sighted users only. Prevents axe image-redundant-alt from firing
                     when the same string appears as both alt and adjacent visible text. */}
-                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-y-0 sm:group-focus-visible:opacity-100 transition-all duration-300 pointer-events-none" aria-hidden="true">
+                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-y-0 sm:group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth pointer-events-none" aria-hidden="true">
                   <p class="text-[10px] sm:text-xs">{img.alt}</p>
                 </div>
               </a>
@@ -253,7 +253,7 @@ const jsonLd = {
               light on this surface), but a photograph rather than a 12px line:
               the first version shipped as text so quiet nobody found the page.
               Navigation gets an image here, the same as every other surface. */}
-          <a href="/beyond" class="press-feedback glass-luminous group relative mt-8 sm:mt-10 flex items-stretch gap-4 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-all duration-500">
+          <a href="/beyond" class="press-feedback glass-luminous group relative mt-8 sm:mt-10 flex items-stretch gap-4 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
             <picture class="shrink-0 block w-20 sm:w-24 self-stretch">
               <source type="image/avif" srcset="/images/relief/edition-16x20.avif" />
               <source type="image/webp" srcset="/images/relief/edition-16x20.webp" />

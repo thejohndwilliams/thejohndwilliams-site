@@ -28,6 +28,8 @@
   --blur-link: 28px;       --blur-card: 30px;   --blur-panel: 34px;
   --blur-nav: 40px;        --blur-header: 44px;
   --sat-max: 1.85;         --sat-mid: 1.6;      --sat-lens: 1.2;
+  /* One name for the curve already used on transitions. Do not retune it. */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   /* The seventh ingredient (study 2026-08-15): grain inside the glass.
      Defeats 8-bit banding on the onyx base; the strongest anti-clone
      lever. White fractal noise at 5% alpha, tiled. */
@@ -112,7 +114,16 @@ html[data-theme="black"] {
 
   a {
     color: inherit;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* .prose a:hover changes color and border-bottom-color.
+       Privacy links add hover:underline (text-decoration-line).
+       The site focus ring sets outline and outline-offset. */
+    transition:
+      color 0.3s var(--ease-smooth),
+      border-color 0.3s var(--ease-smooth),
+      text-decoration-color 0.3s var(--ease-smooth),
+      text-decoration-line 0.3s var(--ease-smooth),
+      outline 0.3s var(--ease-smooth),
+      outline-offset 0.3s var(--ease-smooth);
   }
 
   /* One keyboard ring, cream on midnight. :where() keeps the type list
@@ -245,7 +256,15 @@ html[data-theme="black"] {
        and misleading - deleted so greps read the truth). */
     position: relative;
     border-radius: 0.75rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Unlayered .glass-card:hover changes border-color and box-shadow.
+       /links adds hover opacity. The layered hover background loses to
+       the unlayered rest background, so background is not in this list. */
+    transition:
+      border-color 0.4s var(--ease-smooth),
+      box-shadow 0.4s var(--ease-smooth),
+      opacity 0.4s var(--ease-smooth),
+      outline 0.4s var(--ease-smooth),
+      outline-offset 0.4s var(--ease-smooth);
   }
 
   /* Tier 1 detail: top-edge rim highlight + pointer-tracked specular.
@@ -264,7 +283,7 @@ html[data-theme="black"] {
         transparent 44%
       );
     opacity: 0.95;
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.5s var(--ease-smooth);
     z-index: 0;
   }
 
@@ -311,7 +330,7 @@ html[data-theme="black"] {
         transparent 50%
       );
     opacity: 0.92;
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.5s var(--ease-smooth);
     z-index: 0;
   }
 
@@ -327,7 +346,11 @@ html[data-theme="black"] {
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* .glass-tag:hover changes these three. backdrop-filter stays put. */
+    transition:
+      background 0.3s var(--ease-smooth),
+      border-color 0.3s var(--ease-smooth),
+      box-shadow 0.3s var(--ease-smooth);
   }
 
   .glass-tag:hover {
@@ -395,7 +418,12 @@ html[data-theme="black"] {
   /* Luminous border - ivory glow on hover for image cards */
   .glass-luminous {
     position: relative;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    /* .glass-luminous:hover changes box-shadow. Tiles that also carry
+       a transition utility use that list (ring, press, focus outline). */
+    transition:
+      box-shadow 0.5s var(--ease-smooth),
+      outline 0.5s var(--ease-smooth),
+      outline-offset 0.5s var(--ease-smooth);
   }
 
   .glass-luminous::after {
@@ -417,7 +445,7 @@ html[data-theme="black"] {
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.5s var(--ease-smooth);
     pointer-events: none;
     z-index: 1;
   }
@@ -518,7 +546,16 @@ html[data-theme="black"] {
     font-size: 0.72rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Hover and :active change transform. Outline hover also changes
+       border-color, box-shadow, and backdrop-filter (fine pointer). */
+    transition:
+      transform 0.3s var(--ease-smooth),
+      border-color 0.3s var(--ease-smooth),
+      box-shadow 0.3s var(--ease-smooth),
+      backdrop-filter 0.3s var(--ease-smooth),
+      -webkit-backdrop-filter 0.3s var(--ease-smooth),
+      outline 0.3s var(--ease-smooth),
+      outline-offset 0.3s var(--ease-smooth);
   }
 
   @media (min-width: 768px) {
@@ -799,7 +836,7 @@ body,
 .section-dark,
 .section-light,
 .section-elevated {
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.4s var(--ease-smooth);
 }
 
 /* ============================================================
@@ -882,6 +919,15 @@ html.lenis body { height: auto; }
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
     0 8px 30px rgba(0, 0, 0, 0.32);
+  /* .scrolled changes background. On small screens it also changes
+     border-color, box-shadow, and backdrop-filter. 0.5s matches
+     the former duration-500 utility. */
+  transition:
+    background 0.5s var(--ease-smooth),
+    border-color 0.5s var(--ease-smooth),
+    box-shadow 0.5s var(--ease-smooth),
+    backdrop-filter 0.5s var(--ease-smooth),
+    -webkit-backdrop-filter 0.5s var(--ease-smooth);
 }
 #site-header.scrolled {
   background: rgba(10, 10, 10, 0.56);
@@ -1100,7 +1146,7 @@ main > section:not(:first-of-type):not([id]) {
   opacity: 0;
   background: radial-gradient(220px 120px at var(--mx, 50%) var(--my, 50%),
     rgba(253,252,250,0.10), rgba(244, 234, 222, 0.03) 45%, transparent 72%);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s var(--ease-smooth);
   z-index: 0;
 }
 #site-header.scrolled:hover::after { opacity: 1; }
@@ -1113,7 +1159,7 @@ footer.glass-footer::after {
   opacity: 0;
   background: radial-gradient(260px 150px at var(--mx, 50%) var(--my, 50%),
     rgba(253,252,250,0.09), rgba(244, 234, 222, 0.03) 45%, transparent 72%);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s var(--ease-smooth);
   z-index: 0;
 }
 footer.glass-footer:hover::after { opacity: 1; }
@@ -1187,7 +1233,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   opacity: 0;
   background: radial-gradient(140px 70px at var(--mx, 50%) var(--my, 20%),
     rgba(253,252,250,0.16), rgba(244, 234, 222, 0.042) 45%, transparent 70%);
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.45s var(--ease-smooth);
   z-index: 0;
 }
 .glass-chip-rail:hover::after { opacity: 1; }
@@ -1236,7 +1282,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   border-radius: 9999px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 18px rgba(0,0,0,0.30);
   animation: glassBreath 5.5s ease-in-out infinite;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease;
+  transition: transform 0.3s var(--ease-smooth), border-color 0.3s ease;
 }
 .glass-disc::after {
   content: '';
@@ -1657,10 +1703,10 @@ footer.glass-footer:hover::after { opacity: 1; }
 }
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover .btn-wake,
-  .btn-outline:hover .btn-wake { animation: encircle-dissolve 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .btn-outline:hover .btn-wake { animation: encircle-dissolve 1.15s var(--ease-smooth) forwards; }
 }
 .btn-primary:focus-visible .btn-wake,
-.btn-outline:focus-visible .btn-wake { animation: encircle-dissolve 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.btn-outline:focus-visible .btn-wake { animation: encircle-dissolve 1.15s var(--ease-smooth) forwards; }
 /* material-lab capture: freeze at the encircle peak (the ring lit around the rim) */
 .btn-primary.is-lit .btn-wake,
 .btn-outline.is-lit .btn-wake { opacity: 1; filter: blur(0.4px); animation: none; }
@@ -1671,7 +1717,7 @@ footer.glass-footer:hover::after { opacity: 1; }
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1px;
-  transition: background-size 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+  transition: background-size 0.4s var(--ease-smooth), color 0.3s ease;
 }
 .link-draw:hover,
 .link-draw:focus-visible { background-size: 100% 1px; }
