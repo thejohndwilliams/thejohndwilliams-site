@@ -310,10 +310,13 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
   it('/relief bio links survive the fold: real 301s to /beyond ship', () => {
     // The relief page folded onward to /beyond (owner rulings 2026-07-31). The
     // link-in-bio URLs printed on cards and profiles must keep resolving:
-    // public/_redirects gives Cloudflare Pages a server-side 301.
+    // public/_redirects gives Cloudflare Pages a server-side 301. Targets
+    // include the trailing slash so the hop lands on the canonical URL.
     const redirects = readFileSync(join(SRC, '../public/_redirects'), 'utf8');
-    expect(redirects).toMatch(/^\/relief\s+\/beyond#relief\s+301$/m);
-    expect(redirects).toMatch(/^\/labs\s+\/beyond\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\s+\/beyond\/#relief\s+301$/m);
+    expect(redirects).toMatch(/^\/relief\/\s+\/beyond\/#relief\s+301$/m);
+    expect(redirects).toMatch(/^\/labs\s+\/beyond\/\s+301$/m);
+    expect(redirects).toMatch(/^\/labs\/\s+\/beyond\/\s+301$/m);
   });
 
   it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {
