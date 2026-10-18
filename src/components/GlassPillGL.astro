@@ -286,28 +286,76 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     const U = (n: string) => gl.getUniformLocation(prog, n);
 
     let tex: WebGLTexture | null = null;
-    function upload() {
+    let uploadGen = 0;
+
+    function uploadSource(source: TexImageSource) {
       if (gl!.isContextLost()) return;
       tex = gl!.createTexture();
       gl!.bindTexture(gl!.TEXTURE_2D, tex);
       gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
-      if (img) {
-        gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, img);
-      } else {
-        // No photograph behind this pill: the material stands on the site's
-        // own onyx. Chrome edge, clear body, crown - the About-me-over-black
-        // reading, anywhere on the site.
-        gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, 1, 1, 0, gl!.RGBA, gl!.UNSIGNED_BYTE, new Uint8Array([10, 11, 13, 255]));
-      }
+      gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, source);
       gl!.generateMipmap(gl!.TEXTURE_2D); // rim frost samples blurred mips
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MIN_FILTER, gl!.LINEAR_MIPMAP_LINEAR);
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_S, gl!.CLAMP_TO_EDGE);
       gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE);
     }
-    upload();
-    // The home hero rotates its photograph by hour; when the img swaps, the
-    // glass must bend the NEW light, not a stale texture.
-    if (img) img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); }, { signal: pillAbort.signal });
+
+    function uploadOnyx() {
+      if (gl!.isContextLost()) return;
+      tex = gl!.createTexture();
+      gl!.bindTexture(gl!.TEXTURE_2D, tex);
+      gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false);
+      // No photograph behind this pill: the material stands on the site's
+      // own onyx. Chrome edge, clear body, crown - the About-me-over-black
+      // reading, anywhere on the site.
+      gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, 1, 1, 0, gl!.RGBA, gl!.UNSIGNED_BYTE, new Uint8Array([10, 11, 13, 255]));
+      gl!.generateMipmap(gl!.TEXTURE_2D);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MIN_FILTER, gl!.LINEAR_MIPMAP_LINEAR);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_S, gl!.CLAMP_TO_EDGE);
+      gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE);
+    }
+
+    // The backdrop upload is the cost. A 2400px hero is far larger than the
+    // pill's sample window. resizeWidth 1024, resizeQuality medium, height
+    // left unset so the bitmap keeps the source aspect. UV stays 0..1 over
+    // that same frame, so the cover window in layout() is still valid.
+    // naturalWidth is density-corrected, so the gate uses the decoded
+    // bitmap width. Sources already at or under 1024 upload at that size.
+    // A lost context recreates the texture the same way #68 did.
+    async function upload(): Promise<boolean> {
+      const gen = ++uploadGen;
+      if (gl.isContextLost()) return false;
+      if (!img) {
+        uploadOnyx();
+        return true;
+      }
+      let bitmap: ImageBitmap | null = null;
+      try {
+        const full = await createImageBitmap(img);
+        if (gen !== uploadGen || gl.isContextLost()) {
+          full.close();
+          return false;
+        }
+        if (full.width > 1024) {
+          try {
+            bitmap = await createImageBitmap(full, { resizeWidth: 1024, resizeQuality: 'medium' });
+          } finally {
+            full.close();
+          }
+        } else {
+          bitmap = full;
+        }
+        if (gen !== uploadGen || gl.isContextLost()) return false;
+        uploadSource(bitmap);
+        return true;
+      } catch {
+        if (gen !== uploadGen || gl.isContextLost()) return false;
+        uploadSource(img);
+        return true;
+      } finally {
+        bitmap?.close();
+      }
+    }
 
     let uvScaleAvg = 0;
     function layout() {
@@ -401,25 +449,49 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     let running = false;
     let onScreen = false;
     let resizeRaf = 0;
+    let lastDraw = 0;
+    let texReady = false;
     let io: IntersectionObserver | null = null;
 
     const cssFallback = () => {
       running = false;
+      texReady = false;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
       pill.classList.remove('gpill-live');
       canvas.style.visibility = 'hidden';
     };
 
+    // The loop keeps requesting frames while the pill is on screen and skips
+    // frame() unless the pointer is still chasing amt toward amtTarget, or at
+    // least 80ms have passed since the last draw (breath at about 12 fps).
+    // The breath formula is unchanged: 1.0 + uBreath * 0.06 * sin(uTime * 0.55),
+    // with uBreath = 1. A lost context stops the chain, same as the #68 loop.
     const loop = (now: number) => {
-      frame(now);
-      if (!gl.isContextLost()) raf = requestAnimationFrame(loop);
+      if (gl.isContextLost()) return;
+      const chasing = Math.abs(amtTarget - amt) > 0.001;
+      if (texReady && (chasing || now - lastDraw >= 80)) {
+        frame(now);
+        lastDraw = now;
+      }
+      raf = requestAnimationFrame(loop);
     };
 
-    const rebind = () => {
+    async function present() {
+      const applied = await upload();
+      if (!applied || disposed) return;
+      texReady = true;
+      layout();
+      const now = performance.now();
+      frame(now);
+      lastDraw = now;
+    }
+
+    const rebind = async () => {
       prog = makeProgram(gl);
       gl.useProgram(prog);
-      upload();
+      const applied = await upload();
+      if (!applied || disposed) return;
       gl.uniform1f(U('uDisp'), v.disp);
       gl.uniform1f(U('uRim'), v.rim);
       gl.uniform1f(U('uSpec'), v.spec);
@@ -434,8 +506,11 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
       if (tune) Object.entries(tune).forEach(([name, val]) => gl.uniform1f(U(name), val));
       canvas.style.visibility = '';
       pill.classList.add('gpill-live');
+      texReady = true;
       layout();
-      frame(performance.now());
+      const now = performance.now();
+      frame(now);
+      lastDraw = now;
     };
 
     canvas.addEventListener('webglcontextlost', (ev) => {
@@ -447,21 +522,24 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     canvas.addEventListener('webglcontextrestored', () => {
       if (disposed || restoreTried) return;
       restoreTried = true;
-      try {
-        rebind();
-        if (!reduce && onScreen) {
-          running = true;
-          raf = requestAnimationFrame(loop);
+      void (async () => {
+        try {
+          await rebind();
+          if (!reduce && onScreen && !running && !disposed) {
+            running = true;
+            raf = requestAnimationFrame(loop);
+          }
+        } catch {
+          cssFallback();
         }
-      } catch {
-        cssFallback();
-      }
+      })();
     }, { signal: pillAbort.signal });
 
     const stopPill = () => {
       if (disposed) return;
       disposed = true;
       running = false;
+      texReady = false;
       if (raf) cancelAnimationFrame(raf);
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
       io?.disconnect();
@@ -470,10 +548,13 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     };
     pillSessions.push({ pill, stop: stopPill });
 
-    layout();
-    frame(t0);
+    // The home hero rotates its photograph by hour; when the img swaps, the
+    // glass must bend the NEW light, not a stale texture.
+    if (img) img.addEventListener('load', () => { void present(); }, { signal: pillAbort.signal });
 
-    if (reduce) return; // one static frame; no clock, no pointer chase
+    void present();
+
+    if (reduce) return; // one static frame once the texture lands; no clock, no pointer chase
 
     // RAF only while visible (O2: runtime is the authority; idle costs zero).
     io = new IntersectionObserver((entries) => {
@@ -489,6 +570,10 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
       resizeRaf = requestAnimationFrame(() => {
         resizeRaf = 0;
         layout();
+        if (!texReady || gl.isContextLost()) return;
+        const now = performance.now();
+        frame(now);
+        lastDraw = now;
       });
     };
     window.addEventListener('resize', onResize, { passive: true, signal: pillAbort.signal });
