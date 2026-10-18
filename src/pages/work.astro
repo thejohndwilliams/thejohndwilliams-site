@@ -58,14 +58,21 @@ const expertise = [
 >
   <!-- HERO -->
   <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
-    <img
-      src="/images/photography/gallery/dscf0331.webp"
-      srcset="/images/photography/thumb/dscf0331.webp 400w, /images/photography/gallery/dscf0331.webp 1200w, /images/photography/hero/dscf0331.webp 2400w"
-      sizes="100vw"
-      alt="Lanterns glowing along a shrine at night, a car passing below"
-      class="absolute inset-0 w-full h-full object-cover"
-      fetchpriority="high"
-    />
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/images/photography/thumb/dscf0331.avif 400w, /images/photography/gallery/dscf0331.avif 1200w, /images/photography/hero/dscf0331.avif 2400w"
+        sizes="100vw"
+      />
+      <img
+        src="/images/photography/gallery/dscf0331.webp"
+        srcset="/images/photography/thumb/dscf0331.webp 400w, /images/photography/gallery/dscf0331.webp 1200w, /images/photography/hero/dscf0331.webp 2400w"
+        sizes="100vw"
+        alt="Lanterns glowing along a shrine at night, a car passing below"
+        class="absolute inset-0 w-full h-full object-cover"
+        fetchpriority="high"
+      />
+    </picture>
     <div class="absolute inset-0" style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"></div>
     <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
