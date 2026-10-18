@@ -21,6 +21,10 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
+/* Name lives in this bundled sheet. transition:name emits an inline
+   style that style-src 'self' refuses, so the drift rules never attach. */
+#content { view-transition-name: page; }
+
 /* Default direction: forward (drift left) */
 ::view-transition-old(page) {
   animation: page-drift-out-left 300ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
