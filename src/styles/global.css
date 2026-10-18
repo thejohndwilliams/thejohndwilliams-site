@@ -6,6 +6,9 @@
    glass system are unchanged. data-theme is set pre-paint by an inline script
    in BaseLayout so there is no flash. */
 :root {
+  /* Dark scrollbars and native form controls only. html[data-theme="black"]
+     does not restate this, so the true-black theme inherits it. */
+  color-scheme: dark;
   --bg-base: #0a0a0a;
   --bg-elevated: #141414;
   /* MATERIAL TOKENS (Glass Build A2, 2026-07-31). The rest/lit grammar as
