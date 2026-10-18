@@ -119,6 +119,9 @@ html[data-theme="black"] {
     color: rgba(244, 234, 222, 0.7);
   }
 
+  /* stacked opacity on p fell to 0.35-0.42 effective alpha (2.8-3.6:1); :not(.reveal) preserves scroll-reveal. */
+  p.opacity-50:not(.reveal), p.opacity-55:not(.reveal), p.opacity-60:not(.reveal) { opacity: 1; color: theme('colors.mute'); }
+
   ::selection {
     background-color: rgba(244, 234, 222, 0.18);
     color: #F4EADE;

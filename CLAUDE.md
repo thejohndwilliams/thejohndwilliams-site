@@ -48,7 +48,7 @@ npm run test:e2e             # Playwright
   #FDFCFA survives only as raw literals in the kinetic dot color. The cream
   family replaced gold everywhere, including the JW mark.
 - `navy-hour` (blue-hour) #7E9CB8: accent for active states and fine lines.
-- `stone` #A89F8C secondary. `mute` #787878 muted prose (AA on midnight).
+- `stone` #A89F8C secondary. `mute` #868686 muted prose (AA on midnight and on #141414).
   `charcoal` #1A1A1A separators.
 - GOLD IS RETIRED. #B8973F and its light/dark variants must not return.
 - NAVY-HOUR IS RETIRED (2026-07-28). #7E9CB8 followed gold out; there is no
