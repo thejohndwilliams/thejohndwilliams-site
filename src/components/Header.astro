@@ -6,9 +6,12 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 <header id="site-header" class="py-4 sm:py-6 md:py-8 sticky top-0 z-40 transition-all duration-500" transition:persist>
   <div class="nav-shell">
-    <nav class="flex items-center justify-between">
-      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] flex items-center" transition:name="logo">
-        JW
+    <nav class="flex items-center justify-between" aria-label="Primary">
+      {/* The monogram stays the mark. aria-hidden keeps those two letters out of
+          the accessible name: the fixed label does not contain "JW", and the
+          label-in-name lock requires visible text to sit inside the name. */}
+      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] flex items-center" transition:name="logo" aria-label="John D. Williams, home">
+        <span aria-hidden="true">JW</span>
       </a>
 
       {/* Desktop navigation + Inquire CTA. On mobile the header is just the
@@ -31,7 +34,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
             );
           })}
         </ul>
-        <button type="button" class="theme-toggle inline-flex items-center justify-center text-mute hover:text-cream transition-colors duration-300 py-2 min-h-[44px]" aria-pressed="false" aria-label="Switch to true black background">
+        <button type="button" class="theme-toggle inline-flex items-center justify-center text-mute hover:text-cream transition-colors duration-300 py-2 min-h-[44px]" aria-pressed="false" aria-label="True black background">
           <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
         </button>
         <a
@@ -60,7 +63,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         <a href="mailto:jndwcreative@gmail.com" aria-label="Inquire" class="m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute transition-colors duration-300">
           <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.8" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="m4.5 7.2 7.5 5.4 7.5-5.4" /></svg>
         </a>
-        <button type="button" class="theme-toggle flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute hover:text-cream transition-colors duration-300" aria-pressed="false" aria-label="Switch to true black background">
+        <button type="button" class="theme-toggle flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute hover:text-cream transition-colors duration-300" aria-pressed="false" aria-label="True black background">
           <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
         </button>
       </div>
@@ -125,8 +128,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   // Dim / true-black toggle. Pre-paint script in BaseLayout applied the saved
   // preference; this wires every .theme-toggle control (header has more than
-  // one across breakpoints) and keeps aria + theme-color meta in sync. The
-  // header persists across View Transitions, so guard against double-binding.
+  // one across breakpoints) and keeps aria-pressed + theme-color meta in sync.
+  // The accessible name stays fixed. aria-pressed carries the state.
+  // The header persists across View Transitions, so guard against double-binding.
   function initThemeToggle() {
     const btns = document.querySelectorAll('.theme-toggle');
     if (!btns.length) return;
@@ -138,7 +142,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       const black = document.documentElement.getAttribute('data-theme') === 'black';
       btns.forEach((b) => {
         b.setAttribute('aria-pressed', String(black));
-        b.setAttribute('aria-label', black ? 'Switch to dim background' : 'Switch to true black background');
       });
       if (meta) meta.setAttribute('content', black ? '#000000' : '#0a0a0a');
     };
