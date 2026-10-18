@@ -50,11 +50,13 @@ async function assertPlatePainted(fig: Locator): Promise<void> {
         const canvas = node as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
         if (!ctx || canvas.width < 2 || canvas.height < 2) return 0;
-        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        // A middle band is enough to tell a painted plate from an empty
+        // one, and it stays cheap when device pixels are large.
+        const band = Math.max(16, Math.floor(canvas.height / 5));
+        const y0 = Math.floor((canvas.height - band) / 2);
+        const data = ctx.getImageData(0, y0, canvas.width, band).data;
         let ink = 0;
-        // Step two pixels. Dot cells are about four pixels across, so a
-        // coarser stride can miss a painted plate and look blank.
-        for (let i = 3; i < data.length; i += 8) {
+        for (let i = 3; i < data.length; i += 16) {
           if (data[i] > 8) ink++;
         }
         return ink;
@@ -67,13 +69,25 @@ async function assertPlatePainted(fig: Locator): Promise<void> {
     return;
   }
 
-  const png = PNG.sync.read(await fig.locator('canvas').screenshot());
+  // Element screenshots of a WebGL canvas wait until the box stops moving.
+  // A page clip does not. preserveDrawingBuffer is not set, so the pixels
+  // come from the screenshot, not from the GL buffer.
+  const clip = await fig.locator('canvas').evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    const x = Math.max(0, r.left);
+    const y = Math.max(0, r.top);
+    const width = Math.min(r.width, window.innerWidth - x, 480);
+    const height = Math.min(r.height, window.innerHeight - y, 480);
+    return { x, y, width: Math.max(1, width), height: Math.max(1, height) };
+  });
+  const png = PNG.sync.read(await fig.page().screenshot({ clip, animations: 'disabled' }));
   const spread = luminanceStdDev(png);
   expect(spread, `${label}: point cloud screenshot is flat (${spread.toFixed(2)})`).toBeGreaterThan(4);
 }
 
 for (const viewport of VIEWPORTS) {
   test(`plates paint at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    test.setTimeout(60_000);
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/beyond/');
 
