@@ -439,10 +439,4 @@ const EDITIONS = [
     .edition__read { font-size: 0.5625rem; }
   }
 
-  /* WebGL fallback swap (about.astro pattern; doctrine audit 2026-07-28):
-     the 2.5D plate shows only when the 3D context cannot be created, so
-     no-WebGL visitors get the photograph instead of an empty region. */
-  .plate-fallback { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
 </style>

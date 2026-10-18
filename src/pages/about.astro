@@ -146,13 +146,4 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
     </div>
   </section>
 
-  <!-- CTA -->
-<style is:global>
-  /* The true-3D plate is primary; the 2.5D plate is a graceful fallback,
-     shown only when WebGL2 is unavailable (KineticPlate3D marks its figure
-     data-webgl="unsupported" on context-creation failure). */
-  .plate-fallback { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] { display: none !important; }
-  .kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
-</style>
 </BaseLayout>

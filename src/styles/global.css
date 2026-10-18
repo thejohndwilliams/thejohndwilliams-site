@@ -1051,11 +1051,25 @@ html.lenis body { height: auto; }
    sections are excluded so in-page anchor jumps (photography categories)
    stay pixel-accurate. contain-intrinsic-size:auto memoizes the real
    height after first render so the scrollbar stays honest.
+
+   Sections that hold a hologram or point cloud are excluded. The skip
+   withholds descendant layout, so a plate measured at mount reads a 0
+   rect and locks its canvases at 1x1. contain-intrinsic-size reserves
+   the section box for the scrollbar, but it does not give the figure a
+   size. The rest of the page keeps the skip.
    ============================================================ */
-main > section:not(:first-of-type):not([id]) {
+main > section:not(:first-of-type):not([id]):not(:has(.kinetic-plate, .kplate3d)) {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }
+
+/* 2.5D hologram beside a point cloud. Hidden until that sibling sets
+   data-webgl="unsupported". Bundled here so /about and /beyond share
+   one rule. A scoped style on the relief component never reached the
+   child figure. */
+.plate-fallback { display: none !important; }
+.kplate3d[data-webgl="unsupported"] { display: none !important; }
+.kplate3d[data-webgl="unsupported"] + .plate-fallback { display: block !important; }
 
 /* ============================================================
    GLASS COMPLICATIONS — SITE-WIDE EXTENSION (2026-06-09)
