@@ -328,6 +328,15 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         reveal content visible so images can never be stuck invisible. */}
     <script is:inline src="/js/reveal-failsafe.js"></script>
 
+    {/* Copy the live theme onto the incoming document before ClientRouter
+        replaces every attribute on html. theme.js does not re-run on swap. */}
+    <script>
+      document.addEventListener('astro:before-swap', (ev: any) => {
+        const t = document.documentElement.getAttribute('data-theme');
+        if (t) ev.newDocument.documentElement.setAttribute('data-theme', t);
+      });
+    </script>
+
     {/* Transition direction detector - determines spatial relationship
          between current and target page to set drift direction. */}
     <script>
