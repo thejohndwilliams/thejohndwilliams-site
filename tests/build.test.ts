@@ -194,8 +194,8 @@ describe('Astro Build', () => {
 
   it('emits per-frame KineticPlate geometry and keeps /about lean (no inline grids)', () => {
     // v10: KineticPlate fetches geometry from /data/kinetic/<id>.json instead of
-    // inlining a ~80-130 KB data-plate attribute per plate. /about renders three
-    // plates; before extraction its HTML was ~336 KB.
+    // inlining a ~80-130 KB data-plate attribute per plate. /about keeps one
+    // plate beside Background; before extraction its HTML was ~336 KB.
     const earthGeom = path.join(distDir, 'data', 'kinetic', 'earth.json');
     expect(fs.existsSync(earthGeom)).toBe(true);
     const parsed = JSON.parse(fs.readFileSync(earthGeom, 'utf-8'));
@@ -468,10 +468,35 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
     expect(work).toContain('Resume (PDF)');
   });
-  it('about: the consulting card is retired; More and Inquire stand under the name', () => {
+  it('about: the consulting card is retired; More stands under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
     expect(about).not.toContain('I take on select consulting work');
-    expect((about.match(/data-gpill/g) || []).length).toBe(3); // More + Inquire + footer
+    // Page-level Inquire pill removed. Footer Inquire remains, so the count
+    // is More + footer. Header Inquire is a plain link, not a glass pill.
+    expect((about.match(/data-gpill/g) || []).length).toBe(2);
+    expect(about).toContain('/data/kinetic/earth.json');
+    expect(about).not.toContain('/data/kinetic/structure.json');
+    expect(about).not.toContain('/data/kinetic/sky.json');
+    expect(about).toContain('Neon traced across the night');
+    expect(about).toContain('Turquoise sea against rock formations');
+  });
+  it('beyond: one live depth pair, the other subjects inert, relief pair gone', () => {
+    const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
+    const live = beyond.replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '');
+    // Trailing space keeps the figure class from matching __canvas / __stage.
+    expect((live.match(/class="kplate3d /g) || []).length).toBe(1);
+    expect((live.match(/class="kinetic-plate /g) || []).length).toBe(1);
+    expect((beyond.match(/data-study-tpl=/g) || []).length).toBe(4);
+    expect((live.match(/Hologram · stacked planes/g) || []).length).toBe(1);
+    expect(beyond).not.toContain('The same frame, as space');
+    expect(beyond).not.toContain('Beyond%20Photography');
+    expect(beyond).toContain('The envelope');
+    expect(beyond).toContain('img-2528');
+    expect(beyond).toContain('dsc-0014');
+    expect(beyond).toContain('dscf1022');
+    expect(beyond).not.toContain('img-6552');
+    expect(beyond).not.toContain('7r51018-enhanced-sr');
+    expect(beyond).toContain('>Inquire<');
   });
   it('footer: the inquiry stands beside the verse on every page', () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');

@@ -1,0 +1,62 @@
+/* Depth study selector on /beyond. One live pair; the other subjects
+   stay in <template> until a button asks for them. Buttons are hidden
+   until the script marks the section ready, so no-JS visitors see the
+   first pair and every subject listed. */
+
+.depth-switch.glass-chip-rail {
+  overflow: visible;
+  display: none;
+}
+
+[data-depth-ready] .depth-switch.glass-chip-rail {
+  display: inline-flex;
+}
+
+.depth-switch__btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: rgba(244, 234, 222, 0.62);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.65rem 0.85rem;
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+}
+
+.depth-switch__btn[aria-pressed='true'] {
+  color: #f4eade;
+}
+
+.depth-index {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.depth-index__item + .depth-index__item {
+  margin-top: 1.25rem;
+}
+
+[data-depth-ready] .depth-index__item {
+  display: none;
+  margin-top: 0;
+}
+
+[data-depth-ready] .depth-index__item.is-shown {
+  display: block;
+}
+
+.study-grid .plate-tag {
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-switch__btn {
+    transition: none;
+  }
+}
