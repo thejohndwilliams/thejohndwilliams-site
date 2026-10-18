@@ -33,9 +33,8 @@ export default {
           700: '#3D3D3D',
           900: '#0a0a0a',
         },
-        /* Muted text — WCAG AA pass on midnight (#0a0a0a): 5.1:1.
-           Use in place of opacity-40 for any prose or functional text. */
-        mute: '#787878',
+        /* Muted text, WCAG AA: 5.44:1 on #0a0a0a, 5.06:1 on #141414. Use for prose and functional text. Never opacity below 60 on prose. */
+        mute: '#868686',
         /* Secondary accent — warm stone. Use for secondary actions,
            hover states, and subtle highlights. */
         stone: {
