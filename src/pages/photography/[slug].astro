@@ -166,7 +166,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
       <div class="reveal max-w-2xl">
-        <p class="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-2 sm:mb-3">
+        <p class="text-micro sm:text-xs tracking-[0.3em] uppercase mb-2 sm:mb-3">
           <a href={`/photography/#gallery-${category.id}`} class="hover:opacity-100 transition-opacity duration-300">{category.name}</a>
         </p>
         <h1 class="t-section font-serif tracking-tight mb-2 sm:mb-3">{image.alt}</h1>
@@ -207,7 +207,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
             Available as a limited edition archival print.
           </p>
           {/* Edition of 25 scarcity signal */}
-          <p class="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
+          <p class="text-micro sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
             Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
@@ -258,7 +258,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
               </picture>
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"></div>
               <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth">
-                <p class="text-[10px] sm:text-xs opacity-70">{rel.alt}</p>
+                <p class="text-micro sm:text-xs opacity-70">{rel.alt}</p>
               </div>
             </a>
           ))}

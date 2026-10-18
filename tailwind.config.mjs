@@ -54,6 +54,8 @@ export default {
         'headline': ['3.111rem', { lineHeight: '1.1', letterSpacing: '-0.025em' }], /* 56px */
         'title': ['2.667rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }],    /* 48px */
         'subhead': ['0.778rem', { lineHeight: '1.5', letterSpacing: '0.1em' }],     /* 14px */
+        /* Captions that were arbitrary 10px. 0.6875rem is 11px at a 16px root. */
+        'micro': ['0.6875rem', { lineHeight: '1.4' }],
       },
       spacing: {
         /* 8pt grid — multiples of 8px expressed in rem at 18px base */
