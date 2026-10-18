@@ -7,6 +7,15 @@ import { PNG } from 'pngjs';
 const VIEWPORTS = [
   { width: 1366, height: 900 },
   { width: 820, height: 1180 },
+  { width: 390, height: 844 },
+] as const;
+
+// Trimmed plate list. /beyond keeps one hologram and one point cloud in the
+// document; the other subjects sit in <template> and must not count.
+// /about keeps the earth point cloud. Its 2.5D plate is the hidden fallback.
+const PAGES = [
+  { path: '/beyond/', figures: 2, painted: 2 },
+  { path: '/about/', figures: 2, painted: 1 },
 ] as const;
 
 function luminanceStdDev(png: PNG): number {
@@ -72,6 +81,24 @@ async function assertPlatePainted(fig: Locator): Promise<void> {
   // Element screenshots of a WebGL canvas wait until the box stops moving.
   // A page clip does not. preserveDrawingBuffer is not set, so the pixels
   // come from the screenshot, not from the GL buffer.
+  // About wraps its plate in .reveal, which starts at opacity 0. A clip
+  // taken during that fade is a flat field even after the canvas has painted.
+  await expect.poll(async () => {
+    return fig.evaluate((el) => {
+      const reveal = el.closest('.reveal');
+      if (reveal && !reveal.classList.contains('visible')) return false;
+      let node: Element | null = el;
+      while (node) {
+        if (Number(getComputedStyle(node).opacity) < 0.99) return false;
+        node = node.parentElement;
+      }
+      return true;
+    });
+  }, {
+    timeout: 15000,
+    message: `${label}: plate was still covered by the reveal fade`,
+  }).toBe(true);
+
   const clip = await fig.locator('canvas').evaluate((el) => {
     const r = el.getBoundingClientRect();
     const x = Math.max(0, r.left);
@@ -86,26 +113,27 @@ async function assertPlatePainted(fig: Locator): Promise<void> {
 }
 
 for (const viewport of VIEWPORTS) {
-  test(`plates paint at ${viewport.width}x${viewport.height}`, async ({ page }) => {
-    test.setTimeout(60_000);
-    await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto('/beyond/');
+  for (const target of PAGES) {
+    test(`${target.path} plates paint at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(target.path);
 
-    const figures = page.locator('figure.kinetic-plate, figure.kplate3d');
-    await expect.poll(async () => figures.count(), { timeout: 15000 }).toBeGreaterThan(4);
+      const figures = page.locator('figure.kinetic-plate, figure.kplate3d');
+      await expect.poll(async () => figures.count(), { timeout: 15000 }).toBe(target.figures);
 
-    const total = await figures.count();
-    let painted = 0;
-    for (let i = 0; i < total; i++) {
-      const fig = figures.nth(i);
-      const shown = await fig.evaluate((el) => getComputedStyle(el).display !== 'none');
-      if (!shown) continue;
-      await assertPlatePainted(fig);
-      painted++;
-    }
+      const total = await figures.count();
+      let painted = 0;
+      for (let i = 0; i < total; i++) {
+        const fig = figures.nth(i);
+        const shown = await fig.evaluate((el) => getComputedStyle(el).display !== 'none');
+        if (!shown) continue;
+        await assertPlatePainted(fig);
+        painted++;
+      }
 
-    // Four holograms plus the relief plate. Point clouds add more when
-    // WebGL is available; a hidden fallback must not count.
-    expect(painted).toBeGreaterThanOrEqual(5);
-  });
+      // A hidden fallback must not count. Every plate that is shown has to paint.
+      expect(painted).toBe(target.painted);
+    });
+  }
 }
