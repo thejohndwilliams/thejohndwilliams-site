@@ -24,3 +24,27 @@
 
 /images/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Stable names (not content-hashed). immutable is reserved for /_assets, /fonts, /images.
+# /data and /video can change in place, so a week plus a day of stale-while-revalidate.
+/data/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/video/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Short-lived static files. One day, then a week of stale-while-revalidate.
+/js/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/hdr-palette.css
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/og/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
