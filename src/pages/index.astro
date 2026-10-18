@@ -262,70 +262,215 @@ const charities = [
   </section>
 
   <script>
-    // Time-aware hero - swaps hero image based on visitor's local time.
+    // Time-aware hero. The static midday photograph (7r52326) is the LCP
+    // image and stays in the markup. After load, a wide viewport may dissolve
+    // once to the visitor's local slot. Phones keep the portrait source.
     //
-    // CRITICAL: Runs only AFTER the page has fully loaded so the initial
-    // paint uses the preloaded LCP image (7r52326, midday). Mutating img.src
-    // before LCP fires invalidates the preload and tanks Lighthouse's
-    // lcp-discovery-insight + prioritize-lcp-image scores.
+    // CRITICAL: the fetch starts only after load, on idle, so the initial
+    // paint uses the preloaded LCP image. Mutating img.src before LCP fires
+    // invalidates the preload and tanks lcp-discovery-insight (#20).
     //
-    // Also compares getAttribute('src') - the raw relative path -
-    // against dataset values. img.src returns an absolute URL and would
-    // never match a relative dataset path, causing every visit to
-    // re-download the hero at midday (a silent regression we shipped
-    // briefly in #20).
-    function initTimeHero() {
-      const img = document.getElementById('hero-img');
-      if (img == null) return;
-      const h = new Date().getHours();
-      let slot = 'midday';
-      if (h >= 5 && h < 11) slot = 'dawn';
-      else if (h >= 11 && h < 16) slot = 'midday';
-      else if (h >= 16 && h < 20) slot = 'golden';
-      else slot = 'night';
+    // getAttribute('src') is the raw relative path. img.src is absolute and
+    // would not match the dataset, which re-downloaded midday.
+    //
+    // prefers-reduced-motion: the swap is skipped entirely. No clone, no cut.
+    // The midday frame stays. document.hidden and viewports under 641px skip
+    // the same way. A later client return to Home applies the already chosen
+    // slot in astro:before-swap, so the incoming document never paints midday.
 
-      const src = img.dataset[slot];
-      if (src == null) return;
+    let chosenSlot: string | null = null;
+    let committed = false;
+    let heroGen = 0;
+    let heroAbort: AbortController | null = null;
 
-      // No-op when the slot matches the server-rendered hero.
-      // Relative-path comparison avoids the absolute-URL mismatch bug.
-      const currentAttr = img.getAttribute('src');
-      if (currentAttr === src) return;
+    function slotFromHour(h: number): string {
+      if (h >= 5 && h < 11) return 'dawn';
+      if (h >= 11 && h < 16) return 'midday';
+      if (h >= 16 && h < 20) return 'golden';
+      return 'night';
+    }
 
-      const performSwap = () => {
-        img.src = src;
-        const picture = img.closest('picture');
-        if (picture) {
-          const sources = picture.querySelectorAll('source');
-          const base = src.replace('/hero/', '/TIER/').replace('.webp', '');
-          sources.forEach(s => {
-            if (s.hasAttribute('media')) return; // keep portrait art-direction sources
-            const type = s.getAttribute('type');
-            const ext = type === 'image/avif' ? '.avif' : '.webp';
-            const thumb = base.replace('/TIER/', '/thumb/') + ext + ' 400w';
-            const gallery = base.replace('/TIER/', '/gallery/') + ext + ' 1200w';
-            const hero = base.replace('/TIER/', '/hero/') + ext + ' 2400w';
-            s.srcset = `${thumb}, ${gallery}, ${hero}`;
-          });
-        }
-      };
+    function writeSlot(img: HTMLImageElement, src: string) {
+      img.src = src;
+      const picture = img.closest('picture');
+      if (!picture) return;
+      const base = src.replace('/hero/', '/TIER/').replace('.webp', '');
+      picture.querySelectorAll('source').forEach((s) => {
+        if (s.hasAttribute('media')) return;
+        const type = s.getAttribute('type');
+        const ext = type === 'image/avif' ? '.avif' : '.webp';
+        const thumb = base.replace('/TIER/', '/thumb/') + ext + ' 400w';
+        const gallery = base.replace('/TIER/', '/gallery/') + ext + ' 1200w';
+        const hero = base.replace('/TIER/', '/hero/') + ext + ' 2400w';
+        s.srcset = `${thumb}, ${gallery}, ${hero}`;
+      });
+    }
 
-      // Defer past the LCP measurement window so the preloaded midday
-      // hero earns the paint. requestIdleCallback keeps the fetch off
-      // the critical path; setTimeout is the Safari fallback.
-      if (typeof window.requestIdleCallback === 'function') {
-        window.requestIdleCallback(performSwap, { timeout: 3000 });
-      } else {
-        setTimeout(performSwap, 2000);
+    function stemOf(src: string): string {
+      const file = src.split('/').pop() || '';
+      return file.replace(/\.(webp|avif|jpe?g)$/i, '');
+    }
+
+    function decodeTarget(img: HTMLImageElement, slotSrc: string): string {
+      const stem = stemOf(slotSrc);
+      const current = img.currentSrc;
+      if (!current) return slotSrc;
+      try {
+        const url = new URL(current, window.location.href);
+        if (!/\.(avif|webp|jpe?g)$/i.test(url.pathname)) return slotSrc;
+        url.pathname = url.pathname.replace(/[^/]+(?=\.(avif|webp|jpe?g)$)/i, stem);
+        return url.pathname + url.search;
+      } catch {
+        return slotSrc;
       }
     }
 
-    if (document.readyState === 'complete') {
-      initTimeHero();
-    } else {
-      window.addEventListener('load', initTimeHero, { once: true });
+    function skipMotion(): boolean {
+      if (window.matchMedia('(max-width: 640px)').matches) return true;
+      if (document.hidden) return true;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+      return false;
     }
-    document.addEventListener('astro:after-swap', initTimeHero);
+
+    function onBeforeSwap(ev: Event & { newDocument?: Document }) {
+      if (!chosenSlot || chosenSlot === 'midday') return;
+      const doc = ev.newDocument;
+      if (!doc || typeof doc.getElementById !== 'function') return;
+      const img = doc.getElementById('hero-img');
+      if (!img || img.tagName !== 'IMG') return;
+      const src = (img as HTMLImageElement).dataset[chosenSlot];
+      if (!src || img.getAttribute('src') === src) return;
+      writeSlot(img as HTMLImageElement, src);
+    }
+
+    function initTimeHero() {
+      const gen = ++heroGen;
+      if (heroAbort) heroAbort.abort();
+      heroAbort = new AbortController();
+      const signal = heroAbort.signal;
+
+      const found = document.getElementById('hero-img');
+      if (!found || found.tagName !== 'IMG') return;
+      const img = found as HTMLImageElement;
+      if (skipMotion()) return;
+
+      const slot = chosenSlot || slotFromHour(new Date().getHours());
+      const src = img.dataset[slot];
+      if (!src) return;
+      chosenSlot = slot;
+
+      if (img.getAttribute('src') === src) {
+        committed = true;
+        return;
+      }
+
+      if (committed) {
+        writeSlot(img, src);
+        return;
+      }
+
+      const start = () => {
+        if (signal.aborted || gen !== heroGen) return;
+        void runFade(img, src, gen, signal);
+      };
+
+      if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(start, { timeout: 3000 });
+      } else {
+        window.setTimeout(start, 2000);
+      }
+    }
+
+    async function runFade(img: HTMLImageElement, src: string, gen: number, signal: AbortSignal) {
+      const url = decodeTarget(img, src);
+      const next = new Image();
+      next.setAttribute('fetchpriority', 'low');
+      next.src = url;
+      try {
+        await next.decode();
+      } catch {
+        if (!next.complete || next.naturalWidth === 0) return;
+      }
+      if (signal.aborted || gen !== heroGen || !img.isConnected || committed) return;
+
+      const clone = document.createElement('img');
+      clone.className = 'hero-xfade';
+      clone.alt = '';
+      clone.setAttribute('aria-hidden', 'true');
+      clone.decoding = 'sync';
+      clone.src = url;
+      const picture = img.closest('picture');
+      (picture || img).insertAdjacentElement('afterend', clone);
+
+      const drop = () => {
+        if (clone.isConnected) clone.remove();
+      };
+      signal.addEventListener('abort', drop, { once: true });
+
+      requestAnimationFrame(() => {
+        if (signal.aborted || gen !== heroGen) return;
+        requestAnimationFrame(() => {
+          if (signal.aborted || gen !== heroGen) return;
+          clone.classList.add('is-shown');
+        });
+      });
+
+      let settled = false;
+      const fallback = window.setTimeout(() => { finish(); }, 1900);
+      const stem = stemOf(src);
+
+      function showingNext(): boolean {
+        if (!img.complete || img.naturalWidth === 0 || !img.currentSrc) return false;
+        return img.currentSrc.includes(stem);
+      }
+
+      let published = false;
+      function publish() {
+        if (published || gen !== heroGen || !img.isConnected) return;
+        published = true;
+        img.dispatchEvent(new Event('hero-slot-commit'));
+        drop();
+      }
+
+      function finish() {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(fallback);
+        if (signal.aborted || gen !== heroGen || !img.isConnected) {
+          drop();
+          return;
+        }
+        writeSlot(img, src);
+        committed = true;
+        if (showingNext()) {
+          publish();
+          return;
+        }
+        const onLoad = () => {
+          if (showingNext()) publish();
+        };
+        img.addEventListener('load', onLoad, { signal });
+        window.setTimeout(() => {
+          if (published || gen !== heroGen) return;
+          publish();
+        }, 1600);
+      }
+
+      clone.addEventListener('transitionend', (e) => {
+        if (e.target !== clone) return;
+        if (e.propertyName !== 'opacity') return;
+        finish();
+      }, { signal });
+    }
+
+    const bound = window as Window & { __timeHeroBound?: boolean };
+    if (!bound.__timeHeroBound) {
+      bound.__timeHeroBound = true;
+      document.addEventListener('astro:before-swap', onBeforeSwap as EventListener);
+      document.addEventListener('astro:after-swap', initTimeHero);
+      if (document.readyState === 'complete') initTimeHero();
+      else window.addEventListener('load', initTimeHero, { once: true });
+    }
   </script>
 
 </BaseLayout>

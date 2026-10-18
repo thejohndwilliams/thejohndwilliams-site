@@ -957,6 +957,29 @@ html.lenis body { height: auto; }
   text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 0 3px rgba(0, 0, 0, 0.40);
 }
 
+/* Home hero crossfade. #hero-img stays at full opacity. This layer is
+   inserted only after the next photograph has decoded, dissolves once,
+   then is removed. It sits under the existing scrim. Reduced motion
+   never inserts it; the base reduced-motion rule also collapses the
+   duration if a layer is ever present. */
+.hero-xfade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1400ms var(--ease-smooth);
+}
+.hero-xfade.is-shown {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-xfade { transition: none; }
+}
+
 /* ============================================================
    MOBILE TAB BAR (2026-06-06): single source of truth.
    The bar is glass. Items are bare: icon + label, muted when
