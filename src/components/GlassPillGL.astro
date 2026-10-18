@@ -266,12 +266,16 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
   const LINE = { disp: 1, rim: 0.0, spec: 1, breath: 1, grad: 0.95, bendPx: 22 };
   const VARIANTS: Record<string, typeof LINE> = { a: LINE, b: LINE, c: LINE };
 
+  type PillSession = { pill: HTMLElement; stop: () => void };
+  const pillSessions: PillSession[] = [];
+
   function initPill(pill: HTMLElement, img: HTMLImageElement | null) {
     const canvas = pill.querySelector('canvas') as HTMLCanvasElement | null;
     if (!canvas) return;
     const gl = canvas.getContext('webgl2', { alpha: true, antialias: false, premultipliedAlpha: true });
     if (!gl) { canvas.remove(); return; }   // CSS glass carries the pill
 
+    const pillAbort = new AbortController();
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const v = VARIANTS[pill.dataset.variant || 'b'] || VARIANTS.b;
 
@@ -281,8 +285,10 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     gl.useProgram(prog);
     const U = (n: string) => gl.getUniformLocation(prog, n);
 
-    const tex = gl.createTexture();
+    let tex: WebGLTexture | null = null;
     function upload() {
+      if (gl!.isContextLost()) return;
+      tex = gl!.createTexture();
       gl!.bindTexture(gl!.TEXTURE_2D, tex);
       gl!.pixelStorei(gl!.UNPACK_FLIP_Y_WEBGL, false); // v=0 = image top; top-based uv throughout
       if (img) {
@@ -301,7 +307,7 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     upload();
     // The home hero rotates its photograph by hour; when the img swaps, the
     // glass must bend the NEW light, not a stale texture.
-    if (img) img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); });
+    if (img) img.addEventListener('load', () => { upload(); layout(); frame(performance.now()); }, { signal: pillAbort.signal });
 
     let uvScaleAvg = 0;
     function layout() {
@@ -310,8 +316,14 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       // Full DPR (was 0.75x): two tiny canvases afford it, and a soft edge
       // reads as a WIDE wall - crispness is what makes the wall thin.
-      canvas!.width = Math.max(2, Math.round(cr.width * dpr));
-      canvas!.height = Math.max(2, Math.round(cr.height * dpr));
+      // Reassign the bitmap only when the integer size changed. A no-op
+      // write clears the WebGL drawing buffer.
+      const nextW = Math.max(2, Math.round(cr.width * dpr));
+      const nextH = Math.max(2, Math.round(cr.height * dpr));
+      if (canvas!.width !== nextW || canvas!.height !== nextH) {
+        canvas!.width = nextW;
+        canvas!.height = nextH;
+      }
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
       if (!img) {
         gl!.uniform2f(U('uUV0'), 0.5, 0.5);
@@ -368,11 +380,12 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
       px = (ev.clientX - cr.left) / cr.width;
       py = (ev.clientY - cr.top) / cr.height;
       amtTarget = 1;
-    });
-    pill.addEventListener('pointerleave', () => { amtTarget = 0; });
+    }, { signal: pillAbort.signal });
+    pill.addEventListener('pointerleave', () => { amtTarget = 0; }, { signal: pillAbort.signal });
 
     const t0 = performance.now();
     function frame(now: number) {
+      if (gl.isContextLost()) return;
       amt += (amtTarget - amt) * 0.12;
       gl!.uniform2f(U('uPointer'), px, py);
       gl!.uniform1f(U('uPointerAmt'), amt);
@@ -382,23 +395,103 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
       gl!.drawArrays(gl!.TRIANGLES, 0, 3);
     }
 
+    let disposed = false;
+    let restoreTried = false;
+    let raf = 0;
+    let running = false;
+    let onScreen = false;
+    let resizeRaf = 0;
+    let io: IntersectionObserver | null = null;
+
+    const cssFallback = () => {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      pill.classList.remove('gpill-live');
+      canvas.style.visibility = 'hidden';
+    };
+
+    const loop = (now: number) => {
+      frame(now);
+      if (!gl.isContextLost()) raf = requestAnimationFrame(loop);
+    };
+
+    const rebind = () => {
+      prog = makeProgram(gl);
+      gl.useProgram(prog);
+      upload();
+      gl.uniform1f(U('uDisp'), v.disp);
+      gl.uniform1f(U('uRim'), v.rim);
+      gl.uniform1f(U('uSpec'), v.spec);
+      gl.uniform1f(U('uBreath'), reduce ? 0 : v.breath);
+      gl.uniform1f(U('uGrad'), v.grad);
+      gl.uniform1f(U('uRidge'), 0.0);
+      gl.uniform1f(U('uSigma'), 0.054);
+      gl.uniform1f(U('uSlope'), 3.45);
+      gl.uniform1f(U('uSmokeMax'), 0.18);
+      gl.uniform1i(U('uTex'), 0);
+      const tune = (window as any).__gtuneState as Record<string, number> | undefined;
+      if (tune) Object.entries(tune).forEach(([name, val]) => gl.uniform1f(U(name), val));
+      canvas.style.visibility = '';
+      pill.classList.add('gpill-live');
+      layout();
+      frame(performance.now());
+    };
+
+    canvas.addEventListener('webglcontextlost', (ev) => {
+      ev.preventDefault();
+      if (disposed) return;
+      cssFallback();
+    }, { signal: pillAbort.signal });
+
+    canvas.addEventListener('webglcontextrestored', () => {
+      if (disposed || restoreTried) return;
+      restoreTried = true;
+      try {
+        rebind();
+        if (!reduce && onScreen) {
+          running = true;
+          raf = requestAnimationFrame(loop);
+        }
+      } catch {
+        cssFallback();
+      }
+    }, { signal: pillAbort.signal });
+
+    const stopPill = () => {
+      if (disposed) return;
+      disposed = true;
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      io?.disconnect();
+      pillAbort.abort();
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    };
+    pillSessions.push({ pill, stop: stopPill });
+
     layout();
     frame(t0);
 
     if (reduce) return; // one static frame; no clock, no pointer chase
 
     // RAF only while visible (O2: runtime is the authority; idle costs zero).
-    let raf = 0;
-    let running = false;
-    const loop = (now: number) => { frame(now); raf = requestAnimationFrame(loop); };
-    const io = new IntersectionObserver((entries) => {
+    io = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
+        onScreen = en.isIntersecting;
         if (en.isIntersecting && !running) { running = true; raf = requestAnimationFrame(loop); }
         else if (!en.isIntersecting && running) { running = false; cancelAnimationFrame(raf); }
       });
     }, { threshold: 0.05 });
     io.observe(pill);
-    window.addEventListener('resize', () => { layout(); }, { passive: true });
+    const onResize = () => {
+      if (resizeRaf) return;
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0;
+        layout();
+      });
+    };
+    window.addEventListener('resize', onResize, { passive: true, signal: pillAbort.signal });
   }
 
   function initAll() {
@@ -423,4 +516,14 @@ const { label, variant, href = 'mailto:jndwcreative@gmail.com', class: cls = '',
     });
   }
   document.addEventListener('astro:page-load', initAll);
+  // Non-persisted pills die with the page. The footer pill is
+  // transition:persist, so leave that session running across swaps.
+  document.addEventListener('astro:before-swap', () => {
+    for (let i = pillSessions.length - 1; i >= 0; i--) {
+      const session = pillSessions[i];
+      if (session.pill.closest('footer')) continue;
+      session.stop();
+      pillSessions.splice(i, 1);
+    }
+  });
 </script>

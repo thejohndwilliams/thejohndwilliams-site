@@ -76,6 +76,8 @@ const plateSrc = `/data/kinetic/${category}.json`;
 </style>
 
 <script>
+  import { fetchKineticJson } from '../scripts/kinetic-json';
+
   type Plate = { cols: number; rows: number; grid: number[]; depth?: number[]; depthFade?: number; alt: string };
 
   // --- tiny column-major mat4, zero dependency -------------------------
@@ -275,7 +277,10 @@ const plateSrc = `/data/kinetic/${category}.json`;
     // position gives phones the dimensionality without hijacking the page.
     let figCenterY = 0;
     function cacheCenter() { const r = fig.getBoundingClientRect(); figCenterY = r.top + window.scrollY + r.height / 2; }
+    // Pause fully offscreen; re-cache + nudge a paint on re-entry.
+    let onScreen = true;
     function onScroll() {
+      if (!onScreen) return;
       if (reduce || fine) return;
       const vp = window.innerHeight || 1;
       const p = Math.max(-1, Math.min(1, (figCenterY - window.scrollY - vp / 2) / (vp / 2)));
@@ -283,8 +288,6 @@ const plateSrc = `/data/kinetic/${category}.json`;
       if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); });
     }
 
-    // Pause fully offscreen; re-cache + nudge a paint on re-entry.
-    let onScreen = true;
     const io = new IntersectionObserver((ents) => {
       for (const en of ents) { onScreen = en.isIntersecting; if (onScreen) { cacheCenter(); requestRender(); } }
     }, { threshold: 0.01, rootMargin: '100px' });
@@ -305,7 +308,7 @@ const plateSrc = `/data/kinetic/${category}.json`;
     const setFade = (v: number) => { fadeVal = v; draw(); };
     fadeControllers.push(setFade);
 
-    fetch(src).then((r) => r.json()).then((p: Plate) => {
+    fetchKineticJson(src).then((p: Plate) => {
       if (disposed) return;
       fadeVal = typeof p.depthFade === 'number' ? p.depthFade : 0;
       buildGeometry(p); resize(); cacheCenter();
