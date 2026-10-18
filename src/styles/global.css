@@ -64,9 +64,10 @@ html[data-theme="black"] {
     line-height: 1.667; /* 30px / 18px - generous for readability */
   }
 
-  /* Subtle noise texture - imperceptible dither to break sRGB banding
-     on large dark gradients. Opacity tuned to just-below-conscious-
-     perception on a calibrated display. If you can SEE it, it is wrong. */
+  /* Subtle noise texture. Imperceptible dither on large dark fields.
+     Normal blend, not soft-light: the blend was a full-viewport composite
+     on every scroll frame. Opacity is lower than the old soft-light value
+     because normal compositing lifts black. If you can SEE it, it is wrong. */
   body::before {
     content: '';
     position: fixed;
@@ -75,8 +76,8 @@ html[data-theme="black"] {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0.018;
-    mix-blend-mode: soft-light;
+    opacity: 0.003;
+    mix-blend-mode: normal;
     z-index: 1000;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
@@ -794,6 +795,15 @@ html.lenis body { height: auto; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
 
+/* Hover scale on tiles. A layer is promoted only while the pointer or
+   keyboard is on the group. A permanent will-change kept every still
+   photograph composited for the life of the page. */
+.group:hover img,
+.group:focus-visible img,
+.group:focus-within img {
+  will-change: transform;
+}
+
 /* ============================================================
    LIQUID GLASS v2.2 - Signature++ (another notch; still disciplined)
    Stronger chamfer + brighter specular + a touch more tint and chrome
@@ -863,19 +873,32 @@ html.lenis body { height: auto; }
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
     0 8px 30px rgba(0, 0, 0, 0.32);
-  /* .scrolled changes background. On small screens it also changes
-     border-color, box-shadow, and backdrop-filter. 0.5s matches
-     the former duration-500 utility. */
+  /* .scrolled snaps the live blur off in the same frame as the solid shelf.
+     backdrop-filter and background stay out of this list so the filter is
+     not interpolated while content moves underneath. Border and shadow
+     still ease on small screens, where those values actually change. */
   transition:
-    background 0.5s var(--ease-smooth),
-    border-color 0.5s var(--ease-smooth),
-    box-shadow 0.5s var(--ease-smooth),
-    backdrop-filter 0.5s var(--ease-smooth),
-    -webkit-backdrop-filter 0.5s var(--ease-smooth);
+    border-color 160ms linear,
+    box-shadow 160ms linear;
+}
+#site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 46%);
+  transition: opacity 160ms linear;
 }
 #site-header.scrolled {
-  background: rgba(10, 10, 10, 0.56);
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+#site-header.scrolled::before {
+  opacity: 1;
 }
 
 
@@ -969,8 +992,8 @@ html.lenis body { height: auto; }
    Mobile top nav (the section icons live in the header beside JW; there is no
    bottom bar anymore - it collided with the browser's own toolbar). At the top
    of the page the header is clean over the hero with just a whisper of scrim
-   for legibility. Once you scroll, it resolves into pure liquid glass so the
-   content flows underneath and is never interrupted (Instagram / X behaviour).
+   for legibility. Once scrolled, the live blur stays off and a near-solid
+   shelf takes its place, so content moving underneath is not resampled.
 --------------------------------------------------------------------------- */
 @media (max-width: 767.98px) {
   #site-header {
@@ -981,9 +1004,9 @@ html.lenis body { height: auto; }
     box-shadow: none;
   }
   #site-header.scrolled {
-    background: rgba(10, 10, 10, 0.42);
-    -webkit-backdrop-filter: blur(40px) saturate(1.8);
-    backdrop-filter: blur(40px) saturate(1.8);
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 34px rgba(0, 0, 0, 0.34);
   }
@@ -1067,8 +1090,8 @@ main > section:not(:first-of-type):not([id]) {
    ============================================================ */
 
 /* Persistent bars feel alive: a soft caustic pools under the cursor.
-   Gated to the scrolled (glassy) header so it never paints over the
-   bare-hero header. --mx/--my come from the BaseLayout rAF tracker. */
+   Gated to the scrolled header so it never paints over the hero.
+   --mx/--my come from the BaseLayout rAF tracker. */
 #site-header { position: sticky; }
 #site-header .nav-shell { position: relative; z-index: 1; }
 #site-header.scrolled::after {
@@ -1683,6 +1706,7 @@ footer.glass-footer:hover::after { opacity: 1; }
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+  #site-header::before { opacity: 0 !important; }
   .glass-disc, .btn-primary, .btn-outline {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
