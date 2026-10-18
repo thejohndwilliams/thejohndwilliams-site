@@ -270,11 +270,26 @@ describe('Generated HTML Content', () => {
     });
 
     it('uses the multi-stop dither-resistant hero gradient', () => {
-      // Gradient starts with a semi-transparent scrim (not solid black) so
-      // the portrait reads through on the left, then fades to fully
-      // transparent on the right to let the photograph breathe.
-      expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
-      expect(aboutHtml).toContain('rgba(10,10,10,0)');
+      // The shade is one shared .hero-scrim rule, not an inline style.
+      // It still starts semi-transparent (not solid black) so the portrait
+      // reads through on the left, then fades to fully transparent.
+      for (const html of [aboutHtml, indexHtml, workHtml]) {
+        expect(html).toContain('hero-scrim');
+        expect(html).not.toContain('linear-gradient(to right');
+      }
+      const assetsDir = path.join(distDir, '_assets');
+      const css = fs.readdirSync(assetsDir)
+        .filter((f) => f.endsWith('.css'))
+        .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+        .join('\n');
+      expect(css).toContain('.hero-scrim');
+      const grad = css.match(/linear-gradient\(to right,[^)]*\)/);
+      expect(grad, 'hero scrim gradient missing from the shipped CSS').toBeTruthy();
+      const body = (grad as RegExpMatchArray)[0];
+      expect(body).toMatch(/rgba\(10,\s*10,\s*10,\s*0?\.92\)\s*0%/);
+      expect(body).toMatch(/rgba\(10,\s*10,\s*10,\s*0\)\s*100%/);
+      const stops = body.match(/rgba\(/g) || [];
+      expect(stops.length).toBeGreaterThanOrEqual(10);
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
