@@ -40,7 +40,7 @@
     "@aws-sdk/client-s3": "^3.705.0",
     "@playwright/test": "^1.57.0",
     "@vitest/coverage-v8": "^4.1.11",
-    "autoprefixer": "^10.5.4",
+    "autoprefixer": "^10.6.1",
     "dom-accessibility-api": "^0.7.1",
     "happy-dom": "^20.11.2",
     "jsdom": "^29.1.1",
