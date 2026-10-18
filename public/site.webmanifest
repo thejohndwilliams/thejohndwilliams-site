@@ -3,9 +3,9 @@
   "short_name": "JW",
   "description": "Photography, cybersecurity, and data — the work of John D. Williams.",
   "start_url": "/",
+  "id": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
   "icons": [
@@ -28,7 +28,7 @@
       "purpose": "any"
     },
     {
-      "src": "/favicon-512.png",
+      "src": "/favicon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
