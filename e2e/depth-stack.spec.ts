@@ -154,10 +154,10 @@ test.describe('exploded depth stack', () => {
     expect(desktopLabels).toBe(5);
     const plate = page.locator('.depth-stack__plate[data-i="4"]');
     await plate.focus();
-    const dimmed = await page.locator('.depth-stack__plate[data-i="1"]').evaluate((el) => {
-      return Number.parseFloat(getComputedStyle(el).opacity);
-    });
-    expect(dimmed).toBeLessThan(0.7);
+    const farPlate = page.locator('.depth-stack__plate[data-i="1"]');
+    await expect.poll(async () => {
+      return farPlate.evaluate((el) => Number.parseFloat(getComputedStyle(el).opacity));
+    }, { timeout: 2000 }).toBeLessThan(0.7);
     await page.screenshot({
       path: `/opt/cursor/artifacts/screenshots/depth-stack/${testInfo.project.name}-1280-exploded.png`,
     });
