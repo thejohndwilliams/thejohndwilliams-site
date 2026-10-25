@@ -78,7 +78,7 @@ const expertise = [
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Building</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-        <p class="text-sm sm:text-base leading-relaxed opacity-70 max-w-xl mb-6 sm:mb-8">
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
           Consulting in data engineering, cybersecurity, and operational
           analytics.
         </p>
@@ -93,8 +93,8 @@ const expertise = [
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <div class="reveal max-w-2xl mb-8 sm:mb-12">
-        <p class="text-[11px] tracking-[0.18em] uppercase text-stone-light opacity-80 mb-2">Selected work</p>
-        <p class="text-sm sm:text-base opacity-55">
+        <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Selected work</p>
+        <p class="text-base text-mute">
           Data, security, and operations. The discipline, not the details.
         </p>
       </div>
@@ -114,14 +114,14 @@ const expertise = [
                 <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
                 <div class="flex flex-wrap gap-1.5 mb-3">
                   {project.tags.slice(0, 3).map((tag: string) => (
-                    <span class="glass-tag text-micro sm:text-xs px-2 sm:px-3 py-1 rounded-md sm:rounded-lg opacity-80">{tag}</span>
+                    <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
                   ))}
                 </div>
-                <p class={`text-sm opacity-70 mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
+                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
+                  <p class="text-base text-stone-light">{project.outcome}</p>
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-cream transition-[opacity,color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] flex items-center">
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
                       View on GitHub →
                     </a>
                   )}
@@ -134,12 +134,12 @@ const expertise = [
       <div class="reveal mt-8 sm:mt-12">
         <div class="flex flex-wrap gap-2">
           {expertise.map((skill) => (
-            <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm opacity-60 rounded-md sm:rounded-lg">{skill}</span>
+            <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-sm text-mute rounded-md sm:rounded-lg">{skill}</span>
           ))}
         </div>
       </div>
-      <p class="reveal mt-8 sm:mt-10 text-sm">
-        <span class="opacity-60">The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.</span>
+      <p class="reveal mt-8 sm:mt-10 text-base text-mute">
+        The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>
       {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
           loud. One flame, one whisper: the resume becomes a drawn-underline
@@ -163,8 +163,8 @@ const expertise = [
           the bright plate between the horns. Larger, full cream, a deeper
           scrim below and a double shadow - still reverent, now readable. */}
       <div class="text-center">
-        <p class="text-xs sm:text-sm md:text-base tracking-[0.3em] uppercase text-cream" style="text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 2px 18px rgba(0,0,0,0.75);">Here am I. Send me.</p>
-        <p class="mt-2 text-micro sm:text-xs tracking-[0.3em] uppercase text-cream/60" style="text-shadow: 0 1px 3px rgba(0,0,0,0.9);">Isaiah 6:8</p>
+        <p class="text-sm md:text-base tracking-[0.3em] uppercase text-cream" style="text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 2px 18px rgba(0,0,0,0.75);">Here am I. Send me.</p>
+        <p class="mt-2 text-sm tracking-[0.3em] uppercase text-cream/80" style="text-shadow: 0 1px 3px rgba(0,0,0,0.9);">Isaiah 6:8</p>
       </div>
     </div>
   </section>

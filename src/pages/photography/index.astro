@@ -109,7 +109,7 @@ const jsonLd = {
           <li>
             <a
               href={`#gallery-${cat.id}`}
-              class="cat-link text-xs sm:text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 whitespace-nowrap py-2 min-h-[44px] flex items-center"
+              class="cat-link text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 whitespace-nowrap py-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
               data-cat={cat.id}
             >
               {cat.name}
@@ -130,7 +130,7 @@ const jsonLd = {
       <div class="container-wide">
         <div class="reveal mb-6 sm:mb-10 md:mb-14">
           <h2 class="t-section font-serif mb-1 sm:mb-2 tracking-tight">{cat.name}</h2>
-          <p class="text-xs sm:text-sm opacity-60 italic">{cat.description}</p>
+          <p class="text-base text-mute italic">{cat.description}</p>
         </div>
 
         <div class="photo-grid columns-2 md:columns-3 gap-2 sm:gap-3 md:gap-4">
@@ -180,7 +180,7 @@ const jsonLd = {
                     so expose this to sighted users only. Prevents axe image-redundant-alt from firing
                     when the same string appears as both alt and adjacent visible text. */}
                 <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-y-0 sm:group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth pointer-events-none" aria-hidden="true">
-                  <p class="text-micro sm:text-xs">{img.alt}</p>
+                  <p class="text-sm">{img.alt}</p>
                 </div>
               </a>
             );
@@ -217,8 +217,8 @@ const jsonLd = {
     </button>
     <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
     <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
-      <p id="lightbox-caption" class="text-xs sm:text-sm text-cream whitespace-nowrap truncate"></p>
-      <p id="lightbox-meta" class="text-micro sm:text-xs text-mute tracking-[0.1em] mt-1 truncate"></p>
+      <p id="lightbox-caption" class="text-base text-cream whitespace-nowrap truncate"></p>
+      <p id="lightbox-meta" class="text-sm text-mute tracking-[0.1em] mt-1 truncate"></p>
     </div>
   </div>
 
@@ -227,23 +227,23 @@ const jsonLd = {
     <div class="container-narrow">
       <div class="reveal grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Equipment</p>
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-3 sm:mb-4">Equipment</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Sony Alpha 7R V</p>
-          <p class="text-xs sm:text-sm opacity-60 mb-4 sm:mb-6">Landscape, macro, and fine art work.</p>
+          <p class="text-base text-mute mb-4 sm:mb-6">Landscape, macro, and fine art work.</p>
           <p class="text-base sm:text-lg font-serif mb-1.5 sm:mb-2 opacity-80">Fujifilm X100VI</p>
-          <p class="text-xs sm:text-sm opacity-60">Street, travel, and night photography.</p>
+          <p class="text-base text-mute">Street, travel, and night photography.</p>
         </div>
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Philosophy</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-6 sm:mb-8">
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-3 sm:mb-4">Philosophy</p>
+          <p class="text-base text-mute leading-relaxed mb-6 sm:mb-8">
             A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject; attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
-          <p class="text-xs tracking-[0.15em] uppercase opacity-60 mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-3 sm:mb-4">Collecting</p>
+          <p class="text-sm tracking-[0.12em] uppercase text-mute mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
+          <p class="text-base text-mute leading-relaxed mb-2">
             Archival prints, <a href="mailto:jndwcreative@gmail.com?subject=Print%20inquiry" class="link-draw text-cream/85 hover:text-cream">by inquiry</a>.
           </p>
-          <p class="text-xs sm:text-sm opacity-60 leading-relaxed">
+          <p class="text-base text-mute leading-relaxed">
             Giclée on Hahnemühle Photo Rag.
           </p>
           {/* A2.1 (owner ruling 2026-07-31): the floating pill is retired
@@ -260,8 +260,8 @@ const jsonLd = {
               <img src="/images/relief/edition-16x20.webp" alt="A bas-relief panel of the Shanghai Tower, its facade raised out of a shallow surface and lit from one side" width="620" height="775" class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105" loading="lazy" decoding="async" />
             </picture>
             <span class="flex flex-col justify-center py-4 pr-4 sm:pr-5">
-              <span class="text-xs tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300 mb-1.5">Photographs cut as relief</span>
-              <span class="text-xs sm:text-sm opacity-55 leading-relaxed">No ink. The image is carried in a surface a few millimetres deep and arrives only when light crosses it.</span>
+              <span class="text-sm tracking-[0.2em] uppercase text-stone-light group-hover:text-cream transition-colors duration-300 mb-1.5">Photographs cut as relief</span>
+              <span class="text-base text-mute leading-relaxed">No ink. The image is carried in a surface a few millimetres deep and arrives only when light crosses it.</span>
             </span>
           </a>
         </div>
