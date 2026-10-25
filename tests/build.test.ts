@@ -496,8 +496,13 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).toContain('dscf1022');
     expect(beyond).not.toContain('img-6552');
     expect(beyond).not.toContain('7r51018-enhanced-sr');
-    expect(beyond).not.toContain('>Inquire<');
+    // The page-level button is gone. The shared header control remains,
+    // and minification glues its label to the following svg, so a bare
+    // label check no longer distinguishes the two.
+    expect(beyond).not.toContain('Relief%20inquiry');
+    expect(beyond).not.toContain('class="btn btn-primary');
     expect(beyond).toContain('Back to the photographs');
+    expect(beyond).toContain('mailto:jndwcreative@gmail.com');
   });
   it('served pages and the agent brief omit the retired phrases', () => {
     const banned = [
