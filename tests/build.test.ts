@@ -469,6 +469,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
     expect(work).not.toContain('Resume (PDF)');
     expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
     expect(work).toContain('Data, cybersecurity and operations projects by John D. Williams, with writings and research to come.');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
     expect(work).toContain('Process Controls');
