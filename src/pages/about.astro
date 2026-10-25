@@ -5,6 +5,7 @@ import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import Photo from '../components/Photo.astro';
 import { getPhotoBySlug } from '../data/photography';
+import { bleedSizes, heroCapClass, photoSrcset, portraitSizes, portraitSrcset } from '../utils/photo-src';
 
 const lightStill = getPhotoBySlug('dsc-0378');
 const waterStill = getPhotoBySlug('7r50680-enhanced-sr');
@@ -21,23 +22,24 @@ if (!lightStill || !waterStill) {
   ogImageHeight={630}
   lcpImage="john-portrait-bw"
   lcpImagePortrait="john-portrait-bw"
+  lcpImageSizes={bleedSizes('john-portrait-bw')}
 >
   <!-- Scroll progress indicator -->
 
-  <!-- HERO - Portrait with full-bleed image -->
-  <section class="relative py-10 sm:py-16 md:py-24 overflow-hidden" data-glass-bench>
+  <!-- HERO - Portrait with full-bleed image. Width stops at the bitmap. -->
+  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench>
     <picture>
-      <source media="(max-width: 640px)" type="image/avif" srcset="/images/photography/portrait/john-portrait-bw.avif" />
-      <source media="(max-width: 640px)" type="image/webp" srcset="/images/photography/portrait/john-portrait-bw.webp" />
+      <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('john-portrait-bw', 'avif')} sizes={portraitSizes('john-portrait-bw')} />
+      <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('john-portrait-bw', 'webp')} sizes={portraitSizes('john-portrait-bw')} />
       <source
         type="image/avif"
-        srcset="/images/photography/thumb/john-portrait-bw.avif 400w, /images/photography/gallery/john-portrait-bw.avif 1200w, /images/photography/hero/john-portrait-bw.avif 2400w"
-        sizes="100vw"
+        srcset={photoSrcset('john-portrait-bw', 'avif')}
+        sizes={bleedSizes('john-portrait-bw')}
       />
       <source
         type="image/webp"
-        srcset="/images/photography/thumb/john-portrait-bw.webp 400w, /images/photography/gallery/john-portrait-bw.webp 1200w, /images/photography/hero/john-portrait-bw.webp 2400w"
-        sizes="100vw"
+        srcset={photoSrcset('john-portrait-bw', 'webp')}
+        sizes={bleedSizes('john-portrait-bw')}
       />
       <img
         src="/images/photography/hero/john-portrait-bw.webp"

@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 import '../styles/transitions.css';
+import { photoSrcset, portraitSizes, portraitSrcset } from '../utils/photo-src';
 
 interface Props {
   title?: string;
@@ -123,13 +124,22 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           as="image"
           type="image/avif"
           href={`/images/photography/hero/${lcpImage}.avif`}
-          imagesrcset={`/images/photography/thumb/${lcpImage}.avif 400w, /images/photography/gallery/${lcpImage}.avif 1200w, /images/photography/hero/${lcpImage}.avif 2400w`}
+          imagesrcset={photoSrcset(lcpImage, 'avif')}
           imagesizes={lcpImageSizes}
           media={lcpImagePortrait ? '(min-width: 641px)' : undefined}
           fetchpriority="high"
         />
         {lcpImagePortrait && (
-          <link rel="preload" as="image" type="image/avif" href={`/images/photography/portrait/${lcpImagePortrait}.avif`} media="(max-width: 640px)" fetchpriority="high" />
+          <link
+            rel="preload"
+            as="image"
+            type="image/avif"
+            href={`/images/photography/portrait/${lcpImagePortrait}.avif`}
+            imagesrcset={portraitSrcset(lcpImagePortrait, 'avif')}
+            imagesizes={portraitSizes(lcpImagePortrait)}
+            media="(max-width: 640px)"
+            fetchpriority="high"
+          />
         )}
       </>
     )}

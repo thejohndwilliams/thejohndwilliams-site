@@ -1,5 +1,6 @@
 /* Self-hosted fonts - no Google CDN dependency */
 @import url('/fonts/fonts.css');
+@import './photo-frames.css';
 
 /* Background tone tokens - dim (brand default) vs true-black (OLED).
    Only the solid background LEVELS shift between modes; palette hues and the
@@ -209,6 +210,33 @@ html[data-theme="black"] {
       padding-right: 2rem;
     }
   }
+
+  /* Plate: the photograph's own aspect, centered, never wider than the
+     bitmap and never taller than 80svh. Widths live in photo-frames.css.
+     Full-bleed heroes are the exception: they may fill the viewport, but
+     the section stops at the bitmap so a 2560 slot does not stretch a
+     2400 file. */
+  .photo-frame {
+    position: relative;
+    margin-inline: auto;
+  }
+  .photo-frame picture,
+  .photo-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-frame img {
+    position: absolute;
+    inset: 0;
+  }
+  .hero-bleed {
+    width: 100%;
+    margin-inline: auto;
+  }
+  .hero-cap-2048 { max-width: 2048px; }
+  .hero-cap-2400 { max-width: 2400px; }
 
   /* Nav shell - wider than body containers so the header reads as a distinct
      shelf. Fluid clamp(): 1008px min (never narrower than container-narrow),
