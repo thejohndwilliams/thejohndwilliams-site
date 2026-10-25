@@ -251,10 +251,11 @@ html[data-theme="black"] {
     );
   }
 
-  /* dscf0331 is a portrait. This slice holds the lantern rows and the car
-     when the hero is a wide band. */
+  /* dscf0331 is a portrait. The lanterns and the car sit about 30-48%
+     down the file. center 78% crops below that band, so a short wide
+     hero reads as black. 40% keeps the band in the frame. */
   .hero-pos-lanterns {
-    object-position: center 78%;
+    object-position: center 40%;
   }
 
   /* Work project cards. The scrim that used to be an inline gradient, kept
