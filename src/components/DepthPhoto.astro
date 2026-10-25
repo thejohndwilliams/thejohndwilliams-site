@@ -1,4 +1,6 @@
 ---
+import { publicBitmap } from '../utils/bitmap';
+
 interface Props {
   file: string;
   alt: string;
@@ -8,6 +10,8 @@ interface Props {
 const { file, alt, eager = false } = Astro.props;
 const sizes = '(max-width: 767px) calc(100vw - 2rem), 1080px';
 const tier = (folder: string, ext: string) => `/images/photography/${folder}/${file}.${ext}`;
+const src = tier('gallery', 'webp');
+const dim = await publicBitmap(src);
 ---
 
 <picture class="depth-photo">
@@ -23,8 +27,10 @@ const tier = (folder: string, ext: string) => `/images/photography/${folder}/${f
   />
   <img
     class="depth-photo__img"
-    src={tier('gallery', 'webp')}
+    src={src}
     alt={alt}
+    width={dim.width}
+    height={dim.height}
     sizes={sizes}
     loading={eager ? 'eager' : 'lazy'}
     decoding="async"

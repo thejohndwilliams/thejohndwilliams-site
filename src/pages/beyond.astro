@@ -5,6 +5,7 @@ import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import LiquidPlate from '../components/LiquidPlate.astro';
 import ReliefStudies from '../components/ReliefStudies.astro';
+import { publicBitmap } from '../utils/bitmap';
 import '../styles/beyond.css';
 import '../styles/depth-study.css';
 
@@ -48,6 +49,11 @@ const SUBJECTS = [
 
 const earth = SUBJECTS[0];
 const DEPTH_SIZES = '(max-width: 767px) calc(100vw - 2rem), 1080px';
+const thumbDims = Object.fromEntries(
+  await Promise.all(
+    SUBJECTS.map(async (row) => [row.file, await publicBitmap(`/images/photography/thumb/${row.file}.webp`)] as const),
+  ),
+);
 ---
 
 <BaseLayout
@@ -124,7 +130,7 @@ const DEPTH_SIZES = '(max-width: 767px) calc(100vw - 2rem), 1080px';
             >
               <picture>
                 <source type="image/avif" srcset={`/images/photography/thumb/${row.file}.avif`} />
-                <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width="96" height="96" />
+                <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width={thumbDims[row.file].width} height={thumbDims[row.file].height} />
               </picture>
               <span>{row.label}</span>
             </button>

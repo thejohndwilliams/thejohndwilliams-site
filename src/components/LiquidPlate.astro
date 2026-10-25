@@ -12,6 +12,7 @@
  *   Texture  - Normal map (Sobel) + seamless Tile (mirror), for 3D/makers.
  */
 import palettesData from '../data/plate-palettes.json';
+import { publicBitmap } from '../utils/bitmap';
 
 export interface Props {
   src: string;
@@ -23,6 +24,8 @@ export interface Props {
 }
 const { src, alt, label, note = '', index = 0, reverse = false } = Astro.props;
 const tier = (t: string, e: string) => `/images/photography/${t}/${src}.${e}`;
+const plateSrc = tier('gallery', 'webp');
+const plateDim = await publicBitmap(plateSrc);
 const fid = `lq-${src.replace(/[^a-zA-Z0-9]/g, '')}`;
 const palette: string[] = (palettesData as Record<string, string[]>)[src] ?? [];
 const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`).join(' ');
@@ -40,7 +43,7 @@ const hero = tier('hero', 'webp');
     <picture>
       <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
       <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
-      <img class="liquid-plate__img" src={tier('gallery','webp')} alt={alt} loading="lazy" decoding="async" data-fid={fid} />
+      <img class="liquid-plate__img" src={plateSrc} alt={alt} width={plateDim.width} height={plateDim.height} loading="lazy" decoding="async" data-fid={fid} />
     </picture>
     <span class="liquid-plate__sheen" aria-hidden="true"></span>
     <span class="liquid-plate__rim" aria-hidden="true"></span>

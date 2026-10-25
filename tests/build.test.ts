@@ -8,6 +8,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
+import sharp from 'sharp';
 
 const execAsync = promisify(exec);
 const distDir = path.join(process.cwd(), 'dist');
@@ -480,7 +481,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(about).toContain('Neon traced across the night');
     expect(about).toContain('Turquoise sea against rock formations');
   });
-  it('beyond: photograph at rest, plates stay in templates until a mode is chosen', () => {
+  it('beyond: photograph at rest, plates stay in templates until a mode is chosen', async () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
     const live = beyond.replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '');
     const mainStart = beyond.indexOf('<main');
@@ -521,6 +522,19 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(main).toContain('Which relief depth survives ordinary room light?');
     expect(main).toContain('a Gaussian convolution, the closed-form');
     expect(main).toContain('Back to the photographs');
+    const imgs = beyond.match(/<img\b[^>]*>/gi) || [];
+    expect(imgs.length).toBeGreaterThan(0);
+    for (const tag of imgs) {
+      const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+      const width = tag.match(/\bwidth="(\d+)"/)?.[1];
+      const height = tag.match(/\bheight="(\d+)"/)?.[1];
+      expect(src, tag).toBeTruthy();
+      expect(width, src).toBeTruthy();
+      expect(height, src).toBeTruthy();
+      const meta = await sharp(path.join(process.cwd(), 'public', src!)).metadata();
+      expect(String(meta.width), src).toBe(width);
+      expect(String(meta.height), src).toBe(height);
+    }
   });
   it('depth: draft figure is noindex, unlinked from the sitemap, and has no inline styles', () => {
     const html = fs.readFileSync(path.join(distDir, 'depth/index.html'), 'utf8');
