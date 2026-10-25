@@ -41,9 +41,8 @@ is enforced by reading every public string aloud before it ships.
 
 ## Always
 
-Zero em-dashes in public copy. Professional framings only: "satellite
-communications company", "enterprise operations", "incident command",
-"regulated environments". Nothing more specific about systems, customers,
+Zero em-dashes in public copy. Professional framings only: "operations,
+risk and controls". Nothing more specific about systems, customers,
 or programs. The discipline, not the details.
 
 ## Enforcement
