@@ -32,6 +32,9 @@ interface Props {
   noindex?: boolean;
   /** Header and footer inquiry links. Off for the depth page. */
   inquire?: boolean;
+  /** Extra class on body. Used by /beyond for touch-target rules that
+      must not change the header on other pages. */
+  bodyClass?: string;
 }
 
 const {
@@ -44,7 +47,8 @@ const {
   lcpImageSizes = '100vw',
   lcpImagePortrait,
   noindex = false,
-  inquire = true
+  inquire = true,
+  bodyClass,
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -172,7 +176,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <ClientRouter />
 
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class:list={['min-h-screen flex flex-col', bodyClass]}>
     {/* Liquid Glass Tier 2: SVG displacement filter for .glass-nav.
          Kept for future use; currently unreferenced because iOS Safari
          cannot resolve backdrop-filter: url() at paint time. */}

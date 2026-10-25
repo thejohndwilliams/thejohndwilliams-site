@@ -1,71 +1,71 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DepthPhoto from '../components/DepthPhoto.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import LiquidPlate from '../components/LiquidPlate.astro';
 import ReliefStudies from '../components/ReliefStudies.astro';
+import '../styles/beyond.css';
 import '../styles/depth-study.css';
 
-// LABS (owner directive 2026-07-31): one home for the photography
-// experiments. Merges the depth/hologram comparison work (from the private
-// lab, which keeps its production gate and P1 lock) with the relief - the
-// object axis - discussed in more depth than the work page's resume view.
-// Work stays the living resume of domains; Labs is where the experiments
-// live and are explained.
-const ROWS = [
-  { id: 'earth', label: 'Earth · rain-wet leaf', note: 'A dark subject. Luminance buries it; depth stands it forward.' },
-  { id: 'structure', label: 'Structure · Shanghai Tower', note: 'Shot against bright sky. Depth keeps the tower near, the sky far.' },
-  { id: 'sky', label: 'Sky · thunderheads', note: 'The nearest billows read closest; the void recedes to black.' },
-  { id: 'water', label: 'Water · El Arco', note: 'A distant scene. The arch holds its place in real space.' },
+// One column, one depth frame, texture, then surface findings.
+// The exploded-layers figure lives on /depth and is not imported here.
+// #depth-layers is the empty hook it can fill later.
+const SUBJECTS = [
+  {
+    id: 'earth',
+    label: 'Earth',
+    title: 'Earth · rain-wet leaf',
+    note: 'A dark subject. Luminance buries it; depth stands it forward.',
+    file: '7r51025-enhanced-sr',
+    alt: 'Rain-wet leaf in darkness',
+  },
+  {
+    id: 'structure',
+    label: 'Structure',
+    title: 'Structure · Shanghai Tower',
+    note: 'Shot against bright sky. Depth keeps the tower near, the sky far.',
+    file: 'img-7576-enhanced',
+    alt: 'Shanghai Tower from below',
+  },
+  {
+    id: 'sky',
+    label: 'Sky',
+    title: 'Sky · thunderheads',
+    note: 'The nearest billows read closest; the void recedes to black.',
+    file: '7r52326',
+    alt: 'Thunderheads against black sky',
+  },
+  {
+    id: 'water',
+    label: 'Water',
+    title: 'Water · El Arco',
+    note: 'A distant scene. The arch holds its place in real space.',
+    file: '7r50674-enhanced-sr',
+    alt: 'El Arco de Cabo San Lucas',
+  },
 ] as const;
+
+const earth = SUBJECTS[0];
+const DEPTH_SIZES = '(max-width: 767px) calc(100vw - 2rem), 1080px';
 ---
 
 <BaseLayout
   title="Beyond"
-  description="Beyond the frame: photographs rebuilt as holograms and true point clouds, textures and Gaussian studies to take home, and images cut as physical bas-relief. The experiments of John D. Williams."
+  description="Beyond the frame: photographs rebuilt as holograms and true point clouds, then studied as texture and as surface. The experiments of John D. Williams."
   ogImage="/og/photography/gv-3b61b429.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
-  lcpImage="gv-3b61b429"
+  lcpImage={earth.file}
+  lcpImageSizes={DEPTH_SIZES}
+  bodyClass="page-beyond"
 >
-  {/* HERO - the house pattern: banner, verb, name. The verb liturgy runs
-      making visible / noticing / building / rising; this wing's act is
-      LIFTING - its own inherited sentence is "Lift each experience from
-      its frame." Banner: the last light beyond the ridge (gv-3b61b429),
-      a threshold in the dark register. */}
-  <section class="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden">
-    <picture>
-      <source
-        type="image/avif"
-        srcset="/images/photography/thumb/gv-3b61b429.avif 400w, /images/photography/gallery/gv-3b61b429.avif 1200w, /images/photography/hero/gv-3b61b429.avif 2400w"
-        sizes="100vw"
-      />
-      <source
-        type="image/webp"
-        srcset="/images/photography/thumb/gv-3b61b429.webp 400w, /images/photography/gallery/gv-3b61b429.webp 1200w, /images/photography/hero/gv-3b61b429.webp 2400w"
-        sizes="100vw"
-      />
-      <img
-        src="/images/photography/hero/gv-3b61b429.webp"
-        alt="A lone tree in silhouette against the last light of sunset beyond a dark ridge"
-        class="absolute inset-0 w-full h-full object-cover"
-        fetchpriority="high"
-      />
-    </picture>
-    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
-    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-10 sm:pb-16 md:pb-24">
-      <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-3 sm:mb-4">Lifting</p>
-        <h1 class="t-title font-serif mb-4 sm:mb-6 tracking-tight">Beyond</h1>
-      </div>
-    </div>
-  </section>
-
-  {/* STATEMENT - one block, then three acts: depth, texture, object. */}
-  <section class="py-12 sm:py-16 md:py-20">
-    <div class="container-narrow">
-      <div class="prose max-w-2xl">
-        <p>
+  <header id="beyond" class="beyond-section beyond-anchor beyond-title">
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Lifting</p>
+        <h1 class="t-title font-serif">Beyond</h1>
+        <p class="beyond-lede beyond-copy">
           Experiments in what a photograph can become once it leaves the
           frame. Each one starts the same way: a finished photograph, taken
           seriously enough to ask what else it holds. Depth, first. Then
@@ -73,114 +73,128 @@ const ROWS = [
         </p>
       </div>
     </div>
-  </section>
+  </header>
 
-  {/* ACT I - THE DEPTH. One pair, four subjects. The others live in
-      templates so only the active pair mounts. */}
-  <section id="depth" class="pt-4 pb-10 sm:pb-14 md:pb-16" data-depth-study>
-    <div class="container-narrow">
-      <h2 class="t-sub font-serif mb-3 sm:mb-4">The depth studies</h2>
-      <p class="text-sm sm:text-base opacity-55 max-w-2xl">
-        The same photographs, twice. On the left, a hologram: the frame cut
-        into stacked planes that slide against each other as you move. On the
-        right, a point cloud: every dot sitting at the true depth the
-        photograph holds, baked from its depth pass. One fakes relief
-        beautifully; the other actually has it. Sweep across a plate to orbit
-        it; release mid-turn and it carries, then settles. On a phone, the
-        clouds roll with the page. Reduced motion holds a still frame.
-      </p>
-      <p class="font-serif italic text-sm text-mute max-w-2xl mt-4">
-        One photograph in. A depth estimate per pixel. The image cut into
-        planes or scattered into points, displaced along the axis the camera
-        never recorded.
-      </p>
-      <div class="depth-switch glass-chip-rail mt-8" role="group" aria-label="Depth study">
-        {ROWS.map((row, i) => (
-          <button
-            type="button"
-            class="depth-switch__btn"
-            data-study={row.id}
-            aria-pressed={i === 0 ? 'true' : 'false'}
-          >
-            {row.label.split(' · ')[0]}
-          </button>
-        ))}
+  <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-mode="rest">
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <h2 class="t-sub font-serif">The depth studies</h2>
+        <p class="beyond-copy">
+          The same photographs, twice. Planes: the frame cut into stacked
+          planes that slide against each other as you move. Points: every
+          dot sitting at the true depth the photograph holds, baked from its
+          depth pass. One fakes relief beautifully; the other actually has
+          it. The photograph stays in color until a mode is chosen. Sweep
+          across a plate to orbit it; release mid-turn and it carries, then
+          settles. On a phone, the clouds roll with the page. Reduced motion
+          holds a still frame.
+        </p>
+        <p class="beyond-copy beyond-copy--italic">
+          One photograph in. A depth estimate per pixel. The image cut into
+          planes or scattered into points, displaced along the axis the camera
+          never recorded.
+        </p>
       </div>
     </div>
-    <div class="container-wide mt-8 sm:mt-10">
-      <ul class="depth-index">
-        {ROWS.map((row, i) => (
+
+    {/* Study: depth layers. Empty on purpose. A later figure fills this
+        hook. Do not import the separate /depth draft. */}
+    <div id="depth-layers" class="beyond-layers" data-depth-layers hidden></div>
+
+    <div class="beyond-col" data-depth-slot>
+      <div class="depth-frame" data-depth-frame data-mode="rest">
+        <div data-depth-photo>
+          <DepthPhoto file={earth.file} alt={earth.alt} eager />
+        </div>
+        <div data-depth-plate></div>
+      </div>
+
+      <div class="depth-controls">
+        <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
+          <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
+          <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
+        </div>
+        <div class="depth-thumbs" role="group" aria-label="Depth study">
+          {SUBJECTS.map((row, i) => (
+            <button
+              type="button"
+              class="depth-thumb"
+              data-study={row.id}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              <picture>
+                <source type="image/avif" srcset={`/images/photography/thumb/${row.file}.avif`} />
+                <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width="96" height="96" />
+              </picture>
+              <span>{row.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <ul class="depth-index beyond-text">
+        {SUBJECTS.map((row, i) => (
           <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
-            <p class="eyebrow mb-2">{row.label}</p>
-            <p class="text-sm opacity-55 max-w-xl">{row.note}</p>
+            <p class="eyebrow">{row.title}</p>
+            <p class="beyond-copy">{row.note}</p>
           </li>
         ))}
       </ul>
-      <div class="study-grid grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-start mt-8" data-depth-slot>
-        <div>
+    </div>
+
+    {SUBJECTS.map((row) => (
+      <template data-study-tpl={row.id}>
+        <div data-part="photo">
+          <DepthPhoto file={row.file} alt={row.alt} />
+        </div>
+        <div data-part="hologram">
           <p class="plate-tag">Hologram · stacked planes</p>
-          <div data-depth-hologram>
-            <KineticPlate category="earth" />
-          </div>
+          <KineticPlate category={row.id} />
         </div>
-        <div class="study-3d">
+        <div data-part="cloud">
           <p class="plate-tag">Point cloud · true depth</p>
-          <div data-depth-cloud>
-            <KineticPlate3D category="earth" />
-          </div>
+          <KineticPlate3D category={row.id} />
         </div>
+      </template>
+    ))}
+  </section>
+
+  <section class="beyond-section">
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <h2 class="t-sub font-serif">Texture and Gaussian studies</h2>
+        <p class="beyond-kicker">Studies in texture.</p>
+        <p class="beyond-copy">
+          The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take.
+        </p>
+        <p class="beyond-copy beyond-copy--italic">
+          The blur behind each plate is a Gaussian convolution, the
+          closed-form solution to the heat equation. Light diffuses through the
+          glass the way heat moves through a solid.
+        </p>
       </div>
-      {ROWS.map((row) => (
-        <template data-study-tpl={row.id}>
-          <div data-part="hologram">
-            <KineticPlate category={row.id} />
-          </div>
-          <div data-part="cloud">
-            <KineticPlate3D category={row.id} />
-          </div>
-        </template>
-      ))}
+      <div class="beyond-plates">
+        <LiquidPlate src="img-2528" alt="A ribbon of light drawn in the dark" label="Ribbon" note="A ribbon of light drawn in the dark." index={0} />
+        <LiquidPlate src="dsc-0014" alt="A carved ram emerging from black" label="Ram" note="A carved ram emerging from black." index={1} />
+        <LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} />
+      </div>
     </div>
   </section>
 
-  {/* ACT II - TEXTURE. Pixels a visitor can take (moved from the work page). */}
-  <section class="py-12 sm:py-16 md:py-24 section-light">
-    <div class="container-narrow mb-10 sm:mb-14">
-      <h2 class="t-sub font-serif mb-3 sm:mb-4">Texture and Gaussian studies</h2>
-      <p class="font-serif text-lg sm:text-xl text-cream/90 mb-3 max-w-xl">Take one home.</p>
-      <p class="text-sm sm:text-base opacity-55 max-w-xl">
-        The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take.
-      </p>
-      <p class="font-serif italic text-sm text-mute max-w-xl mt-4">
-        The blur behind each plate is a Gaussian convolution &mdash; the
-        closed-form solution to the heat equation. Light diffuses through the
-        glass the way heat moves through a solid.
-      </p>
-    </div>
-    <div class="container-wide space-y-16 sm:space-y-24 md:space-y-28">
-      <div class="reveal"><LiquidPlate src="img-2528" alt="A ribbon of light drawn in the dark" label="Ribbon" note="A ribbon of light drawn in the dark." index={0} /></div>
-      <div class="reveal"><LiquidPlate src="dsc-0014" alt="A carved ram emerging from black" label="Ram" note="A carved ram emerging from black." index={1} reverse /></div>
-      <div class="reveal"><LiquidPlate src="dscf1022" alt="A wall combed into vertical ribs of light and shadow" label="Stone" note="A wall, raked into ribs of light." index={2} /></div>
-    </div>
-  </section>
-
-  {/* ACT III - THE OBJECT. The relief, folded in whole: depth learned,
-      pixels lifted, then the photograph cut as a surface you could hold. */}
   <ReliefStudies />
 
-  {/* THE ENVELOPE - the working, shown. Bounds verified against global.css
-      actuals (max blur 44px, max saturate 1.85) and the WCAG AA contrast
-      floor the a11y harness enforces. One sentence by design; if this block
-      ever grows a second paragraph, it has failed (owner ruling 2026-07-31). */}
-  <section class="py-14 sm:py-20">
-    <div class="container-narrow">
-      <div class="border-t border-white/5 pt-8 sm:pt-10 max-w-2xl">
-        <p class="eyebrow mb-3">The envelope</p>
-        <p class="text-sm sm:text-base opacity-55 leading-relaxed">
+  <section id="method" class="beyond-section beyond-anchor">
+    <div class="beyond-col">
+      <div class="beyond-text beyond-method">
+        <p class="eyebrow">The envelope</p>
+        <p class="beyond-copy">
           Every material on this site holds calibrated bounds: blur no higher
           than 44 pixels, saturation no higher than 1.85, text contrast at or
           above 4.5:1 at every tested opacity. Settings that survived a sweep,
           not settings that looked good once.
+        </p>
+        <p class="beyond-return">
+          <a href="/photography/">Back to the photographs</a>
         </p>
       </div>
     </div>
@@ -189,20 +203,20 @@ const ROWS = [
 <script>
   import { initDepthStudy } from '../scripts/depth-study';
 
-  initDepthStudy();
-  document.addEventListener('astro:after-swap', initDepthStudy);
-</script>
-
-<style is:global>
-  .plate-tag {
-    margin-top: 1rem;
-    font-size: 0.6875rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(244, 234, 222, 0.62);
+  function syncBeyondPage(): void {
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    document.body.classList.toggle('page-beyond', path === '/beyond');
   }
-  /* If WebGL2 is unavailable the point cloud cannot mount; the hologram
-     column carries the row alone rather than showing a dead figure. */
-  .study-3d:has(.kplate3d[data-webgl="unsupported"]) { display: none; }
-</style>
+
+  const flag = window as Window & { __beyondPage?: boolean };
+  syncBeyondPage();
+  initDepthStudy();
+  if (!flag.__beyondPage) {
+    flag.__beyondPage = true;
+    document.addEventListener('astro:after-swap', () => {
+      syncBeyondPage();
+      initDepthStudy();
+    });
+  }
+</script>
 </BaseLayout>

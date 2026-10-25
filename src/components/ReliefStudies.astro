@@ -1,37 +1,6 @@
 ---
-/* ReliefStudies (A2.5, owner ruling 2026-07-31: 'Fold Relief into labs'):
- * the whole /relief page body, componentized so the Labs page composes it.
- * /relief now 301s to /labs via public/_redirects. All original notes kept below. */
-
-/*
- * /relief — the object axis of the photographs.
- *
- * The site already answers "what if a photograph were a place you could walk
- * into" (the kinetic plates, the splat work). This page answers the other
- * half: what if it were an object you could pick up. One photograph, taken
- * all the way through, rather than a survey of many.
- *
- * The frame is `structure` (img-7576-enhanced, Shanghai Tower from below).
- * It is the featured structure plate, it survives the portrait crop better
- * than any other candidate, and its OG image is already spot-checked by
- * build.test.ts, so its assets are exercised by the gate.
- *
- * ASSET PROVENANCE. Every still and the sweep come from the object-axis
- * renderer filed with Edition_and_Format_Specification_v1 (relief_render.py
- * + build_web_relief_assets.py), re-rendered clean for the web: no baked
- * labels, no contact-sheet background, no instrumentation captions. The
- * Instagram deliverable is deliberately NOT reused here. That file is
- * 1080x1920 with the panel inside Instagram's safe rectangle, so a third of
- * the frame is margin that exists only to clear an app's chrome. The sweep
- * below is the same 180 frames recropped 4:5 around the panel.
- * scripts/build-relief-assets.mjs does the AVIF + WebP encode.
- *
- * NOT using the lcpImage prop: it resolves paths under
- * /images/photography/<tier>/ by construction, and these assets live in
- * /images/relief/. On /beyond the hero is the LCP. This still sits below
- * the depth and texture acts, so it loads lazy and does not take
- * fetchpriority from the hero.
- */
+/* ReliefStudies: the surface findings on /beyond.
+ * /relief 301s here. The sweep still loads only when it is on screen. */
 
 const DEPTHS = [
   { mm: 1, alt: 'The tower rendered as a relief panel one millimetre deep, barely raised from the surface' },
@@ -57,12 +26,13 @@ const EDITIONS = [
 ];
 ---
 
-<section id="relief" class="py-12 sm:py-16 md:py-20 scroll-mt-24">
-    <div class="container-narrow">
-      <p class="eyebrow mb-3 sm:mb-4">Object studies</p>
-      <h2 class="mb-5 sm:mb-7">A photograph you could hold</h2>
-      <div class="prose max-w-2xl">
-        <p>
+<section id="relief" class="beyond-section beyond-anchor">
+  <div class="beyond-flow">
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Object studies</p>
+        <h2>A photograph you could hold</h2>
+        <p class="beyond-copy">
           A print is light recorded on a plane. These studies ask what survives
           when the ink is taken away and only the surface is left. The
           photograph becomes a shallow landscape a few millimetres deep,
@@ -71,74 +41,66 @@ const EDITIONS = [
         </p>
       </div>
     </div>
-  </section>
 
-  <section class="pb-12 sm:pb-16 md:pb-20">
-    <div class="container-wide">
-      {/* grid-cols-1 is load-bearing: without an explicit base track the
-          implicit auto column sizes to the sweep figure's max-content
-          (26rem), overflowing 390px phones and dragging the whole document
-          wide (doctrine audit, 2026-07-28). */}
-      <div class="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 items-center">
-        <div class="order-2 md:order-1">
-          <p class="eyebrow mb-2">Structure · Shanghai Tower</p>
-          <h2 class="mb-5">The light does the work</h2>
-          <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-md mb-4">
-            Nothing on this panel is printed. The entire image is carried in a
-            surface four millimetres deep, lit from eleven degrees above the
-            plane. One full turn of the light takes six seconds.
-          </p>
-          <p class="text-sm opacity-60 leading-relaxed max-w-md">
-            Watch the facade. Its ribs light and go dark in sequence as the
-            source swings behind them, which is the one thing a printed
-            photograph can never do.
-          </p>
-        </div>
-
-        <figure class="order-1 md:order-2 sweep">
-          <div class="sweep__stage" data-sweep>
-            <picture class="sweep__still">
-              <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
-              <source srcset="/images/relief/sweep-still.webp" type="image/webp" />
-              <img
-                src="/images/relief/sweep-still.webp"
-                alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
-                width="1040"
-                height="1300"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <video
-              class="sweep__video"
-              data-src="/video/relief-sweep.mp4"
-              width="832"
-              height="1040"
-              muted
-              loop
-              playsinline
-              preload="none"
-              aria-hidden="true"
-            ></video>
-          </div>
-          <figcaption class="sweep__cap">
-            4 mm relief · light at 11° · one turn, six seconds
-          </figcaption>
-        </figure>
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Structure · Shanghai Tower</p>
+        <h2>The light does the work</h2>
+        <p class="beyond-copy">
+          Nothing on this panel is printed. The entire image is carried in a
+          surface four millimetres deep, lit from eleven degrees above the
+          plane. One full turn of the light takes six seconds.
+        </p>
+        <p class="beyond-copy">
+          Watch the facade. Its ribs light and go dark in sequence as the
+          source swings behind them, which is the one thing a printed
+          photograph can never do.
+        </p>
       </div>
-    </div>
-  </section>
 
-  <section class="py-12 sm:py-16 md:py-20">
-    <div class="container-wide">
-      <p class="eyebrow mb-2">Seven depths</p>
-      <h2 class="mb-5">How deep should a photograph be?</h2>
-      <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-8 sm:mb-10">
-        One frame, one light, seven candidate reliefs. At one millimetre the
-        image is a rumour. At fourteen it is a carving that throws its own
-        shadow across the panel and starts to look like something other than
-        a photograph.
-      </p>
+      <figure class="sweep">
+        <div class="sweep__stage" data-sweep>
+          <picture class="sweep__still">
+            <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
+            <source srcset="/images/relief/sweep-still.webp" type="image/webp" />
+            <img
+              src="/images/relief/sweep-still.webp"
+              alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
+              width="1040"
+              height="1300"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <video
+            class="sweep__video"
+            data-src="/video/relief-sweep.mp4"
+            width="832"
+            height="1040"
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-hidden="true"
+          ></video>
+        </div>
+        <figcaption class="sweep__cap">
+          4 mm relief · light at 11° · one turn, six seconds
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Seven depths</p>
+        <h2>How deep should a photograph be?</h2>
+        <p class="beyond-copy">
+          One frame, one light, seven candidate reliefs. At one millimetre the
+          image is a rumour. At fourteen it is a carving that throws its own
+          shadow across the panel and starts to look like something other than
+          a photograph.
+        </p>
+      </div>
 
       <ul class="depth-grid">
         {DEPTHS.map((d) => (
@@ -158,32 +120,30 @@ const EDITIONS = [
             <p class="depth__label">{d.mm} mm</p>
           </li>
         ))}
-        <li class="depth depth--note">
-          <p>
-            There is no formula here. The three relief ratios in the
-            literature each describe their own author's test piece, and none
-            is offered as guidance. This one gets chosen by looking at a
-            printed sample.
-          </p>
-        </li>
       </ul>
-    </div>
-  </section>
-
-  <section class="py-12 sm:py-16 md:py-20 section-light">
-    <div class="container-wide">
-      <p class="eyebrow mb-2">The edition</p>
-      <h2 class="mb-5">Three sizes, one depth</h2>
-      <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-10 sm:mb-14">
-        Sixteen by twenty, twenty by twenty four, and twenty four by thirty
-        six inches, portrait. The relief is cut to the same absolute depth on
-        all three, so it reads deepest on the smallest panel and quietest on
-        the largest. Shown here at true relative scale.
+      <p class="beyond-copy beyond-follow">
+        There is no formula here. The three relief ratios in the
+        literature each describe their own author's test piece, and none
+        is offered as guidance. This one gets chosen by looking at a
+        printed sample.
       </p>
+    </div>
+
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Scale study</p>
+        <h2>One depth, three sizes</h2>
+        <p class="beyond-copy">
+          Sixteen by twenty, twenty by twenty four, and twenty four by thirty
+          six inches, portrait. The relief is cut to the same absolute depth on
+          all three, so it reads deepest on the smallest panel and quietest on
+          the largest. Shown here at true relative scale.
+        </p>
+      </div>
 
       <div class="edition-rail">
-        {EDITIONS.map((e, i) => (
-          <figure class="edition" style={`--w:${e.w};--c:${i + 1}`}>
+        {EDITIONS.map((e) => (
+          <figure class={`edition edition--${e.slug}`}>
             <picture class="edition__img">
               <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
               <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
@@ -204,92 +164,76 @@ const EDITIONS = [
         ))}
       </div>
     </div>
-  </section>
 
-  <section class="py-12 sm:py-16 md:py-20">
-    <div class="container-narrow text-center">
-      <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
-      <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
-        Relief panels are cut to order, one photograph at a time. Depth and
-        size are settled against a printed sample first.
-      </p>
-      <p class="text-xs sm:text-sm opacity-60 leading-relaxed mb-6 sm:mb-8">
-        Archival prints of the photograph, by inquiry. Giclée on Hahnemühle
-        Photo Rag.
-      </p>
-      <a
-        href="mailto:jndwcreative@gmail.com?subject=Relief%20inquiry"
-        class="btn btn-primary w-full sm:w-auto"
-      >Inquire</a>
-      <p class="mt-8 sm:mt-10">
-        <a href="/photography/" class="text-xs tracking-[0.2em] uppercase text-mute hover:text-cream transition-colors">
-          Back to the photographs
-        </a>
-      </p>
+    <div class="beyond-col">
+      <div class="beyond-text">
+        <p class="eyebrow">Open questions</p>
+        <p class="beyond-copy">
+          Which relief depth survives ordinary room light?
+        </p>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <script>
-    // The sweep loads and plays only once it is on screen, and never at all
-    // under prefers-reduced-motion: the <video> ships with preload="none" and
-    // no src, so the 1.5 MB file is not fetched until the observer assigns it.
-    // The still underneath is the page's LCP candidate and is what a
-    // reduced-motion visitor keeps.
-    let sweepObserver: IntersectionObserver | null = null;
-    let sweepAbort: AbortController | null = null;
+<script>
+  // The sweep loads and plays only once it is on screen, and never at all
+  // under prefers-reduced-motion: the <video> ships with preload="none" and
+  // no src, so the 1.5 MB file is not fetched until the observer assigns it.
+  // The still underneath stays put when the video never arrives.
+  let sweepObserver: IntersectionObserver | null = null;
+  let sweepAbort: AbortController | null = null;
 
-    function initSweep() {
-      // Re-init runs on every view-transition swap. Tear the previous one
-      // down first or the observer pins the detached page tree (the
-      // atmosObserver class of bug, 2026-07-19).
-      sweepObserver?.disconnect();
-      sweepObserver = null;
-      sweepAbort?.abort();
-      sweepAbort = null;
+  function initSweep() {
+    // Re-init runs on every view-transition swap. Tear the previous one
+    // down first or the observer pins the detached page tree (the
+    // atmosObserver class of bug, 2026-07-19).
+    sweepObserver?.disconnect();
+    sweepObserver = null;
+    sweepAbort?.abort();
+    sweepAbort = null;
 
-      const stage = document.querySelector('[data-sweep]');
-      if (!stage) return;
-      const video = stage.querySelector('video') as HTMLVideoElement | null;
-      if (!video) return;
+    const stage = document.querySelector('[data-sweep]');
+    if (!stage) return;
+    const video = stage.querySelector('video') as HTMLVideoElement | null;
+    if (!video) return;
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        video.remove();
-        return;
-      }
-
-      sweepAbort = new AbortController();
-      const { signal } = sweepAbort;
-
-      video.addEventListener('playing', () => stage.classList.add('is-playing'), { signal });
-
-      sweepObserver = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            if (!video.getAttribute('src')) {
-              video.setAttribute('src', video.dataset.src || '');
-            }
-            // Autoplay can reject (low power mode, user setting). The still
-            // stays visible in that case, which is the correct fallback.
-            video.play().catch(() => {});
-          } else if (!video.paused) {
-            video.pause();
-          }
-        }
-      }, { rootMargin: '200px 0px', threshold: 0.01 });
-
-      sweepObserver.observe(stage);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video.remove();
+      return;
     }
 
-    initSweep();
-    document.addEventListener('astro:after-swap', initSweep);
-  </script>
+    sweepAbort = new AbortController();
+    const { signal } = sweepAbort;
 
+    video.addEventListener('playing', () => stage.classList.add('is-playing'), { signal });
+
+    sweepObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          if (!video.getAttribute('src')) {
+            video.setAttribute('src', video.dataset.src || '');
+          }
+          // Autoplay can reject (low power mode, user setting). The still
+          // stays visible in that case, which is the correct fallback.
+          video.play().catch(() => {});
+        } else if (!video.paused) {
+          video.pause();
+        }
+      }
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+    sweepObserver.observe(stage);
+  }
+
+  initSweep();
+  document.addEventListener('astro:after-swap', initSweep);
+</script>
 
 <style>
-  /* ---------------------------------------------------------------- sweep */
   .sweep {
-    max-width: min(26rem, 100%);
-    margin-inline: auto;
+    max-width: min(26rem, 80svh);
+    margin: 2rem 0 0;
   }
   .sweep__stage {
     position: relative;
@@ -320,25 +264,27 @@ const EDITIONS = [
   .sweep__stage.is-playing .sweep__video { opacity: 1; }
   .sweep__cap {
     margin-top: 0.85rem;
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.6875rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(244, 234, 222, 0.62);
-    text-align: center;
   }
 
-  /* ---------------------------------------------------------- depth ladder */
+  .beyond-follow {
+    margin-top: 1.25rem;
+  }
+
   .depth-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 2rem 0 0;
   }
-  @media (min-width: 768px) {
-    .depth-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; }
+  @media (min-width: 1024px) {
+    .depth-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.85rem; }
   }
   .depth img {
     display: block;
@@ -354,31 +300,20 @@ const EDITIONS = [
     font-variant-numeric: tabular-nums;
     color: rgba(244, 234, 222, 0.7);
   }
-  /* The eighth cell of a seven-tile contact sheet. Text, not a hole. */
-  .depth--note {
-    display: flex;
-    align-items: flex-end;
-    padding-bottom: 2rem;
-  }
-  .depth--note p {
-    font-size: 0.8125rem;
-    line-height: 1.65;
-    color: #868686;
-  }
 
-  /* --------------------------------------------------------- edition scale */
-  /* Two explicit rows so the panel BOTTOMS align on one line regardless of
-     how each caption wraps. --u is the pixels-per-inch of the diagram; --w is
-     the panel's real width in inches, so the layout is the measurement. */
   .edition-rail {
-    --u: min(1.38vw, 18px);
+    --u: min(1.15vw, 16px);
     display: grid;
     grid-template-columns: repeat(3, auto);
     grid-template-rows: auto auto;
     justify-content: start;
     column-gap: calc(var(--u) * 1.3);
+    margin-top: 2rem;
   }
   .edition { display: contents; }
+  .edition--16x20 { --w: 16; --c: 1; }
+  .edition--20x24 { --w: 20; --c: 2; }
+  .edition--24x36 { --w: 24; --c: 3; }
   .edition__img {
     grid-row: 1;
     grid-column: var(--c);
@@ -409,13 +344,12 @@ const EDITIONS = [
     color: rgba(244, 234, 222, 0.75);
   }
   .edition__read {
-    font-size: 0.625rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.06em;
     color: #868686;
   }
-  @media (max-width: 640px) {
-    .edition__size { font-size: 0.625rem; }
-    .edition__read { font-size: 0.5625rem; }
-  }
 
+  @media (prefers-reduced-motion: reduce) {
+    .sweep__video { transition: none; }
+  }
 </style>
