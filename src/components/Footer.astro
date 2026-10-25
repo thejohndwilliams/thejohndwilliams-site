@@ -2,6 +2,11 @@
 import { getCurrentYear } from '../utils/date';
 import GlassPillGL from './GlassPillGL.astro';
 
+interface Props {
+  inquire?: boolean;
+}
+
+const { inquire = true } = Astro.props;
 const currentYear = getCurrentYear();
 ---
 
@@ -19,7 +24,7 @@ const currentYear = getCurrentYear();
           class="link-draw hover:text-cream transition-colors duration-300"
         >John 15:13</a>
       </p>
-      <GlassPillGL label="Inquire" href="mailto:jndwcreative@gmail.com" variant="c" class="shrink-0" />
+      {inquire && <GlassPillGL label="Inquire" href="mailto:jndwcreative@gmail.com" variant="c" class="shrink-0" />}
     </div>
     <div class="mt-10 pt-6 border-t border-white/5 flex flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
       <p class="text-xs opacity-50">

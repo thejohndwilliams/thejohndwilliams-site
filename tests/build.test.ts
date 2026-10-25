@@ -498,6 +498,34 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).not.toContain('7r51018-enhanced-sr');
     expect(beyond).toContain('>Inquire<');
   });
+  it('depth: draft figure is noindex, unlinked from the sitemap, and has no inline styles', () => {
+    const html = fs.readFileSync(path.join(distDir, 'depth/index.html'), 'utf8');
+    expect(html).toContain('noindex');
+    expect(html).toContain('id="depth-stack"');
+    expect(html).toContain('id="depth-separation"');
+    expect(html).toContain('type="range"');
+    expect(html).toContain('min="0"');
+    expect(html).toContain('max="1"');
+    expect(html).toContain('step="0.01"');
+    expect(html).toContain('Layer separation');
+    expect(html).toContain('>Replay<');
+    expect(html).not.toContain('\u2014');
+    expect(html).not.toMatch(/<style[\s\S]*?<\/style>/);
+    expect(html).not.toMatch(/\sstyle="/);
+    expect(html).not.toContain('KineticPlate');
+    expect(html).toContain('/images/depth/w800/layer1.webp 800w');
+    expect(html).not.toContain('2400w');
+    const lower = html.toLowerCase();
+    for (const word of ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license']) {
+      expect(lower, word).not.toMatch(new RegExp(`\\b${word}\\b`));
+    }
+    const sitemap = fs.readFileSync(path.join(distDir, 'sitemap-0.xml'), 'utf8');
+    expect(sitemap).not.toContain('/depth');
+    expect(sitemap).not.toContain('\u2014');
+    const robots = fs.readFileSync(path.join(distDir, 'robots.txt'), 'utf8');
+    expect(robots).toContain('Disallow: /depth');
+  });
+
   it('footer: the inquiry stands beside the verse on every page', () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
     const footIdx = beyond.indexOf('John 15:13');

@@ -1,6 +1,11 @@
 ---
 import { navItems } from '../utils/date';
 
+interface Props {
+  inquire?: boolean;
+}
+
+const { inquire = true } = Astro.props;
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
 ---
@@ -38,13 +43,15 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
         <button type="button" class="theme-toggle inline-flex items-center justify-center text-mute hover:text-cream transition-colors duration-300 py-2 min-h-[44px]" aria-pressed="false" aria-label="True black background">
           <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
         </button>
-        <a
-          href="mailto:jndwcreative@gmail.com"
-          class="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border border-cream/25 text-cream hover:border-cream/50 hover:bg-cream/5 transition-[background-color,border-color,outline,outline-offset] duration-300 ease-smooth"
-        >
-          Inquire
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        </a>
+        {inquire && (
+          <a
+            href="mailto:jndwcreative@gmail.com"
+            class="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2 rounded-full border border-cream/25 text-cream hover:border-cream/50 hover:bg-cream/5 transition-[background-color,border-color,outline,outline-offset] duration-300 ease-smooth"
+          >
+            Inquire
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </a>
+        )}
       </div>
 
       {/* Mobile icon nav - lives in the header (top), beside JW which is home. No bottom bar (it collided with the browser chrome). */}
@@ -61,9 +68,11 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
         <a href="/about/" data-path="/about" aria-label="About" class={`m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full transition-colors duration-300 ${currentPath === '/about' ? 'text-cream' : 'text-mute'}`} aria-current={currentPath === '/about' ? 'page' : undefined}>
           <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.4" r="3.7" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M5.6 19.8a6.4 6.4 0 0 1 12.8 0" /></svg>
         </a>
-        <a href="mailto:jndwcreative@gmail.com" aria-label="Inquire" class="m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute transition-colors duration-300">
-          <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="1.8" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="m4.5 7.2 7.5 5.4 7.5-5.4" /></svg>
-        </a>
+        {inquire && (
+          <a href="mailto:jndwcreative@gmail.com" aria-label="Inquire" class="m-nav-item flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute transition-colors duration-300">
+            <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="1.8" stroke-width="1.4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="m4.5 7.2 7.5 5.4 7.5-5.4" /></svg>
+          </a>
+        )}
         <button type="button" class="theme-toggle flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-mute hover:text-cream transition-colors duration-300" aria-pressed="false" aria-label="True black background">
           <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" /></svg>
         </button>

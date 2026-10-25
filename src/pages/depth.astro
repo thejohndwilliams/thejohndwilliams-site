@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DepthStack from '../components/DepthStack.astro';
+
+// Draft figure. Unlinked. noindex, omitted from the sitemap, disallowed
+// in robots.txt. Preview branches and local builds keep the page. The
+// production branch redirects home until John decides to publish it.
+// Local and CI omit CF_PAGES, so the tests still see the figure.
+if (process.env.CF_PAGES === '1' && (process.env.CF_PAGES_BRANCH || 'main') === 'main') {
+  return Astro.redirect('/', 308);
+}
+---
+
+<BaseLayout
+  title="Depth layers"
+  description="A photograph separated into five depth layers."
+  ogImage="/images/depth/layer1.webp"
+  ogImageWidth={1600}
+  ogImageHeight={1062}
+  noindex={true}
+  inquire={false}
+>
+  <div class="depth-page">
+    <DepthStack />
+  </div>
+</BaseLayout>

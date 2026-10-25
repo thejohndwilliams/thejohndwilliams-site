@@ -39,7 +39,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // Keep unlinked preview/lab routes out of the production sitemap.
-      filter: (page) => !page.includes('/about-lab') && !page.includes('/glass-lab'),
+      filter: (page) => !page.includes('/about-lab') && !page.includes('/glass-lab') && !page.includes('/depth'),
       // Google Images sitemap enrichment: attach <image:image> entries to
       // photography URLs so the gallery is discovered as images (not just HTML).
       serialize(item) {

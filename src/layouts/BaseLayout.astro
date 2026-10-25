@@ -30,6 +30,8 @@ interface Props {
   /** Emit <meta name="robots" content="noindex, nofollow">. For unlinked
       preview/lab pages that must build but never be indexed. */
   noindex?: boolean;
+  /** Header and footer inquiry links. Off for the depth page. */
+  inquire?: boolean;
 }
 
 const {
@@ -41,7 +43,8 @@ const {
   lcpImage,
   lcpImageSizes = '100vw',
   lcpImagePortrait,
-  noindex = false
+  noindex = false,
+  inquire = true
 } = Astro.props;
 
 const fullTitle = title === 'Home' ? 'John D. Williams' : `${title} | John D. Williams`;
@@ -182,11 +185,11 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     </svg>
 
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-cream focus:text-midnight focus:rounded-md focus:text-sm focus:font-medium">Skip to content</a>
-    <Header />
+    <Header inquire={inquire} />
     <main id="content" class="flex-grow">
       <slot />
     </main>
-    <Footer />
+    <Footer inquire={inquire} />
 
 
     {/* Back to top - desktop only; mobile uses active-tab-tap convention */}
