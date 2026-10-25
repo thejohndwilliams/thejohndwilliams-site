@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GlassPillGL from '../components/GlassPillGL.astro';
 import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes } from '../utils/photo-src';
 
 
@@ -66,13 +65,10 @@ const expertise = [
         <div class="reveal md:col-span-5">
           <p class="eyebrow mb-3 sm:mb-4">Building</p>
           <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-          <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
+          <p class="text-base leading-relaxed max-w-xl">
             Consulting in data engineering, cybersecurity, and operational
             analytics.
           </p>
-          <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
-            <GlassPillGL label="Resume (PDF)" href="/files/Williams-John-D-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
-          </div>
         </div>
         <div class={`${frameClass('dscf0331')} min-w-0 md:col-span-7`}>
           <picture>

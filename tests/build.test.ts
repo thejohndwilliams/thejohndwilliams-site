@@ -461,17 +461,20 @@ describe('Glass Build B promotion: hero complications are refractive C', () => {
 });
 
 describe('The spread (owner order 2026-08-01): the material takes its seats', () => {
-  it('work: the practice strip sits under Selected Work with a glass resume', () => {
+  it('work: the practice strip sits under Selected Work', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
     const heroIdx = work.indexOf('Selected Work');
     const stripIdx = work.indexOf('Consulting in data engineering');
     expect(stripIdx).toBeGreaterThan(heroIdx);
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
-    expect(work).toContain('Resume (PDF)');
+    expect(work).not.toContain('Resume (PDF)');
+    expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
   });
   it('about: the consulting card is retired; More stands under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
     expect(about).not.toContain('I take on select consulting work');
+    expect(about).not.toContain('Resume (PDF)');
+    expect(about).not.toContain('/files/Williams-John-D-Resume.pdf');
     // Page-level Inquire pill removed. Footer Inquire remains, so the count
     // is More + footer. Header Inquire is a plain link, not a glass pill.
     expect((about.match(/data-gpill/g) || []).length).toBe(2);
