@@ -55,7 +55,7 @@ const jsonLd = {
   creditText: 'John D. Williams',
   copyrightNotice: '© John D. Williams',
   license: `${SITE}/photography/`,
-  acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`,
+  acquireLicensePage: 'mailto:jndwcreative@gmail.com',
   keywords: [category.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
   ...(meta.captureDate ? { datePublished: meta.captureDate } : {}),
   ...(meta.location ? { contentLocation: { '@type': 'Place', name: meta.location } } : {}),
@@ -216,7 +216,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
             <a
-              href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`}
+              href="mailto:jndwcreative@gmail.com"
               class="btn btn-primary"
             >
               Inquire about this print
