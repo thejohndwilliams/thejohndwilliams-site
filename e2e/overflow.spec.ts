@@ -29,6 +29,9 @@ for (const path of PAGES) {
 // /work hero were measured past the viewport.
 const TABLET = [
   { width: 820, height: 1180 },
+  // 820 with a classic scrollbar lays out at about 805. That is the width
+  // where Contact was measured past the right edge.
+  { width: 805, height: 1180 },
   { width: 768, height: 1024 },
   { width: 1024, height: 768 },
 ] as const;
@@ -60,8 +63,8 @@ for (const viewport of TABLET) {
       });
       expect(header.gap, `wordmark meets the first link on ${path}`).not.toBeNull();
       expect(header.gap!, `wordmark meets Photography on ${path} at ${viewport.width}`).toBeGreaterThanOrEqual(16);
-      expect(header.inquireRight, `Inquire missing on ${path}`).not.toBeNull();
-      expect(header.inquireRight!, `Inquire crosses the viewport on ${path} at ${viewport.width}`).toBeLessThanOrEqual(header.clientWidth);
+      expect(header.inquireRight, `Contact missing on ${path}`).not.toBeNull();
+      expect(header.inquireRight!, `Contact crosses the viewport on ${path} at ${viewport.width}`).toBeLessThanOrEqual(header.clientWidth);
 
       if (path === '/work/') {
         const links = page.locator('a', { hasText: 'View on GitHub' });
@@ -70,9 +73,20 @@ for (const viewport of TABLET) {
         for (let i = 0; i < count; i++) {
           const box = await links.nth(i).boundingBox();
           expect(box, `github link ${i} has no box`).not.toBeNull();
+          expect(box!.width, `github link ${i} is squeezed on ${path} at ${viewport.width}`).toBeGreaterThanOrEqual(100);
           expect(box!.height, `github link ${i} wraps on ${path} at ${viewport.width}`).toBeLessThanOrEqual(56);
         }
       }
     });
   }
 }
+
+test('the /work Beyond sentence link is a 44px target at 390', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/work/');
+  await page.waitForLoadState('networkidle');
+  const box = await page.locator('main p a[href="/beyond/"]', { hasText: 'Beyond' }).boundingBox();
+  expect(box, 'Beyond sentence link has no box').not.toBeNull();
+  expect(box!.width, 'Beyond sentence link is narrower than 44px').toBeGreaterThanOrEqual(44);
+  expect(box!.height, 'Beyond sentence link is shorter than 44px').toBeGreaterThanOrEqual(44);
+});

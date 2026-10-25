@@ -1163,7 +1163,7 @@ main > section:not(:first-of-type):not([id]):not(:has(.kinetic-plate, .kplate3d)
   z-index: 1;
   container-type: inline-size;
   /* gap-8 on the word nav. Five of those gaps fill a 768-900px shell,
-     so the mark meets Photography and Inquire crosses the edge.
+     so the mark meets Photography and Contact crosses the edge.
      Below 960px the shell tightens the gap: about 32px at 768,
      back to this value by 900. Wider shells keep the utility gap. */
   --nav-gap: 3.556rem;
