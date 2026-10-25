@@ -1,0 +1,81 @@
+---
+import '../styles/depth-stack.css';
+
+/* Source layers are 1600px wide. 800 and 1200 are downscales.
+   No wider candidate is offered. */
+const SIZES = '(max-width: 740px) 72vw, (min-resolution: 3dppx) 533px, (min-resolution: 2dppx) 800px, 1600px';
+const layerset = (file: string) =>
+  `/images/depth/w800/${file} 800w, /images/depth/w1200/${file} 1200w, /images/depth/${file} 1600w`;
+const ALT = 'Layered canyon walls receding toward a hazy far rim, with a small river below.';
+const UPPER = [
+  { i: '1', label: 'LAYER 2', file: 'layer2.webp' },
+  { i: '2', label: 'LAYER 3', file: 'layer3.webp' },
+  { i: '3', label: 'LAYER 4', file: 'layer4.webp' },
+  { i: '4', label: 'LAYER 5 NEAR', file: 'layer5.webp' },
+] as const;
+const LABELS = ['LAYER 1 FAR', 'LAYER 2', 'LAYER 3', 'LAYER 4', 'LAYER 5 NEAR'] as const;
+---
+
+<figure class="depth-stack" id="depth-stack">
+  <div class="depth-stack__view">
+    <div class="depth-stack__fit">
+      <div class="depth-stack__stage">
+        <div class="depth-stack__plate" data-i="0" tabindex="0" role="img" aria-label={ALT}>
+          <img
+            class="depth-stack__shot depth-stack__base"
+            src="/images/depth/layer1.webp"
+            srcset={layerset('layer1.webp')}
+            sizes={SIZES}
+            width="1600"
+            height="1062"
+            alt={ALT}
+            fetchpriority="high"
+            decoding="async"
+            draggable="false"
+          />
+          <img
+            class="depth-stack__shot depth-stack__far"
+            data-src="/images/depth/layer1-plate.webp"
+            data-srcset={layerset('layer1-plate.webp')}
+            data-sizes={SIZES}
+            width="1600"
+            height="1062"
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            draggable="false"
+          />
+        </div>
+        {UPPER.map((layer) => (
+          <img
+            class="depth-stack__plate"
+            data-i={layer.i}
+            tabindex="0"
+            alt=""
+            aria-label={layer.label}
+            data-src={`/images/depth/${layer.file}`}
+            data-srcset={layerset(layer.file)}
+            data-sizes={SIZES}
+            width="1600"
+            height="1062"
+            decoding="async"
+            draggable="false"
+          />
+        ))}
+      </div>
+    </div>
+    <div class="depth-stack__labels" aria-hidden="true">
+      {LABELS.map((label, i) => (
+        <span class="depth-stack__tag" data-i={String(i)}>{label}</span>
+      ))}
+    </div>
+  </div>
+  <figcaption class="depth-stack__cap">The photograph separated into five depth layers, far to near.</figcaption>
+  <label class="depth-stack__range" hidden>
+    <span class="sr-only">Layer separation</span>
+    <input id="depth-separation" type="range" min="0" max="1" step="0.01" value="0" disabled />
+  </label>
+  <button class="depth-stack__replay" type="button" hidden aria-hidden="true">Replay</button>
+</figure>
+
+<script src="../scripts/depth-stack.ts"></script>
