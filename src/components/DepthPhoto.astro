@@ -1,0 +1,39 @@
+---
+import { publicBitmap } from '../utils/bitmap';
+
+interface Props {
+  file: string;
+  alt: string;
+  eager?: boolean;
+}
+
+const { file, alt, eager = false } = Astro.props;
+const sizes = '(max-width: 767px) calc(100vw - 2rem), 1080px';
+const tier = (folder: string, ext: string) => `/images/photography/${folder}/${file}.${ext}`;
+const src = tier('gallery', 'webp');
+const dim = await publicBitmap(src);
+---
+
+<picture class="depth-photo">
+  <source
+    type="image/avif"
+    srcset={`${tier('thumb', 'avif')} 400w, ${tier('gallery', 'avif')} 1200w, ${tier('hero', 'avif')} 2400w`}
+    sizes={sizes}
+  />
+  <source
+    type="image/webp"
+    srcset={`${tier('thumb', 'webp')} 400w, ${tier('gallery', 'webp')} 1200w, ${tier('hero', 'webp')} 2400w`}
+    sizes={sizes}
+  />
+  <img
+    class="depth-photo__img"
+    src={src}
+    alt={alt}
+    width={dim.width}
+    height={dim.height}
+    sizes={sizes}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    fetchpriority={eager ? 'high' : undefined}
+  />
+</picture>

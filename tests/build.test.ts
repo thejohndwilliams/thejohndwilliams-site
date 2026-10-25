@@ -8,6 +8,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
+import sharp from 'sharp';
 
 const execAsync = promisify(exec);
 const distDir = path.join(process.cwd(), 'dist');
@@ -480,14 +481,23 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(about).toContain('Neon traced across the night');
     expect(about).toContain('Turquoise sea against rock formations');
   });
-  it('beyond: one live depth pair, the other subjects inert, relief pair gone', () => {
+  it('beyond: photograph at rest, plates stay in templates until a mode is chosen', async () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
     const live = beyond.replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '');
+    const mainStart = beyond.indexOf('<main');
+    const mainEnd = beyond.indexOf('</main>');
+    const main = beyond.slice(mainStart, mainEnd);
     // Trailing space keeps the figure class from matching __canvas / __stage.
-    expect((live.match(/class="kplate3d /g) || []).length).toBe(1);
-    expect((live.match(/class="kinetic-plate /g) || []).length).toBe(1);
+    // Nothing is mounted on first paint: a resting visit opens no depth WebGL context.
+    expect((live.match(/class="kplate3d /g) || []).length).toBe(0);
+    expect((live.match(/class="kinetic-plate /g) || []).length).toBe(0);
+    expect((beyond.match(/class="kplate3d /g) || []).length).toBe(4);
+    expect((beyond.match(/class="kinetic-plate /g) || []).length).toBe(4);
     expect((beyond.match(/data-study-tpl=/g) || []).length).toBe(4);
-    expect((live.match(/Hologram · stacked planes/g) || []).length).toBe(1);
+    expect((live.match(/Hologram · stacked planes/g) || []).length).toBe(0);
+    expect(beyond).toContain('Hologram · stacked planes');
+    expect(beyond).toContain('Point cloud · true depth');
+    expect(beyond).toContain('data-depth-layers');
     expect(beyond).not.toContain('The same frame, as space');
     expect(beyond).not.toContain('Beyond%20Photography');
     expect(beyond).toContain('The envelope');
@@ -497,6 +507,34 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).not.toContain('img-6552');
     expect(beyond).not.toContain('7r51018-enhanced-sr');
     expect(beyond).toContain('>Inquire<');
+    expect(main).not.toContain('>Inquire<');
+    expect(main).not.toContain('Take one home');
+    expect(main).not.toContain('The edition');
+    expect(main).not.toContain('Three sizes, one depth');
+    expect(main).not.toContain('Collecting');
+    expect(main).not.toContain('Hahnemühle');
+    expect(main).not.toContain('cut to order');
+    expect(main).not.toContain('—');
+    expect(main).toContain('Studies in texture.');
+    expect(main).toContain('Scale study');
+    expect(main).toContain('One depth, three sizes');
+    expect(main).toContain('Open questions');
+    expect(main).toContain('Which relief depth survives ordinary room light?');
+    expect(main).toContain('a Gaussian convolution, the closed-form');
+    expect(main).toContain('Back to the photographs');
+    const imgs = beyond.match(/<img\b[^>]*>/gi) || [];
+    expect(imgs.length).toBeGreaterThan(0);
+    for (const tag of imgs) {
+      const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+      const width = tag.match(/\bwidth="(\d+)"/)?.[1];
+      const height = tag.match(/\bheight="(\d+)"/)?.[1];
+      expect(src, tag).toBeTruthy();
+      expect(width, src).toBeTruthy();
+      expect(height, src).toBeTruthy();
+      const meta = await sharp(path.join(process.cwd(), 'public', src!)).metadata();
+      expect(String(meta.width), src).toBe(width);
+      expect(String(meta.height), src).toBe(height);
+    }
   });
   it('depth: draft figure is noindex, unlinked from the sitemap, and has no inline styles', () => {
     const html = fs.readFileSync(path.join(distDir, 'depth/index.html'), 'utf8');

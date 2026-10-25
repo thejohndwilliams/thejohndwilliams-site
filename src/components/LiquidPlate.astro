@@ -1,9 +1,8 @@
 ---
 /**
- * LiquidPlate - an editorial feature row: a photograph seen through the
- * site's glass system, beside a roomy "atelier" panel that hands the
- * image back as colors, wallpaper, and texture. Alternates left/right
- * via `reverse`, matching the About page's grammar.
+ * LiquidPlate - one photograph, then the atelier under it: colors,
+ * wallpaper, and texture. `reverse` is retained and unused; the row
+ * used to alternate beside the plate and fought the column.
  *
  * Plate: crisp <picture> base (zero-JS safe) + enhancement on capable
  *   devices (feDisplacementMap refraction, specular, one ivory depth-scan).
@@ -13,6 +12,7 @@
  *   Texture  - Normal map (Sobel) + seamless Tile (mirror), for 3D/makers.
  */
 import palettesData from '../data/plate-palettes.json';
+import { publicBitmap } from '../utils/bitmap';
 
 export interface Props {
   src: string;
@@ -24,6 +24,8 @@ export interface Props {
 }
 const { src, alt, label, note = '', index = 0, reverse = false } = Astro.props;
 const tier = (t: string, e: string) => `/images/photography/${t}/${src}.${e}`;
+const plateSrc = tier('gallery', 'webp');
+const plateDim = await publicBitmap(plateSrc);
 const fid = `lq-${src.replace(/[^a-zA-Z0-9]/g, '')}`;
 const palette: string[] = (palettesData as Record<string, string[]>)[src] ?? [];
 const cssVars = palette.map((h, i) => `--${label.toLowerCase()}-${i + 1}: ${h};`).join(' ');
@@ -41,7 +43,7 @@ const hero = tier('hero', 'webp');
     <picture>
       <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
       <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
-      <img class="liquid-plate__img" src={tier('gallery','webp')} alt={alt} loading="lazy" decoding="async" data-fid={fid} />
+      <img class="liquid-plate__img" src={plateSrc} alt={alt} width={plateDim.width} height={plateDim.height} loading="lazy" decoding="async" data-fid={fid} />
     </picture>
     <span class="liquid-plate__sheen" aria-hidden="true"></span>
     <span class="liquid-plate__rim" aria-hidden="true"></span>
@@ -58,7 +60,7 @@ const hero = tier('hero', 'webp');
         <span class="lp-grp__k">Colors</span>
         <div class="lp-grp__v lp-palette" role="group" aria-label={`Color palette from ${label}`}>
           {palette.map((hex) => (
-            <button type="button" class="lp-sw" style={`--sw: ${hex}`} data-hex={hex} title={hex} aria-label={`Copy ${hex}`}></button>
+            <button type="button" class="lp-sw" data-hex={hex} title={hex} aria-label={`Copy ${hex}`}></button>
           ))}
           <button type="button" class="lp-ctl" data-css={cssVars} aria-label="Copy palette as CSS">CSS</button>
           <span class="lp-toast" aria-live="polite"></span>
@@ -95,16 +97,17 @@ const hero = tier('hero', 'webp');
 </div>
 
 <style>
-  .lp-feature { display: flex; flex-direction: column; gap: 1.5rem; }
-  @media (min-width: 1024px) {
-    .lp-feature { flex-direction: row; align-items: center; gap: 3rem; }
-    .lp-feature--rev { flex-direction: row-reverse; }
-    .lp-feature .liquid-plate { flex: 0 0 auto; width: 520px; }
-    .lp-feature .lp-atelier { flex: 1; min-width: 0; }
+  /* One row: the photograph, then the control bar under it. The plate
+     fills the figure column, capped so a 16:10 frame stays inside 80svh. */
+  .lp-feature { display: flex; flex-direction: column; align-items: stretch; gap: 1.25rem; }
+  .lp-feature .liquid-plate {
+    width: min(100%, calc(80svh * 1.6));
+    max-width: 100%;
   }
+  .lp-feature .lp-atelier { width: 100%; min-width: 0; }
   .liquid-plate {
     position: relative; display: block; margin: 0; width: 100%;
-    aspect-ratio: 16 / 10; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
+    aspect-ratio: 16 / 10; max-height: 80svh; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
   }
   .liquid-plate__defs { position: absolute; width: 0; height: 0; }
   .liquid-plate__img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: filter; }
@@ -120,15 +123,43 @@ const hero = tier('hero', 'webp');
   .liquid-plate__label { position: absolute; left: 0.7rem; bottom: 0.55rem; font-size: 0.7rem; letter-spacing: 0.06em;
     text-transform: uppercase; color: #fdfcfa; background: rgba(10,10,10,0.42); padding: 0.15rem 0.55rem; border-radius: 6px; }
   .liquid-plate.is-fine:hover .liquid-plate__sheen { opacity: 1; }
+  .liquid-plate.is-fine .liquid-plate__img[data-fid="lq-img2528"] { filter: url(#lq-img2528); }
+  .liquid-plate.is-fine .liquid-plate__img[data-fid="lq-dsc0014"] { filter: url(#lq-dsc0014); }
+  .liquid-plate.is-fine .liquid-plate__img[data-fid="lq-dscf1022"] { filter: url(#lq-dscf1022); }
 
   .lp-atelier__label { font-family: var(--font-serif, Georgia, serif); font-size: 1.5rem; color: #fdfcfa; margin: 0 0 0.4rem; }
-  .lp-atelier__note { font-size: 0.95rem; line-height: 1.6; color: #9a958c; margin: 0 0 1.4rem; max-width: 32ch; }
+  .lp-atelier__note { font-size: 1rem; line-height: 1.6; color: #868686; margin: 0 0 1.4rem; max-width: 62ch; }
   .lp-grp { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-top: 0.5px solid rgba(168,159,140,0.18); }
   .lp-grp__k { flex: 0 0 78px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a89f8c; opacity: 0.85; padding-top: 5px; }
   .lp-grp__v { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; position: relative; min-width: 0; }
 
   .lp-sw { position: relative; width: 28px; height: 24px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
-    flex-shrink: 0; background: var(--sw); outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
+    flex-shrink: 0; background: #1a1a1a; outline: 0.5px solid rgba(255,255,255,0.14); transition: transform 0.15s ease; }
+  .lp-sw[data-hex="#080808"] { background: #080808; }
+  .lp-sw[data-hex="#002B79"] { background: #002B79; }
+  .lp-sw[data-hex="#0270CA"] { background: #0270CA; }
+  .lp-sw[data-hex="#AEAFCC"] { background: #AEAFCC; }
+  .lp-sw[data-hex="#DCD1D5"] { background: #DCD1D5; }
+  .lp-sw[data-hex="#030803"] { background: #030803; }
+  .lp-sw[data-hex="#222421"] { background: #222421; }
+  .lp-sw[data-hex="#2F3D2B"] { background: #2F3D2B; }
+  .lp-sw[data-hex="#424541"] { background: #424541; }
+  .lp-sw[data-hex="#50574F"] { background: #50574F; }
+  .lp-sw[data-hex="#626262"] { background: #626262; }
+  .lp-sw[data-hex="#787878"] { background: #787878; }
+  .lp-sw[data-hex="#919191"] { background: #919191; }
+  .lp-sw[data-hex="#C1C1C1"] { background: #C1C1C1; }
+  .lp-sw[data-hex="#E4E4E4"] { background: #E4E4E4; }
+  .lp-sw[data-hex="#020105"] { background: #020105; }
+  .lp-sw[data-hex="#0E0810"] { background: #0E0810; }
+  .lp-sw[data-hex="#372B2D"] { background: #372B2D; }
+  .lp-sw[data-hex="#726B6B"] { background: #726B6B; }
+  .lp-sw[data-hex="#B9B9B9"] { background: #B9B9B9; }
+  .lp-sw[data-hex="#030201"] { background: #030201; }
+  .lp-sw[data-hex="#1C1009"] { background: #1C1009; }
+  .lp-sw[data-hex="#412E1A"] { background: #412E1A; }
+  .lp-sw[data-hex="#826A46"] { background: #826A46; }
+  .lp-sw[data-hex="#D1BA8E"] { background: #D1BA8E; }
   .lp-sw:hover { transform: translateY(-2px); }
   .lp-ctl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f8c;
     background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
@@ -172,8 +203,8 @@ const hero = tier('hero', 'webp');
   @media (pointer: coarse) {
     .lp-grp__v { gap: 10px; }
     .lp-devs { gap: 8px; }
-    .lp-sw { width: 44px; height: 34px; }
-    .lp-sw::after { content: ''; position: absolute; inset: -5px; }
+    .lp-sw { width: 44px; height: 44px; }
+    .lp-sw::after { content: none; }
     .lp-ctl, .lp-fit, .lp-dev { min-height: 44px; min-width: 44px; padding: 8px 12px; }
   }
 
@@ -275,7 +306,6 @@ const hero = tier('hero', 'webp');
     if (img && fe && sheen && fine && !reduce && supports) {
       const fidAttr = img.getAttribute('data-fid');
       if (fidAttr) {
-        img.style.filter = 'url(#' + fidAttr + ')';
         fig.classList.add('is-fine');
         let raf = 0, t = Math.random() * 6, cur = 0, hover = false, looping = false;
         // Idle displacement is unchanged while the figure is on screen:
@@ -313,7 +343,7 @@ const hero = tier('hero', 'webp');
         fig.addEventListener('pointermove', onMove, { passive: true });
         fig.addEventListener('pointerleave', onLeave, { passive: true });
         cleanups.push(() => { stopLoop(); motionIo.disconnect(); fig.removeEventListener('pointermove', onMove);
-          fig.removeEventListener('pointerleave', onLeave); img.style.filter = ''; fig.classList.remove('is-fine'); });
+          fig.removeEventListener('pointerleave', onLeave); fig.classList.remove('is-fine'); });
       }
     }
 
