@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseStudyLayout from '../components/CaseStudyLayout.astro';
 import GlassPillGL from '../components/GlassPillGL.astro';
 import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes } from '../utils/photo-src';
 
@@ -58,6 +59,7 @@ const expertise = [
   lcpImage="dscf0331"
   lcpImageSizes={plateSizes('dscf0331')}
 >
+  <CaseStudyLayout />
   <!-- HERO. dscf0331 is a portrait. It keeps that aspect beside the lockup
        instead of being cropped into a landscape band. -->
   <section class="pt-8 sm:pt-12 pb-10 sm:pb-16" data-glass-bench>

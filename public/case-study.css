@@ -1,0 +1,114 @@
+/* Placeholder case study. Linked only when the flag renders the block. */
+
+.case-study {
+  --case-ground: #0a0a0a;
+  --case-title: #F4EADE;
+  --case-body: rgba(244, 234, 222, 0.78);
+  --case-line: rgba(244, 234, 222, 0.2);
+  --case-measure: 65ch;
+  --case-pad-inline: 1rem;
+  --case-pad-top: 3.5rem;
+  --case-pad-bottom: 4rem;
+  --case-stack: 2.5rem;
+  --case-prose: 1.25rem;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background-color: var(--bg-base, var(--case-ground));
+  color: var(--case-title);
+  padding-top: var(--case-pad-top);
+  padding-bottom: var(--case-pad-bottom);
+  padding-left: max(var(--case-pad-inline), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--case-pad-inline), env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--case-line);
+}
+
+.case-study-inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 72rem;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.case-study-title {
+  margin: 0 0 var(--case-stack);
+  max-width: 100%;
+  font-family: "EB Garamond", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 1.45rem + 2.6vw, 3.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--case-title);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.case-study-figure {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 0 var(--case-stack);
+}
+
+.case-study-frame {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--case-line);
+  background: transparent;
+}
+
+.case-study-body {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--case-prose);
+  width: 100%;
+  max-width: var(--case-measure);
+  min-width: 0;
+}
+
+.case-study-body p {
+  margin: 0;
+  max-width: 100%;
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.667;
+  color: var(--case-body);
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 820px) {
+  .case-study {
+    --case-pad-inline: 1.5rem;
+    --case-pad-top: 5rem;
+    --case-pad-bottom: 5.5rem;
+    --case-stack: 3.5rem;
+    --case-prose: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .case-study {
+    --case-pad-inline: 2rem;
+    --case-pad-top: 5.5rem;
+    --case-pad-bottom: 6.5rem;
+    --case-stack: 4rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .case-study {
+    --case-pad-top: 6.5rem;
+    --case-pad-bottom: 7.5rem;
+    --case-stack: 4.75rem;
+  }
+}

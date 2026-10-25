@@ -53,5 +53,8 @@ visual-diff/
 # axe a11y test scratch build
 dist-a11y-test/
 
+# Flag-on scratch build for the case study layout check
+dist-case-study/
+
 # Traffic reports (scripts/traffic-report.mjs --md; point-in-time exports)
 Traffic_Report_*.md

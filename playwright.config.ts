@@ -28,10 +28,27 @@ export default defineConfig({
       use: { ...devices['iPhone 13'] },
     },
   ],
-  webServer: {
-    command: 'npm run preview',
-    url: 'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  webServer: [
+    {
+      command: 'npm run preview',
+      url: 'http://localhost:4321',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+    // Placeholder case study only. astro preview always serves dist/, so
+    // this build uses its own directory and a static file server. The dev
+    // toolbar never enters the page. Production preview above stays flag-off.
+    // reuseExistingServer stays off: a leftover dev server on this port
+    // would hide the static flag-on build.
+    {
+      command: 'npx astro build --outDir dist-case-study && python3 -m http.server 4391 --bind 127.0.0.1 --directory dist-case-study',
+      url: 'http://127.0.0.1:4391/work/',
+      reuseExistingServer: false,
+      timeout: 180000,
+      env: {
+        ...process.env,
+        PUBLIC_SHOW_CASE_STUDY: 'true',
+      },
+    },
+  ],
 });
