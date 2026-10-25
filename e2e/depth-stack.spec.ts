@@ -99,9 +99,13 @@ test.describe('exploded depth stack', () => {
     expect(html).not.toMatch(/\sstyle="/);
     expect(html).not.toMatch(/<style[\s>]/);
     const lower = html.toLowerCase();
+    // Sales wording stays banned. Contact is the neutral nav label, and
+    // /depth sets inquire={false}, so that CTA is absent. Same count: zero.
     for (const word of ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license']) {
       expect(lower, word).not.toMatch(new RegExp(`\\b${word}\\b`));
     }
+    expect(html).not.toContain('>Contact<');
+    expect(html).not.toContain('aria-label="Contact"');
 
     const range = page.locator('#depth-separation');
     await expect(range).toBeEnabled();
@@ -154,10 +158,10 @@ test.describe('exploded depth stack', () => {
     expect(desktopLabels).toBe(5);
     const plate = page.locator('.depth-stack__plate[data-i="4"]');
     await plate.focus();
-    const dimmed = await page.locator('.depth-stack__plate[data-i="1"]').evaluate((el) => {
-      return Number.parseFloat(getComputedStyle(el).opacity);
-    });
-    expect(dimmed).toBeLessThan(0.7);
+    const farPlate = page.locator('.depth-stack__plate[data-i="1"]');
+    await expect.poll(async () => {
+      return farPlate.evaluate((el) => Number.parseFloat(getComputedStyle(el).opacity));
+    }, { timeout: 2000 }).toBeLessThan(0.7);
     await page.screenshot({
       path: `/opt/cursor/artifacts/screenshots/depth-stack/${testInfo.project.name}-1280-exploded.png`,
     });
@@ -285,6 +289,7 @@ test('no-js shows the flat photograph only', async ({ browser }) => {
     await expect(page.locator('.depth-stack__tag').first()).toBeHidden();
     await expect(page.locator('img[src*="layer2"]')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/\b(inquire|purchase|edition|licen[cs]e|sale|price)\b/i);
+    await expect(page.locator('header a[aria-label="Contact"], footer a:has-text("Contact")')).toHaveCount(0);
     await page.screenshot({ path: '/opt/cursor/artifacts/screenshots/depth-stack/nojs-1280.png' });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: '/opt/cursor/artifacts/screenshots/depth-stack/nojs-390.png' });

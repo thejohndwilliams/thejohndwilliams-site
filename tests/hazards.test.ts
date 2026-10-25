@@ -322,7 +322,7 @@ describe('hazard locks: /beyond is reachable (the experiments wing, 2026-07-31)'
     expect(redirects).toMatch(/^\/labs\/\s+\/beyond\/\s+301$/m);
   });
 
-  it('no surface gains a second ivory CTA for relief: btn-primary is Inquire only', () => {
+  it('no surface gains a second ivory CTA for relief: relief links are not btn-primary', () => {
     for (const [name, body] of [['index', home], ['work', work], ['photography', gallery]] as const) {
       const hits = Array.from(body.matchAll(/href="\/relief"[^>]*/g)).map((m) => m[0]);
       for (const h of hits) expect(h, `${name}: relief link must not be a btn-primary`).not.toContain('btn-primary');
