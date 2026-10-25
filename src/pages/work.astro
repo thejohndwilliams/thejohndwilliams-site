@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes } from '../utils/photo-src';
+import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
 const projects = [
@@ -100,15 +100,14 @@ const expertise = [
           const isWide = i === 0 || i === 3;
           const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
           return (
-            <div class={`glass-luminous group min-w-0 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth ${span}`}>
-              <div class={frameClass(project.image)}>
-                <picture>
-                  <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={plateSizes(project.image)} />
-                  <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={plateSizes(project.image)} />
-                  <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} loading="lazy" decoding="async" />
-                </picture>
-              </div>
-              <div class="w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
+            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
+              <picture>
+                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
+                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
+                <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" />
+              </picture>
+              <div class="overlay-scrim-work absolute inset-0"></div>
+              <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
                 <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
                 <div class="flex flex-wrap gap-1.5 mb-3">
                   {project.tags.slice(0, 3).map((tag: string) => (
