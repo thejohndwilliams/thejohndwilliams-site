@@ -13,7 +13,9 @@ test.describe('Mobile navigation (top glass header)', () => {
   test('icon nav links are present and tappable', async ({ page }) => {
     await page.goto('/');
     const items = page.locator('header .m-nav-item:visible');
-    expect(await items.count()).toBeGreaterThanOrEqual(3);
+    // Four section icons plus the Contact mailto. Same count as the Inquire key.
+    expect(await items.count()).toBe(5);
+    await expect(page.locator('header a.m-nav-item[aria-label="Contact"]')).toBeVisible();
     await page.locator('header .m-nav-item[href="/about/"]').click();
     await expect(page).toHaveURL(/\/about\/?$/);
   });
