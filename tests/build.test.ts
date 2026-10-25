@@ -469,6 +469,12 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
     expect(work).not.toContain('Resume (PDF)');
     expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    expect(work).toContain('Data, cybersecurity and operations projects by John D. Williams, with writings and research to come.');
+    expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
+    expect(work).toContain('Process Controls');
+    expect(work).not.toContain('Incident Command');
+    expect(work).toContain('Forecasting tool for enterprise support operations');
+    expect((work.match(/Forecasting/g) || []).length).toBe(2);
   });
   it('about: the consulting card is retired; More stands under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
