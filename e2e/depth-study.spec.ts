@@ -60,6 +60,28 @@ test.describe('depth study selector', () => {
   });
 });
 
+test('the banner and the depth figure stay put when a mode is chosen', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/beyond/?still=flat');
+  const banner = page.locator('.beyond-banner__img');
+  await expect(banner).toBeVisible();
+  const band = await banner.boundingBox();
+  expect(band?.width).toBeGreaterThan(1000);
+  expect(band?.height).toBeGreaterThan(200);
+  const stack = page.locator('#depth-layers #depth-stack');
+  await expect(stack).toBeVisible();
+  await stack.scrollIntoViewIfNeeded();
+  await expect(stack).toHaveClass(/is-on/);
+  await expect(stack).not.toHaveClass(/is-run/);
+  const sep = async () => stack.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--sep')));
+  expect(await sep()).toBeLessThan(0.05);
+  await page.getByRole('button', { name: 'Planes', exact: true }).click();
+  await expect(page.locator('#depth-stack')).toHaveCount(1);
+  await expect(page.locator('#depth .kinetic-plate')).toHaveCount(1);
+  await expect(stack).not.toHaveClass(/is-run/);
+  expect(await sep()).toBeLessThan(0.05);
+});
+
 test('no-js shows the photograph and every depth subject, with no plates', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();

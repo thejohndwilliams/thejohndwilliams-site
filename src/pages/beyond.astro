@@ -1,17 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DepthPhoto from '../components/DepthPhoto.astro';
+import DepthStack from '../components/DepthStack.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import LiquidPlate from '../components/LiquidPlate.astro';
 import ReliefStudies from '../components/ReliefStudies.astro';
 import { publicBitmap } from '../utils/bitmap';
+import { bleedSizes, photoSrcset, photoTiers } from '../utils/photo-src';
 import '../styles/beyond.css';
 import '../styles/depth-study.css';
 
-// One column, one depth frame, texture, then surface findings.
-// The exploded-layers figure lives on /depth and is not imported here.
-// #depth-layers is the empty hook it can fill later.
+// Opening photograph, then the depth figure at rest, then the studies.
+// The figure is the same component /depth uses. This page does not link
+// to that route. The banner file is the page's existing landscape hero.
 const SUBJECTS = [
   {
     id: 'earth',
@@ -48,7 +50,10 @@ const SUBJECTS = [
 ] as const;
 
 const earth = SUBJECTS[0];
-const DEPTH_SIZES = '(max-width: 767px) calc(100vw - 2rem), 1080px';
+const BANNER = 'gv-3b61b429';
+const bannerAlt = 'Lone tree against a smoldering horizon';
+const banner = photoTiers(BANNER);
+const bannerSizes = bleedSizes(BANNER);
 const thumbDims = Object.fromEntries(
   await Promise.all(
     SUBJECTS.map(async (row) => [row.file, await publicBitmap(`/images/photography/thumb/${row.file}.webp`)] as const),
@@ -62,10 +67,27 @@ const thumbDims = Object.fromEntries(
   ogImage="/og/photography/gv-3b61b429.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
-  lcpImage={earth.file}
-  lcpImageSizes={DEPTH_SIZES}
+  lcpImage={BANNER}
+  lcpImageSizes={bannerSizes}
   bodyClass="page-beyond"
 >
+  <div class="beyond-banner">
+    <picture>
+      <source type="image/avif" srcset={photoSrcset(BANNER, 'avif')} sizes={bannerSizes} />
+      <img
+        class="beyond-banner__img"
+        src={`/images/photography/gallery/${BANNER}.webp`}
+        srcset={photoSrcset(BANNER, 'webp')}
+        sizes={bannerSizes}
+        width={banner.gallery.w}
+        height={banner.gallery.h}
+        alt={bannerAlt}
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  </div>
+
   <header id="beyond" class="beyond-section beyond-anchor beyond-title">
     <div class="beyond-col">
       <div class="beyond-text">
@@ -80,6 +102,12 @@ const thumbDims = Object.fromEntries(
       </div>
     </div>
   </header>
+
+  <section id="depth-layers" class="beyond-section beyond-anchor beyond-layers" data-depth-layers>
+    <div class="beyond-col">
+      <DepthStack priority={false} autoplay={false} />
+    </div>
+  </section>
 
   <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-mode="rest">
     <div class="beyond-col">
@@ -103,14 +131,10 @@ const thumbDims = Object.fromEntries(
       </div>
     </div>
 
-    {/* Study: depth layers. Empty on purpose. A later figure fills this
-        hook. Do not import the separate /depth draft. */}
-    <div id="depth-layers" class="beyond-layers" data-depth-layers hidden></div>
-
     <div class="beyond-col" data-depth-slot>
       <div class="depth-frame" data-depth-frame data-mode="rest">
         <div data-depth-photo>
-          <DepthPhoto file={earth.file} alt={earth.alt} eager />
+          <DepthPhoto file={earth.file} alt={earth.alt} />
         </div>
         <div data-depth-plate></div>
       </div>

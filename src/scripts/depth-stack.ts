@@ -16,6 +16,7 @@ type Drag = {
 const EASE = unitBezier(0.16, 1, 0.3, 1);
 
 let abort: AbortController | null = null;
+let mountedFig: HTMLElement | null = null;
 
 function clamp01(n: number): number {
   if (Number.isNaN(n)) return 0;
@@ -80,12 +81,20 @@ function unitBezier(x1: number, y1: number, x2: number, y2: number): (x: number)
 }
 
 function initDepthStack(): void {
+  const fig = document.getElementById('depth-stack');
+  // A plate swap on /beyond dispatches astro:after-swap for the study.
+  // The same figure is still on the page, so leave its still state alone.
+  if (fig instanceof HTMLElement && fig === mountedFig && fig.isConnected) return;
   abort?.abort();
   abort = null;
-  const fig = document.getElementById('depth-stack');
+  mountedFig = null;
   if (!(fig instanceof HTMLElement)) return;
   abort = new AbortController();
+  mountedFig = fig;
   const signal = abort.signal;
+  signal.addEventListener('abort', () => {
+    if (mountedFig === fig) mountedFig = null;
+  });
   try {
     mount(fig, signal);
   } catch {
@@ -396,7 +405,7 @@ function mount(fig: HTMLElement, signal: AbortSignal): void {
       requestAnimationFrame(place);
       return;
     }
-    if (still === 'flat') {
+    if (still === 'flat' || fig.dataset.autoplay === '0') {
       apply();
       return;
     }

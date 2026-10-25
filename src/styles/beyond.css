@@ -3,6 +3,26 @@
    inset is 16px. Section rhythm is padding-top only, so two sections
    never add their padding together. */
 
+.beyond-banner {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 56svh;
+  max-height: 640px;
+  margin: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.beyond-banner__img {
+  display: block;
+  width: 100%;
+  max-width: 2400px;
+  height: 100%;
+  object-fit: cover;
+  object-position: 32% 72%;
+}
+
 .beyond-section {
   padding-top: 64px;
 }
@@ -24,9 +44,26 @@
   margin: 0.75rem 0 0;
 }
 
+.beyond-section.beyond-title {
+  padding-top: 32px;
+}
+
 .beyond-section > .beyond-col + .beyond-col,
 .beyond-section > .beyond-layers + .beyond-col {
   margin-top: 2rem;
+}
+
+/* The figure's page rules size it to the viewport. Here it sits in the
+   1080px column, so the stage uses that width and does not borrow the
+   short-page padding variable. */
+.beyond-layers {
+  --pad-x: 0px;
+}
+
+.beyond-layers .depth-stack {
+  --pad-x: 0px;
+  --room: min(1080px, calc(100vw - 32px));
+  width: 100%;
 }
 
 .beyond-copy {
