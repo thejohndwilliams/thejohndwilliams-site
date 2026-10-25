@@ -62,8 +62,8 @@ const expertise = [
        instead of being cropped into a landscape band. -->
   <section class="pt-8 sm:pt-12 pb-10 sm:pb-16" data-glass-bench>
     <div class="container-wide">
-      <div class="grid items-end gap-8 md:grid-cols-12 md:gap-10">
-        <div class="reveal md:col-span-5">
+      <div class="work-hero grid items-end gap-8 md:grid-cols-12 md:gap-10">
+        <div class="reveal min-w-0 md:col-span-5">
           <p class="eyebrow mb-3 sm:mb-4">Building</p>
           <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
           <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
@@ -120,10 +120,10 @@ const expertise = [
                   ))}
                 </div>
                 <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-base text-stone-light">{project.outcome}</p>
+                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2 mt-auto">
+                  <p class="text-base text-stone-light min-w-0">{project.outcome}</p>
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] inline-flex items-center shrink-0 whitespace-nowrap">
                       View on GitHub →
                     </a>
                   )}
