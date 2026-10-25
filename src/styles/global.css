@@ -1750,3 +1750,8 @@ footer.glass-footer:hover::after { opacity: 1; }
   }
   .rim-lens { display: none !important; }
 }
+
+/* Hit area grows; the candle underline stays under the glyphs, not the padding edge. */
+.link-draw.tap-44 {
+  background-position: 0 calc(50% + 0.42em);
+}

@@ -136,7 +136,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     {/* Back nav + keyboard hint */}
     <a
       href="/photography/"
-      class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 min-h-[44px]"
+      class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center justify-center gap-1.5 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
       Gallery
@@ -166,12 +166,12 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
     <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
       <div class="reveal max-w-2xl">
-        <p class="text-micro sm:text-xs tracking-[0.3em] uppercase mb-2 sm:mb-3">
-          <a href={`/photography/#gallery-${category.id}`} class="hover:opacity-100 transition-opacity duration-300">{category.name}</a>
+        <p class="text-sm tracking-[0.22em] uppercase text-mute mb-2 sm:mb-3">
+          <a href={`/photography/#gallery-${category.id}`} class="inline-flex items-center justify-center min-h-[44px] min-w-[44px] hover:text-cream transition-colors duration-300">{category.name}</a>
         </p>
         <h1 class="t-section font-serif tracking-tight mb-2 sm:mb-3">{image.alt}</h1>
         {metaLine && (
-          <p class="text-xs sm:text-sm text-mute tracking-[0.05em]">{metaLine}</p>
+          <p class="text-sm text-mute tracking-[0.05em]">{metaLine}</p>
         )}
       </div>
     </div>
@@ -185,14 +185,14 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         {/* EXIF Technical Details - staggered reveal on scroll */}
         {exifDetails.length > 0 && (
           <div>
-            <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
+            <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">Technical Details</p>
             <dl class="space-y-3" id="exif-list">
               {exifDetails.map(({ label, value }, i) => (
                 <div
                   class="exif-row flex items-baseline justify-between gap-4"
                   style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
                 >
-                  <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
+                  <dt class="text-sm text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
                   <dd class="text-sm opacity-80 text-right">{value}</dd>
                 </div>
               ))}
@@ -202,12 +202,12 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
         {/* Print / Licensing CTA */}
         <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Acquire</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">Acquire</p>
+          <p class="text-base text-mute leading-relaxed mb-2">
             Available as a limited edition archival print.
           </p>
           {/* Edition of 25 scarcity signal */}
-          <p class="text-micro sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
             Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
@@ -229,7 +229,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <section class="py-10 sm:py-16 md:py-20 relative z-10">
       <div class="container-wide">
         <div class="reveal">
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-6 sm:mb-8">More from {category.name}</p>
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-6 sm:mb-8">More from {category.name}</p>
         </div>
         <div class="stagger-children grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {related.map((rel) => (
@@ -258,7 +258,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
               </picture>
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"></div>
               <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth">
-                <p class="text-micro sm:text-xs opacity-70">{rel.alt}</p>
+                <p class="text-sm text-cream/90">{rel.alt}</p>
               </div>
             </a>
           ))}
@@ -272,7 +272,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="container-narrow text-center">
       <a
         href="/photography/"
-        class="inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px]"
+        class="inline-flex items-center justify-center gap-2 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         Back to gallery
