@@ -238,6 +238,25 @@ html[data-theme="black"] {
   .hero-cap-2048 { max-width: 2048px; }
   .hero-cap-2400 { max-width: 2400px; }
 
+  /* Left-to-right lockup scrim. Was an inline gradient on the heroes.
+     A class keeps style-src at 'self'. */
+  .hero-scrim-left {
+    background-image: linear-gradient(
+      to right,
+      rgba(10, 10, 10, 0.92) 0%,
+      rgba(10, 10, 10, 0.78) 22%,
+      rgba(10, 10, 10, 0.56) 44%,
+      rgba(10, 10, 10, 0.28) 68%,
+      rgba(10, 10, 10, 0) 100%
+    );
+  }
+
+  /* dscf0331 is a portrait. This slice holds the lantern rows and the car
+     when the hero is a wide band. */
+  .hero-pos-lanterns {
+    object-position: center 78%;
+  }
+
   /* Work project cards. The scrim that used to be an inline gradient, kept
      as a class so style-src stays 'self'. Text sits on the 0.95 stop. */
   .overlay-scrim-work {

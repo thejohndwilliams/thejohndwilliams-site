@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
+import { bleedSizes, heroCapClass, photoSrcset, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
 const projects = [
@@ -55,33 +55,32 @@ const expertise = [
   ogImageWidth={1200}
   ogImageHeight={630}
   lcpImage="dscf0331"
-  lcpImageSizes={plateSizes('dscf0331')}
+  lcpImageSizes="100vw"
 >
-  <!-- HERO. dscf0331 is a portrait. It keeps that aspect beside the lockup
-       instead of being cropped into a landscape band. -->
-  <section class="pt-8 sm:pt-12 pb-10 sm:pb-16" data-glass-bench>
-    <div class="container-wide">
-      <div class="grid items-end gap-8 md:grid-cols-12 md:gap-10">
-        <div class="reveal md:col-span-5">
-          <p class="eyebrow mb-3 sm:mb-4">Building</p>
-          <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-          <p class="text-base leading-relaxed max-w-xl">
-            Consulting in data engineering, cybersecurity, and operational
-            analytics.
-          </p>
-        </div>
-        <div class={`${frameClass('dscf0331')} min-w-0 md:col-span-7`}>
-          <picture>
-            <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes={plateSizes('dscf0331')} />
-            <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes={plateSizes('dscf0331')} />
-            <img
-              src="/images/photography/hero/dscf0331.webp"
-              alt="Lanterns glowing along a shrine at night, a car passing below"
-              fetchpriority="high"
-              decoding="async"
-            />
-          </picture>
-        </div>
+  <!-- HERO. Full-bleed lockup. dscf0331 is a 1349px portrait; the position
+       class keeps the lanterns and the car in the wide crop. -->
+  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
+    <picture>
+      <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes="100vw" />
+      <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes="100vw" />
+      <img
+        src="/images/photography/hero/dscf0331.webp"
+        alt="Lanterns glowing along a shrine at night, a car passing below"
+        class="hero-pos-lanterns absolute inset-0 h-full w-full object-cover"
+        data-bleed-short
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+    <div class="hero-scrim-left absolute inset-0"></div>
+    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Building</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
+        <p class="text-base leading-relaxed max-w-xl">
+          Consulting in data engineering, cybersecurity, and operational
+          analytics.
+        </p>
       </div>
     </div>
   </section>
