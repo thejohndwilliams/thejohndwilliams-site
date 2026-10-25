@@ -28,6 +28,24 @@
   object-position: 32% 72%;
 }
 
+@media (max-width: 700px) {
+  /* The frame is wider than a 40svh phone band, so cover keeps the full
+     height (sky and ground) and trims the sides. Sit the window on the
+     tree, whose branches reach about 85% across the master. */
+  .beyond-banner {
+    height: 40svh;
+    max-height: 50svh;
+  }
+
+  .beyond-banner__img {
+    object-position: 92% 100%;
+  }
+
+  .beyond-section.beyond-title {
+    padding-top: 20px;
+  }
+}
+
 .beyond-section {
   padding-top: 64px;
 }
@@ -64,20 +82,63 @@
   margin-top: 2rem;
 }
 
-/* The figure's page rules size it to the viewport. Here it sits in the
-   1080px column, so the stage uses that width and does not borrow the
-   short-page padding variable. */
+/* The figure's own rules reserve a side gutter and a tall stage so the
+   short /depth page can hold labels beside the plates. On this page the
+   photograph fills the column, and the caption sits under its left edge. */
 .beyond-layers {
   --pad-x: 0px;
 }
 
+.beyond-section.beyond-layers {
+  padding-top: 28px;
+}
+
+.beyond-layers + .beyond-section {
+  padding-top: 40px;
+}
+
 .beyond-layers .depth-stack {
   --pad-x: 0px;
-  --room: min(1080px, calc(100vw - 32px));
-  /* The short-page cap reserves header and footer. This page scrolls,
-     so the figure can use more of the viewport while it is on screen. */
-  --vh-cap: min(72svh, 760px);
+  --gutter: 0px;
+  align-items: flex-start;
   width: 100%;
+  max-width: var(--native);
+}
+
+.beyond-layers .depth-stack__view {
+  height: auto;
+  aspect-ratio: 1600 / 1062;
+  max-height: none;
+}
+
+.beyond-layers .depth-stack__fit {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  transform: none;
+}
+
+.beyond-layers .depth-stack__cap {
+  width: 100%;
+  max-width: 36rem;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: left;
+  text-wrap: balance;
+  text-wrap: pretty;
+}
+
+.beyond-layers .depth-stack__range:not([hidden]) {
+  width: min(18rem, 100%);
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.beyond-layers .depth-stack__replay:not([hidden]) {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .beyond-copy {
@@ -193,6 +254,14 @@
 
   .beyond-plates > * + * {
     margin-top: 96px;
+  }
+
+  .beyond-section.beyond-layers {
+    padding-top: 40px;
+  }
+
+  .beyond-layers + .beyond-section {
+    padding-top: 56px;
   }
 }
 

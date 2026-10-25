@@ -7,7 +7,7 @@ import KineticPlate3D from '../components/KineticPlate3D.astro';
 import LiquidPlate from '../components/LiquidPlate.astro';
 import ReliefStudies from '../components/ReliefStudies.astro';
 import { publicBitmap } from '../utils/bitmap';
-import { bleedSizes, photoSrcset, photoTiers } from '../utils/photo-src';
+import { photoSrcset, photoTiers } from '../utils/photo-src';
 import '../styles/beyond.css';
 import '../styles/depth-study.css';
 
@@ -53,7 +53,9 @@ const earth = SUBJECTS[0];
 const BANNER = 'gv-3b61b429';
 const bannerAlt = 'Lone tree against a smoldering horizon';
 const banner = photoTiers(BANNER);
-const bannerSizes = bleedSizes(BANNER);
+/* Phones ask for 2x the CSS width so cover does not upscale the thumb.
+   Wider screens stay at the real hero width. */
+const bannerSizes = '(max-width: 700px) 200vw, min(100vw, 2400px)';
 const thumbDims = Object.fromEntries(
   await Promise.all(
     SUBJECTS.map(async (row) => [row.file, await publicBitmap(`/images/photography/thumb/${row.file}.webp`)] as const),

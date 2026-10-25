@@ -74,6 +74,17 @@ test('the banner and the depth figure stay put when a mode is chosen', async ({ 
   const stack = page.locator('#depth-layers #depth-stack');
   await expect(stack).toBeVisible();
   await stack.scrollIntoViewIfNeeded();
+  const col = await page.locator('#depth-layers .beyond-col').boundingBox();
+  const fit = await page.locator('#depth-stack .depth-stack__fit').boundingBox();
+  const cap = await page.locator('#depth-stack .depth-stack__cap').boundingBox();
+  const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
+  const native = dpr >= 2.5 ? 533 : dpr >= 1.5 ? 800 : 1600;
+  const expected = Math.min(col?.width ?? 0, native);
+  expect(Math.abs((fit?.width ?? 0) - expected)).toBeLessThan(12);
+  expect(fit?.width).toBeGreaterThan(500);
+  expect(Math.abs((cap?.x ?? 0) - (fit?.x ?? 0))).toBeLessThan(4);
+  const wrap = await page.locator('#depth-stack .depth-stack__cap').evaluate((el) => getComputedStyle(el).textWrap);
+  expect(wrap === 'pretty' || wrap === 'balance').toBe(true);
   await expect(stack).toHaveClass(/is-on/);
   await expect(stack).not.toHaveClass(/is-run/);
   const sep = async () => stack.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--sep')));
@@ -83,6 +94,47 @@ test('the banner and the depth figure stay put when a mode is chosen', async ({ 
   await expect(page.locator('#depth .kinetic-plate')).toHaveCount(1);
   await expect(stack).not.toHaveClass(/is-run/);
   expect(await sep()).toBeLessThan(0.05);
+});
+
+test('a phone shows the intro on the first screen and a full-width figure', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/beyond/?still=flat');
+  await expect(page.locator('.beyond-banner')).toBeVisible();
+  const band = await page.locator('.beyond-banner').boundingBox();
+  expect(band?.height).toBeGreaterThan(844 * 0.35);
+  expect(band?.height).toBeLessThanOrEqual(844 * 0.5 + 1);
+  const intro = await page.locator('.beyond-lede').boundingBox();
+  expect((intro?.y ?? 9999) + (intro?.height ?? 9999)).toBeLessThan(844);
+  const img = page.locator('.beyond-banner__img');
+  await expect(img).toBeVisible();
+  const pos = await img.evaluate((el) => getComputedStyle(el).objectPosition);
+  expect(pos).toBe('92% 100%');
+  const sharp = await img.evaluate((node) => {
+    const el = node as HTMLImageElement;
+    return { css: el.clientWidth, bitmap: el.naturalWidth };
+  });
+  expect(sharp.bitmap).toBeGreaterThanOrEqual(sharp.css * 2);
+  const col = page.locator('#depth-layers .beyond-col');
+  const fit = page.locator('#depth-stack .depth-stack__fit');
+  await fit.scrollIntoViewIfNeeded();
+  const colBox = await col.boundingBox();
+  const fitBox = await fit.boundingBox();
+  expect(fitBox?.width).toBeGreaterThan(340);
+  expect(Math.abs((fitBox?.width ?? 0) - (colBox?.width ?? 0))).toBeLessThan(8);
+});
+
+test('the figure fills the column on an ipad width', async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 1180 });
+  await page.goto('/beyond/?still=flat');
+  const fit = page.locator('#depth-stack .depth-stack__fit');
+  await fit.scrollIntoViewIfNeeded();
+  const colBox = await page.locator('#depth-layers .beyond-col').boundingBox();
+  const fitBox = await fit.boundingBox();
+  const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
+  const native = dpr >= 2.5 ? 533 : dpr >= 1.5 ? 800 : 1600;
+  const expected = Math.min(colBox?.width ?? 0, native);
+  expect(Math.abs((fitBox?.width ?? 0) - expected)).toBeLessThan(12);
+  expect(fitBox?.width).toBeGreaterThan(500);
 });
 
 test('no-js shows the photograph and every depth subject, with no plates', async ({ browser }) => {
