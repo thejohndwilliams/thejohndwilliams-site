@@ -65,8 +65,11 @@ test('the banner and the depth figure stay put when a mode is chosen', async ({ 
   await page.goto('/beyond/?still=flat');
   const banner = page.locator('.beyond-banner__img');
   await expect(banner).toBeVisible();
+  const shell = await page.locator('.beyond-banner').boundingBox();
   const band = await banner.boundingBox();
-  expect(band?.width).toBeGreaterThan(1000);
+  const viewport = page.viewportSize();
+  expect(shell?.width).toBeGreaterThan((viewport?.width ?? 0) - 2);
+  expect(band?.width).toBeGreaterThan((viewport?.width ?? 0) - 2);
   expect(band?.height).toBeGreaterThan(200);
   const stack = page.locator('#depth-layers #depth-stack');
   await expect(stack).toBeVisible();

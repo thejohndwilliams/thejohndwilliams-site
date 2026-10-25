@@ -4,8 +4,6 @@
    never add their padding together. */
 
 .beyond-banner {
-  display: flex;
-  justify-content: center;
   width: 100%;
   height: 56svh;
   max-height: 640px;
@@ -14,11 +12,18 @@
   background: #0a0a0a;
 }
 
+.beyond-banner picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .beyond-banner__img {
   display: block;
   width: 100%;
   max-width: 2400px;
   height: 100%;
+  margin-inline: auto;
   object-fit: cover;
   object-position: 32% 72%;
 }
@@ -48,6 +53,12 @@
   padding-top: 32px;
 }
 
+@media (max-height: 760px) {
+  .beyond-section.beyond-title {
+    padding-top: 16px;
+  }
+}
+
 .beyond-section > .beyond-col + .beyond-col,
 .beyond-section > .beyond-layers + .beyond-col {
   margin-top: 2rem;
@@ -63,6 +74,9 @@
 .beyond-layers .depth-stack {
   --pad-x: 0px;
   --room: min(1080px, calc(100vw - 32px));
+  /* The short-page cap reserves header and footer. This page scrolls,
+     so the figure can use more of the viewport while it is on screen. */
+  --vh-cap: min(72svh, 760px);
   width: 100%;
 }
 
