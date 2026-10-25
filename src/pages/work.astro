@@ -8,7 +8,6 @@ const projects = [
     title: 'Queue Forecast Dashboard',
     description: 'Forecasting tool for enterprise support operations. Holt-Winters exponential smoothing predicts queue demand across time windows. Sanitized and open-sourced with proportions-only output to respect operational security.',
     tags: ['Python', 'Forecasting', 'Holt-Winters', 'Operations'],
-    outcome: 'Used in production for workforce planning',
     github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard',
     image: 'gv-1fd48bd9',
     alt: 'Glass tower rising into the night'
@@ -79,8 +78,7 @@ const expertise = [
         <p class="eyebrow mb-3 sm:mb-4">Building</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
         <p class="text-sm sm:text-base leading-relaxed opacity-70 max-w-xl mb-6 sm:mb-8">
-          Consulting in data engineering, cybersecurity, and operational
-          analytics.
+          Data engineering, cybersecurity, and operational analytics.
         </p>
       </div>
       <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
@@ -119,7 +117,9 @@ const expertise = [
                 </div>
                 <p class={`text-sm opacity-70 mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
+                  {project.outcome && (
+                    <p class="text-xs sm:text-sm text-stone-light">{project.outcome}</p>
+                  )}
                   {project.github && (
                     <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm opacity-70 hover:opacity-100 hover:text-cream transition-[opacity,color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] flex items-center">
                       View on GitHub →

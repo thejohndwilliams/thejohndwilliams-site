@@ -463,7 +463,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
   it('work: the practice strip sits under Selected Work with a glass resume', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
     const heroIdx = work.indexOf('Selected Work');
-    const stripIdx = work.indexOf('Consulting in data engineering');
+    const stripIdx = work.indexOf('Data engineering, cybersecurity, and operational analytics.');
     expect(stripIdx).toBeGreaterThan(heroIdx);
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
     expect(work).toContain('Resume (PDF)');
@@ -496,7 +496,49 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).toContain('dscf1022');
     expect(beyond).not.toContain('img-6552');
     expect(beyond).not.toContain('7r51018-enhanced-sr');
-    expect(beyond).toContain('>Inquire<');
+    expect(beyond).not.toContain('>Inquire<');
+    expect(beyond).toContain('Back to the photographs');
+  });
+  it('served pages and the agent brief omit the retired phrases', () => {
+    const banned = [
+      'edition of 25',
+      'inquire about this print',
+      'browse all prints',
+      'acquirelicensepage',
+      'prints are sold directly',
+      'archival prints',
+      'available by inquiry',
+      'by inquiry',
+      'regulated environments',
+      'jobtitle',
+      'satellite',
+      'forecasting tools built from scratch',
+      'used in production for workforce planning',
+      'consulting in data engineering',
+      'technology consulting',
+      'prints by inquiry',
+      'limited edition',
+      'cut to order',
+      'hahnem',
+      'gicl',
+    ];
+    const offenders: string[] = [];
+    const walk = (dir: string) => {
+      for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, ent.name);
+        if (ent.isDirectory()) {
+          walk(full);
+          continue;
+        }
+        if (!/\.(html|txt|xml)$/.test(ent.name)) continue;
+        const lower = fs.readFileSync(full, 'utf8').toLowerCase();
+        for (const phrase of banned) {
+          if (lower.includes(phrase)) offenders.push(`${path.relative(distDir, full)} :: ${phrase}`);
+        }
+      }
+    };
+    walk(distDir);
+    expect(offenders).toEqual([]);
   });
   it('footer: the inquiry stands beside the verse on every page', () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');

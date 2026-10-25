@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GlassPillGL from '../../components/GlassPillGL.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
 import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages, getPlaceholder } from '../../data/photography';
 
@@ -53,7 +52,6 @@ const jsonLd = {
   creditText: 'John D. Williams',
   copyrightNotice: '© John D. Williams',
   license: `${SITE}/photography/`,
-  acquireLicensePage: `mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`,
   keywords: [category.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
   ...(meta.captureDate ? { datePublished: meta.captureDate } : {}),
   ...(meta.location ? { contentLocation: { '@type': 'Place', name: meta.location } } : {}),
@@ -128,11 +126,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </picture>
     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
-    {/* Print preview frame - ghost overlay, visible when CTA is hovered */}
-    <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
-      <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
-    </div>
-
     {/* Back nav + keyboard hint */}
     <a
       href="/photography/"
@@ -177,52 +170,27 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  {/* DETAILS + EXIF + CTA */}
-  <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
-    <div class="container-narrow">
-      <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
-
-        {/* EXIF Technical Details - staggered reveal on scroll */}
-        {exifDetails.length > 0 && (
-          <div>
-            <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
-            <dl class="space-y-3" id="exif-list">
-              {exifDetails.map(({ label, value }, i) => (
-                <div
-                  class="exif-row flex items-baseline justify-between gap-4"
-                  style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
-                >
-                  <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
-                  <dd class="text-sm opacity-80 text-right">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        )}
-
-        {/* Print / Licensing CTA */}
-        <div>
-          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Acquire</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
-            Available as a limited edition archival print.
-          </p>
-          {/* Edition of 25 scarcity signal */}
-          <p class="text-micro sm:text-xs tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
-            Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a
-              href={`mailto:jndwcreative@gmail.com?subject=Print%20Inquiry:%20${encodeURIComponent(image.alt)}`}
-              class="btn btn-primary"
-            >
-              Inquire about this print
-            </a>
-            <GlassPillGL label="Browse all prints" href="/photography/" variant="c" />
-          </div>
+  {/* DETAILS + EXIF. The column collapses when a frame has no recorded details. */}
+  {exifDetails.length > 0 && (
+    <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
+      <div class="container-narrow">
+        <div class="max-w-md">
+          <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-4 sm:mb-6">Technical Details</p>
+          <dl class="space-y-3" id="exif-list">
+            {exifDetails.map(({ label, value }, i) => (
+              <div
+                class="exif-row flex items-baseline justify-between gap-4"
+                style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
+              >
+                <dt class="text-xs text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
+                <dd class="text-sm opacity-80 text-right">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   {/* RELATED IMAGES */}
   {related.length > 0 && (
@@ -361,42 +329,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
     initKeyboardNav();
     document.addEventListener('astro:after-swap', initKeyboardNav);
-  </script>
-
-  {/* Print preview on hover - desktop only, CSS-driven */}
-  <style>
-    @media (hover: hover) {
-      .print-cta-hover:hover ~ #print-frame,
-      .print-cta-hover:focus-visible ~ #print-frame {
-        opacity: 1;
-      }
-    }
-  </style>
-  <script>
-    function initPrintPreview() {
-      const btn = document.querySelector('.btn.btn-primary[href^="mailto:"]');
-      const frame = document.getElementById('print-frame');
-      if (!btn || !frame) return;
-
-      // Only on desktop with hover capability
-      if (!window.matchMedia('(hover: hover)').matches) return;
-
-      btn.addEventListener('mouseenter', () => {
-        frame.style.opacity = '1';
-      });
-      btn.addEventListener('mouseleave', () => {
-        frame.style.opacity = '0';
-      });
-      btn.addEventListener('focus', () => {
-        frame.style.opacity = '1';
-      });
-      btn.addEventListener('blur', () => {
-        frame.style.opacity = '0';
-      });
-    }
-
-    initPrintPreview();
-    document.addEventListener('astro:after-swap', initPrintPreview);
   </script>
 
 </BaseLayout>

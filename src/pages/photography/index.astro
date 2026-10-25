@@ -27,7 +27,6 @@ const allImages = categories.flatMap(cat =>
       copyrightHolder: { '@type': 'Person', name: 'John D. Williams' },
       creditText: 'John D. Williams',
       license: `${SITE}/photography`,
-      acquireLicensePage: 'mailto:jndwcreative@gmail.com',
       copyrightNotice: `© John D. Williams`,
       keywords: [cat.name, 'fine art photography', meta.camera].filter(Boolean).join(', '),
     };
@@ -239,19 +238,9 @@ const jsonLd = {
             A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject; attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
           <p class="text-xs tracking-[0.25em] uppercase opacity-60 mb-3 sm:mb-4">Collecting</p>
-          <p class="text-xs tracking-[0.15em] uppercase opacity-60 mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
-          <p class="text-sm sm:text-base opacity-50 leading-relaxed mb-2">
-            Archival prints, <a href="mailto:jndwcreative@gmail.com?subject=Print%20inquiry" class="link-draw text-cream/85 hover:text-cream">by inquiry</a>.
-          </p>
-          <p class="text-xs sm:text-sm opacity-60 leading-relaxed">
-            Giclée on Hahnemühle Photo Rag.
-          </p>
-          {/* A2.1 (owner ruling 2026-07-31): the floating pill is retired
-              from this colophon - "tasteful with text." The sentence carries
-              the inquiry; the nav's ivory key remains the page's flame. */}
-          {/* Object axis. Still not a second ivory CTA (Inquire holds the only
-              light on this surface), but a photograph rather than a 12px line:
-              the first version shipped as text so quiet nobody found the page.
+          <p class="text-xs tracking-[0.15em] uppercase opacity-60">{totalImages} selected from an archive of 3,000+</p>
+          {/* Object axis. A photograph rather than a 12px line: the first
+              version shipped as text so quiet nobody found the page.
               Navigation gets an image here, the same as every other surface. */}
           <a href="/beyond/" class="press-feedback glass-luminous group relative mt-8 sm:mt-10 flex items-stretch gap-4 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
             <picture class="shrink-0 block w-20 sm:w-24 self-stretch">
