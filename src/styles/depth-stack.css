@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
-  padding: 0.35rem var(--pad-x) 0.4rem;
+  padding: 0 var(--pad-x);
   box-sizing: border-box;
 }
 
@@ -33,8 +33,15 @@ body:has(#depth-stack) footer.glass-footer {
 }
 
 body:has(#depth-stack) footer .container-narrow {
-  padding-top: 0.4rem;
-  padding-bottom: max(0.4rem, env(safe-area-inset-bottom, 0px));
+  padding-top: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* The 44px footer hit boxes replaced the short line boxes. On a narrow
+   footer the copyright row stacks, and that gap is what used to absorb
+   the extra height. The boxes stay 44px. */
+@media (max-width: 639px) {
+  body:has(#depth-stack) footer .gap-2 { gap: 0; }
 }
 
 body:has(#depth-stack) footer .gap-8 { gap: 0.3rem; }
