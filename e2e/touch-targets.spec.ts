@@ -4,7 +4,7 @@
 // including secondary captions, is at least 14px. Eyebrows keep their own scale.
 import { test, expect } from '@playwright/test';
 
-const PAGES = ['/', '/work/', '/photography/', '/about/', '/links/'] as const;
+const PAGES = ['/', '/work/', '/photography/', '/about/', '/links/', '/depth/'] as const;
 
 const VIEWPORTS = [
   { name: 'iphone390', width: 390, height: 844, dpr: 3 },
