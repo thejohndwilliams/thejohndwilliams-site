@@ -50,6 +50,13 @@ const SUBJECTS = [
 ] as const;
 
 const earth = SUBJECTS[0];
+
+function orientOf(file: string): 'portrait' | 'landscape' | 'square' {
+  const { w, h } = photoTiers(file).hero;
+  const ratio = w / h;
+  if (ratio > 0.92 && ratio < 1.08) return 'square';
+  return h > w ? 'portrait' : 'landscape';
+}
 const BANNER = 'gv-3b61b429';
 const bannerAlt = 'Lone tree against a smoldering horizon';
 const banner = photoTiers(BANNER);
@@ -111,7 +118,7 @@ const thumbDims = Object.fromEntries(
     </div>
   </section>
 
-  <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-mode="rest">
+  <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-orient={orientOf(earth.file)} data-mode="rest">
     <div class="beyond-col">
       <div class="beyond-text">
         <h2 class="t-sub font-serif">The depth studies</h2>
@@ -134,28 +141,47 @@ const thumbDims = Object.fromEntries(
     </div>
 
     <div class="beyond-col" data-depth-slot>
-      <div class="depth-frame" data-depth-frame data-mode="rest">
-        <div data-depth-photo>
-          <DepthPhoto file={earth.file} alt={earth.alt} />
+      <div class="depth-layout">
+      <div class="depth-stage">
+        <div class="depth-frame" data-depth-frame data-mode="rest">
+          <div data-depth-photo>
+            <DepthPhoto file={earth.file} alt={earth.alt} />
+          </div>
+          <div data-depth-plate></div>
         </div>
-        <div data-depth-plate></div>
+
+        <div class="depth-aside">
+          <div class="depth-controls">
+            <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
+              <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
+              <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
+            </div>
+          </div>
+
+          <ul class="depth-index beyond-text">
+            {SUBJECTS.map((row, i) => (
+              <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
+                <p class="eyebrow">{row.title}</p>
+                <p class="beyond-copy">{row.note}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      <div class="depth-controls">
-        <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
-          <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
-          <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
-        </div>
+      <div class="depth-controls depth-controls--strip">
         <div class="depth-thumbs" role="group" aria-label="Depth study">
           {SUBJECTS.map((row, i) => (
             <button
               type="button"
               class="depth-thumb"
               data-study={row.id}
+              data-orient={orientOf(row.file)}
               aria-pressed={i === 0 ? 'true' : 'false'}
             >
               <picture>
-                <source type="image/avif" srcset={`/images/photography/thumb/${row.file}.avif`} />
+                <source type="image/avif" srcset={photoSrcset(row.file, 'avif', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
+                <source type="image/webp" srcset={photoSrcset(row.file, 'webp', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
                 <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width={thumbDims[row.file].width} height={thumbDims[row.file].height} />
               </picture>
               <span>{row.label}</span>
@@ -163,15 +189,7 @@ const thumbDims = Object.fromEntries(
           ))}
         </div>
       </div>
-
-      <ul class="depth-index beyond-text">
-        {SUBJECTS.map((row, i) => (
-          <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
-            <p class="eyebrow">{row.title}</p>
-            <p class="beyond-copy">{row.note}</p>
-          </li>
-        ))}
-      </ul>
+      </div>
     </div>
 
     {SUBJECTS.map((row) => (

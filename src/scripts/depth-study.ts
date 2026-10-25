@@ -10,6 +10,7 @@
 let depthAbort: AbortController | null = null;
 
 type Mode = 'rest' | 'planes' | 'points';
+type Orient = 'portrait' | 'landscape' | 'square';
 type PlatePart = 'hologram' | 'cloud';
 
 type LenisLike = {
@@ -27,6 +28,11 @@ function restoreScroll(y: number): void {
 function asMode(value: string | null): Mode {
   if (value === 'planes' || value === 'points' || value === 'rest') return value;
   return 'rest';
+}
+
+function asOrient(value: string | null): Orient | null {
+  if (value === 'portrait' || value === 'landscape' || value === 'square') return value;
+  return null;
 }
 
 function platePart(mode: Mode): PlatePart | null {
@@ -71,7 +77,11 @@ function show(root: HTMLElement, id: string, mode: Mode): void {
   const plateChanged = nextPart !== prevPart || (nextPart !== null && currentId !== id);
   if (plateChanged) plateHost.replaceChildren(...(nextPart ? takePart(tpl, nextPart) : []));
 
+  const orient = asOrient(
+    root.querySelector<HTMLButtonElement>(`button[data-study="${CSS.escape(id)}"]`)?.getAttribute('data-orient') ?? null,
+  );
   root.setAttribute('data-subject', id);
+  if (orient) root.setAttribute('data-orient', orient);
   root.setAttribute('data-mode', mode);
   frame.setAttribute('data-mode', mode);
 

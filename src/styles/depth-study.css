@@ -3,13 +3,33 @@
    script marks the section ready, so a no-JS visit is the photograph
    plus every subject note. */
 
+.depth-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.depth-frame {
+  width: 100%;
+  min-width: 0;
+}
+
+.depth-aside {
+  min-width: 0;
+  margin-top: 1.25rem;
+}
+
 .depth-controls {
   display: none;
-  margin-top: 1.25rem;
 }
 
 [data-depth-ready] .depth-controls {
   display: block;
+}
+
+.depth-controls--strip {
+  margin-top: 1.5rem;
+  min-width: 0;
 }
 
 .depth-mode.glass-chip-rail {
@@ -36,39 +56,52 @@
 }
 
 .depth-thumbs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
   gap: 0.75rem;
-  margin-top: 1.25rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .depth-thumb {
   appearance: none;
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0.45rem;
+  width: 0;
   margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
   color: rgba(244, 234, 222, 0.62);
   cursor: pointer;
-  min-width: 44px;
+  min-width: 0;
   min-height: 44px;
   text-align: left;
 }
 
-.depth-thumb:focus {
-  outline: 1.5px solid rgba(244, 234, 222, 0.7);
+.depth-thumb:focus,
+.depth-thumb:focus-visible,
+.depth-mode__btn:focus-visible {
+  outline: 1.5px solid rgba(244, 234, 222, 0.85);
   outline-offset: 3px;
+}
+
+.depth-thumb picture {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0a0a0a;
 }
 
 .depth-thumb img {
   display: block;
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
   background: #0a0a0a;
 }
 
@@ -83,8 +116,8 @@
   color: #f4eade;
 }
 
-.depth-thumb[aria-pressed='true'] img {
-  box-shadow: 0 0 0 1px rgba(244, 234, 222, 0.85);
+.depth-thumb[aria-pressed='true'] picture {
+  box-shadow: inset 0 0 0 1px #f4eade;
 }
 
 .depth-index {
@@ -109,6 +142,86 @@
 .depth-frame[data-mode='planes'] [data-depth-photo],
 .depth-frame[data-mode='points'] [data-depth-photo] {
   display: none;
+}
+
+/* Portrait studies sit beside their note from 1024 up. The frame width
+   stays inside the hero (earth 1350, structure 1800) even at 3x. */
+@media (min-width: 1024px) {
+  [data-orient='portrait'] .depth-layout {
+    display: grid;
+    grid-template-columns: clamp(16rem, 36%, 24rem) minmax(0, 1fr);
+    column-gap: 2.75rem;
+    row-gap: 1.25rem;
+    align-items: start;
+  }
+
+  [data-orient='portrait'] .depth-stage {
+    display: contents;
+  }
+
+  [data-orient='portrait'] .depth-frame {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  [data-orient='portrait'] .depth-aside {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  [data-orient='portrait'] .depth-controls--strip {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+  }
+
+  [data-orient='portrait'] .depth-thumbs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  [data-orient='portrait'] .depth-thumb {
+    width: auto;
+    flex: none;
+  }
+
+  [data-orient='square'] .depth-frame {
+    width: min(100%, 36rem);
+    margin-inline: auto;
+  }
+}
+
+/* Do not draw a study wider than its bitmap. 2x and 3x caps are the
+   hero width divided by the device pixel ratio. */
+@media (min-resolution: 2dppx) {
+  [data-subject='earth'] .depth-photo__img { max-width: 675px; }
+  [data-subject='structure'] .depth-photo__img { max-width: 900px; }
+  [data-subject='sky'] .depth-photo__img,
+  [data-subject='water'] .depth-photo__img { max-width: 1200px; }
+}
+
+@media (min-resolution: 3dppx) {
+  [data-subject='earth'] .depth-photo__img { max-width: 450px; }
+  [data-subject='structure'] .depth-photo__img { max-width: 600px; }
+  [data-subject='sky'] .depth-photo__img,
+  [data-subject='water'] .depth-photo__img { max-width: 800px; }
+}
+
+@media (max-width: 700px) {
+  .depth-thumbs {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 2px;
+    padding: 4px 2px 6px;
+    margin-inline: -2px;
+  }
+
+  .depth-thumb {
+    flex: 0 0 46%;
+    width: auto;
+    scroll-snap-align: start;
+  }
 }
 
 .plate-tag {

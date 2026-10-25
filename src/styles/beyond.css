@@ -219,9 +219,8 @@
   display: block;
 }
 
-/* The candidate that loads can be smaller than the column (the thumb
-   is labelled 400w and is not). Fill the figure column, stop at 80svh,
-   and contain the file so a portrait is not stretched sideways. */
+/* The study photograph keeps its own aspect and fills its frame.
+   A height cap here letterboxed portraits to the left of an empty box. */
 .depth-photo {
   width: 100%;
 }
@@ -229,9 +228,7 @@
 .depth-photo__img {
   width: 100%;
   height: auto;
-  max-height: 80svh;
-  object-fit: contain;
-  object-position: left center;
+  margin-inline: auto;
 }
 
 @media (min-width: 768px) {

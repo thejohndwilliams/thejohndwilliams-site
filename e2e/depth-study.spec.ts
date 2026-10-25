@@ -137,6 +137,81 @@ test('the figure fills the column on an ipad width', async ({ page }) => {
   expect(fitBox?.width).toBeGreaterThan(500);
 });
 
+const STUDIES = [
+  { name: 'Earth', orient: 'portrait' },
+  { name: 'Structure', orient: 'portrait' },
+  { name: 'Sky', orient: 'landscape' },
+  { name: 'Water', orient: 'landscape' },
+] as const;
+
+function bitmapCap(name: string, dpr: number): number {
+  const hero = name === 'Earth' ? 1350 : name === 'Structure' ? 1800 : 2400;
+  if (dpr >= 2.5) return hero / 3;
+  if (dpr >= 1.5) return hero / 2;
+  return hero;
+}
+
+test('each study fills its stage and the strip uses one frame', async ({ page }) => {
+  const widths = [1440, 1024, 820, 390];
+  for (const width of widths) {
+    const height = width === 390 ? 844 : width === 820 ? 1180 : width === 1024 ? 800 : 900;
+    await page.setViewportSize({ width, height });
+    await page.goto('/beyond/?still=flat');
+    for (const study of STUDIES) {
+      await page.getByRole('button', { name: study.name, exact: true }).click();
+      const img = page.locator('#depth [data-depth-photo] img');
+      await img.scrollIntoViewIfNeeded();
+      const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
+      const boxes = await page.evaluate(() => {
+        const col = document.querySelector('#depth [data-depth-slot]')!.getBoundingClientRect();
+        const photo = document.querySelector('#depth [data-depth-photo] img')!.getBoundingClientRect();
+        const aside = document.querySelector('#depth .depth-aside')!.getBoundingClientRect();
+        const strip = document.querySelector('#depth .depth-thumbs') as HTMLElement;
+        const frames = [...strip.querySelectorAll('picture')].map((el) => el.getBoundingClientRect());
+        const node = document.querySelector('#depth [data-depth-photo] img') as HTMLImageElement;
+        const srcset = node.parentElement?.querySelector('source')?.getAttribute('srcset') || '';
+        return {
+          col: { x: col.x, w: col.width, right: col.right },
+          photo: { x: photo.x, w: photo.width, h: photo.height },
+          aside: { x: aside.x, right: aside.right, y: aside.y },
+          frames: frames.map((r) => ({ w: r.width, h: r.height })),
+          stripScroll: strip.scrollWidth > strip.clientWidth + 4,
+          current: node.currentSrc,
+          srcset,
+          css: node.clientWidth,
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      });
+      expect(boxes.overflow, `${width} ${study.name}`).toBeLessThan(2);
+      const cap = Math.min(boxes.col.w, bitmapCap(study.name, dpr));
+      if (width >= 1024 && study.orient === 'portrait') {
+        expect(boxes.photo.w, study.name).toBeGreaterThan(250);
+        expect(boxes.photo.w, study.name).toBeLessThan(boxes.col.w * 0.55);
+        expect(boxes.aside.x).toBeGreaterThan(boxes.photo.x + boxes.photo.w - 8);
+        expect(Math.abs(boxes.aside.right - boxes.col.right)).toBeLessThan(8);
+        expect(boxes.photo.h).toBeGreaterThan(boxes.photo.w);
+      } else {
+        expect(Math.abs(boxes.photo.w - cap), `${width} ${study.name}`).toBeLessThan(12);
+        expect(Math.abs(boxes.photo.x - boxes.col.x)).toBeLessThan(Math.max(12, (boxes.col.w - boxes.photo.w) / 2 + 8));
+      }
+      const first = boxes.frames[0];
+      expect(boxes.frames).toHaveLength(4);
+      for (const frame of boxes.frames) {
+        expect(Math.abs(frame.w - first.w), `${width} ${study.name} thumb`).toBeLessThan(2);
+        expect(Math.abs(frame.h - first.h), `${width} ${study.name} thumb`).toBeLessThan(2);
+        expect(frame.h).toBeGreaterThan(44);
+      }
+      expect(Math.abs(first.w / first.h - 4 / 3)).toBeLessThan(0.05);
+      if (width === 390) expect(boxes.stripScroll).toBe(true);
+      const chosen = boxes.srcset.split(',').map((part) => part.trim().split(/\s+/)).find(([url]) => boxes.current.includes(url));
+      const chosenW = Number(chosen?.[1]?.replace('w', '') || 0);
+      const largest = Math.max(...boxes.srcset.split(',').map((part) => Number(part.trim().split(/\s+/)[1]?.replace('w', '') || 0)));
+      expect(chosenW, `${width} ${study.name} src`).toBeGreaterThanOrEqual(Math.min(boxes.css * 2, largest) - 1);
+      expect(boxes.current).not.toContain('/thumb/');
+    }
+  }
+});
+
 test('no-js shows the photograph and every depth subject, with no plates', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
