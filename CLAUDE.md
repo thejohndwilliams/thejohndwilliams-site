@@ -61,13 +61,13 @@ npm run test:e2e             # Playwright
 - NO em-dash anywhere in public copy. Periods, commas, colons.
 - No font-light / weight 300 (not loaded).
 - Home hero: verb eyebrow + "John D. Williams" + the finished-identity line
-  ("Enterprise operations, satellite communications. Fine-art photographer.",
+  ("Enterprise operations. Fine-art photographer.",
   Phase 0, owner-approved). Never unfinished credentials, never triplets.
 - Page-identity hero eyebrows are verbs: making visible / noticing /
   building / rising (owner ruling 2026-07-28 restored "rising" as the
   fourth verb of the sequence; it is continuing action, not a status
   label). Section and utility eyebrows are professional nouns (Object
-  studies, The edition, Fine Print).
+  studies, Scale, Fine Print).
 - Photo titles one word, lowercase. Scripture pairing adjacent, not literal;
   ESV default, KJV sparingly.
 - No emojis, no exclamation marks, no engagement-begging.
@@ -113,7 +113,7 @@ lives in John's private opsec-review skill and vault. The shape of the rule:
 no employer or product names, no customer segments, no operational volume
 metrics, no export-control or program references, anywhere in public strings.
 Reuse the generic framings already present on /work and /about ("enterprise
-operations", "incident command", "regulated environments"). Run the
+operations", "incident command"). Run the
 opsec-review skill on every changed public-facing string before pushing.
 If you cannot run that skill, do not push public copy changes.
 

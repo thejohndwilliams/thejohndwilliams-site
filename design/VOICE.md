@@ -19,7 +19,7 @@ is enforced by reading every public string aloud before it ships.
    exempt; those are verbs of continuing action, the site's quiet poem,
    and "Rising" stands above the name on About.
 3. Omit unfinished credentials. No "(in progress)", no GPA, no certifications
-   or commissions that are not yet held.
+   that are not yet held.
 4. Delete interrupted-life explanations. No "life intervened", no detours
    narrated to justify the path taken.
 5. Never defend the work's seriousness. No "not a hobby", no "actually",
@@ -41,9 +41,8 @@ is enforced by reading every public string aloud before it ships.
 
 ## Always
 
-Zero em-dashes in public copy. Professional framings only: "satellite
-communications company", "enterprise operations", "incident command",
-"regulated environments". Nothing more specific about systems, customers,
+Zero em-dashes in public copy. Professional framings only: "enterprise
+operations", "incident command". Nothing more specific about systems, customers,
 or programs. The discipline, not the details.
 
 ## Enforcement
