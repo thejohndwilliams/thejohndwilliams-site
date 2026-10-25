@@ -27,6 +27,7 @@
 
 import type { PhotoImage } from '../data/photography';
 import { getPlaceholder } from '../data/photography';
+import { photoSrcset, photoTiers } from '../utils/photo-src';
 
 export interface PhotoProps {
   /** The photograph entry from photography.ts */
@@ -63,6 +64,7 @@ const {
 const source = (image as any).source ?? 'local';
 const placeholder = getPlaceholder(image.file);
 const altText = alt ?? image.alt;
+const localTiers = source === 'local' ? photoTiers(image.file) : null;
 
 // ── R2 + Image Resizing URL builder ──────────────────────────────────
 //
@@ -136,12 +138,12 @@ const local = {
   <picture>
     <source
       type="image/avif"
-      srcset={`${local.avif.thumb} 400w, ${local.avif.gallery} 1200w, ${local.avif.hero} 2400w`}
+      srcset={photoSrcset(image.file, 'avif')}
       sizes={sizes}
     />
     <source
       type="image/webp"
-      srcset={`${local.webp.thumb} 400w, ${local.webp.gallery} 1200w, ${local.webp.hero} 2400w`}
+      srcset={photoSrcset(image.file, 'webp')}
       sizes={sizes}
     />
     <img
@@ -151,8 +153,8 @@ const local = {
       loading={loading}
       decoding={decoding}
       fetchpriority={fetchpriority}
-      width={placeholder?.width}
-      height={placeholder?.height}
+      width={localTiers?.hero.w ?? placeholder?.width}
+      height={localTiers?.hero.h ?? placeholder?.height}
     />
   </picture>
 )}

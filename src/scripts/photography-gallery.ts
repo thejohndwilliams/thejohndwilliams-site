@@ -126,14 +126,17 @@
       lenis()?.start?.();
     }
 
-    // Serve the 1200px gallery tier as the base; srcset lets retina desktop
-    // pull the 2400px hero. src previously pointed at the hero, which forced
-    // worst-case decodes on phones during swipe bursts.
+    // Width descriptors are the real bitmap widths from the gallery anchor.
+    // The gallery tier is the default decode; the hero tier is offered when
+    // the slot is wider than that file.
     function setLightboxImage(item: HTMLElement) {
       const file = item.dataset.file || '';
       const alt = item.dataset.alt || '';
-      if (file) {
-        lightboxImg.srcset = `/images/photography/gallery/${file}.webp 1200w, /images/photography/hero/${file}.webp 2400w`;
+      const galleryW = Number(item.dataset.galleryW || 0);
+      const heroW = Number(item.dataset.heroW || 0);
+      if (file && galleryW > 0 && heroW > 0) {
+        lightboxImg.srcset = `/images/photography/gallery/${file}.webp ${galleryW}w, /images/photography/hero/${file}.webp ${heroW}w`;
+        lightboxImg.sizes = `min(92vw, ${heroW}px)`;
         lightboxImg.src = `/images/photography/gallery/${file}.webp`;
       } else {
         lightboxImg.removeAttribute('srcset');

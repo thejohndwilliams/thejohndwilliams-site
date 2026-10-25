@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassPillGL from '../components/GlassPillGL.astro';
+import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes } from '../utils/photo-src';
 
 
 const projects = [
@@ -55,36 +56,36 @@ const expertise = [
   ogImageWidth={1200}
   ogImageHeight={630}
   lcpImage="dscf0331"
+  lcpImageSizes={plateSizes('dscf0331')}
 >
-  <!-- HERO -->
-  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
-    <picture>
-      <source
-        type="image/avif"
-        srcset="/images/photography/thumb/dscf0331.avif 400w, /images/photography/gallery/dscf0331.avif 1200w, /images/photography/hero/dscf0331.avif 2400w"
-        sizes="100vw"
-      />
-      <img
-        src="/images/photography/gallery/dscf0331.webp"
-        srcset="/images/photography/thumb/dscf0331.webp 400w, /images/photography/gallery/dscf0331.webp 1200w, /images/photography/hero/dscf0331.webp 2400w"
-        sizes="100vw"
-        alt="Lanterns glowing along a shrine at night, a car passing below"
-        class="absolute inset-0 w-full h-full object-cover"
-        fetchpriority="high"
-      />
-    </picture>
-    <div class="absolute inset-0" style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"></div>
-    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
-      <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-3 sm:mb-4">Building</p>
-        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
-          Consulting in data engineering, cybersecurity, and operational
-          analytics.
-        </p>
-      </div>
-      <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
-        <GlassPillGL label="Resume (PDF)" href="/files/Williams-John-D-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
+  <!-- HERO. dscf0331 is a portrait. It keeps that aspect beside the lockup
+       instead of being cropped into a landscape band. -->
+  <section class="pt-8 sm:pt-12 pb-10 sm:pb-16" data-glass-bench>
+    <div class="container-wide">
+      <div class="grid items-end gap-8 md:grid-cols-12 md:gap-10">
+        <div class="reveal md:col-span-5">
+          <p class="eyebrow mb-3 sm:mb-4">Building</p>
+          <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
+          <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
+            Consulting in data engineering, cybersecurity, and operational
+            analytics.
+          </p>
+          <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+            <GlassPillGL label="Resume (PDF)" href="/files/Williams-John-D-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
+          </div>
+        </div>
+        <div class={`${frameClass('dscf0331')} min-w-0 md:col-span-7`}>
+          <picture>
+            <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes={plateSizes('dscf0331')} />
+            <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes={plateSizes('dscf0331')} />
+            <img
+              src="/images/photography/hero/dscf0331.webp"
+              alt="Lanterns glowing along a shrine at night, a car passing below"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
+        </div>
       </div>
     </div>
   </section>
@@ -103,14 +104,15 @@ const expertise = [
           const isWide = i === 0 || i === 3;
           const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
           return (
-            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
-              <picture>
-                <source type="image/avif" srcset={`/images/photography/thumb/${project.image}.avif 400w, /images/photography/gallery/${project.image}.avif 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
-                <source type="image/webp" srcset={`/images/photography/thumb/${project.image}.webp 400w, /images/photography/gallery/${project.image}.webp 1200w`} sizes={isWide ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 42vw'} />
-                <img src={`/images/photography/gallery/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105" loading="lazy" decoding="async" />
-              </picture>
-              <div class="absolute inset-0" style="background-image: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.84) 36%, rgba(10,10,10,0.52) 70%, rgba(10,10,10,0.22) 100%);"></div>
-              <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
+            <div class={`glass-luminous group min-w-0 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth ${span}`}>
+              <div class={frameClass(project.image)}>
+                <picture>
+                  <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={plateSizes(project.image)} />
+                  <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={plateSizes(project.image)} />
+                  <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} loading="lazy" decoding="async" />
+                </picture>
+              </div>
+              <div class="w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
                 <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
                 <div class="flex flex-wrap gap-1.5 mb-3">
                   {project.tags.slice(0, 3).map((tag: string) => (
@@ -148,15 +150,19 @@ const expertise = [
   </section>
 
   <!-- DIVIDER -->
-  <section class="relative h-[42vh] sm:h-[52vh] overflow-hidden">
-    <img
-      src="/images/photography/gallery/dsc-0014.webp"
-      srcset="/images/photography/thumb/dsc-0014.webp 400w, /images/photography/gallery/dsc-0014.webp 1200w, /images/photography/hero/dsc-0014.webp 2400w"
-      sizes="100vw"
-      alt="A ram skull, stark against shadow"
-      class="absolute inset-0 w-full h-full object-cover"
-      loading="lazy"
-    />
+  <section class:list={['hero-bleed', heroCapClass('dsc-0014'), 'relative h-[42vh] sm:h-[52vh] overflow-hidden']}>
+    <picture class="absolute inset-0">
+      <source type="image/avif" srcset={photoSrcset('dsc-0014', 'avif')} sizes={bleedSizes('dsc-0014')} />
+      <img
+        src="/images/photography/hero/dsc-0014.webp"
+        srcset={photoSrcset('dsc-0014', 'webp')}
+        sizes={bleedSizes('dsc-0014')}
+        alt="A ram skull, stark against shadow"
+        class="w-full h-full object-cover"
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
     <div class="absolute inset-0" style="background-image: linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.12) 38%, rgba(10,10,10,0.78) 100%);"></div>
     <div class="absolute inset-0 flex items-end justify-center pb-10 sm:pb-14">
       {/* A2.1 legibility (owner, 2026-07-31): the line was whispering into

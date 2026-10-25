@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import GlassPillGL from '../../components/GlassPillGL.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
 import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages, getPlaceholder } from '../../data/photography';
+import { frameClass, photoSrcset, photoTiers, plateSizes, RELATED_SIZES } from '../../utils/photo-src';
 
 export function getStaticPaths() {
   return getAllSlugs().map(slug => ({ params: { slug } }));
@@ -16,6 +17,7 @@ if (!entry) {
 }
 
 const { image, category } = entry;
+const heroDim = photoTiers(image.file).hero;
 const meta = getPhotoMeta(image.file);
 const metaLine = formatMetaLine(meta);
 const related = getRelatedImages(image.file, 4);
@@ -88,6 +90,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
   ogImageWidth={1200}
   ogImageHeight={630}
   lcpImage={image.file}
+  lcpImageSizes={plateSizes(image.file)}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
@@ -98,49 +101,49 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     style={`background: radial-gradient(ellipse 80% 60% at 50% 30%, ${bleed.glow}, ${bleed.accent}, transparent 70%);`}
   ></div>
 
-  {/* FULL-BLEED HERO IMAGE */}
-  <section
-    class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden z-10"
-    style={(() => {
-      const ph = getPlaceholder(image.file);
-      return ph ? `background-image: url('${ph.lqip}'); background-size: cover; background-position: center;` : '';
-    })()}
-  >
+  {/* The photograph at its own aspect, capped at 80svh. Copy sits below it. */}
+  <section class="relative z-10 pt-6 sm:pt-10 pb-8 sm:pb-12">
+    <div class="container-wide mb-4 sm:mb-6">
+      <a
+        href="/photography/"
+        class="inline-flex items-center justify-center gap-1.5 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Gallery
+      </a>
+    </div>
+    <div
+      class={`${frameClass(image.file)} min-w-0`}
+      style={(() => {
+        const ph = getPlaceholder(image.file);
+        return ph ? `background-image: url('${ph.lqip}'); background-size: cover; background-position: center;` : '';
+      })()}
+    >
     <picture>
       <source
         type="image/avif"
-        srcset={`/images/photography/thumb/${image.file}.avif 400w, /images/photography/gallery/${image.file}.avif 1200w, /images/photography/hero/${image.file}.avif 2400w`}
-        sizes="100vw"
+        srcset={photoSrcset(image.file, 'avif')}
+        sizes={plateSizes(image.file)}
       />
       <source
         type="image/webp"
-        srcset={`/images/photography/thumb/${image.file}.webp 400w, /images/photography/gallery/${image.file}.webp 1200w, /images/photography/hero/${image.file}.webp 2400w`}
-        sizes="100vw"
+        srcset={photoSrcset(image.file, 'webp')}
+        sizes={plateSizes(image.file)}
       />
       <img
         src={`/images/photography/hero/${image.file}.webp`}
         alt={image.alt}
-        class="absolute inset-0 w-full h-full object-cover"
         fetchpriority="high"
-        width={getPlaceholder(image.file)?.width}
-        height={getPlaceholder(image.file)?.height}
+        decoding="async"
+        width={heroDim.w}
+        height={heroDim.h}
       />
     </picture>
-    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent"></div>
 
     {/* Print preview frame - ghost overlay, visible when CTA is hovered */}
     <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
       <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
     </div>
-
-    {/* Back nav + keyboard hint */}
-    <a
-      href="/photography/"
-      class="absolute top-4 left-4 sm:top-8 sm:left-8 z-10 inline-flex items-center justify-center gap-1.5 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-      Gallery
-    </a>
 
     {/* Keyboard nav arrows (desktop only, visible on hover) */}
     {prevSlug && (
@@ -164,7 +167,8 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       </a>
     )}
 
-    <div class="relative z-10 container-narrow pb-10 sm:pb-16 md:pb-20">
+    </div>
+    <div class="container-narrow mt-6 sm:mt-8">
       <div class="reveal max-w-2xl">
         <p class="text-sm tracking-[0.22em] uppercase text-mute mb-2 sm:mb-3">
           <a href={`/photography/#gallery-${category.id}`} class="inline-flex items-center justify-center min-h-[44px] min-w-[44px] hover:text-cream transition-colors duration-300">{category.name}</a>
@@ -235,23 +239,23 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
           {related.map((rel) => (
             <a
               href={`/photography/${rel.file}/`}
-              class="group relative block rounded-lg sm:rounded-card overflow-hidden aspect-[4/3] ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,outline,outline-offset] duration-500 ease-smooth"
+              class="group relative block min-w-0 rounded-lg sm:rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,outline,outline-offset] duration-500 ease-smooth"
             >
+              <div class={frameClass(rel.file)}>
               <picture>
                 <source
                   type="image/avif"
-                  srcset={`/images/photography/thumb/${rel.file}.avif 400w, /images/photography/gallery/${rel.file}.avif 1200w`}
-                  sizes="(max-width: 767px) 50vw, 25vw"
+                  srcset={photoSrcset(rel.file, 'avif')}
+                  sizes={RELATED_SIZES}
                 />
                 <source
                   type="image/webp"
-                  srcset={`/images/photography/thumb/${rel.file}.webp 400w, /images/photography/gallery/${rel.file}.webp 1200w`}
-                  sizes="(max-width: 767px) 50vw, 25vw"
+                  srcset={photoSrcset(rel.file, 'webp')}
+                  sizes={RELATED_SIZES}
                 />
                 <img
                   src={`/images/photography/gallery/${rel.file}.webp`}
                   alt={rel.alt}
-                  class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                 />
@@ -259,6 +263,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300"></div>
               <div class="absolute bottom-0 left-0 right-0 p-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 transition-[opacity,transform] duration-300 ease-smooth">
                 <p class="text-sm text-cream/90">{rel.alt}</p>
+              </div>
               </div>
             </a>
           ))}
