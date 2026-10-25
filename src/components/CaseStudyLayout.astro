@@ -1,0 +1,19 @@
+---
+import { showCaseStudy } from '../lib/case-study-flag';
+---
+{showCaseStudy && <link rel="stylesheet" href="/case-study.css" />}
+{showCaseStudy && (
+<section class="case-study" data-nosnippet>
+  <div class="case-study-inner">
+    <p class="case-study-title">Case study title</p>
+    <figure class="case-study-figure" aria-hidden="true">
+      <div class="case-study-frame"></div>
+    </figure>
+    <div class="case-study-body">
+      <p>Paragraph</p>
+      <p>Paragraph</p>
+      <p>Paragraph</p>
+    </div>
+  </div>
+</section>
+)}
