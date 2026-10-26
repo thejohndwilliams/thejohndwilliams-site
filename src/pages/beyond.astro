@@ -1,17 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DepthPhoto from '../components/DepthPhoto.astro';
+import DepthStack from '../components/DepthStack.astro';
 import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import LiquidPlate from '../components/LiquidPlate.astro';
 import ReliefStudies from '../components/ReliefStudies.astro';
 import { publicBitmap } from '../utils/bitmap';
+import { photoSrcset, photoTiers } from '../utils/photo-src';
 import '../styles/beyond.css';
 import '../styles/depth-study.css';
 
-// One column, one depth frame, texture, then surface findings.
-// The exploded-layers figure lives on /depth and is not imported here.
-// #depth-layers is the empty hook it can fill later.
+// Opening photograph, then the depth figure at rest, then the studies.
+// The figure is the same component /depth uses. This page does not link
+// to that route. The banner file is the page's existing landscape hero.
 const SUBJECTS = [
   {
     id: 'earth',
@@ -48,7 +50,19 @@ const SUBJECTS = [
 ] as const;
 
 const earth = SUBJECTS[0];
-const DEPTH_SIZES = '(max-width: 767px) calc(100vw - 2rem), 1080px';
+
+function orientOf(file: string): 'portrait' | 'landscape' | 'square' {
+  const { w, h } = photoTiers(file).hero;
+  const ratio = w / h;
+  if (ratio > 0.92 && ratio < 1.08) return 'square';
+  return h > w ? 'portrait' : 'landscape';
+}
+const BANNER = 'gv-3b61b429';
+const bannerAlt = 'Lone tree against a smoldering horizon';
+const banner = photoTiers(BANNER);
+/* Phones ask for 2x the CSS width so cover does not upscale the thumb.
+   Wider screens stay at the real hero width. */
+const bannerSizes = '(max-width: 700px) 200vw, min(100vw, 2400px)';
 const thumbDims = Object.fromEntries(
   await Promise.all(
     SUBJECTS.map(async (row) => [row.file, await publicBitmap(`/images/photography/thumb/${row.file}.webp`)] as const),
@@ -62,10 +76,27 @@ const thumbDims = Object.fromEntries(
   ogImage="/og/photography/gv-3b61b429.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
-  lcpImage={earth.file}
-  lcpImageSizes={DEPTH_SIZES}
+  lcpImage={BANNER}
+  lcpImageSizes={bannerSizes}
   bodyClass="page-beyond"
 >
+  <div class="beyond-banner">
+    <picture>
+      <source type="image/avif" srcset={photoSrcset(BANNER, 'avif')} sizes={bannerSizes} />
+      <img
+        class="beyond-banner__img"
+        src={`/images/photography/gallery/${BANNER}.webp`}
+        srcset={photoSrcset(BANNER, 'webp')}
+        sizes={bannerSizes}
+        width={banner.gallery.w}
+        height={banner.gallery.h}
+        alt={bannerAlt}
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  </div>
+
   <header id="beyond" class="beyond-section beyond-anchor beyond-title">
     <div class="beyond-col">
       <div class="beyond-text">
@@ -81,7 +112,13 @@ const thumbDims = Object.fromEntries(
     </div>
   </header>
 
-  <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-mode="rest">
+  <section id="depth-layers" class="beyond-section beyond-anchor beyond-layers" data-depth-layers>
+    <div class="beyond-col">
+      <DepthStack priority={false} autoplay={false} />
+    </div>
+  </section>
+
+  <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-orient={orientOf(earth.file)} data-mode="rest">
     <div class="beyond-col">
       <div class="beyond-text">
         <h2 class="t-sub font-serif">The depth studies</h2>
@@ -103,33 +140,48 @@ const thumbDims = Object.fromEntries(
       </div>
     </div>
 
-    {/* Study: depth layers. Empty on purpose. A later figure fills this
-        hook. Do not import the separate /depth draft. */}
-    <div id="depth-layers" class="beyond-layers" data-depth-layers hidden></div>
-
     <div class="beyond-col" data-depth-slot>
-      <div class="depth-frame" data-depth-frame data-mode="rest">
-        <div data-depth-photo>
-          <DepthPhoto file={earth.file} alt={earth.alt} eager />
+      <div class="depth-layout">
+      <div class="depth-stage">
+        <div class="depth-frame" data-depth-frame data-mode="rest">
+          <div data-depth-photo>
+            <DepthPhoto file={earth.file} alt={earth.alt} />
+          </div>
+          <div data-depth-plate></div>
         </div>
-        <div data-depth-plate></div>
+
+        <div class="depth-aside">
+          <div class="depth-controls">
+            <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
+              <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
+              <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
+            </div>
+          </div>
+
+          <ul class="depth-index beyond-text">
+            {SUBJECTS.map((row, i) => (
+              <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
+                <p class="eyebrow">{row.title}</p>
+                <p class="beyond-copy">{row.note}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      <div class="depth-controls">
-        <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
-          <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
-          <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
-        </div>
+      <div class="depth-controls depth-controls--strip">
         <div class="depth-thumbs" role="group" aria-label="Depth study">
           {SUBJECTS.map((row, i) => (
             <button
               type="button"
               class="depth-thumb"
               data-study={row.id}
+              data-orient={orientOf(row.file)}
               aria-pressed={i === 0 ? 'true' : 'false'}
             >
               <picture>
-                <source type="image/avif" srcset={`/images/photography/thumb/${row.file}.avif`} />
+                <source type="image/avif" srcset={photoSrcset(row.file, 'avif', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
+                <source type="image/webp" srcset={photoSrcset(row.file, 'webp', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
                 <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width={thumbDims[row.file].width} height={thumbDims[row.file].height} />
               </picture>
               <span>{row.label}</span>
@@ -137,15 +189,7 @@ const thumbDims = Object.fromEntries(
           ))}
         </div>
       </div>
-
-      <ul class="depth-index beyond-text">
-        {SUBJECTS.map((row, i) => (
-          <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
-            <p class="eyebrow">{row.title}</p>
-            <p class="beyond-copy">{row.note}</p>
-          </li>
-        ))}
-      </ul>
+      </div>
     </div>
 
     {SUBJECTS.map((row) => (

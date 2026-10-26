@@ -32,8 +32,9 @@ describe('depth stack draft route', () => {
     expect(nav).not.toContain('/depth');
     expect(header).not.toContain('/depth/');
     expect(footer).not.toContain('/depth/');
-    expect(beyond).not.toContain('DepthStack');
     expect(beyond).not.toContain('/depth/');
+    expect(beyond).toContain('DepthStack');
+    expect(beyond).toContain('autoplay={false}');
     expect(photos).not.toContain('/images/depth/');
     expect(photos).not.toContain('layer1-plate');
   });
@@ -68,7 +69,7 @@ describe('depth stack draft route', () => {
   it('does not mount a second WebGL plate and lazy-loads the upper layers', () => {
     expect(figure).not.toContain('KineticPlate');
     expect(figure).not.toContain('canvas');
-    expect(figure).toContain('fetchpriority="high"');
+    expect(figure).toContain("priority ? 'high' : undefined");
     expect(figure).toContain("file: 'layer2.webp'");
     expect(figure).toContain("file: 'layer5.webp'");
     expect(figure).toContain('data-src={`/images/depth/${layer.file}`}');

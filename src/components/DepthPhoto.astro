@@ -1,5 +1,6 @@
 ---
 import { publicBitmap } from '../utils/bitmap';
+import { photoSrcset } from '../utils/photo-src';
 
 interface Props {
   file: string;
@@ -8,23 +9,16 @@ interface Props {
 }
 
 const { file, alt, eager = false } = Astro.props;
-const sizes = '(max-width: 767px) calc(100vw - 2rem), 1080px';
-const tier = (folder: string, ext: string) => `/images/photography/${folder}/${file}.${ext}`;
-const src = tier('gallery', 'webp');
+/* Ask for twice the viewport so a 1x screen does not stop on the gallery
+   tier when the figure is a full column. Descriptors stay real widths. */
+const sizes = 'calc((100vw - 2rem) * 2)';
+const src = `/images/photography/gallery/${file}.webp`;
 const dim = await publicBitmap(src);
 ---
 
 <picture class="depth-photo">
-  <source
-    type="image/avif"
-    srcset={`${tier('thumb', 'avif')} 400w, ${tier('gallery', 'avif')} 1200w, ${tier('hero', 'avif')} 2400w`}
-    sizes={sizes}
-  />
-  <source
-    type="image/webp"
-    srcset={`${tier('thumb', 'webp')} 400w, ${tier('gallery', 'webp')} 1200w, ${tier('hero', 'webp')} 2400w`}
-    sizes={sizes}
-  />
+  <source type="image/avif" srcset={photoSrcset(file, 'avif')} sizes={sizes} />
+  <source type="image/webp" srcset={photoSrcset(file, 'webp')} sizes={sizes} />
   <img
     class="depth-photo__img"
     src={src}

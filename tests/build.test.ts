@@ -508,6 +508,36 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).toContain('Hologram · stacked planes');
     expect(beyond).toContain('Point cloud · true depth');
     expect(beyond).toContain('data-depth-layers');
+    expect(beyond).toContain('id="depth-layers"');
+    expect(beyond).not.toMatch(/id="depth-layers"[^>]*\shidden/);
+    expect(beyond).toContain('class="beyond-banner"');
+    expect(beyond).toContain('Lone tree against a smoldering horizon');
+    expect((beyond.match(/id="depth-stack"/g) || []).length).toBe(1);
+    expect((beyond.match(/id="depth-separation"/g) || []).length).toBe(1);
+    expect(beyond).toContain('The photograph separated into five depth layers, far to near.');
+    expect(beyond).toContain('data-autoplay="0"');
+    const banner = beyond.match(/<img\b[^>]*beyond-banner__img[^>]*>/i)?.[0];
+    expect(banner, 'banner img').toBeTruthy();
+    expect(banner).toContain('fetchpriority="high"');
+    expect(banner).toContain('width="1200"');
+    expect(banner).toContain('height="901"');
+    expect(banner).not.toContain('style=');
+    const bannerPicture = beyond.slice(beyond.indexOf('class="beyond-banner"'), beyond.indexOf('id="beyond"'));
+    for (const tag of bannerPicture.match(/<(?:img|source)\b[^>]*>/gi) || []) {
+      const srcset = tag.match(/\bsrcset="([^"]+)"/)?.[1];
+      expect(srcset, tag).toBeTruthy();
+      for (const part of srcset!.split(',')) {
+        const candidate = part.trim().match(/^(\S+)\s+(\d+)w$/);
+        expect(candidate, part).toBeTruthy();
+        const file = await sharp(path.join(process.cwd(), 'public', candidate![1])).metadata();
+        expect(file.width, candidate![1]).toBe(Number(candidate![2]));
+      }
+    }
+    const stackBase = beyond.match(/<img\b[^>]*depth-stack__base[^>]*>/i)?.[0];
+    expect(stackBase, 'depth stack base').toBeTruthy();
+    expect(stackBase).toContain('loading="lazy"');
+    expect(stackBase).not.toContain('fetchpriority');
+    expect((beyond.match(/fetchpriority="high"/g) || []).length).toBe(2);
     expect(beyond).not.toContain('The same frame, as space');
     expect(beyond).not.toContain('Beyond%20Photography');
     expect(beyond).toContain('The envelope');
@@ -535,7 +565,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     const imgs = beyond.match(/<img\b[^>]*>/gi) || [];
     expect(imgs.length).toBeGreaterThan(0);
     for (const tag of imgs) {
-      const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+      const src = tag.match(/\bsrc="([^"]+)"/)?.[1] ?? tag.match(/\bdata-src="([^"]+)"/)?.[1];
       const width = tag.match(/\bwidth="(\d+)"/)?.[1];
       const height = tag.match(/\bheight="(\d+)"/)?.[1];
       expect(src, tag).toBeTruthy();
@@ -561,6 +591,8 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(html).not.toMatch(/<style[\s\S]*?<\/style>/);
     expect(html).not.toMatch(/\sstyle="/);
     expect(html).not.toContain('KineticPlate');
+    expect(html).toContain('fetchpriority="high"');
+    expect(html).not.toContain('data-autoplay="0"');
     expect(html).toContain('/images/depth/w800/layer1.webp 800w');
     expect(html).not.toContain('2400w');
     const lower = html.toLowerCase();
