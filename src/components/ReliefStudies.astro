@@ -26,39 +26,41 @@ const EDITIONS = [
 ];
 ---
 
-<section id="relief" class="beyond-section beyond-anchor">
-  <div class="beyond-flow">
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Object studies</p>
-        <h2>A photograph you could hold</h2>
-        <p class="beyond-copy">
-          A print is light recorded on a plane. These studies ask what survives
-          when the ink is taken away and only the surface is left. The
-          photograph becomes a shallow landscape a few millimetres deep,
-          invisible under ordinary room light, and it stays that way until
-          something crosses it at a grazing angle. Then the image arrives.
-        </p>
-      </div>
+<section id="relief" class="py-12 sm:py-16 md:py-20 scroll-mt-24">
+  <div class="container-narrow">
+    <p class="eyebrow mb-3 sm:mb-4">Object studies</p>
+    <h2 class="mb-5 sm:mb-7">A photograph you could hold</h2>
+    <div class="prose max-w-2xl">
+      <p>
+        A print is light recorded on a plane. These studies ask what survives
+        when the ink is taken away and only the surface is left. The
+        photograph becomes a shallow landscape a few millimetres deep,
+        invisible under ordinary room light, and it stays that way until
+        something crosses it at a grazing angle. Then the image arrives.
+      </p>
     </div>
+  </div>
+</section>
 
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Structure · Shanghai Tower</p>
-        <h2>The light does the work</h2>
-        <p class="beyond-copy">
+<section class="pb-12 sm:pb-16 md:pb-20">
+  <div class="container-wide">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 items-center">
+      <div class="order-2 md:order-1">
+        <p class="eyebrow mb-2">Structure · Shanghai Tower</p>
+        <h2 class="mb-5">The light does the work</h2>
+        <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-md mb-4">
           Nothing on this panel is printed. The entire image is carried in a
           surface four millimetres deep, lit from eleven degrees above the
           plane. One full turn of the light takes six seconds.
         </p>
-        <p class="beyond-copy">
+        <p class="text-sm opacity-60 leading-relaxed max-w-md">
           Watch the facade. Its ribs light and go dark in sequence as the
           source swings behind them, which is the one thing a printed
           photograph can never do.
         </p>
       </div>
 
-      <figure class="sweep">
+      <figure class="order-1 md:order-2 sweep">
         <div class="sweep__stage" data-sweep>
           <picture class="sweep__still">
             <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
@@ -89,90 +91,93 @@ const EDITIONS = [
         </figcaption>
       </figure>
     </div>
+  </div>
+</section>
 
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Seven depths</p>
-        <h2>How deep should a photograph be?</h2>
-        <p class="beyond-copy">
-          One frame, one light, seven candidate reliefs. At one millimetre the
-          image is a rumour. At fourteen it is a carving that throws its own
-          shadow across the panel and starts to look like something other than
-          a photograph.
+<section class="py-12 sm:py-16 md:py-20">
+  <div class="container-wide">
+    <p class="eyebrow mb-2">Seven depths</p>
+    <h2 class="mb-5">How deep should a photograph be?</h2>
+    <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-8 sm:mb-10">
+      One frame, one light, seven candidate reliefs. At one millimetre the
+      image is a rumour. At fourteen it is a carving that throws its own
+      shadow across the panel and starts to look like something other than
+      a photograph.
+    </p>
+
+    <ul class="depth-grid">
+      {DEPTHS.map((d) => (
+        <li class="depth">
+          <picture>
+            <source srcset={`/images/relief/depth-${d.mm}mm.avif`} type="image/avif" />
+            <source srcset={`/images/relief/depth-${d.mm}mm.webp`} type="image/webp" />
+            <img
+              src={`/images/relief/depth-${d.mm}mm.webp`}
+              alt={d.alt}
+              width="620"
+              height="775"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <p class="depth__label">{d.mm} mm</p>
+        </li>
+      ))}
+      <li class="depth depth--note">
+        <p>
+          There is no formula here. The three relief ratios in the
+          literature each describe their own author's test piece, and none
+          is offered as guidance. This one gets chosen by looking at a
+          printed sample.
         </p>
-      </div>
+      </li>
+    </ul>
+  </div>
+</section>
 
-      <ul class="depth-grid">
-        {DEPTHS.map((d) => (
-          <li class="depth">
-            <picture>
-              <source srcset={`/images/relief/depth-${d.mm}mm.avif`} type="image/avif" />
-              <source srcset={`/images/relief/depth-${d.mm}mm.webp`} type="image/webp" />
-              <img
-                src={`/images/relief/depth-${d.mm}mm.webp`}
-                alt={d.alt}
-                width="620"
-                height="775"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <p class="depth__label">{d.mm} mm</p>
-          </li>
-        ))}
-      </ul>
-      <p class="beyond-copy beyond-follow">
-        There is no formula here. The three relief ratios in the
-        literature each describe their own author's test piece, and none
-        is offered as guidance. This one gets chosen by looking at a
-        printed sample.
-      </p>
+<section class="py-12 sm:py-16 md:py-20 section-light">
+  <div class="container-wide">
+    <p class="eyebrow mb-2">The edition</p>
+    <h2 class="mb-5">Three sizes, one depth</h2>
+    <p class="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl mb-10 sm:mb-14">
+      Sixteen by twenty, twenty by twenty four, and twenty four by thirty
+      six inches, portrait. The relief is cut to the same absolute depth on
+      all three, so it reads deepest on the smallest panel and quietest on
+      the largest. Shown here at true relative scale.
+    </p>
+
+    <div class="edition-rail">
+      {EDITIONS.map((e) => (
+        <figure class={`edition edition--${e.slug}`}>
+          <picture class="edition__img">
+            <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
+            <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
+            <img
+              src={`/images/relief/edition-${e.slug}.webp`}
+              alt={e.alt}
+              width={e.px[0]}
+              height={e.px[1]}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <figcaption class="edition__cap">
+            <span class="edition__size">{e.label}</span>
+            <span class="edition__read">relief reads {e.reads}</span>
+          </figcaption>
+        </figure>
+      ))}
     </div>
+  </div>
+</section>
 
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Scale study</p>
-        <h2>One depth, three sizes</h2>
-        <p class="beyond-copy">
-          Sixteen by twenty, twenty by twenty four, and twenty four by thirty
-          six inches, portrait. The relief is cut to the same absolute depth on
-          all three, so it reads deepest on the smallest panel and quietest on
-          the largest. Shown here at true relative scale.
-        </p>
-      </div>
-
-      <div class="edition-rail">
-        {EDITIONS.map((e) => (
-          <figure class={`edition edition--${e.slug}`}>
-            <picture class="edition__img">
-              <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
-              <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
-              <img
-                src={`/images/relief/edition-${e.slug}.webp`}
-                alt={e.alt}
-                width={e.px[0]}
-                height={e.px[1]}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <figcaption class="edition__cap">
-              <span class="edition__size">{e.label}</span>
-              <span class="edition__read">relief reads {e.reads}</span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Open questions</p>
-        <p class="beyond-copy">
-          Which relief depth survives ordinary room light?
-        </p>
-      </div>
-    </div>
+<section class="py-12 sm:py-16 md:py-20">
+  <div class="container-narrow text-center">
+    <p>
+      <a href="/photography/" class="inline-flex items-center justify-center min-h-[44px] px-2 text-xs tracking-[0.2em] uppercase text-mute hover:text-cream transition-colors">
+        Back to the photographs
+      </a>
+    </p>
   </div>
 </section>
 
@@ -232,8 +237,8 @@ const EDITIONS = [
 
 <style>
   .sweep {
-    max-width: min(26rem, 80svh);
-    margin: 2rem 0 0;
+    max-width: min(26rem, 100%);
+    margin-inline: auto;
   }
   .sweep__stage {
     position: relative;
@@ -264,15 +269,12 @@ const EDITIONS = [
   .sweep__stage.is-playing .sweep__video { opacity: 1; }
   .sweep__cap {
     margin-top: 0.85rem;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 0.6875rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(244, 234, 222, 0.62);
-  }
-
-  .beyond-follow {
-    margin-top: 1.25rem;
+    text-align: center;
   }
 
   .depth-grid {
@@ -281,10 +283,10 @@ const EDITIONS = [
     gap: 0.75rem;
     list-style: none;
     padding: 0;
-    margin: 2rem 0 0;
+    margin: 0;
   }
-  @media (min-width: 1024px) {
-    .depth-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.85rem; }
+  @media (min-width: 768px) {
+    .depth-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; }
   }
   .depth img {
     display: block;
@@ -300,15 +302,24 @@ const EDITIONS = [
     font-variant-numeric: tabular-nums;
     color: rgba(244, 234, 222, 0.7);
   }
+  .depth--note {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2rem;
+  }
+  .depth--note p {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: #868686;
+  }
 
   .edition-rail {
-    --u: min(1.15vw, 16px);
+    --u: min(1.38vw, 18px);
     display: grid;
     grid-template-columns: repeat(3, auto);
     grid-template-rows: auto auto;
     justify-content: start;
     column-gap: calc(var(--u) * 1.3);
-    margin-top: 2rem;
   }
   .edition { display: contents; }
   .edition--16x20 { --w: 16; --c: 1; }
@@ -338,15 +349,19 @@ const EDITIONS = [
   }
   .edition__size {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     letter-spacing: 0.1em;
     font-variant-numeric: tabular-nums;
     color: rgba(244, 234, 222, 0.75);
   }
   .edition__read {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     letter-spacing: 0.06em;
     color: #868686;
+  }
+  @media (max-width: 640px) {
+    .edition__size { font-size: 0.625rem; }
+    .edition__read { font-size: 0.5625rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {

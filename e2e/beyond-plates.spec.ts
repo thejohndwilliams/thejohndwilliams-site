@@ -10,10 +10,11 @@ const VIEWPORTS = [
   { width: 390, height: 844 },
 ] as const;
 
+// /beyond keeps one hologram and one point cloud in the document; the
+// other subjects sit in <template> and must not count.
 // /about keeps the earth point cloud. Its 2.5D plate is the hidden fallback.
-// /beyond mounts neither plate until Planes or Points is chosen, and then
-// only one of them, so a resting visit does not open a depth WebGL context.
 const PAGES = [
+  { path: '/beyond/', figures: 2, painted: 2 },
   { path: '/about/', figures: 2, painted: 1 },
 ] as const;
 
@@ -112,27 +113,6 @@ async function assertPlatePainted(fig: Locator): Promise<void> {
 }
 
 for (const viewport of VIEWPORTS) {
-  test(`/beyond/ paints the chosen plate at ${viewport.width}x${viewport.height}`, async ({ page }) => {
-    test.setTimeout(60_000);
-    await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto('/beyond/');
-
-    await expect(page.locator('figure.kinetic-plate, figure.kplate3d')).toHaveCount(0);
-    await expect(page.locator('[data-depth-photo] img')).toBeVisible();
-
-    await page.getByRole('button', { name: 'Planes', exact: true }).click();
-    const hologram = page.locator('figure.kinetic-plate');
-    await expect(hologram).toHaveCount(1);
-    await assertPlatePainted(hologram);
-    await expect(page.locator('figure.kplate3d')).toHaveCount(0);
-
-    await page.getByRole('button', { name: 'Points', exact: true }).click();
-    const cloud = page.locator('figure.kplate3d');
-    await expect(cloud).toHaveCount(1);
-    await assertPlatePainted(cloud);
-    await expect(page.locator('figure.kinetic-plate')).toHaveCount(0);
-  });
-
   for (const target of PAGES) {
     test(`${target.path} plates paint at ${viewport.width}x${viewport.height}`, async ({ page }) => {
       test.setTimeout(60_000);
