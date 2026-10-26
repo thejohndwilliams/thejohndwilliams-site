@@ -1,0 +1,391 @@
+/* Case study page. Ink and ivory. One glass surface lives on .gov-summary.
+   Figures stay matte. No hue accent. 8px rhythm. */
+
+.gov-lead {
+  max-width: 40rem;
+  margin-bottom: 48px;
+}
+
+.gov-lead h1 {
+  margin: 0;
+}
+
+.gov-kicker {
+  margin: 24px 0 0;
+  color: #A89F8C;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.gov-block h2,
+.gov-summary h2 {
+  margin: 64px 0 24px;
+  max-width: 40rem;
+}
+
+.gov-block > h2:first-child {
+  margin-top: 48px;
+}
+
+.gov-summary {
+  max-width: 40rem;
+  margin: 48px 0;
+  padding: 32px;
+}
+
+.gov-summary h2 {
+  margin-top: 0;
+}
+
+.gov-block p,
+.gov-summary p,
+.gov-block li,
+.gov-live p,
+.gov-note {
+  line-height: 1.7;
+}
+
+.gov-block p,
+.gov-summary p {
+  margin: 0 0 24px;
+  max-width: 40rem;
+}
+
+.gov-summary p:last-child,
+.gov-block p:last-child {
+  margin-bottom: 0;
+}
+
+.gov-block ul {
+  margin: 0 0 24px;
+  padding: 0 0 0 24px;
+  max-width: 40rem;
+}
+
+.gov-block li {
+  margin: 0 0 8px;
+}
+
+.gov-block li::marker {
+  color: #A89F8C;
+}
+
+.gov-block strong {
+  font-weight: 500;
+  color: #F4EADE;
+}
+
+.gov-summary p,
+.gov-block p,
+.gov-block li {
+  color: #F4EADE;
+}
+
+.gov-figure {
+  margin: 48px 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.gov-svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #1A1A1A;
+}
+
+.gov-label {
+  margin: 16px 0 0;
+  max-width: 40rem;
+  color: #F4EADE;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+}
+
+.gov-note {
+  margin: 16px 0 0;
+  max-width: 40rem;
+  color: #A89F8C;
+  font-size: 0.9375rem;
+}
+
+.gov-live[hidden],
+.gov-panel[hidden],
+.gov-map tr[hidden] {
+  display: none;
+}
+
+.gov-live h3 {
+  margin: 0 0 8px;
+  max-width: 40rem;
+}
+
+.gov-sub {
+  margin: 0 0 24px;
+  max-width: 40rem;
+  color: #A89F8C;
+}
+
+.gov-tabs,
+.gov-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+}
+
+.gov-tab,
+.gov-filter {
+  flex: 1 1 12rem;
+  max-width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  color: #A89F8C;
+  background: transparent;
+  border: 1px solid #3a3632;
+  cursor: pointer;
+}
+
+.gov-tab[aria-selected='true'],
+.gov-filter[aria-checked='true'] {
+  color: #F4EADE;
+  border-color: #F4EADE;
+  background: #141414;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gov-tab:hover,
+  .gov-filter:hover {
+    color: #F4EADE;
+    border-color: #C6B498;
+  }
+}
+
+@media (max-width: 819px) {
+  .gov-tab,
+  .gov-filter {
+    flex-basis: 100%;
+  }
+}
+
+.gov-check {
+  display: block;
+  margin-top: 8px;
+  color: #F4EADE;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.gov-tab .gov-mono,
+.gov-tab-sub {
+  display: block;
+}
+
+.gov-tab-sub {
+  margin-top: 4px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.gov-panel {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #3a3632;
+  max-width: 40rem;
+}
+
+.gov-panel p {
+  margin: 0;
+  color: #F4EADE;
+}
+
+.gov-escalate {
+  margin: 24px 0 0;
+  padding-top: 16px;
+  max-width: 40rem;
+  border-top: 1px dashed #A89F8C;
+  color: #A89F8C;
+}
+
+.gov-escalate.is-lit {
+  color: #F4EADE;
+  border-top-color: #F4EADE;
+}
+
+.gov-dl {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.gov-dl div {
+  min-width: 0;
+}
+
+.gov-dl dt {
+  margin: 16px 0 0;
+  color: #A89F8C;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gov-dl div:first-child dt {
+  margin-top: 0;
+}
+
+.gov-dl dd {
+  margin: 0;
+  color: #F4EADE;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 820px) {
+  .gov-dl {
+    grid-template-columns: 9rem 1fr;
+    align-items: baseline;
+  }
+
+  .gov-dl dt {
+    margin-top: 0;
+  }
+}
+
+.gov-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.gov-table-wrap {
+  max-width: 100%;
+  min-width: 0;
+  margin: 24px 0 32px;
+}
+
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.gov-table th,
+.gov-table td {
+  padding: 16px 16px 16px 0;
+  vertical-align: top;
+  text-align: left;
+  color: #F4EADE;
+  font-weight: 400;
+  border-bottom: 1px solid #3a3632;
+  overflow-wrap: anywhere;
+}
+
+.gov-table thead th {
+  color: #A89F8C;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gov-table tbody th {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.gov-k {
+  display: block;
+  margin-bottom: 4px;
+  color: #A89F8C;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 819px) {
+  .gov-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .gov-stack,
+  .gov-stack tbody,
+  .gov-stack tr,
+  .gov-stack td,
+  .gov-stack tbody th {
+    display: block;
+    width: 100%;
+  }
+
+  .gov-stack tr {
+    margin: 0 0 24px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #3a3632;
+  }
+
+  .gov-stack td,
+  .gov-stack tbody th {
+    padding: 8px 0;
+    border-bottom: 0;
+  }
+}
+
+@media (min-width: 820px) {
+  .gov-k {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .gov-map th:nth-child(1),
+  .gov-map td:nth-child(1) { width: 28%; }
+  .gov-map th:nth-child(2),
+  .gov-map td:nth-child(2) { width: 22%; }
+  .gov-map th:nth-child(3),
+  .gov-map td:nth-child(3) { width: 30%; }
+  .gov-map td:nth-child(4),
+  .gov-map th:nth-child(4) { width: 20%; }
+}
+
+.gov-colophon {
+  margin-top: 32px;
+  max-width: 40rem;
+  color: #A89F8C;
+}

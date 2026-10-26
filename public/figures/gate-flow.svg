@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 560" width="1440" height="560" role="img" aria-labelledby="t d">
+<title id="t">Approval-gate flow: intake, risk check, approval authority, execution by the Operator, and monitoring. Approval and execution are human checkpoints; ties, rule conflicts and blocked actions escalate to the Operator.</title><desc id="d">Approval-gate flow: intake, risk check, approval authority, execution by the Operator, and monitoring. Approval and execution are human checkpoints; ties, rule conflicts and blocked actions escalate to the Operator.</desc>
+<rect width="1440" height="560" fill="#0a0a0a"/>
+<text x="60" y="70" font-family="'EB Garamond', Georgia, serif" font-size="34" font-weight="400" fill="#F4EADE" text-anchor="start">Approval-gate flow</text>
+<text x="60" y="102" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#B8AEA2" text-anchor="start">Agents prepare. The Operator or a named approval authority acts on anything irreversible.</text>
+<rect x="60" y="170" width="232" height="150" fill="none" stroke="#3a3632" stroke-width="1"/>
+<text x="78" y="210" font-family="'EB Garamond', Georgia, serif" font-size="22" font-weight="500" fill="#F4EADE" text-anchor="start">1  Intake</text>
+<text x="78" y="250" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Brief: outcome, checks,</text>
+<text x="78" y="272" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">sources, decision owner</text>
+<line x1="296" y1="245" x2="316" y2="245" stroke="#F4EADE" stroke-width="1.2"/><path d="M316 240 l6 5 l-6 5" fill="none" stroke="#F4EADE" stroke-width="1.2"/>
+<rect x="322" y="170" width="232" height="150" fill="none" stroke="#3a3632" stroke-width="1"/>
+<text x="340" y="210" font-family="'EB Garamond', Georgia, serif" font-size="22" font-weight="500" fill="#F4EADE" text-anchor="start">2  Risk check</text>
+<text x="340" y="250" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Gated act? Fixed rule?</text>
+<text x="340" y="272" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Rule conflict?</text>
+<line x1="558" y1="245" x2="578" y2="245" stroke="#F4EADE" stroke-width="1.2"/><path d="M578 240 l6 5 l-6 5" fill="none" stroke="#F4EADE" stroke-width="1.2"/>
+<rect x="584" y="170" width="232" height="150" fill="none" stroke="#F4EADE" stroke-width="1"/>
+<text x="602" y="210" font-family="'EB Garamond', Georgia, serif" font-size="22" font-weight="500" fill="#F4EADE" text-anchor="start">3  Approval authority</text>
+<text x="602" y="250" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Dated approval in the</text>
+<text x="602" y="272" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Operator's own words</text>
+<text x="602" y="304" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F4EADE" text-anchor="start">HUMAN CHECKPOINT</text>
+<line x1="820" y1="245" x2="840" y2="245" stroke="#F4EADE" stroke-width="1.2"/><path d="M840 240 l6 5 l-6 5" fill="none" stroke="#F4EADE" stroke-width="1.2"/>
+<rect x="846" y="170" width="232" height="150" fill="none" stroke="#F4EADE" stroke-width="1"/>
+<text x="864" y="210" font-family="'EB Garamond', Georgia, serif" font-size="22" font-weight="500" fill="#F4EADE" text-anchor="start">4  Execution</text>
+<text x="864" y="250" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Operator acts, or a narrow</text>
+<text x="864" y="272" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">dated grant for one act</text>
+<text x="864" y="304" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F4EADE" text-anchor="start">HUMAN CHECKPOINT</text>
+<line x1="1082" y1="245" x2="1102" y2="245" stroke="#F4EADE" stroke-width="1.2"/><path d="M1102 240 l6 5 l-6 5" fill="none" stroke="#F4EADE" stroke-width="1.2"/>
+<rect x="1108" y="170" width="232" height="150" fill="none" stroke="#3a3632" stroke-width="1"/>
+<text x="1126" y="210" font-family="'EB Garamond', Georgia, serif" font-size="22" font-weight="500" fill="#F4EADE" text-anchor="start">5  Monitoring</text>
+<text x="1126" y="250" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Live check, evidence logged,</text>
+<text x="1126" y="272" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">mistake becomes a rule</text>
+<path d="M438.0 320 V420 H700.0" fill="none" stroke="#F4EADE" stroke-dasharray="4 4"/>
+<path d="M695.0 328 l5 -8 l5 8" fill="none" stroke="#F4EADE"/><line x1="700.0" y1="420" x2="700.0" y2="322" stroke="#F4EADE" stroke-dasharray="4 4"/>
+<text x="322" y="454" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">Escalation: ties, rule conflicts and blocked actions go to the Operator. Silence is never approval for an irreversible act.</text>
+<text x="60" y="520" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#B8AEA2" text-anchor="start">An agent's report that the Operator approved is not approval. Unconfirmed status is marked unconfirmed.</text>
+</svg>

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 704" width="1440" height="704" role="img" aria-labelledby="t d">
+<title id="t">Table mapping eight controls in this design to NIST AI RMF functions (Govern, Map, Measure, Manage) and to ISO/IEC 42001 themes; clause numbers not given.</title><desc id="d">Table mapping eight controls in this design to NIST AI RMF functions (Govern, Map, Measure, Manage) and to ISO/IEC 42001 themes; clause numbers not given.</desc>
+<rect width="1440" height="704" fill="#0a0a0a"/>
+<text x="60" y="70" font-family="'EB Garamond', Georgia, serif" font-size="34" font-weight="400" fill="#F4EADE" text-anchor="start">Controls mapped to NIST AI RMF and ISO/IEC 42001</text>
+<text x="60" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">CONTROL IN THIS DESIGN</text>
+<text x="450" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">NIST AI RMF 1.0 FUNCTION</text>
+<text x="680" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">ISO/IEC 42001 THEME</text>
+<text x="1080" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">EVIDENCE</text>
+<line x1="60" y1="142" x2="1380" y2="142" stroke="#3a3632"/>
+<text x="60" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Approval gates and non-waivable rules</text>
+<text x="450" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Govern, Manage</text>
+<text x="680" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Leadership, roles and operational control</text>
+<text x="1080" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Dated approval record</text>
+<line x1="60" y1="202" x2="1380" y2="202" stroke="#3a3632"/>
+<text x="60" y="238" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Ranked rules, dated changes, kept versions</text>
+<text x="450" y="238" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Govern</text>
+<text x="680" y="238" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Documented information</text>
+<text x="1080" y="238" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Changelog entry</text>
+<line x1="60" y1="260" x2="1380" y2="260" stroke="#3a3632"/>
+<text x="60" y="296" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Role archetypes: owns and refuses</text>
+<text x="450" y="296" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Govern, Map</text>
+<text x="680" y="296" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Roles, responsibilities and authorities</text>
+<text x="1080" y="296" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Role card</text>
+<line x1="60" y1="318" x2="1380" y2="318" stroke="#3a3632"/>
+<text x="60" y="354" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Routing table with owner and backup</text>
+<text x="450" y="354" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Govern</text>
+<text x="680" y="354" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Roles, responsibilities and authorities</text>
+<text x="1080" y="354" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Routing table</text>
+<line x1="60" y1="376" x2="1380" y2="376" stroke="#3a3632"/>
+<text x="60" y="412" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Evidence before closing; live checks</text>
+<text x="450" y="412" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Measure</text>
+<text x="680" y="412" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Monitoring, measurement and evaluation</text>
+<text x="1080" y="412" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Check record</text>
+<line x1="60" y1="434" x2="1380" y2="434" stroke="#3a3632"/>
+<text x="60" y="470" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Mistake to rule loop</text>
+<text x="450" y="470" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Manage</text>
+<text x="680" y="470" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Nonconformity and continual improvement</text>
+<text x="1080" y="470" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Mistake log, new rule</text>
+<line x1="60" y1="492" x2="1380" y2="492" stroke="#3a3632"/>
+<text x="60" y="528" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Secrets in one Operator store</text>
+<text x="450" y="528" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Manage</text>
+<text x="680" y="528" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Operational control</text>
+<text x="1080" y="528" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Store access record</text>
+<line x1="60" y1="550" x2="1380" y2="550" stroke="#3a3632"/>
+<text x="60" y="586" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Untrusted content treated as data</text>
+<text x="450" y="586" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Map, Manage (GenAI Profile)</text>
+<text x="680" y="586" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Operational control</text>
+<text x="1080" y="586" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Quoted-instruction report</text>
+<line x1="60" y1="608" x2="1380" y2="608" stroke="#3a3632"/>
+<text x="60" y="674" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#B8AEA2" text-anchor="start">Mapped by theme, not certified. AI RMF 1.0 is under revision by NIST; GenAI Profile is NIST-AI-600-1.</text>
+<text x="60" y="646" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#B8AEA2" text-anchor="start">Not endorsed by or affiliated with NIST or ISO.</text>
+</svg>
