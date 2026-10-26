@@ -3,17 +3,30 @@
    inset is 16px. Section rhythm is padding-top only, so two sections
    never add their padding together. */
 
-/* The photograph and the title are one band. Text sits on the lower
-   left, in the same column as the figure below. */
+/* The photograph and the title are one band - the Work and Photography
+   hero, verbatim: 65vh / 75vh / 80vh at the Tailwind sm and md steps,
+   lockup on the lower left at the page padding, not the column. */
 .beyond-banner {
   position: relative;
   display: flex;
   align-items: flex-end;
   width: 100%;
-  min-height: clamp(520px, 70svh, 760px);
+  min-height: 65vh;
   margin: 0;
   overflow: hidden;
   background: #0a0a0a;
+}
+
+@media (min-width: 640px) {
+  .beyond-banner {
+    min-height: 75vh;
+  }
+}
+
+@media (min-width: 768px) {
+  .beyond-banner {
+    min-height: 80vh;
+  }
 }
 
 .beyond-banner picture {
@@ -53,25 +66,32 @@
   );
 }
 
+/* Lockup padding = the Work hero's px-6 / sm:px-10 / lg:px-20 and
+   pb-12 / sm:pb-16 / md:pb-24, written here because this selector
+   outranks the utilities. */
 .beyond-banner > .beyond-title {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: 0;
-  padding-bottom: clamp(1.5rem, 4svh, 3.25rem);
+  padding: 0 1.5rem 3rem;
 }
 
-@media (max-width: 820px) {
-  .beyond-banner {
-    min-height: clamp(500px, 64svh, 700px);
+@media (min-width: 640px) {
+  .beyond-banner > .beyond-title {
+    padding: 0 2.5rem 4rem;
   }
 }
 
-/* A short desktop window (1024x615): the 520px floor plus the sticky
-   header pushes the lede below the fold. Fit the band under the header. */
-@media (max-height: 780px) and (min-width: 701px) {
-  .beyond-banner {
-    min-height: calc(100svh - 11.5rem);
+@media (min-width: 768px) {
+  .beyond-banner > .beyond-title {
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .beyond-banner > .beyond-title {
+    padding-left: 5rem;
+    padding-right: 5rem;
   }
 }
 
@@ -131,15 +151,12 @@
   margin: 0.35rem 0 1rem;
 }
 
-.beyond-title h1 {
-  margin: 0.75rem 0 0;
-  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 0 3px rgba(0, 0, 0, 0.40);
-}
-
-@media (max-width: 700px) {
-  .beyond-title h1 {
-    margin-top: 0.4rem;
-  }
+/* The heading carries the Work hero's own type and spacing (t-title,
+   mb-4 / sm:mb-5). No text-shadow: the scrim is the legibility
+   control, never a painted halo. The lede follows at the heading's
+   margin, so the three lines read as one lockup. */
+.beyond-title .beyond-lede {
+  margin-top: 0;
 }
 
 /* On a short landscape phone the title fills the band, so the eyebrow
@@ -154,11 +171,6 @@
       rgba(10, 10, 10, 0.78) 100%
     );
   }
-}
-
-.beyond-title .eyebrow,
-.beyond-title .beyond-lede {
-  color: #d8d8d8;
 }
 
 .beyond-section > .beyond-col + .beyond-col,

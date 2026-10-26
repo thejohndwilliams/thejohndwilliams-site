@@ -96,18 +96,19 @@ const thumbDims = Object.fromEntries(
       />
     </picture>
     <div class="beyond-scrim"></div>
+    <!-- The lockup is the Work and Photography hero pattern verbatim:
+         eyebrow, t-title, one lede, inside .reveal so it fades up with the
+         rest of the site. Geometry lives in beyond.css (.beyond-title). -->
     <header id="beyond" class="beyond-anchor beyond-title">
-      <div class="beyond-col">
-        <div class="beyond-text">
-          <p class="eyebrow">Lifting</p>
-          <h1 class="t-title font-serif">Beyond</h1>
-          <p class="beyond-lede beyond-copy">
-            Experiments in what a photograph can become once it leaves the
-            frame. Each one starts the same way: a finished photograph, taken
-            seriously enough to ask what else it holds. Depth, first. Then
-            texture. Then surface.
-          </p>
-        </div>
+      <div class="beyond-text reveal">
+        <p class="eyebrow mb-3 sm:mb-4">Lifting</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Beyond</h1>
+        <p class="beyond-lede text-base leading-relaxed max-w-xl">
+          Experiments in what a photograph can become once it leaves the
+          frame. Each one starts the same way: a finished photograph, taken
+          seriously enough to ask what else it holds. Depth, first. Then
+          texture. Then surface.
+        </p>
       </div>
     </header>
   </div>
