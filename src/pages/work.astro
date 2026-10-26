@@ -110,14 +110,14 @@ const expertise = [
                 <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
                 <div class="flex flex-wrap gap-1.5 mb-3">
                   {project.tags.slice(0, 3).map((tag: string) => (
-                    <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
+                    <span class="glass-tag text-micro sm:text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
                   ))}
                 </div>
-                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
+                <p class={`text-sm sm:text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-base text-stone-light">{project.outcome}</p>
+                  <p class="text-xs sm:text-base text-stone-light">{project.outcome}</p>
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-xs sm:text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
                       View on GitHub →
                     </a>
                   )}
