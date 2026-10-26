@@ -123,8 +123,12 @@ const expertise = [
             : isWide
               ? 'col-span-2 md:col-span-7'
               : 'col-span-1 md:col-span-5';
+          // Full row. Content box caps at 1224px: container-wide is 72rem at the
+          // 18px root, minus 2rem of padding on each side. A rem length in
+          // sizes uses the 16px initial size, so 72rem there is 1152px and
+          // the 1200 file is chosen for this wider card.
           const sizes = project.wideRow
-            ? '(max-width: 767px) 100vw, 72rem'
+            ? '(max-width: 767px) 100vw, 1224px'
             : isWide
               ? PROJECT_WIDE_SIZES
               : PROJECT_NARROW_SIZES;
