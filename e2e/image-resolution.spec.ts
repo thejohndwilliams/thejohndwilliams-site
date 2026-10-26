@@ -102,7 +102,15 @@ async function measure(page: Page): Promise<Row[]> {
       const css = img.clientWidth;
       const dpr = window.devicePixelRatio || 1;
       const need = css * dpr;
-      const pass = max + 1 >= need ? chosen + 1 >= need : chosen + 1 >= css;
+      // data-bleed-short: a full-bleed hero whose master is narrower than the
+      // viewport. It must still use the largest file. It may paint wider than
+      // that bitmap so the band stays full. Every other image must not.
+      const shortBleed = img.hasAttribute('data-bleed-short');
+      const pass = max + 1 >= need
+        ? chosen + 1 >= need
+        : shortBleed
+          ? chosen + 1 >= max
+          : chosen + 1 >= css;
       rows.push({ src: current, css, dpr, chosen, max, pass });
     }
     return rows;

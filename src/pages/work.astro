@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GlassPillGL from '../components/GlassPillGL.astro';
-import { bleedSizes, frameClass, heroCapClass, photoSrcset, plateSizes } from '../utils/photo-src';
+import { bleedSizes, heroCapClass, photoSrcset, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
 const projects = [
@@ -44,48 +43,44 @@ const projects = [
 ];
 
 const expertise = [
-  'Data Engineering', 'Cybersecurity', 'Incident Command', 'Python',
-  'Power BI', 'SQL', 'Operations Analytics', 'Forecasting', 'Photography'
+  'Data Engineering', 'Cybersecurity', 'Process Controls', 'Python',
+  'Power BI', 'SQL', 'Operations Analytics', 'Photography'
 ];
 ---
 
 <BaseLayout
   title="Work"
-  description="The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come."
+  description="Data, cybersecurity and operations projects by John D. Williams, with writings and research to come."
   ogImage="/og/pages/work.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
   lcpImage="dscf0331"
-  lcpImageSizes={plateSizes('dscf0331')}
+  lcpImageSizes="100vw"
 >
-  <!-- HERO. dscf0331 is a portrait. It keeps that aspect beside the lockup
-       instead of being cropped into a landscape band. -->
-  <section class="pt-8 sm:pt-12 pb-10 sm:pb-16" data-glass-bench>
-    <div class="container-wide">
-      <div class="work-hero grid items-end gap-8 md:grid-cols-12 md:gap-10">
-        <div class="reveal min-w-0 md:col-span-5">
-          <p class="eyebrow mb-3 sm:mb-4">Building</p>
-          <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-          <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
-            Consulting in data engineering, cybersecurity, and operational
-            analytics.
-          </p>
-          <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
-            <GlassPillGL label="Resume (PDF)" href="/files/Williams-John-D-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
-          </div>
-        </div>
-        <div class={`${frameClass('dscf0331')} min-w-0 md:col-span-7`}>
-          <picture>
-            <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes={plateSizes('dscf0331')} />
-            <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes={plateSizes('dscf0331')} />
-            <img
-              src="/images/photography/hero/dscf0331.webp"
-              alt="Lanterns glowing along a shrine at night, a car passing below"
-              fetchpriority="high"
-              decoding="async"
-            />
-          </picture>
-        </div>
+  <!-- HERO. Full-bleed lockup. dscf0331 is a 1349px portrait; the position
+       class keeps the lanterns and the car in the wide crop. -->
+  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
+    <picture>
+      <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes="100vw" />
+      <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes="100vw" />
+      <img
+        src="/images/photography/hero/dscf0331.webp"
+        alt="Lanterns glowing along a shrine at night, a car passing below"
+        class="hero-pos-lanterns absolute inset-0 h-full w-full object-cover"
+        data-bleed-short
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+    <div class="hero-scrim-left absolute inset-0"></div>
+    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Building</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
+        <p class="text-base leading-relaxed max-w-xl">
+          Consulting in data engineering, cybersecurity, and operational
+          analytics.
+        </p>
       </div>
     </div>
   </section>
@@ -104,15 +99,14 @@ const expertise = [
           const isWide = i === 0 || i === 3;
           const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
           return (
-            <div class={`glass-luminous group min-w-0 rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth ${span}`}>
-              <div class={frameClass(project.image)}>
-                <picture>
-                  <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={plateSizes(project.image)} />
-                  <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={plateSizes(project.image)} />
-                  <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} loading="lazy" decoding="async" />
-                </picture>
-              </div>
-              <div class="w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
+            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
+              <picture>
+                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
+                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
+                <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" />
+              </picture>
+              <div class="overlay-scrim-work absolute inset-0"></div>
+              <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
                 <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
                 <div class="flex flex-wrap gap-1.5 mb-3">
                   {project.tags.slice(0, 3).map((tag: string) => (

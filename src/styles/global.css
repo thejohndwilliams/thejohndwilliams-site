@@ -238,6 +238,38 @@ html[data-theme="black"] {
   .hero-cap-2048 { max-width: 2048px; }
   .hero-cap-2400 { max-width: 2400px; }
 
+  /* Left-to-right lockup scrim. Was an inline gradient on the heroes.
+     A class keeps style-src at 'self'. */
+  .hero-scrim-left {
+    background-image: linear-gradient(
+      to right,
+      rgba(10, 10, 10, 0.92) 0%,
+      rgba(10, 10, 10, 0.78) 22%,
+      rgba(10, 10, 10, 0.56) 44%,
+      rgba(10, 10, 10, 0.28) 68%,
+      rgba(10, 10, 10, 0) 100%
+    );
+  }
+
+  /* dscf0331 is a portrait. The lanterns and the car sit about 30-48%
+     down the file. center 78% crops below that band, so a short wide
+     hero reads as black. 40% keeps the band in the frame. */
+  .hero-pos-lanterns {
+    object-position: center 40%;
+  }
+
+  /* Work project cards. The scrim that used to be an inline gradient, kept
+     as a class so style-src stays 'self'. Text sits on the 0.95 stop. */
+  .overlay-scrim-work {
+    background-image: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.95) 0%,
+      rgba(10, 10, 10, 0.84) 36%,
+      rgba(10, 10, 10, 0.52) 70%,
+      rgba(10, 10, 10, 0.22) 100%
+    );
+  }
+
   /* Nav shell - wider than body containers so the header reads as a distinct
      shelf. Fluid clamp(): 1008px min (never narrower than container-narrow),
      90vw preferred, 1536px max. Keeps the logo and CTA visually anchored to the
@@ -1175,21 +1207,6 @@ main > section:not(:first-of-type):not([id]):not(:has(.kinetic-plate, .kplate3d)
   }
 }
 
-/* /work hero. From 768 to 1024 the 12-column track spends the row on eleven
-   gap-10s (4.444rem), and the portrait runs past the viewport. Two tracks
-   keep the 5/7 split and one gap. At 1024 and above the original tracks
-   stay, so the 80svh frame does not move. */
-@media (min-width: 768px) and (max-width: 1023.98px) {
-  /* .grid raises specificity above the md:grid-cols-12 utility, which
-     otherwise wins by source order and leaves twelve zero-width tracks. */
-  .work-hero.grid {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-  .work-hero > .reveal,
-  .work-hero > .photo-frame {
-    grid-column: auto;
-  }
-}
 #site-header.scrolled::after {
   content: '';
   position: absolute;
