@@ -96,6 +96,47 @@ test('the banner and the depth figure stay put when a mode is chosen', async ({ 
   expect(await sep()).toBeLessThan(0.05);
 });
 
+test('the title stays inside the banner on short landscape phones', async ({ page }) => {
+  const sizes = [
+    { width: 667, height: 375 },
+    { width: 640, height: 360 },
+    { width: 568, height: 320 },
+    { width: 390, height: 844 },
+    { width: 1440, height: 900 },
+  ] as const;
+  for (const size of sizes) {
+    await page.setViewportSize({ width: size.width, height: size.height });
+    await page.goto('/beyond/?still=flat');
+    const label = `${size.width}x${size.height}`;
+    await expect(page.locator('#beyond .eyebrow'), label).toBeVisible();
+    await expect(page.locator('#beyond h1'), label).toBeVisible();
+    await expect(page.locator('#beyond .beyond-lede'), label).toBeVisible();
+    const boxes = await page.evaluate(() => {
+      const rect = (el: Element) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
+      };
+      return {
+        banner: rect(document.querySelector('.beyond-banner')!),
+        eyebrow: rect(document.querySelector('#beyond .eyebrow')!),
+        h1: rect(document.querySelector('#beyond h1')!),
+        lede: rect(document.querySelector('#beyond .beyond-lede')!),
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+    expect(boxes.overflow, label).toBeLessThanOrEqual(0);
+    for (const name of ['eyebrow', 'h1', 'lede'] as const) {
+      const box = boxes[name];
+      expect(box.width, `${label} ${name}`).toBeGreaterThan(0);
+      expect(box.height, `${label} ${name}`).toBeGreaterThan(0);
+      expect(box.y, `${label} ${name} top`).toBeGreaterThanOrEqual(boxes.banner.y - 1);
+      expect(box.bottom, `${label} ${name} bottom`).toBeLessThanOrEqual(boxes.banner.bottom + 1);
+      expect(box.x, `${label} ${name} left`).toBeGreaterThanOrEqual(boxes.banner.x - 1);
+      expect(box.right, `${label} ${name} right`).toBeLessThanOrEqual(boxes.banner.right + 1);
+    }
+  }
+});
+
 test('a phone shows the intro on the first screen and a full-width figure', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/beyond/?still=flat');

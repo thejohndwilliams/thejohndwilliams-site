@@ -79,12 +79,10 @@
   /* The frame is wider than the phone band, so cover keeps the full
      height (sky and ground) and trims the sides. Sit the window on the
      tree, whose branches reach about 85% across the master.
-     The phone lock caps this band at half the viewport, so the height
-     stays inside that range. */
+     Portrait phones keep a half-viewport floor. A short landscape band
+     grows with the title so the eyebrow, heading, and lede stay inside. */
   .beyond-banner {
-    height: 49svh;
     min-height: 49svh;
-    max-height: 50svh;
   }
 
   /* The phone band is capped at half the viewport. A shorter text block
@@ -141,6 +139,20 @@
 @media (max-width: 700px) {
   .beyond-title h1 {
     margin-top: 0.4rem;
+  }
+}
+
+/* On a short landscape phone the title fills the band, so the eyebrow
+   sits at the top of the frame where the portrait scrim has faded.
+   Hold the same 0.92 black through the text. */
+@media (max-width: 700px) and (orientation: landscape) {
+  .beyond-scrim {
+    background-image: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.92) 0%,
+      rgba(10, 10, 10, 0.88) 60%,
+      rgba(10, 10, 10, 0.78) 100%
+    );
   }
 }
 
