@@ -43,6 +43,15 @@ test.describe('Work page', () => {
     await page.goto('/work');
     await expect(page.locator('h1')).toContainText('Selected Work');
   });
+
+  test('links the agent governance case study', async ({ page }) => {
+    await page.goto('/work/');
+    const link = page.locator('a[href="/work/agent-governance/"]');
+    await expect(link).toBeVisible();
+    await link.click();
+    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/);
+    await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties');
+  });
 });
 
 test.describe('Photography gallery + lightbox', () => {

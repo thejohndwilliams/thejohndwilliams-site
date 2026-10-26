@@ -1,0 +1,81 @@
+---
+const alt = 'Illustrative, synthetic audit trail for one change: brief opened, draft prepared without merge, read-only screenshot check, a relayed approval rejected, dated Operator approval, merge by the Operator, and a live check.';
+
+const rows = [
+  { time: '2026-03-02 09:14', actor: 'Researcher', event: 'Brief opened', outcome: 'Outcome and checks recorded', evidence: 'Brief file' },
+  { time: '2026-03-02 10:05', actor: 'Developer', event: 'Draft change prepared', outcome: 'No merge: gate requires dated approval', evidence: 'Draft change ID' },
+  { time: '2026-03-02 10:40', actor: 'Preview reviewer', event: 'Read-only check', outcome: 'Screenshots at four widths', evidence: 'Screenshot paths' },
+  { time: '2026-03-02 11:02', actor: 'Agent (relayed)', event: 'Claimed approval', outcome: 'Rejected: relayed approval is not approval', evidence: 'Log entry' },
+  { time: '2026-03-02 11:30', actor: 'Operator', event: 'Dated approval', outcome: 'Exact change approved', evidence: 'Operator message ID' },
+  { time: '2026-03-02 11:31', actor: 'Operator', event: 'Executed merge', outcome: 'Done by the Operator', evidence: 'Commit reference' },
+  { time: '2026-03-02 11:45', actor: 'Auditor', event: 'Live check', outcome: 'Confirmed live, with time and identifier', evidence: 'Check record' },
+];
+---
+
+<figure class="gov-figure" data-gov="audit">
+  <div class="gov-fallback" data-gov-fallback>
+    <img
+      class="gov-svg"
+      src="/figures/audit-trail.svg"
+      alt={alt}
+      width="1440"
+      height="630"
+      decoding="async"
+    />
+    <p class="gov-label">ILLUSTRATIVE · SYNTHETIC DATA</p>
+    <p class="gov-note">Illustrative only. Entries are invented to show the record format, not taken from any real log.</p>
+  </div>
+  <div class="gov-live" data-gov-live hidden>
+    <h3>Audit trail sample</h3>
+    <p class="gov-label">ILLUSTRATIVE · SYNTHETIC DATA</p>
+    <p class="gov-note">Illustrative only. Entries are invented to show the record format, not taken from any real log.</p>
+    <div class="gov-tabs" role="tablist" aria-label="Illustrative synthetic audit trail">
+      {rows.map((row, index) => (
+        <button
+          type="button"
+          class="gov-tab"
+          role="tab"
+          id={`gov-audit-tab-${index}`}
+          aria-controls={`gov-audit-panel-${index}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+        >
+          <span class="gov-mono">{row.time}</span>
+          <span class="gov-tab-sub">{row.event}</span>
+        </button>
+      ))}
+    </div>
+    {rows.map((row, index) => (
+      <div
+        class="gov-panel"
+        role="tabpanel"
+        id={`gov-audit-panel-${index}`}
+        aria-labelledby={`gov-audit-tab-${index}`}
+        hidden={index === 0 ? undefined : true}
+      >
+        <dl class="gov-dl">
+          <div>
+            <dt>Time</dt>
+            <dd class="gov-mono">{row.time}</dd>
+          </div>
+          <div>
+            <dt>Actor</dt>
+            <dd>{row.actor}</dd>
+          </div>
+          <div>
+            <dt>Event</dt>
+            <dd>{row.event}</dd>
+          </div>
+          <div>
+            <dt>Gate / outcome</dt>
+            <dd>{row.outcome}</dd>
+          </div>
+          <div>
+            <dt>Evidence</dt>
+            <dd>{row.evidence}</dd>
+          </div>
+        </dl>
+      </div>
+    ))}
+  </div>
+</figure>

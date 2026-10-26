@@ -6,7 +6,7 @@
 // viewport on every core page, at every engine and viewport CI runs.
 import { test, expect } from '@playwright/test';
 
-const PAGES = ['/', '/photography/', '/work/', '/about/', '/beyond/', '/links/'];
+const PAGES = ['/', '/photography/', '/work/', '/work/agent-governance/', '/about/', '/beyond/', '/links/'];
 
 for (const path of PAGES) {
   test(`no horizontal overflow on ${path}`, async ({ page }) => {

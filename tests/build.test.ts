@@ -292,6 +292,58 @@ describe('Generated HTML Content', () => {
     it('contains technology tags', () => {
       expect(workHtml).toContain('Python');
     });
+
+    it('links and locks the agent governance case study', () => {
+      expect(workHtml).toContain('href="/work/agent-governance/"');
+      expect((workHtml.match(/Forecasting/g) || []).length).toBe(2);
+      const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
+      const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
+      expect(html).toContain(`<title>${title} | John D. Williams</title>`);
+      expect(html).toContain(`<h1>${title}</h1>`);
+      expect(html).not.toContain('\u2014');
+      expect(html).not.toContain('Independent personal project');
+      expect(html).toContain('Personal project.');
+      expect(html).toContain('An independent challenger');
+      expect(html).toContain('and to the management-system approach of ISO/IEC 42001');
+      expect(html).not.toContain('and with the management-system approach of ISO/IEC 42001');
+      expect(html).toContain('treated as data and never as instructions.');
+      expect(html).not.toContain('treated as data and never as instruction.');
+      expect(html).toContain('key-like strings, and terms from a separate configurable list. The scan must pass before anything is shared.');
+      expect(html).toContain('The design question was this:');
+      expect(html).not.toContain('The design question was simple:');
+      expect(html).toContain('NIST (the Manage function)');
+      expect(html).not.toContain('NIST (Manage)');
+      expect(html).toContain('The approval workflow is a fixed list, not a judgment call:');
+      expect(html).not.toContain('fixed table, not a judgment call');
+      expect(html).toContain('One rule sits under the whole list:');
+      expect(html).not.toContain('under the whole table:');
+      expect(html).toContain('routing table');
+      expect(html).toContain('Not endorsed by or affiliated with NIST or ISO.');
+      expect(html).toContain('Mapped by theme, not certified');
+      expect(html).toContain('/figures/gate-flow.svg');
+      expect(html).toContain('/figures/audit-trail.svg');
+      expect(html).toContain('/figures/controls-mapping.svg');
+      expect(html).toContain('ILLUSTRATIVE');
+      expect(html).toContain('SYNTHETIC');
+      expect(html).not.toMatch(/<style[\s\S]*?<\/style>/);
+      expect(html).not.toMatch(/\sstyle="/);
+      expect(html).not.toContain('#7E9CB8');
+      expect(html).not.toContain('#7e9cb8');
+      const gate = html.indexOf('/figures/gate-flow.svg');
+      const audit = html.indexOf('/figures/audit-trail.svg');
+      const map = html.indexOf('/figures/controls-mapping.svg');
+      const worked = html.indexOf('A worked example');
+      const shows = html.indexOf('What this shows');
+      const disclaimer = html.lastIndexOf('Not endorsed by or affiliated with NIST or ISO.');
+      expect(gate).toBeGreaterThan(html.indexOf('non-waivable rules'));
+      expect(gate).toBeLessThan(html.indexOf('Rules are ranked'));
+      expect(audit).toBeGreaterThan(worked);
+      expect(map).toBeGreaterThan(shows);
+      expect(map).toBeLessThan(disclaimer);
+      const sitemap = fs.readFileSync(path.join(distDir, 'sitemap-0.xml'), 'utf8');
+      expect(sitemap).toContain('/work/agent-governance/');
+      expect(sitemap).not.toContain('\u2014');
+    });
   });
 
   describe('Photography Page', () => {

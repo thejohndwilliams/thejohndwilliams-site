@@ -3,7 +3,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { bleedSizes, heroCapClass, photoSrcset, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
-const projects = [
+type ProjectCard = {
+  title: string;
+  description: string;
+  tags: string[];
+  outcome?: string;
+  github?: string;
+  page?: string;
+  image: string;
+  alt: string;
+  wideRow?: boolean;
+};
+
+const projects: ProjectCard[] = [
   {
     title: 'Queue Forecast Dashboard',
     description: 'Forecasting tool for enterprise support operations. Holt-Winters exponential smoothing predicts queue demand across time windows. Sanitized and open-sourced with proportions-only output to respect operational security.',
@@ -39,6 +51,15 @@ const projects = [
     github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
     image: 'dscf0423',
     alt: 'Japanese alleyway at night'
+  },
+  {
+    title: 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties',
+    description: 'This page describes a design and its rules.',
+    tags: ['Approval gates', 'Evidence', 'Duties'],
+    page: '/work/agent-governance/',
+    image: 'img-7395-enhanced-sr',
+    alt: 'Temple gate against blue sky',
+    wideRow: true
   }
 ];
 
@@ -97,12 +118,22 @@ const expertise = [
       <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
         {projects.map((project, i) => {
           const isWide = i === 0 || i === 3;
-          const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
+          const span = project.wideRow
+            ? 'col-span-2 md:col-span-12'
+            : isWide
+              ? 'col-span-2 md:col-span-7'
+              : 'col-span-1 md:col-span-5';
+          const sizes = project.wideRow
+            ? '(max-width: 767px) 100vw, 72rem'
+            : isWide
+              ? PROJECT_WIDE_SIZES
+              : PROJECT_NARROW_SIZES;
+          const showCopy = isWide || project.wideRow;
           return (
             <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
               <picture>
-                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
-                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
+                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={sizes} />
+                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={sizes} />
                 <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" />
               </picture>
               <div class="overlay-scrim-work absolute inset-0"></div>
@@ -113,12 +144,18 @@ const expertise = [
                     <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
                   ))}
                 </div>
-                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
+                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${showCopy ? '' : 'hidden sm:block'}`}>{project.description}</p>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-base text-stone-light">{project.outcome}</p>
-                  {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
-                      View on GitHub →
+                  {project.outcome && <p class="text-base text-stone-light">{project.outcome}</p>}
+                  {(project.page || project.github) && (
+                    <a
+                      href={project.page || project.github}
+                      target={project.page ? undefined : '_blank'}
+                      rel={project.page ? undefined : 'noopener noreferrer'}
+                      aria-label={project.page ? `View ${project.title}` : undefined}
+                      class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center"
+                    >
+                      {project.page ? 'View' : 'View on GitHub →'}
                     </a>
                   )}
                 </div>

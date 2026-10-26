@@ -1,0 +1,86 @@
+---
+const alt = 'Table mapping eight controls in this design to NIST AI RMF functions (Govern, Map, Measure, Manage) and to ISO/IEC 42001 themes; clause numbers not given.';
+
+const filters = ['All', 'Govern', 'Map', 'Measure', 'Manage'];
+
+const rows = [
+  { control: 'Approval gates and non-waivable rules', fn: 'Govern, Manage', functions: 'Govern Manage', theme: 'Leadership, roles and operational control', evidence: 'Dated approval record' },
+  { control: 'Ranked rules, dated changes, kept versions', fn: 'Govern', functions: 'Govern', theme: 'Documented information', evidence: 'Changelog entry' },
+  { control: 'Role archetypes: owns and refuses', fn: 'Govern, Map', functions: 'Govern Map', theme: 'Roles, responsibilities and authorities', evidence: 'Role card' },
+  { control: 'Routing table with owner and backup', fn: 'Govern', functions: 'Govern', theme: 'Roles, responsibilities and authorities', evidence: 'Routing table' },
+  { control: 'Evidence before closing; live checks', fn: 'Measure', functions: 'Measure', theme: 'Monitoring, measurement and evaluation', evidence: 'Check record' },
+  { control: 'Mistake to rule loop', fn: 'Manage', functions: 'Manage', theme: 'Nonconformity and continual improvement', evidence: 'Mistake log, new rule' },
+  { control: 'Secrets in one Operator store', fn: 'Manage', functions: 'Manage', theme: 'Operational control', evidence: 'Store access record' },
+  { control: 'Untrusted content treated as data', fn: 'Map, Manage (GenAI Profile)', functions: 'Map Manage', theme: 'Operational control', evidence: 'Quoted-instruction report' },
+];
+---
+
+<figure class="gov-figure" data-gov="map">
+  <div class="gov-fallback" data-gov-fallback>
+    <img
+      class="gov-svg"
+      src="/figures/controls-mapping.svg"
+      alt={alt}
+      width="1440"
+      height="704"
+      decoding="async"
+    />
+    <p class="gov-note">Mapped by theme, not certified. AI RMF 1.0 is under revision by NIST; GenAI Profile is NIST-AI-600-1.</p>
+    <p class="gov-note">Not endorsed by or affiliated with NIST or ISO.</p>
+  </div>
+  <div class="gov-live" data-gov-live hidden>
+    <h3>Controls mapped to NIST AI RMF and ISO/IEC 42001</h3>
+    <div class="gov-filters" role="radiogroup" aria-label="Filter by NIST AI RMF function">
+      {filters.map((name, index) => (
+        <button
+          type="button"
+          class="gov-filter"
+          role="radio"
+          aria-checked={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-gov-filter={name}
+        >
+          {name}
+        </button>
+      ))}
+    </div>
+    <p class="sr-only" data-gov-status aria-live="polite"></p>
+    <div class="gov-table-wrap">
+      <table class="gov-table gov-map gov-stack">
+        <caption class="sr-only">{alt}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Control in this design</th>
+            <th scope="col">NIST AI RMF 1.0 function</th>
+            <th scope="col">ISO/IEC 42001 theme</th>
+            <th scope="col">Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr data-functions={row.functions}>
+              <td>
+                <span class="gov-k">Control in this design</span>
+                {row.control}
+              </td>
+              <td>
+                <span class="gov-k">NIST AI RMF 1.0 function</span>
+                {row.fn}
+              </td>
+              <td>
+                <span class="gov-k">ISO/IEC 42001 theme</span>
+                {row.theme}
+              </td>
+              <td>
+                <span class="gov-k">Evidence</span>
+                {row.evidence}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="gov-note">Mapped by theme, not certified. AI RMF 1.0 is under revision by NIST; GenAI Profile is NIST-AI-600-1.</p>
+    <p class="gov-note">Not endorsed by or affiliated with NIST or ISO.</p>
+  </div>
+</figure>

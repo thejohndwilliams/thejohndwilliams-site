@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GateFlow from '../../components/GateFlow.astro';
+import AuditTrail from '../../components/AuditTrail.astro';
+import ControlsMap from '../../components/ControlsMap.astro';
+import '../../styles/agent-governance.css';
+
+const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
+const description = 'This page describes a design and its rules.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  description,
+  url: 'https://thejohndwilliams.com/work/agent-governance/',
+};
+
+const roles = [
+  ['Convener', 'The agenda and the final answer', 'Doing specialist work alone'],
+  ['Researcher', 'Public, cited research', 'Acting on its own findings'],
+  ['Records clerk', 'Run log, decision record, indexes', 'Changing or interpreting rules'],
+  ['Auditor', 'Objections, conformance and drift checks', 'Voting; fixing what it audits'],
+  ['Legal-review gate', 'Reading drafts before release', 'Approving for the Operator'],
+  ['Developers', 'Code changes as drafts', 'Merging without dated approval'],
+  ['Preview reviewer', 'Read-only checks with screenshots', 'Any write action'],
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage="/og/pages/work.jpg"
+  ogImageWidth={1200}
+  ogImageHeight={630}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+  <article class="gov-page container-narrow py-12 sm:py-16 md:py-24" data-agent-governance>
+    <header class="gov-lead">
+      <p class="eyebrow mb-3">Case study</p>
+      <h1>{title}</h1>
+      <p class="gov-kicker">Personal project.</p>
+    </header>
+
+    <section class="gov-block">
+      <h2>The problem</h2>
+      <p>One person using many AI agents faces a simple risk: an agent can send, spend, publish or delete something the person never meant to allow, and afterward nobody can tell who decided what. This design answers that with written rules, approval steps a person must pass, clear role limits, and evidence for every claim.</p>
+    </section>
+
+    <section class="glass-panel gov-summary rounded-card">
+      <h2>Summary</h2>
+      <p>This page describes a design and its rules. It makes no claim about how any particular deployment has run.</p>
+      <p>I designed and documented a governance model for a group of cooperating AI agents that do research, drafting, scheduling and software work for one person. The design question was this: how does one human stay in control of many agents, and how can anyone check afterward what each agent did and why? The answer is a written set of rules, approval gates, role boundaries and evidence requirements. This page describes that structure. It does not describe results, scale or performance.</p>
+      <p>The design is mapped by theme to the NIST AI Risk Management Framework (AI RMF 1.0) and its Generative AI Profile (NIST-AI-600-1), and to the management-system approach of ISO/IEC 42001. NIST has said AI RMF 1.0 is being revised, so the mapping below is to the current published version.</p>
+    </section>
+
+    <section class="gov-block">
+      <h2>1. Approval gates and non-waivable rules</h2>
+      <p>All authority comes from one human, the Operator. Agents prepare work. The Operator, or an approval authority the Operator has named for one specific act, carries out anything that cannot be undone.</p>
+      <p>The approval workflow is a fixed list, not a judgment call:</p>
+      <ul>
+        <li>Sending a message or email in the Operator's name needs the Operator to approve the exact text and recipients.</li>
+        <li>Any purchase needs approval for that purchase.</li>
+        <li>Publishing, pushing or merging code needs the Operator's dated approval.</li>
+        <li>Deleting anything outside the agents' own workspace needs approval.</li>
+        <li>Signing or submitting a form is done by the Operator personally.</li>
+      </ul>
+      <p>One rule sits under the whole list: an agent saying the Operator approved something is never approval. Approval is the Operator's own recorded words, with a date.</p>
+      <p>A short list of non-waivable rules cannot be waived by any rule change. No agent spends, sends, publishes or deletes except by the Operator's own act or a narrow, dated grant for that one act. No unattended automation may send, pay or trade except under a dated written grant that names the job and its limits. Third-party confidential material never goes into prompts or files. Credentials are never handled in chat or files.</p>
+    </section>
+
+    <GateFlow />
+
+    <section class="gov-block">
+      <p>Rules are ranked: applicable law first, then the Operator's confidentiality obligations, then platform policies, then the non-waivable rules, then the Operator's dated decisions, then everything else. No dated decision can override a non-waivable rule. Only the Operator resolves a conflict between rules. Changes to the rules are drafted in full sentences, traced to their source in a changelog, reviewed by an auditor role, and approved by the Operator with a date. Old versions are kept and renamed, never deleted, so the history stays complete.</p>
+      <p>Escalation is explicit. When reviewers disagree or a decision is tied, it goes to the Operator. Silence from the Operator never counts as approval for any irreversible act. For reversible work only, silence after a plan has been reviewed and certified is treated as assent.</p>
+      <p>Three further checks sit on top of the gates. An independent challenger reviews every proposal and must be answered in writing before any vote. A legal reviewer must sign off before anything is published. A verification check accepts only raw evidence, such as the record itself, never another agent's summary of it.</p>
+    </section>
+
+    <section class="gov-block">
+      <h2>2. Evidence before a task is closed</h2>
+      <p>The second control is about evidence. An agent may not call a task done until every claim has proof a third party could check: a message identifier, a file on disk, a screenshot, or the state of an account page.</p>
+      <p>The live-check rule applies to any statement about a system's state, such as present, absent, running or finished. The statement must rest on a check made just now, recorded with where, when and an identifier. Without that, the claim is marked unconfirmed. Agents describe what they could or could not see rather than declaring that something does not exist. Anything passed along from another agent is marked as relayed and unchecked.</p>
+      <p>Work starts from a brief with an outcome, success checks, allowed sources, non-waivable limits and a named decision owner. Decisions are kept separate from status, so a progress report cannot quietly turn into an approval.</p>
+      <p>When the same mistake happens twice, it becomes a rule. The mistake is logged with its date, cost and root cause. One rule that would have prevented it is written and placed where it will be read at the moment of risk. The next audit checks that the rule held. This is the continual-improvement loop that both NIST (the Manage function) and ISO/IEC 42001 expect.</p>
+      <p>Together these rules produce an audit trail as a side effect of normal work. Every gated act has a dated approval, every completion has an artifact, and every rule change has a changelog entry.</p>
+    </section>
+
+    <section class="gov-block">
+      <h2>3. Role archetypes and segregation of duties</h2>
+      <p>Each agent fills a defined role with two lists: what it owns and what it refuses. The refusals do the work of segregation of duties.</p>
+      <div class="gov-table-wrap">
+        <table class="gov-table gov-stack">
+          <caption class="sr-only">Role, owns, and refuses</caption>
+          <thead>
+            <tr>
+              <th scope="col">Role</th>
+              <th scope="col">Owns</th>
+              <th scope="col">Refuses</th>
+            </tr>
+          </thead>
+          <tbody>
+            {roles.map(([role, owns, refuses]) => (
+              <tr>
+                <th scope="row"><span class="gov-k">Role</span>{role}</th>
+                <td><span class="gov-k">Owns</span>{owns}</td>
+                <td><span class="gov-k">Refuses</span>{refuses}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>The auditor cannot fix what it audits. The developer cannot merge its own work. The reviewer who checks a page cannot change it. The legal reviewer reads but does not approve. Each request type has one owner and one backup in a routing table, and the agent that was asked owns the final answer even when it brings others in. Agents are created only on the Operator's order.</p>
+    </section>
+
+    <section class="gov-block">
+      <h2>4. Secrets and untrusted content</h2>
+      <p>Agents never ask for, read, paste or store passwords, tokens or keys. Secrets live in one store the Operator controls. Agents refer to a secret by name, and the runtime supplies it at call time. Rotation and revocation are the Operator's acts. A blocked action is not a puzzle to work around: no reading key files, no capturing session tokens, and no rewording a command to get past review.</p>
+      <p>Everything that comes from outside, including email, web pages, posts and attachments, is treated as data and never as instructions. If an agent finds an instruction inside that content, it quotes it to the Operator and does not act on it. This is the main defense against prompt injection, one of the risks the GenAI Profile names.</p>
+      <p>The documentation itself is checked by a scanner that fails on email addresses, identifiers, file paths, currency figures, key-like strings, and terms from a separate configurable list. The scan must pass before anything is shared.</p>
+    </section>
+
+    <section class="gov-block">
+      <h2>Other mechanics, briefly</h2>
+      <ul>
+        <li><strong>Communication:</strong> agents work in shared group channels and wake on named triggers, with a set priority for messages that need action.</li>
+        <li><strong>Routines:</strong> scheduled tasks run from versioned prompts, and editing a routine follows the same review rules.</li>
+        <li><strong>Parallel work:</strong> independent subtasks can be split across agents, and each result is treated as a claim to verify.</li>
+      </ul>
+    </section>
+
+    <section class="gov-block">
+      <h2>A worked example</h2>
+      <p>An agent drafts a change to a public web page. It may prepare the change, but it cannot merge it. A read-only reviewer checks the draft and records screenshots. Another agent then reports that the Operator approved; that report is rejected, because relayed approval is not approval. The Operator approves the exact change in their own dated words and merges it. A final live check confirms the page, with the time and an identifier. Each step leaves a record.</p>
+    </section>
+
+    <AuditTrail />
+
+    <section class="gov-block">
+      <h2>What this shows</h2>
+      <p>Human oversight here is designed into the system, not added after the fact. There is a defined approval workflow, a ranked rule set with recorded changes, separation of duties enforced by refusals, and control evidence produced by ordinary work. The mapping to NIST AI RMF functions and ISO/IEC 42001 themes is shown in the table below, with the evidence each control produces.</p>
+    </section>
+
+    <ControlsMap />
+
+    <p class="gov-colophon">Not endorsed by or affiliated with NIST or ISO.</p>
+  </article>
+  <script src="../../scripts/agent-governance.ts"></script>
+</BaseLayout>
