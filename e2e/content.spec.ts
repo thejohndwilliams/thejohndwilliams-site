@@ -10,9 +10,13 @@ test.describe('Homepage', () => {
     await expect(page.locator('h1:has-text("John D. Williams")')).toBeVisible();
   });
 
-  test('Inquire mailto is reachable', async ({ page }) => {
+  test('Contact mailto is reachable', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('a[href^="mailto:"]:visible').first()).toBeVisible();
+    const mailto = page.locator('a[href="mailto:jndwcreative@gmail.com"]:visible');
+    await expect(mailto.first()).toBeVisible();
+    await expect(page.locator('header')).toContainText('Contact');
+    await expect(page.locator('footer')).toContainText('Contact');
+    await expect(page.getByRole('link', { name: 'Contact' }).first()).toBeVisible();
   });
 
   test('footer carries the scripture citation; socials live on the page', async ({ page }) => {
@@ -67,6 +71,7 @@ test.describe('Links (bio)', () => {
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toContainText('John D. Williams');
     await expect(page.locator('#content a[href="/photography/"]')).toBeVisible();
+    await expect(page.locator('#content').getByRole('link', { name: 'Contact' })).toBeVisible();
     await expect(page.locator('a[href*="linkedin.com"]').first()).toBeVisible();
   });
 });

@@ -461,19 +461,29 @@ describe('Glass Build B promotion: hero complications are refractive C', () => {
 });
 
 describe('The spread (owner order 2026-08-01): the material takes its seats', () => {
-  it('work: the practice strip sits under Selected Work with a glass resume', () => {
+  it('work: the practice strip sits under Selected Work', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
     const heroIdx = work.indexOf('Selected Work');
     const stripIdx = work.indexOf('Consulting in data engineering');
     expect(stripIdx).toBeGreaterThan(heroIdx);
     expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
-    expect(work).toContain('Resume (PDF)');
+    expect(work).not.toContain('Resume (PDF)');
+    expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
+    expect(work).toContain('Data, cybersecurity and operations projects by John D. Williams, with writings and research to come.');
+    expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
+    expect(work).toContain('Process Controls');
+    expect(work).not.toContain('Incident Command');
+    expect(work).toContain('Forecasting tool for enterprise support operations');
+    expect((work.match(/Forecasting/g) || []).length).toBe(2);
   });
   it('about: the consulting card is retired; More stands under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
     expect(about).not.toContain('I take on select consulting work');
-    // Page-level Inquire pill removed. Footer Inquire remains, so the count
-    // is More + footer. Header Inquire is a plain link, not a glass pill.
+    expect(about).not.toContain('Resume (PDF)');
+    expect(about).not.toContain('/files/Williams-John-D-Resume.pdf');
+    // Page-level pill removed. Footer Contact remains, so the count
+    // is More + footer. Header Contact is a plain link, not a glass pill.
     expect((about.match(/data-gpill/g) || []).length).toBe(2);
     expect(about).toContain('/data/kinetic/earth.json');
     expect(about).not.toContain('/data/kinetic/structure.json');
@@ -536,8 +546,8 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).toContain('dscf1022');
     expect(beyond).not.toContain('img-6552');
     expect(beyond).not.toContain('7r51018-enhanced-sr');
-    expect(beyond).toContain('>Inquire<');
-    expect(main).not.toContain('>Inquire<');
+    expect(beyond).toContain('>Contact<');
+    expect(main).not.toContain('>Contact<');
     expect(main).not.toContain('Take one home');
     expect(main).not.toContain('The edition');
     expect(main).not.toContain('Three sizes, one depth');
@@ -586,9 +596,13 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(html).toContain('/images/depth/w800/layer1.webp 800w');
     expect(html).not.toContain('2400w');
     const lower = html.toLowerCase();
+    // Sales wording stays banned. The nav label is Contact, and this page
+    // sets inquire={false}, so that CTA is absent too. Same count: zero.
     for (const word of ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license']) {
       expect(lower, word).not.toMatch(new RegExp(`\\b${word}\\b`));
     }
+    expect(html).not.toContain('>Contact<');
+    expect(html).not.toContain('aria-label="Contact"');
     const sitemap = fs.readFileSync(path.join(distDir, 'sitemap-0.xml'), 'utf8');
     expect(sitemap).not.toContain('/depth');
     expect(sitemap).not.toContain('\u2014');

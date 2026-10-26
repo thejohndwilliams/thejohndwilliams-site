@@ -61,7 +61,7 @@ npm run test:e2e             # Playwright
 - NO em-dash anywhere in public copy. Periods, commas, colons.
 - No font-light / weight 300 (not loaded).
 - Home hero: verb eyebrow + "John D. Williams" + the finished-identity line
-  ("Enterprise operations, satellite communications. Fine-art photographer.",
+  ("Operations, risk and controls. Fine-art photographer.",
   Phase 0, owner-approved). Never unfinished credentials, never triplets.
 - Page-identity hero eyebrows are verbs: making visible / noticing /
   building / rising (owner ruling 2026-07-28 restored "rising" as the
@@ -112,8 +112,8 @@ This file is public. The OPSEC blocklist is therefore NOT reproduced here; it
 lives in John's private opsec-review skill and vault. The shape of the rule:
 no employer or product names, no customer segments, no operational volume
 metrics, no export-control or program references, anywhere in public strings.
-Reuse the generic framings already present on /work and /about ("enterprise
-operations", "incident command", "regulated environments"). Run the
+Reuse the generic framings already present on /work and /about ("operations,
+risk and controls"). Run the
 opsec-review skill on every changed public-facing string before pushing.
 If you cannot run that skill, do not push public copy changes.
 

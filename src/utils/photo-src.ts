@@ -74,3 +74,15 @@ export function frameClass(file: string): string {
 export const GRID_SIZES = '(max-width: 767px) 50vw, (max-width: 1023px) 34vw, 28rem';
 
 export const RELATED_SIZES = '(max-width: 767px) 50vw, 22rem';
+
+/** Home charity bento. Two-up below md; 7/12 or 5/12 of the wide container after. */
+export const CHARITY_WIDE_SIZES = '(max-width: 767px) 50vw, 58vw';
+export const CHARITY_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';
+
+/** Home work tiles. One column below md; the flagship is the wide bento cell. */
+export const WORK_TILE_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
+export const WORK_TILE_NARROW_SIZES = '(max-width: 767px) 100vw, 42vw';
+
+/** Work page project bento. Wide cells are full width below md. */
+export const PROJECT_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
+export const PROJECT_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';

@@ -92,12 +92,16 @@ describe('depth stack draft route', () => {
   });
 
   it('keeps the page to labels and one caption, with no sales wording', () => {
+    // "inquire" stays on the sales list. Contact is the neutral nav label
+    // and is not rendered here (the page sets inquire={false}).
     const banned = ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license'];
     for (const body of [figure, css]) {
       const lower = body.toLowerCase();
       for (const word of banned) {
         expect(lower, word).not.toMatch(new RegExp(`\\b${word}\\b`));
       }
+      expect(lower).not.toContain('>contact<');
+      expect(body).not.toContain('aria-label="Contact"');
     }
     expect(figure).toContain('LAYER 1 FAR');
     expect(figure).toContain('LAYER 5 NEAR');
