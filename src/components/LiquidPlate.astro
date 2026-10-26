@@ -1,8 +1,9 @@
 ---
 /**
- * LiquidPlate - one photograph, then the atelier under it: colors,
- * wallpaper, and texture. `reverse` is retained and unused; the row
- * used to alternate beside the plate and fought the column.
+ * LiquidPlate - an editorial feature row: a photograph seen through the
+ * site's glass system, beside a roomy atelier panel that hands the
+ * image back as colors, wallpaper, and texture. Alternates left/right
+ * via `reverse`.
  *
  * Plate: crisp <picture> base (zero-JS safe) + enhancement on capable
  *   devices (feDisplacementMap refraction, specular, one ivory depth-scan).
@@ -97,17 +98,16 @@ const hero = tier('hero', 'webp');
 </div>
 
 <style>
-  /* One row: the photograph, then the control bar under it. The plate
-     fills the figure column, capped so a 16:10 frame stays inside 80svh. */
-  .lp-feature { display: flex; flex-direction: column; align-items: stretch; gap: 1.25rem; }
-  .lp-feature .liquid-plate {
-    width: min(100%, calc(80svh * 1.6));
-    max-width: 100%;
+  .lp-feature { display: flex; flex-direction: column; gap: 1.5rem; }
+  @media (min-width: 1024px) {
+    .lp-feature { flex-direction: row; align-items: center; gap: 3rem; }
+    .lp-feature--rev { flex-direction: row-reverse; }
+    .lp-feature .liquid-plate { flex: 0 0 auto; width: 520px; }
+    .lp-feature .lp-atelier { flex: 1; min-width: 0; }
   }
-  .lp-feature .lp-atelier { width: 100%; min-width: 0; }
   .liquid-plate {
     position: relative; display: block; margin: 0; width: 100%;
-    aspect-ratio: 16 / 10; max-height: 80svh; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
+    aspect-ratio: 16 / 10; border-radius: 0.5rem; overflow: hidden; background: #0a0a0a;
   }
   .liquid-plate__defs { position: absolute; width: 0; height: 0; }
   .liquid-plate__img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: filter; }
@@ -128,7 +128,7 @@ const hero = tier('hero', 'webp');
   .liquid-plate.is-fine .liquid-plate__img[data-fid="lq-dscf1022"] { filter: url(#lq-dscf1022); }
 
   .lp-atelier__label { font-family: var(--font-serif, Georgia, serif); font-size: 1.5rem; color: #fdfcfa; margin: 0 0 0.4rem; }
-  .lp-atelier__note { font-size: 1rem; line-height: 1.6; color: #868686; margin: 0 0 1.4rem; max-width: 62ch; }
+  .lp-atelier__note { font-size: 0.95rem; line-height: 1.6; color: #9a958c; margin: 0 0 1.4rem; max-width: 32ch; }
   .lp-grp { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-top: 0.5px solid rgba(168,159,140,0.18); }
   .lp-grp__k { flex: 0 0 78px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a89f8c; opacity: 0.85; padding-top: 5px; }
   .lp-grp__v { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; position: relative; min-width: 0; }
@@ -203,8 +203,8 @@ const hero = tier('hero', 'webp');
   @media (pointer: coarse) {
     .lp-grp__v { gap: 10px; }
     .lp-devs { gap: 8px; }
-    .lp-sw { width: 44px; height: 44px; }
-    .lp-sw::after { content: none; }
+    .lp-sw { width: 44px; height: 34px; }
+    .lp-sw::after { content: ''; position: absolute; inset: -5px; }
     .lp-ctl, .lp-fit, .lp-dev { min-height: 44px; min-width: 44px; padding: 8px 12px; }
   }
 

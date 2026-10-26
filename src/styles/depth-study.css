@@ -1,95 +1,39 @@
-/* Depth study on /beyond. The photograph is the resting frame.
-   Planes and Points, and the subject buttons, stay hidden until the
-   script marks the section ready, so a no-JS visit is the photograph
-   plus every subject note. */
+/* Depth study selector on /beyond. One live pair; the other subjects
+   stay in <template> until a button asks for them. Buttons are hidden
+   until the script marks the section ready, so no-JS visitors see the
+   first pair and every subject listed. */
 
-.depth-controls {
-  display: none;
-  margin-top: 1.25rem;
-}
-
-[data-depth-ready] .depth-controls {
-  display: block;
-}
-
-.depth-mode.glass-chip-rail {
+.depth-switch.glass-chip-rail {
   overflow: visible;
+  display: none;
 }
 
-.depth-mode__btn {
+[data-depth-ready] .depth-switch.glass-chip-rail {
+  display: inline-flex;
+}
+
+.depth-switch__btn {
   appearance: none;
   background: transparent;
   border: 0;
   color: rgba(244, 234, 222, 0.62);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 0.6875rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 0.65rem 0.95rem;
+  padding: 0.65rem 0.85rem;
   min-height: 44px;
   min-width: 44px;
   cursor: pointer;
 }
 
-.depth-mode__btn[aria-pressed='true'] {
+.depth-switch__btn[aria-pressed='true'] {
   color: #f4eade;
-}
-
-.depth-thumbs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.depth-thumb {
-  appearance: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.45rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: rgba(244, 234, 222, 0.62);
-  cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
-  text-align: left;
-}
-
-.depth-thumb:focus {
-  outline: 1.5px solid rgba(244, 234, 222, 0.7);
-  outline-offset: 3px;
-}
-
-.depth-thumb img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  background: #0a0a0a;
-}
-
-.depth-thumb span {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.depth-thumb[aria-pressed='true'] {
-  color: #f4eade;
-}
-
-.depth-thumb[aria-pressed='true'] img {
-  box-shadow: 0 0 0 1px rgba(244, 234, 222, 0.85);
 }
 
 .depth-index {
   list-style: none;
-  margin: 1.25rem 0 0;
+  margin: 1.5rem 0 0;
   padding: 0;
 }
 
@@ -106,23 +50,25 @@
   display: block;
 }
 
-.depth-frame[data-mode='planes'] [data-depth-photo],
-.depth-frame[data-mode='points'] [data-depth-photo] {
-  display: none;
-}
-
 .plate-tag {
-  margin: 0 0 0.85rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  margin-top: 1rem;
   font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(244, 234, 222, 0.62);
 }
 
+.study-grid .plate-tag {
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+
+.study-3d:has(.kplate3d[data-webgl="unsupported"]) {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .depth-mode__btn,
-  .depth-thumb {
+  .depth-switch__btn {
     transition: none;
   }
 }
