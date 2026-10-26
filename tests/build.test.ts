@@ -286,7 +286,17 @@ describe('Generated HTML Content', () => {
 
   describe('Work Page', () => {
     it('contains project information', () => {
-      expect(workHtml).toContain('Queue Forecast Dashboard');
+      expect(workHtml).toContain('Job Application Analytics');
+    });
+
+    // Owner order 2026-10-25: the queue-forecast project is erased from the
+    // public site and its repository retired. This lock keeps it gone - the
+    // card named employer customer verticals and a production claim.
+    it('work: the retired queue-forecast project never returns', () => {
+      expect(workHtml).not.toContain('Queue Forecast');
+      expect(workHtml).not.toContain('queue-forecast-dashboard');
+      expect(workHtml).not.toContain('Holt-Winters');
+      expect(workHtml).not.toContain('workforce planning');
     });
 
     it('contains technology tags', () => {
@@ -295,7 +305,8 @@ describe('Generated HTML Content', () => {
 
     it('links and locks the agent governance case study', () => {
       expect(workHtml).toContain('href="/work/agent-governance/"');
-      expect((workHtml.match(/Forecasting/g) || []).length).toBe(2);
+      // 2026-10-25: the two 'Forecasting' hits were the retired queue card.
+      expect((workHtml.match(/Forecasting/g) || []).length).toBe(0);
       const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
       const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
       expect(html).toContain(`<title>${title} | John D. Williams</title>`);
@@ -518,7 +529,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     const heroIdx = work.indexOf('Selected Work');
     const stripIdx = work.indexOf('Consulting in data engineering');
     expect(stripIdx).toBeGreaterThan(heroIdx);
-    expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
+    expect(stripIdx).toBeLessThan(work.indexOf('Job Application Analytics'));
     expect(work).not.toContain('Resume (PDF)');
     expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
     expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
@@ -526,8 +537,8 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
     expect(work).toContain('Process Controls');
     expect(work).not.toContain('Incident Command');
-    expect(work).toContain('Forecasting tool for enterprise support operations');
-    expect((work.match(/Forecasting/g) || []).length).toBe(2);
+    expect(work).not.toContain('Forecasting tool for enterprise support operations');
+    expect((work.match(/Forecasting/g) || []).length).toBe(0);
   });
   it('about: the consulting card is retired; More stands under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
