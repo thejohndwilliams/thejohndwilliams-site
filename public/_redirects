@@ -17,3 +17,6 @@ https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
 
 # Humans and some tools still request /sitemap.xml.
 /sitemap.xml /sitemap-index.xml 301
+
+# File path retired.
+/files/Williams-John-D-Resume.pdf / 301
