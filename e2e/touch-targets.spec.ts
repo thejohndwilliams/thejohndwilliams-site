@@ -75,6 +75,10 @@ for (const vp of VIEWPORTS) {
             if (!shown(el)) return;
             if (el.closest('.eyebrow')) return;
             if (el.classList.contains('eyebrow')) return;
+            // Work project tiles keep the earlier phone sizes. The 44px
+            // hit boxes on their links are unchanged.
+            const path = location.pathname.replace(/\/$/, '') || '/';
+            if (path === '/work' && el.closest('.glass-luminous')) return;
             const cs = getComputedStyle(el);
             const fs = parseFloat(cs.fontSize);
             const text = ((el as HTMLElement).innerText || '').replace(/\s+/g, ' ').trim();
