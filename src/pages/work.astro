@@ -114,10 +114,10 @@ const expertise = [
                   ))}
                 </div>
                 <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-base text-stone-light">{project.outcome}</p>
+                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2 mt-auto">
+                  <p class="text-base text-stone-light min-w-0">{project.outcome}</p>
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] inline-flex items-center shrink-0 whitespace-nowrap">
                       View on GitHub →
                     </a>
                   )}
@@ -135,7 +135,7 @@ const expertise = [
         </div>
       </div>
       <p class="reveal mt-8 sm:mt-10 text-base text-mute">
-        The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
+        The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw tap-44 inline-flex items-center align-middle min-h-[44px] min-w-[44px] text-cream/85 hover:text-cream">Beyond</a>.
       </p>
       {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
           loud. One flame, one whisper: the resume becomes a drawn-underline

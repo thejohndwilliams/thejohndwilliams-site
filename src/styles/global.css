@@ -1190,7 +1190,23 @@ main > section:not(:first-of-type):not([id]):not(:has(.kinetic-plate, .kplate3d)
    Gated to the scrolled header so it never paints over the hero.
    --mx/--my come from the BaseLayout rAF tracker. */
 #site-header { position: sticky; }
-#site-header .nav-shell { position: relative; z-index: 1; }
+#site-header .nav-shell {
+  position: relative;
+  z-index: 1;
+  container-type: inline-size;
+  /* gap-8 on the word nav. Five of those gaps fill a 768-900px shell,
+     so the mark meets Photography and Contact crosses the edge.
+     Below 960px the shell tightens the gap: about 32px at 768,
+     back to this value by 900. Wider shells keep the utility gap. */
+  --nav-gap: 3.556rem;
+}
+@container (max-width: 960px) {
+  #site-header nav > div.hidden,
+  #site-header nav ul {
+    gap: clamp(1.75rem, -8.2rem + 22.7cqi, var(--nav-gap));
+  }
+}
+
 #site-header.scrolled::after {
   content: '';
   position: absolute;
