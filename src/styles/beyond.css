@@ -38,14 +38,15 @@
   margin: 0;
 }
 
+/* Full-bleed like the Work and Photography heroes. No width cap: a 2400px
+   master fills a wider display under the data-bleed-short exemption
+   (e2e/image-resolution.spec.ts) instead of leaving black gutters. */
 .beyond-banner__img {
   position: absolute;
   inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  max-width: 2400px;
-  margin-inline: auto;
   object-fit: cover;
   object-position: 32% 72%;
 }
@@ -68,31 +69,41 @@
 
 /* Lockup padding = the Work hero's px-6 / sm:px-10 / lg:px-20 and
    pb-12 / sm:pb-16 / md:pb-24, written here because this selector
-   outranks the utilities. */
+   outranks the utilities. The site's spacing scale is the 8pt grid in
+   tailwind.config (6 = 2.667rem = 48px, 10 = 4.444rem = 80px,
+   12 = 5.333rem = 96px, 16 = 7.111rem = 128px, 20 = 8.889rem = 160px,
+   24 = 10.667rem = 192px), not Tailwind's defaults; measured against
+   /work at 390 / 640 / 768 / 1024 / 1440 on 2026-10-28. */
 .beyond-banner > .beyond-title {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding: 0 1.5rem 3rem;
+  padding: 0 2.667rem 5.333rem;
 }
 
 @media (min-width: 640px) {
   .beyond-banner > .beyond-title {
-    padding: 0 2.5rem 4rem;
+    padding: 0 4.444rem 7.111rem;
   }
 }
 
 @media (min-width: 768px) {
   .beyond-banner > .beyond-title {
-    padding-bottom: 6rem;
+    padding-bottom: 10.667rem;
   }
 }
 
 @media (min-width: 1024px) {
   .beyond-banner > .beyond-title {
-    padding-left: 5rem;
-    padding-right: 5rem;
+    padding-left: 8.889rem;
+    padding-right: 8.889rem;
   }
+}
+
+/* The lockup block is the Work hero's max-w-2xl (42rem), not the page
+   column's 680px text measure. */
+.beyond-banner .beyond-title .beyond-text {
+  max-width: 42rem;
 }
 
 @media (max-width: 700px) {
@@ -147,8 +158,11 @@
   max-width: 680px;
 }
 
+/* Section header grammar (2026-10-28): every act opens with eyebrow,
+   serif h2, then copy. Eyebrow to h2 0.5rem, h2 to copy 1.5rem, copy to
+   the first figure 2rem (.beyond-col .beyond-text + * below). */
 .beyond-text h2 {
-  margin: 0.35rem 0 1rem;
+  margin: 0.5rem 0 1.5rem;
 }
 
 /* The heading carries the Work hero's own type and spacing (t-title,
@@ -180,25 +194,45 @@
 
 /* The figure's own rules reserve a side gutter and a tall stage so the
    short /depth page can hold labels beside the plates. On this page the
-   photograph fills the column, and the caption sits under its left edge. */
+   photograph fills the column, and the caption sits under its left edge.
+   The layer figure is the first figure of the Depth act; the Planes and
+   Points study follows it at the within-act gap, not the section gap. */
 .beyond-layers {
   --pad-x: 0px;
 }
 
-.beyond-section.beyond-layers {
-  padding-top: 28px;
-}
-
 .beyond-layers + .beyond-section {
-  padding-top: 40px;
+  padding-top: 48px;
 }
 
+/* The figure grammar's control row: caption across, then the slider and
+   Replay side by side on one line (the markup is the shared component's,
+   so the row is made here with grid rather than a wrapper). */
 .beyond-layers .depth-stack {
   --pad-x: 0px;
   --gutter: 0px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: min(18rem, 100%) minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-items: center;
+  justify-items: start;
   width: 100%;
   max-width: var(--native);
+}
+
+/* On a phone the slider takes the column and Replay drops under it, the
+   same wrap the scrub figure's flex row makes; side by side the button
+   overflowed a 358px column (caught at 390 on 2026-10-28). */
+@media (max-width: 480px) {
+  .beyond-layers .depth-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.beyond-layers .depth-stack__view,
+.beyond-layers .depth-stack__cap {
+  grid-column: 1 / -1;
+  justify-self: stretch;
 }
 
 .beyond-layers .depth-stack__view {
@@ -219,22 +253,29 @@
 .beyond-layers .depth-stack__cap {
   width: 100%;
   max-width: 36rem;
-  margin-left: 0;
-  margin-right: 0;
+  margin: 1rem 0 0;
   text-align: left;
   text-wrap: balance;
   text-wrap: pretty;
 }
 
 .beyond-layers .depth-stack__range:not([hidden]) {
-  width: min(18rem, 100%);
-  margin-left: 0;
-  margin-right: auto;
+  grid-column: 1;
+  width: 100%;
+  max-width: 18rem;
+  margin: 1.25rem 0 0;
 }
 
 .beyond-layers .depth-stack__replay:not([hidden]) {
-  margin-left: 0;
-  margin-right: auto;
+  grid-column: 2;
+  margin: 1.25rem 0 0;
+}
+
+@media (max-width: 480px) {
+  .beyond-layers .depth-stack__replay:not([hidden]) {
+    grid-column: 1;
+    margin-top: 0.75rem;
+  }
 }
 
 .beyond-copy {
@@ -258,20 +299,14 @@
   font-style: italic;
 }
 
-.beyond-kicker {
-  margin: 0 0 0.75rem;
-  font-family: 'EB Garamond', Georgia, serif;
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  line-height: 1.3;
-  color: rgba(244, 234, 222, 0.92);
-}
-
 .beyond-anchor {
   scroll-margin-top: 7.5rem;
 }
 
+/* Within an act, figure follows figure at 48px (64px from md). Between
+   acts the section padding (64 / 96px) carries the larger step. */
 .beyond-flow > * + * {
-  margin-top: 64px;
+  margin-top: 48px;
 }
 
 .beyond-col .beyond-text + * {
@@ -284,11 +319,6 @@
 
 .beyond-plates > * + * {
   margin-top: 64px;
-}
-
-.beyond-method {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 2rem;
 }
 
 .beyond-return {
@@ -342,19 +372,15 @@
   }
 
   .beyond-flow > * + * {
-    margin-top: 96px;
+    margin-top: 64px;
   }
 
   .beyond-plates > * + * {
     margin-top: 96px;
   }
 
-  .beyond-section.beyond-layers {
-    padding-top: 40px;
-  }
-
   .beyond-layers + .beyond-section {
-    padding-top: 56px;
+    padding-top: 64px;
   }
 }
 
@@ -375,5 +401,275 @@ main > .beyond-section:last-child {
   body.page-beyond .theme-toggle {
     min-width: 44px;
     min-height: 44px;
+  }
+}
+
+/* ============================================================
+   FIGURE GRAMMAR (2026-10-28, owner order: one grammar for the page).
+   Every figure reads the same way: the media, then one block of
+   tag, caption, controls, notes.
+     tag       JetBrains Mono 11px caps, the figure's small label
+     caption   EB Garamond 17px cream, one sentence
+     controls  slider, readout, actions: Mono caps, 44px targets
+     notes     body copy (.beyond-copy)
+   Spacing: media to block 1rem, caption to controls 1.25rem,
+   controls to notes 1.5rem. Landscape media: the block sits below,
+   left-aligned at the text measure. Portrait media from 1024px: the
+   media takes 45% of the column and the block sits beside it (the
+   Planes / Points study already worked this way; it is the rule now).
+   The layer figure (DepthStack) keeps its own class names and is
+   mapped onto the same values above (.beyond-layers rules).
+   ============================================================ */
+.bfig {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.bfig__media {
+  width: 100%;
+  min-width: 0;
+}
+
+.bfig__stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #0a0a0a;
+}
+
+.bfig__side {
+  display: block;
+  max-width: 680px;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.bfig__tag {
+  margin: 0 0 0.5rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 222, 0.62);
+}
+
+.bfig__cap {
+  margin: 0;
+  max-width: 36rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  font-weight: 400;
+  color: #f4eade;
+  text-wrap: pretty;
+}
+
+.bfig__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.bfig__notes {
+  margin-top: 1.5rem;
+}
+
+/* Actions: the layer figure's Replay, verbatim, for every figure.
+   Toggles (Planes / Points) use the same box; aria-pressed lights it. */
+.bfig__action {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  margin: 0;
+  padding: 0.55rem 1.1rem;
+  background: transparent;
+  border: 1px solid rgba(244, 234, 222, 0.72);
+  border-radius: 0;
+  color: #f4eade;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms linear, color 160ms linear;
+}
+
+.bfig__action[aria-pressed='false'] {
+  border-color: rgba(244, 234, 222, 0.32);
+  color: rgba(244, 234, 222, 0.62);
+}
+
+.bfig__action:hover,
+.bfig__action[aria-pressed='true'] {
+  border-color: #f4eade;
+  color: #f4eade;
+}
+
+.bfig__action:focus {
+  outline: none;
+}
+
+.bfig__action:focus-visible {
+  outline: 1px solid #f4eade;
+  outline-offset: 3px;
+}
+
+/* Slider: the layer figure's range, verbatim, plus tick labels for a
+   discrete seven-stop control. The ticks are inset by half the thumb so
+   each label sits under the thumb centre at that stop. */
+.bfig__range {
+  --thumb: 14px;
+  display: block;
+  width: min(18rem, 100%);
+}
+
+.bfig__range input {
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  touch-action: pan-y;
+  cursor: pointer;
+}
+
+.bfig__range input:focus { outline: none; }
+.bfig__range input:focus-visible {
+  outline: 1px solid #f4eade;
+  outline-offset: 3px;
+}
+
+.bfig__range input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgba(244, 234, 222, 0.55);
+}
+
+.bfig__range input::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: calc(var(--thumb) / -2);
+  border: 1px solid #f4eade;
+  border-radius: 50%;
+  background: #0a0a0a;
+}
+
+.bfig__range input::-moz-range-track {
+  height: 1px;
+  background: rgba(244, 234, 222, 0.55);
+  border: 0;
+}
+
+.bfig__range input::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 1px solid #f4eade;
+  border-radius: 50%;
+  background: #0a0a0a;
+}
+
+.bfig__ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 calc(var(--thumb) / 2);
+  margin-top: 0.15rem;
+}
+
+.bfig__tick {
+  display: flex;
+  justify-content: center;
+  width: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.625rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(244, 234, 222, 0.45);
+  transition: color 160ms linear;
+}
+
+.bfig__tick.is-current {
+  color: #f4eade;
+}
+
+.bfig__readout {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: #f4eade;
+  min-width: 4.5ch;
+}
+
+@media (pointer: coarse) {
+  .bfig__range { --thumb: 22px; }
+  .bfig__range input { height: 44px; }
+}
+
+/* The depth scrub: two stacked frames, 120 ms crossfade between stops. */
+.depth-scrub__stage {
+  aspect-ratio: 1240 / 1550;
+}
+
+.depth-scrub__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 120ms linear;
+}
+
+.depth-scrub__frame.is-active {
+  opacity: 1;
+}
+
+.depth-scrub__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Portrait media fills the column below 1024px (as the Planes / Points
+   study does) and sits beside its block from 1024px. The rail keeps its
+   literal relative scale and never takes this split. */
+@media (min-width: 1024px) {
+  .bfig--portrait {
+    display: grid;
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+    column-gap: 2.75rem;
+    align-items: start;
+  }
+
+  .bfig--portrait .bfig__side {
+    margin-top: 0;
+    max-width: none;
+  }
+}
+
+/* The rail's own per-panel captions sit under the panels; give the
+   figure block a little more room so the two caption rows read apart. */
+.bfig--rail .bfig__side {
+  margin-top: 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-scrub__frame,
+  .bfig__action,
+  .bfig__tick {
+    transition: none;
   }
 }

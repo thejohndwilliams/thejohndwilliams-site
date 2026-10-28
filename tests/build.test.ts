@@ -614,6 +614,16 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(main).toContain('Which relief depth survives ordinary room light?');
     expect(main).toContain('a Gaussian convolution, the closed-form');
     expect(main).toContain('Back to the photographs');
+    // 2026-10-28 rebuild: the hero is full-bleed under the bleed-short
+    // exemption, the seven relief thumbnails are one scrubbed figure, and
+    // the page's controls share the layer figure's box (no glass chip rail).
+    expect(banner).toContain('data-bleed-short');
+    expect(main).toContain('Seven depths, one photograph.');
+    expect((main.match(/class="depth-scrub__frame/g) || []).length).toBe(2);
+    expect(main).toMatch(/<input[^>]*type="range"[^>]*max="6"[^>]*aria-valuetext="4 mm"[^>]*data-scrub-range/);
+    expect(main).not.toContain('glass-chip-rail');
+    expect(main).not.toContain('depth-grid');
+    expect(main).not.toContain('The depth studies');
     const imgs = beyond.match(/<img\b[^>]*>/gi) || [];
     expect(imgs.length).toBeGreaterThan(0);
     for (const tag of imgs) {

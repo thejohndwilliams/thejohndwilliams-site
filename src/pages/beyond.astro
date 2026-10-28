@@ -61,8 +61,10 @@ const BANNER = 'gv-3b61b429';
 const bannerAlt = 'Lone tree against a smoldering horizon';
 const banner = photoTiers(BANNER);
 /* Phones ask for 2x the CSS width so cover does not upscale the thumb.
-   Wider screens stay at the real hero width. */
-const bannerSizes = '(max-width: 700px) 200vw, min(100vw, 2400px)';
+   Wider screens ask for the viewport: the band is full-bleed like Work and
+   Photography, and data-bleed-short lets a 2400px master fill a wider
+   display rather than leaving gutters (see e2e/image-resolution.spec.ts). */
+const bannerSizes = '(max-width: 700px) 200vw, 100vw';
 const thumbDims = Object.fromEntries(
   await Promise.all(
     SUBJECTS.map(async (row) => [row.file, await publicBitmap(`/images/photography/thumb/${row.file}.webp`)] as const),
@@ -91,6 +93,7 @@ const thumbDims = Object.fromEntries(
         width={banner.gallery.w}
         height={banner.gallery.h}
         alt={bannerAlt}
+        data-bleed-short
         fetchpriority="high"
         decoding="async"
       />
@@ -113,34 +116,31 @@ const thumbDims = Object.fromEntries(
     </header>
   </div>
 
+  <!-- ACT I · DEPTH. One act header, two figures. The layer figure used to
+       sit here with no heading at all (owner: "awkward", 2026-10-28); it is
+       now the first figure of the act, and the Planes / Points study below
+       is the second. The ids, hooks and the resting autoplay="0" are locked
+       in tests/build.test.ts and e2e/depth-study.spec.ts. -->
   <section id="depth-layers" class="beyond-section beyond-anchor beyond-layers" data-depth-layers>
     <div class="beyond-col">
+      <div class="beyond-text beyond-head">
+        <p class="eyebrow">Depth</p>
+        <h2 class="t-sub font-serif">Separate the photograph</h2>
+        <p class="beyond-copy">
+          Every study here starts with one finished frame and a depth estimate
+          for each pixel. The first figure pulls a photograph apart into five
+          layers, far to near. The second cuts a frame into stacked planes or
+          scatters it into points, displaced along the axis the camera never
+          recorded. One fakes relief beautifully; the other actually has it.
+          Choose a subject, then Planes or Points, and sweep across the plate
+          to orbit it. Reduced motion holds a still frame.
+        </p>
+      </div>
       <DepthStack priority={false} autoplay={false} />
     </div>
   </section>
 
   <section id="depth" class="beyond-section beyond-anchor" data-depth-study data-subject="earth" data-orient={orientOf(earth.file)} data-mode="rest">
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <h2 class="t-sub font-serif">The depth studies</h2>
-        <p class="beyond-copy">
-          The same photographs, twice. Planes: the frame cut into stacked
-          planes that slide against each other as you move. Points: every
-          dot sitting at the true depth the photograph holds, baked from its
-          depth pass. One fakes relief beautifully; the other actually has
-          it. The photograph stays in color until a mode is chosen. Sweep
-          across a plate to orbit it; release mid-turn and it carries, then
-          settles. On a phone, the clouds roll with the page. Reduced motion
-          holds a still frame.
-        </p>
-        <p class="beyond-copy beyond-copy--italic">
-          One photograph in. A depth estimate per pixel. The image cut into
-          planes or scattered into points, displaced along the axis the camera
-          never recorded.
-        </p>
-      </div>
-    </div>
-
     <div class="beyond-col" data-depth-slot>
       <div class="depth-layout">
       <div class="depth-stage">
@@ -151,22 +151,25 @@ const thumbDims = Object.fromEntries(
           <div data-depth-plate></div>
         </div>
 
-        <div class="depth-aside">
-          <div class="depth-controls">
-            <div class="depth-mode glass-chip-rail" role="group" aria-label="Depth rendering">
-              <button type="button" class="depth-mode__btn" data-depth-mode="planes" aria-pressed="false">Planes</button>
-              <button type="button" class="depth-mode__btn" data-depth-mode="points" aria-pressed="false">Points</button>
-            </div>
-          </div>
-
-          <ul class="depth-index beyond-text">
+        <!-- The aside follows the page's figure grammar: tag, caption,
+             then the control row. Without JS the four subject notes all
+             show and the controls stay hidden (depth-study.css). -->
+        <div class="depth-aside bfig__side">
+          <ul class="depth-index">
             {SUBJECTS.map((row, i) => (
               <li class:list={['depth-index__item', { 'is-shown': i === 0 }]} data-study-note={row.id}>
-                <p class="eyebrow">{row.title}</p>
-                <p class="beyond-copy">{row.note}</p>
+                <p class="bfig__tag">{row.title}</p>
+                <p class="bfig__cap">{row.note}</p>
               </li>
             ))}
           </ul>
+
+          <div class="depth-controls">
+            <div class="depth-mode bfig__controls" role="group" aria-label="Depth rendering">
+              <button type="button" class="depth-mode__btn bfig__action" data-depth-mode="planes" aria-pressed="false">Planes</button>
+              <button type="button" class="depth-mode__btn bfig__action" data-depth-mode="points" aria-pressed="false">Points</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -210,18 +213,21 @@ const thumbDims = Object.fromEntries(
     ))}
   </section>
 
-  <section class="beyond-section">
+  <!-- ACT II · TEXTURE. Same header grammar as the other acts: eyebrow,
+       serif h2, one paragraph, one italic method line. -->
+  <section id="texture" class="beyond-section beyond-anchor">
     <div class="beyond-col">
-      <div class="beyond-text">
-        <h2 class="t-sub font-serif">Texture and Gaussian studies</h2>
-        <p class="beyond-kicker">Studies in texture.</p>
+      <div class="beyond-text beyond-head">
+        <p class="eyebrow">Texture</p>
+        <h2 class="t-sub font-serif">Drawn from single frames</h2>
         <p class="beyond-copy">
-          The depth work above feeds these. Wallpapers, textures, and color palettes drawn from single frames, free to take.
+          The depth work above feeds these. Wallpapers, textures, and color
+          palettes, each taken from one photograph, free to take.
         </p>
         <p class="beyond-copy beyond-copy--italic">
-          The blur behind each plate is a Gaussian convolution, the
-          closed-form solution to the heat equation. Light diffuses through the
-          glass the way heat moves through a solid.
+          Studies in texture. The blur behind each plate is a Gaussian
+          convolution, the closed-form solution to the heat equation. Light
+          diffuses through the glass the way heat moves through a solid.
         </p>
       </div>
       <div class="beyond-plates">
@@ -234,10 +240,17 @@ const thumbDims = Object.fromEntries(
 
   <ReliefStudies />
 
+  <!-- CLOSE. The open questions and the calibration note were two
+       sections; they are one restrained closing now. -->
   <section id="method" class="beyond-section beyond-anchor">
     <div class="beyond-col">
-      <div class="beyond-text beyond-method">
-        <p class="eyebrow">The envelope</p>
+      <div class="beyond-text beyond-head">
+        <p class="eyebrow">Open questions</p>
+        <h2 class="t-sub font-serif">The envelope</h2>
+        <p class="beyond-copy">
+          Which relief depth survives ordinary room light? That one gets
+          answered by a printed sample, not by a render.
+        </p>
         <p class="beyond-copy">
           Every material on this site holds calibrated bounds: blur no higher
           than 44 pixels, saturation no higher than 1.85, text contrast at or
@@ -253,6 +266,7 @@ const thumbDims = Object.fromEntries(
 
 <script>
   import { initDepthStudy } from '../scripts/depth-study';
+  import { initDepthScrub } from '../scripts/depth-scrub';
 
   function syncBeyondPage(): void {
     const path = window.location.pathname.replace(/\/$/, '') || '/';
@@ -262,11 +276,13 @@ const thumbDims = Object.fromEntries(
   const flag = window as Window & { __beyondPage?: boolean };
   syncBeyondPage();
   initDepthStudy();
+  initDepthScrub();
   if (!flag.__beyondPage) {
     flag.__beyondPage = true;
     document.addEventListener('astro:after-swap', () => {
       syncBeyondPage();
       initDepthStudy();
+      initDepthScrub();
     });
   }
 </script>

@@ -14,9 +14,12 @@
   min-width: 0;
 }
 
+/* The aside is the figure grammar's block (beyond.css .bfig__side): the
+   subject tag and caption, then the Planes / Points row. Media to block
+   is 1rem, the page rule. */
 .depth-aside {
   min-width: 0;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
 }
 
 .depth-controls {
@@ -32,28 +35,9 @@
   min-width: 0;
 }
 
-.depth-mode.glass-chip-rail {
-  overflow: visible;
-}
-
-.depth-mode__btn {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  color: rgba(244, 234, 222, 0.62);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 0.65rem 0.95rem;
-  min-height: 44px;
-  min-width: 44px;
-  cursor: pointer;
-}
-
-.depth-mode__btn[aria-pressed='true'] {
-  color: #f4eade;
-}
+/* Planes / Points are .bfig__action toggles (beyond.css). The glass chip
+   rail that used to hold them was the one control on the page with its
+   own material; every figure control is now the same bordered Mono box. */
 
 .depth-thumbs {
   display: flex;
@@ -82,8 +66,7 @@
 }
 
 .depth-thumb:focus,
-.depth-thumb:focus-visible,
-.depth-mode__btn:focus-visible {
+.depth-thumb:focus-visible {
   outline: 1.5px solid rgba(244, 234, 222, 0.85);
   outline-offset: 3px;
 }
@@ -122,10 +105,11 @@
 
 .depth-index {
   list-style: none;
-  margin: 1.25rem 0 0;
+  margin: 0;
   padding: 0;
 }
 
+/* Without JS every subject note shows, stacked. */
 .depth-index__item + .depth-index__item {
   margin-top: 1.25rem;
 }
@@ -144,14 +128,19 @@
   display: none;
 }
 
-/* Portrait studies sit beside their note from 1024 up. The frame width
-   stays inside the hero (earth 1350, structure 1800) even at 3x. */
+/* Portrait studies sit beside their block from 1024 up: the page's
+   portrait figure split (beyond.css .bfig--portrait), 45 / 55 with a
+   2.75rem gutter. The frame width stays inside the hero bitmap (earth
+   1350, structure 1800) through the dppx caps below. */
 @media (min-width: 1024px) {
   [data-orient='portrait'] .depth-layout {
     display: grid;
-    grid-template-columns: clamp(16rem, 36%, 24rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+    /* The frame spans both rows. The second row takes the slack, so the
+       thumbnail strip follows the block instead of floating mid-column. */
+    grid-template-rows: auto minmax(0, 1fr);
     column-gap: 2.75rem;
-    row-gap: 1.25rem;
+    row-gap: 1.5rem;
     align-items: start;
   }
 
@@ -168,6 +157,7 @@
     grid-column: 2;
     grid-row: 1;
     margin-top: 0;
+    max-width: none;
   }
 
   [data-orient='portrait'] .depth-controls--strip {
