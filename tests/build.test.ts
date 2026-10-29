@@ -70,8 +70,8 @@ describe('Astro Build', () => {
     const relief = path.join(distDir, 'images', 'relief');
     expect(fs.existsSync(relief)).toBe(true);
     for (const mm of [1, 2, 3, 4, 6, 9, 14]) {
-      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.avif`))).toBe(true);
-      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.webp`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm-w1240.avif`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm-w1240.webp`))).toBe(true);
     }
     for (const size of ['16x20', '20x24', '24x36']) {
       expect(fs.existsSync(path.join(relief, `edition-${size}.avif`))).toBe(true);
