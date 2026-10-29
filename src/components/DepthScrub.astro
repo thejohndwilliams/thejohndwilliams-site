@@ -1,0 +1,98 @@
+---
+/**
+ * DepthScrub - the relief depth survey as ONE figure, scrubbed.
+ *
+ * Seven pre-rendered frames of the same bas-relief panel (Structure ·
+ * Shanghai Tower, 16x20 portrait) at 1, 2, 3, 4, 6, 9 and 14 mm, rendered
+ * at 1240x1550 by relief_render.py with its recipe constants verbatim.
+ * Owner order 2026-10-28: the seven static thumbnails become one large
+ * figure with the same slider-and-caption grammar as the layer figure.
+ *
+ * Two stacked <picture> frames crossfade 120 ms between stops (the frames
+ * differ only in relief intensity, so a short blend reads as continuous
+ * depth). The figure plays once from 1 mm to 14 mm when it enters view and
+ * rests at the provisional 4 mm; reduced motion holds 4 mm with no play.
+ * Behaviour lives in src/scripts/depth-scrub.ts; layout in beyond.css.
+ */
+export const DEPTHS_MM = [1, 2, 3, 4, 6, 9, 14] as const;
+const REST = 3; // index of 4 mm, the depth under consideration
+const W = 1240;
+const H = 1550;
+const ALT =
+  'Bas-relief panel of a tower facade, lit from a low angle, shown at an adjustable carving depth.';
+const frame = (mm: number, ext: 'avif' | 'webp') => `/images/relief/depth-${mm}mm.${ext}`;
+---
+
+<figure class="bfig bfig--portrait depth-scrub" data-depth-scrub data-rest={String(REST)}>
+  <div class="bfig__media">
+    <div class="bfig__stage depth-scrub__stage" role="img" aria-label={ALT} data-scrub-stage>
+      <picture class="depth-scrub__frame is-active" data-frame="a" data-index={String(REST)}>
+        <source type="image/avif" srcset={frame(DEPTHS_MM[REST], 'avif')} data-src-avif />
+        <img
+          src={frame(DEPTHS_MM[REST], 'webp')}
+          width={W}
+          height={H}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          loading="lazy"
+          data-src-webp
+        />
+      </picture>
+      <picture class="depth-scrub__frame" data-frame="b" aria-hidden="true">
+        <source type="image/avif" srcset={frame(DEPTHS_MM[REST], 'avif')} data-src-avif />
+        <img
+          src={frame(DEPTHS_MM[REST], 'webp')}
+          width={W}
+          height={H}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          loading="lazy"
+          data-src-webp
+        />
+      </picture>
+    </div>
+  </div>
+
+  <figcaption class="bfig__side">
+    <p class="bfig__tag">Seven depths · 1 to 14 mm</p>
+    <p class="bfig__cap">Seven depths, one photograph.</p>
+
+    <div class="bfig__controls depth-scrub__controls">
+      <label class="bfig__range depth-scrub__range">
+        <span class="sr-only">Relief depth</span>
+        <input
+          type="range"
+          min="0"
+          max={String(DEPTHS_MM.length - 1)}
+          step="1"
+          value={String(REST)}
+          aria-valuetext={`${DEPTHS_MM[REST]} mm`}
+          data-scrub-range
+        />
+        <span class="bfig__ticks" aria-hidden="true">
+          {DEPTHS_MM.map((mm, i) => (
+            <span class:list={['bfig__tick', { 'is-current': i === REST }]} data-i={String(i)}>{String(mm)}</span>
+          ))}
+        </span>
+      </label>
+      <output class="bfig__readout" aria-live="polite" data-scrub-output>{DEPTHS_MM[REST]} mm</output>
+      <button type="button" class="bfig__action depth-scrub__replay" hidden aria-hidden="true" data-scrub-replay>Replay</button>
+    </div>
+
+    <div class="bfig__notes">
+      <p class="beyond-copy">
+        How deep should a photograph be? One frame, one light, seven candidate
+        reliefs. At one millimetre the image is a rumour. At fourteen it is a
+        carving that throws its own shadow across the panel and starts to look
+        like something other than a photograph.
+      </p>
+      <p class="beyond-copy">
+        There is no formula here. The three relief ratios in the literature
+        each describe their own author's test piece, and none is offered as
+        guidance. This one gets chosen by looking at a printed sample.
+      </p>
+    </div>
+  </figcaption>
+</figure>
