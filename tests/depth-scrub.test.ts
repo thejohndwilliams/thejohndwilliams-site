@@ -64,6 +64,23 @@ describe('relief depth scrub (the seven depths as one figure)', () => {
     expect(script).toMatch(/frames\.findIndex\(\(f\) => f\.classList\.contains\('is-active'\)\)/);
   });
 
+  it('frames carry their width in the filename: /images/* is immutable for a year', () => {
+    // 2026-10-28 incident: the 1240px renders replaced the 620px files in
+    // place under the same names. _headers serves /images/* immutable with a
+    // one-year max-age, so every earlier visitor kept the old 620px frames.
+    // A changed image gets a new name, never an in-place overwrite.
+    const headers = read('public/_headers');
+    expect(headers).toMatch(/\/images\/\*\s+Cache-Control: public, max-age=31536000, immutable/);
+    expect(figure).toContain('/images/relief/depth-${mm}mm-w1240.${ext}');
+    expect(script).toContain('/images/relief/depth-${mm}mm-w1240.${ext}');
+    for (const mm of [1, 2, 3, 4, 6, 9, 14]) {
+      for (const ext of ['avif', 'webp']) {
+        expect(() => read(`public/images/relief/depth-${mm}mm-w1240.${ext}`)).not.toThrow();
+        expect(() => read(`public/images/relief/depth-${mm}mm.${ext}`)).toThrow();
+      }
+    }
+  });
+
   it('keeps public copy free of em dashes and inline styles, with no sales wording', () => {
     const banned = ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license'];
     for (const body of [figure, script, relief]) {

@@ -32,7 +32,7 @@ function clearTimers(): void {
 }
 
 function frameSrc(mm: number, ext: 'avif' | 'webp'): string {
-  return `/images/relief/depth-${mm}mm.${ext}`;
+  return `/images/relief/depth-${mm}mm-w1240.${ext}`;
 }
 
 function teardown(): void {
