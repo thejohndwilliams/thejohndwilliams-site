@@ -39,7 +39,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.1151.0",
     "@playwright/test": "^1.57.0",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.5",
     "autoprefixer": "^10.6.1",
     "dom-accessibility-api": "^0.7.1",
     "happy-dom": "^20.11.2",
