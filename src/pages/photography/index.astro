@@ -65,7 +65,7 @@ const jsonLd = {
   <div id="atmos-overlay" class="fixed inset-0 pointer-events-none z-0 transition-[background-color] duration-1000 ease-out" aria-hidden="true"></div>
 
   {/* HERO - Featured image full-bleed */}
-  <section class:list={['hero-bleed', heroCapClass('img-1066'), 'relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden']}>
+  <section class:list={['hero-bleed', heroCapClass('img-1066'), 'relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden']} data-hero-under>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('img-1066', 'avif')} sizes={portraitSizes('img-1066')} />
       <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('img-1066', 'webp')} sizes={portraitSizes('img-1066')} />
@@ -81,6 +81,7 @@ const jsonLd = {
       />
       <img
         src="/images/photography/hero/img-1066.webp"
+        data-bleed-short
         alt="A shelf cloud rolling over an open field"
         class="absolute inset-0 w-full h-full object-cover"
         fetchpriority="high"

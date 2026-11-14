@@ -42,7 +42,7 @@ const charities = [
 
   {/* HERO - Full-bleed cloudscape with left-aligned identity.
       The section stops at the bitmap width. Phone art direction keeps its own crop. */}
-  <section class:list={['hero-bleed', heroCapClass('7r52326'), 'relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden']} data-glass-bench>
+  <section class:list={['hero-bleed', heroCapClass('7r52326'), 'relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden']} data-glass-bench data-hero-under>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('7r52326', 'avif')} sizes={portraitSizes('7r52326')} />
       <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('7r52326', 'webp')} sizes={portraitSizes('7r52326')} />
@@ -60,6 +60,7 @@ const charities = [
         src="/images/photography/hero/7r52326.webp"
         alt="Dramatic cloudscape with towering cumulus clouds illuminated against a dark sky"
         class="absolute inset-0 w-full h-full object-cover"
+        data-bleed-short
         fetchpriority="high"
         id="hero-img"
         data-dawn="/images/photography/hero/img-3058.webp"
@@ -417,6 +418,9 @@ const charities = [
       clone.className = 'hero-xfade';
       clone.alt = '';
       clone.setAttribute('aria-hidden', 'true');
+      // Full-bleed like the hero it fades over (2026-11-14): the dawn and
+      // golden masters are 2400px, narrower than a 2560 screen.
+      clone.setAttribute('data-bleed-short', '');
       clone.decoding = 'sync';
       clone.src = url;
       const picture = img.closest('picture');
