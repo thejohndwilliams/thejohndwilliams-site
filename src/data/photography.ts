@@ -28,6 +28,13 @@ export interface PhotoImage {
   source?: 'local' | 'r2';
   /** R2 object key when source === 'r2'. Format: photography/<sha>_<basename>.<ext> */
   key?: string;
+  /**
+   * Two observational sentences shown on the photo page (2026-11-14 review:
+   * photo pages were ~60 words and Google left most of them unindexed).
+   * Describe only what is in the frame. No invented places, dates or
+   * stories; no em dashes. Owner edits these.
+   */
+  note?: string;
 }
 
 export interface PhotoCategory {
@@ -43,7 +50,7 @@ export const categories: PhotoCategory[] = [
     name: 'Sky',
     description: 'Looking up.',
     images: [
-      { file: '7r52326', alt: 'Thunderheads against black sky', orientation: 'landscape', featured: true },
+      { file: '7r52326', alt: 'Thunderheads against black sky', orientation: 'landscape', featured: true, note: 'The sky is pulled down to black so only the cloud keeps its light. Seen this way a thunderhead stops reading as weather and becomes a form.' },
       { file: '7r52258', alt: 'Cloud mass rising into darkness', orientation: 'portrait' },
       { file: '7r52256', alt: 'Storm clouds from below', orientation: 'portrait' },
       { file: '7r52314', alt: 'Backlit dramatic cloudscape', orientation: 'landscape' },
@@ -64,13 +71,13 @@ export const categories: PhotoCategory[] = [
       { file: '7r52355', alt: 'Cloud edge study', orientation: 'portrait' },
       { file: '7r52352', alt: 'Atmospheric cloud layers', orientation: 'portrait' },
       { file: 'gv-3b61b429', alt: 'Lone tree against a smoldering horizon', orientation: 'landscape' },
-      { file: 'dsc-0131', alt: 'Storm front massing over open water', orientation: 'landscape', featured: true },
+      { file: 'dsc-0131', alt: 'Storm front massing over rooftops', orientation: 'landscape', featured: true, note: 'A shelf of storm cloud runs the width of the frame, with a band of clear evening light still holding beneath it. The rooftops and a single light pole give it scale.' },
       { file: 'img-0061', alt: 'Violet and ember sky over a sleeping town', orientation: 'landscape' },
-      { file: 'img-0078', alt: 'Last light bleeding from a violet sky', orientation: 'landscape', featured: true },
-      { file: 'img-1066', alt: 'A single tree beneath a darkening storm', orientation: 'landscape', featured: true },
+      { file: 'img-0078', alt: 'Last light bleeding from a violet sky', orientation: 'landscape', featured: true, note: 'The last of the day leaves violet and rose in the sky while the ground has already gone dark. A few bare trees and a roofline hold the horizon.' },
+      { file: 'img-1066', alt: 'A shelf cloud rolling over an open field', orientation: 'landscape', featured: true, note: 'The leading edge of a shelf cloud is drawn out in long grey bands above an open field. The light poles and the treeline below are already in shadow.' },
       { file: 'img-1142', alt: 'Thunderhead swelling over the plain', orientation: 'portrait' },
       { file: 'img-3058', alt: 'Blue hour thinning to a single light', orientation: 'landscape' },
-      { file: 'img-3094', alt: 'Towering cloud over black water', orientation: 'landscape', featured: true },
+      { file: 'img-3094', alt: 'Towering cloud in a darkening sky', orientation: 'landscape', featured: true, note: 'A cumulus tower holds warm light on its upper flank while the blue around it deepens. Smaller clouds scatter across the top of the frame.' },
       { file: 'img-6549', alt: 'Solitary tree on a dusk-lit ridge', orientation: 'landscape' },
       { file: 'img-6552', alt: 'Sun failing behind a lone silhouette', orientation: 'landscape' },
       { file: '7r51848', alt: 'Storm cell drifting over the flats', orientation: 'portrait' },
@@ -83,7 +90,7 @@ export const categories: PhotoCategory[] = [
     name: 'Earth',
     description: 'Looking close.',
     images: [
-      { file: '7r51025-enhanced-sr', alt: 'Rain-wet leaf in darkness', orientation: 'portrait', featured: true },
+      { file: '7r51025-enhanced-sr', alt: 'Rain-wet leaf in darkness', orientation: 'portrait', featured: true, note: 'A broad leaf after rain, beaded with drops and lit just enough to separate it from the dark. Most of the frame is left to shadow.' },
       { file: '7r51024-enhanced-sr', alt: 'Water droplets on dark leaf', orientation: 'landscape' },
       { file: '7r51018-enhanced-sr', alt: 'Leaf veins with rain', orientation: 'landscape' },
       { file: '7r50580-enhanced-sr', alt: 'Bougainvillea bloom', orientation: 'landscape' },
@@ -96,13 +103,13 @@ export const categories: PhotoCategory[] = [
       { file: 'dscf1845', alt: 'Botanical detail', orientation: 'portrait' },
       { file: 'dscf1844', alt: 'Plant texture study', orientation: 'portrait' },
       { file: 'dscf1831', alt: 'Garden flora', orientation: 'portrait' },
-      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait' },
+      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait', note: 'A field of orange wildflowers under a sky turning pink and blue at sunset. Two trees mark the far edge of the field.' },
       { file: '7r51784-enhanced-sr', alt: 'Flowering tree and clouds', orientation: 'portrait' },
       { file: '7r51911-enhanced-sr', alt: 'Botanical close-up', orientation: 'portrait' },
       { file: 'dscf0425', alt: 'Foliage closing over a dusk path', orientation: 'portrait' },
       { file: 'dscf0783', alt: 'Bamboo standing in low green light', orientation: 'portrait' },
       { file: 'img-0075', alt: 'Light reaching into stone', orientation: 'portrait' },
-      { file: 'img-6662', alt: 'A lone figure against the dunes', orientation: 'landscape', featured: true },
+      { file: 'img-6662', alt: 'A lone figure against the dunes', orientation: 'landscape', featured: true, note: 'A single figure crosses an open field of white sand under a wide, streaked sky. The person is kept small; the scale is the subject.' },
     ]
   },
   {
@@ -110,7 +117,7 @@ export const categories: PhotoCategory[] = [
     name: 'Water',
     description: 'Where land dissolves.',
     images: [
-      { file: '7r50674-enhanced-sr', alt: 'El Arco de Cabo San Lucas', orientation: 'landscape', featured: true },
+      { file: '7r50674-enhanced-sr', alt: 'El Arco de Cabo San Lucas', orientation: 'landscape', featured: true, note: 'El Arco at Cabo San Lucas, with small boats working the water beneath the rock. The clouds open above it and the sea catches the light.' },
       { file: '7r50680-enhanced-sr', alt: 'Turquoise sea against rock formations', orientation: 'landscape' },
       { file: '7r50993-enhanced-sr', alt: 'Blue hour over Cabo harbor', orientation: 'landscape' },
       { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
@@ -123,7 +130,7 @@ export const categories: PhotoCategory[] = [
       { file: 'dscf1941', alt: 'Tide breathing against a dusk shore', orientation: 'portrait' },
       { file: 'img-2526', alt: 'A single post standing in blue water', orientation: 'portrait' },
       { file: '7r50953', alt: 'Sun sinking past a far ridge', orientation: 'portrait' },
-      { file: '7r50996', alt: 'A harbor under violet dusk', orientation: 'landscape', featured: true },
+      { file: '7r50996', alt: 'A harbor under violet dusk', orientation: 'landscape', featured: true, note: 'A harbor at dusk, the clouds lit violet and gold above the waterfront. A boat\'s wake cuts across the water toward the shore.' },
     ]
   },
   {
@@ -131,7 +138,7 @@ export const categories: PhotoCategory[] = [
     name: 'Structure',
     description: 'What we build toward the sky.',
     images: [
-      { file: 'img-7576-enhanced', alt: 'Shanghai Tower from below', orientation: 'portrait', featured: true },
+      { file: 'img-7576-enhanced', alt: 'Shanghai Tower from below', orientation: 'portrait', featured: true, note: 'The Shanghai Tower seen from its base, the twist of the facade rising into a pale sky. Neighboring towers hold the edges of the frame.' },
       { file: 'img-7575-enhanced', alt: 'Glass tower looking up', orientation: 'portrait' },
       { file: 'img-7598-enhanced-sr', alt: 'Chinese pagoda at night', orientation: 'portrait' },
       { file: 'img-7610-enhanced-sr', alt: 'Temple reflected in purple water', orientation: 'landscape' },
@@ -146,7 +153,7 @@ export const categories: PhotoCategory[] = [
       { file: 'gv-1fd48bd9', alt: 'Glass tower rising into the night', orientation: 'landscape' },
       { file: 'dscf0503', alt: 'Red light spilling across a night street', orientation: 'portrait' },
       { file: 'dscf0580', alt: 'A dim alley swallowed by green', orientation: 'portrait' },
-      { file: 'dscf0671', alt: 'Lit windows stacked against the dark', orientation: 'portrait', featured: true },
+      { file: 'dscf0671', alt: 'Paper lanterns glowing against the night', orientation: 'portrait', featured: true, note: 'Tiers of paper lanterns glow against the night, each one inscribed. A wooden notice board stands in front of them.' },
       { file: 'dscf0876', alt: 'Temple roofline against the treeline', orientation: 'portrait' },
       { file: 'dscf1022', alt: 'A tower reduced to vertical lines', orientation: 'portrait' },
       { file: 'dscf1059', alt: 'A spire against a bruised twilight', orientation: 'portrait' },
@@ -161,14 +168,14 @@ export const categories: PhotoCategory[] = [
     name: 'Light',
     description: 'What changes everything.',
     images: [
-      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait', featured: true },
+      { file: 'img-7055-enhanced-enhanced-sr', alt: 'Sunset over wildflower field', orientation: 'portrait', featured: true, note: 'A field of orange wildflowers under a sky turning pink and blue at sunset. Two trees mark the far edge of the field.' },
       { file: '7r50971-enhanced-sr', alt: 'Golden sunset over coastal town', orientation: 'landscape' },
       { file: 'burningcold-enhanced', alt: 'Fire consuming structure', orientation: 'landscape' },
       { file: 'dscf0331', alt: 'Daylight pressed through shutters', orientation: 'portrait' },
       { file: 'dscf1419', alt: 'A globe of light held in shadow', orientation: 'portrait' },
-      { file: 'dsc-0014', alt: 'A carved ram emerging from black', orientation: 'landscape', featured: true },
+      { file: 'dsc-0014', alt: 'A carved ram emerging from black', orientation: 'landscape', featured: true, note: 'A carved ram\'s head in dark metal, its horns curling out of the black. Light falls across the brow and leaves the rest to shadow.' },
       { file: 'dsc-0378', alt: 'Neon traced across the night', orientation: 'landscape' },
-      { file: 'img-0132', alt: 'A chandelier suspended in darkness', orientation: 'portrait', featured: true },
+      { file: 'img-0132', alt: 'A chandelier suspended in darkness', orientation: 'portrait', featured: true, note: 'A crystal chandelier hangs lit in a dark room. Every arm and drop catches a point of light.' },
       { file: 'img-2528', alt: 'A ribbon of light drawn in the dark', orientation: 'landscape' },
       { file: 'img-2972', alt: 'Fire taking a frame in the night', orientation: 'landscape' },
       { file: '7r52035', alt: 'Sparks raining against a black sky', orientation: 'portrait' },

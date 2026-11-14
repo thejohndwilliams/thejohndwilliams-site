@@ -309,7 +309,9 @@ describe('Generated HTML Content', () => {
       expect((workHtml.match(/Forecasting/g) || []).length).toBe(0);
       const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
       const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
-      expect(html).toContain(`<title>${title} | John D. Williams</title>`);
+      // Search title shortened 2026-11-14; the h1 keeps the full heading.
+      expect(html).toContain('<title>Human Oversight for a Multi-Agent System | John D. Williams</title>');
+      expect(html).toMatch(/<meta name="description" content="How one person stays in control of a group of AI agents[^"]{60,}">/);
       expect(html).toContain(`<h1>${title}</h1>`);
       expect(html).not.toContain('\u2014');
       expect(html).not.toContain('Independent personal project');

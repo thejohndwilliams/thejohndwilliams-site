@@ -48,7 +48,7 @@ const jsonLd = {
   contentUrl: `${SITE}/images/photography/hero/${image.file}.webp`,
   thumbnailUrl: `${SITE}/images/photography/thumb/${image.file}.webp`,
   name: image.alt,
-  description: image.alt,
+  description: image.note ?? image.alt,
   creator: { '@type': 'Person', name: 'John D. Williams', url: SITE },
   copyrightHolder: { '@type': 'Person', name: 'John D. Williams' },
   creditText: 'John D. Williams',
@@ -84,7 +84,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
 <BaseLayout
   title={`${image.alt} · Photography`}
-  description={`${image.alt}. Fine art photograph by John D. Williams. ${category.name} series. ${metaLine || ''}`}
+  description={image.note ? `${image.alt}. ${image.note}` : `${image.alt}. Fine art photograph by John D. Williams. ${category.name} series. ${metaLine || ''}`}
   ogImage={`/og/photography/${image.file}.jpg`}
   ogImageWidth={1200}
   ogImageHeight={630}
@@ -175,6 +175,9 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         <h1 class="t-section font-serif tracking-tight mb-2 sm:mb-3">{image.alt}</h1>
         {metaLine && (
           <p class="text-sm text-mute tracking-[0.05em]">{metaLine}</p>
+        )}
+        {image.note && (
+          <p class="photo-note text-base text-mute leading-relaxed mt-5 sm:mt-6 max-w-xl">{image.note}</p>
         )}
       </div>
     </div>
