@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GlassPillGL from '../../components/GlassPillGL.astro';
 import { getPhotoMeta, formatMetaLine } from '../../utils/photo-meta';
 import { categories, getAllSlugs, getAllSlugsSequential, getPhotoBySlug, getRelatedImages, getPlaceholder } from '../../data/photography';
 import { frameClass, photoSrcset, photoTiers, plateSizes, RELATED_SIZES } from '../../utils/photo-src';
@@ -181,52 +180,30 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     </div>
   </section>
 
-  {/* DETAILS + EXIF + CTA */}
-  <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
-    <div class="container-narrow">
-      <div class="grid sm:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-3xl">
-
-        {/* EXIF Technical Details - staggered reveal on scroll */}
-        {exifDetails.length > 0 && (
-          <div>
-            <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">Technical Details</p>
-            <dl class="space-y-3" id="exif-list">
-              {exifDetails.map(({ label, value }, i) => (
-                <div
-                  class="exif-row flex items-baseline justify-between gap-4"
-                  style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
-                >
-                  <dt class="text-sm text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
-                  <dd class="text-sm opacity-80 text-right">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        )}
-
-        {/* Print / Licensing CTA */}
-        <div>
-          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">Acquire</p>
-          <p class="text-base text-mute leading-relaxed mb-2">
-            Available as a limited edition archival print.
-          </p>
-          {/* Edition of 25 scarcity signal */}
-          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">
-            Edition of 25 &middot; Fine art gicl&eacute;e on Hahnem&uuml;hle Photo Rag
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a
-              href="mailto:jndwcreative@gmail.com"
-              class="btn btn-primary"
-            >
-              Inquire about this print
-            </a>
-            <GlassPillGL label="Browse all prints" href="/photography/" variant="c" />
-          </div>
+  {/* TECHNICAL DETAILS. The Acquire column (limited-edition print, Inquire
+      button, "Browse all prints") was removed 2026-11-14: prints are not for
+      sale yet (owner). Do not restore sales wording until there is a way to
+      fulfil an order. */}
+  {exifDetails.length > 0 && (
+    <section class="section-light py-10 sm:py-16 md:py-20 relative z-10">
+      <div class="container-narrow">
+        <div class="max-w-md">
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-4 sm:mb-6">Technical Details</p>
+          <dl class="space-y-3" id="exif-list">
+            {exifDetails.map(({ label, value }, i) => (
+              <div
+                class="exif-row flex items-baseline justify-between gap-4"
+                style={`transition: opacity 0.4s ease ${i * 60}ms, transform 0.4s ease ${i * 60}ms;`}
+              >
+                <dt class="text-sm text-mute uppercase tracking-[0.1em] flex-shrink-0">{label}</dt>
+                <dd class="text-sm opacity-80 text-right">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   {/* RELATED IMAGES */}
   {related.length > 0 && (

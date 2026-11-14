@@ -83,6 +83,7 @@ export const CHARITY_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';
 export const WORK_TILE_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
 export const WORK_TILE_NARROW_SIZES = '(max-width: 767px) 100vw, 42vw';
 
-/** Work page project bento. Wide cells are full width below md. */
+/** Work page project bento. One column below sm (2026-11-14: two cards at
+ * 390px wrapped titles and tags to three lines); wide cells full width below md. */
 export const PROJECT_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
-export const PROJECT_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';
+export const PROJECT_NARROW_SIZES = '(max-width: 639px) 100vw, (max-width: 767px) 50vw, 42vw';

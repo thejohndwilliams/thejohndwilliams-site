@@ -260,6 +260,20 @@ html[data-theme="black"] {
 
   /* Work project cards. The scrim that used to be an inline gradient, kept
      as a class so style-src stays 'self'. Text sits on the 0.95 stop. */
+  /* Home "The Work" cards (2026-11-14 review): the old black/80 -> via
+     black/25 gradient left captions unreadable on bright frames (the About
+     card's chandelier). Weight sits in the lower half where the text is;
+     the top of the photograph stays clear (hero attenuation rule). */
+  .overlay-scrim-card {
+    background-image: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.9) 0%,
+      rgba(10, 10, 10, 0.74) 26%,
+      rgba(10, 10, 10, 0.34) 52%,
+      rgba(10, 10, 10, 0) 78%
+    );
+  }
+
   .overlay-scrim-work {
     background-image: linear-gradient(
       to top,
@@ -951,8 +965,11 @@ html.lenis body { height: auto; }
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 46%);
   transition: opacity 160ms linear;
 }
+/* Solid once scrolled (2026-11-14 review): at 0.90-0.94 the nav row sat over
+   legible page text (the Photography category rail, About body copy). The
+   shelf is opaque now; the top-of-page glass state is unchanged. */
 #site-header.scrolled {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+  background: var(--bg-base);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
@@ -1087,7 +1104,7 @@ html.lenis body { height: auto; }
     box-shadow: none;
   }
   #site-header.scrolled {
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+    background: var(--bg-base);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
