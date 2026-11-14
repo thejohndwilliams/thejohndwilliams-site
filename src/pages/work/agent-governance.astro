@@ -6,7 +6,10 @@ import ControlsMap from '../../components/ControlsMap.astro';
 import '../../styles/agent-governance.css';
 
 const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
-const description = 'This page describes a design and its rules.';
+// Search listing (2026-11-14 review): the full heading ran ~110 characters
+// in the <title> and the description was 43. The h1 keeps the full heading.
+const pageTitle = 'Human Oversight for a Multi-Agent System';
+const description = 'How one person stays in control of a group of AI agents: approval gates, role boundaries, separation of duties and an evidence trail anyone can check.';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -28,7 +31,7 @@ const roles = [
 ---
 
 <BaseLayout
-  title={title}
+  title={pageTitle}
   description={description}
   ogImage="/og/pages/work.jpg"
   ogImageWidth={1200}
