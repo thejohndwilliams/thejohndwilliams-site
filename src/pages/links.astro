@@ -2,6 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassPillGL from '../components/GlassPillGL.astro';
 import { navItems, socialLinks } from '../utils/date';
+import { photoTiers } from '../utils/photo-src';
+
+// 2026-11-14 review, pass 4: eight identical grey panels became rows that
+// each carry a small photograph, the same frames the home cards and page
+// heroes use, so the bio link reads like the site it points to.
+const NAV_PHOTO: Record<string, { file: string; alt: string }> = {
+  '/photography/': { file: '7r52326', alt: '' },
+  '/work/': { file: 'dscf0331', alt: '' },
+  '/beyond/': { file: 'gv-3b61b429', alt: '' },
+  '/about/': { file: 'img-0132', alt: '' },
+};
+const thumb = (file: string) => photoTiers(file).thumb;
 ---
 
 <BaseLayout
@@ -15,16 +27,30 @@ import { navItems, socialLinks } from '../utils/date';
       <p class="text-lg opacity-70 mb-10 sm:mb-12">Photography. Operations. The work.</p>
 
       <ul class="space-y-3 mb-10">
-        {navItems.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              class="block glass-card px-5 py-4 text-cream hover:opacity-100 opacity-90"
-            >
-              {item.name}
-            </a>
-          </li>
-        ))}
+        {navItems.map((item) => {
+          const photo = NAV_PHOTO[item.href];
+          const t = photo ? thumb(photo.file) : null;
+          return (
+            <li>
+              <a href={item.href} class="links-row glass-card text-cream">
+                {photo && t && (
+                  <img
+                    class="links-row__thumb"
+                    src={`/images/photography/thumb/${photo.file}.webp`}
+                    alt={photo.alt}
+                    width={t.w}
+                    height={t.h}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <span class="links-row__text">
+                  <span class="block">{item.name}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
 
       <ul class="space-y-3 mb-12">
@@ -34,10 +60,16 @@ import { navItems, socialLinks } from '../utils/date';
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="block glass-card px-5 py-4"
+              class="links-row glass-card"
             >
-              <span class="block text-cream">{item.name}</span>
-              <span class="block text-sm text-mute">{item.description}</span>
+              <picture class="links-row__thumb">
+                <source srcset={item.hero} type="image/webp" />
+                <img src={item.heroFallback} alt="" loading="lazy" decoding="async" />
+              </picture>
+              <span class="links-row__text">
+                <span class="block text-cream">{item.name}</span>
+                <span class="block text-sm text-mute">{item.description}</span>
+              </span>
             </a>
           </li>
         ))}
@@ -47,3 +79,32 @@ import { navItems, socialLinks } from '../utils/date';
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .links-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 72px;
+    padding: 0.625rem 1.25rem 0.625rem 0.625rem;
+    opacity: 0.92;
+    transition: opacity 200ms linear;
+  }
+  .links-row:hover,
+  .links-row:focus-visible {
+    opacity: 1;
+  }
+  .links-row__thumb,
+  .links-row__thumb img {
+    display: block;
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    overflow: hidden;
+  }
+  .links-row__text {
+    min-width: 0;
+  }
+</style>
