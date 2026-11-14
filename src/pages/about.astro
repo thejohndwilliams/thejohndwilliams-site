@@ -27,7 +27,7 @@ if (!lightStill || !waterStill) {
   <!-- Scroll progress indicator -->
 
   <!-- HERO - Portrait with full-bleed image. Width stops at the bitmap. -->
-  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench>
+  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'about-hero relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench data-hero-under>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('john-portrait-bw', 'avif')} sizes={portraitSizes('john-portrait-bw')} />
       <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('john-portrait-bw', 'webp')} sizes={portraitSizes('john-portrait-bw')} />
@@ -45,6 +45,7 @@ if (!lightStill || !waterStill) {
         src="/images/photography/hero/john-portrait-bw.webp"
         alt="John D. Williams, black and white portrait"
         class="absolute inset-0 w-full h-full object-cover object-[center_12%]"
+        data-bleed-short
         fetchpriority="high"
       />
     </picture>

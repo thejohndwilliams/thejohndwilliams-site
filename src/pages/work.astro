@@ -71,7 +71,7 @@ const expertise = [
 >
   <!-- HERO. Full-bleed lockup. dscf0331 is a 1349px portrait; the position
        class keeps the lanterns and the car in the wide crop. -->
-  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
+  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench data-hero-under>
     <picture>
       <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes="100vw" />
       <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes="100vw" />
@@ -190,6 +190,7 @@ const expertise = [
         sizes={bleedSizes('dsc-0014')}
         alt="A ram skull, stark against shadow"
         class="w-full h-full object-cover"
+        data-bleed-short
         loading="lazy"
         decoding="async"
       />

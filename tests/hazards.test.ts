@@ -364,3 +364,30 @@ describe('hazard locks: CSP style-src (2026-08-22)', () => {
     }
   });
 });
+
+describe('hazard locks: immersive opening and smooth scroll (2026-11-14)', () => {
+  const css = readFileSync(join(SRC, 'styles/global.css'), 'utf8');
+  const layout = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
+  const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
+
+  it('Lenis zeroes its clock when the idle loop wakes (the first-frame jump)', () => {
+    // Without this, the first frame of a gesture after the idle stop saw the
+    // whole idle gap as one frame and the 1.4s tween finished instantly:
+    // measured on production as 100% of a wheel step in a single frame.
+    const start = layout.slice(layout.indexOf('function startLoop()'));
+    expect(start.slice(0, 900)).toContain('if (!loopOn) lenis.time = 0;');
+  });
+
+  it('heroes are full-bleed: the hero caps no longer cap', () => {
+    expect(css).toMatch(/\.hero-cap-2048,\s*\.hero-cap-2400 \{ max-width: none; \}/);
+    expect(css).not.toContain('.hero-cap-2048 { max-width: 2048px; }');
+  });
+
+  it('the opening photograph slides under a shade header that cannot draw a hairline', () => {
+    expect(css).toContain('[data-hero-under] { margin-top: calc(-1 * var(--header-h)); }');
+    const rest = css.slice(css.indexOf('#site-header:not(.scrolled) {'));
+    expect(rest.slice(0, 600)).toContain('background-origin: border-box;');
+    expect(rest.slice(0, 600)).toContain('backdrop-filter: none;');
+    expect(header).toContain("setProperty('--header-h'");
+  });
+});

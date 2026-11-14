@@ -111,6 +111,7 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
   // navigation (N listeners each scheduling their own rAF). Bind once at
   // module scope; re-runs only refresh the initial scrolled state.
   let glassHeaderBound = false;
+  let headerSizeBound = false;
   function initGlassHeader() {
     const header = document.getElementById('site-header');
     if (!header) return;
@@ -134,6 +135,17 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
     }
 
     if (window.scrollY > 40) header.classList.add('scrolled');
+
+    // Publish the real header height so [data-hero-under] heroes slide
+    // exactly under it (global.css keeps measured fallbacks). One observer
+    // for the persisted header, bound once like the scroll listener.
+    if (!headerSizeBound && 'ResizeObserver' in window) {
+      headerSizeBound = true;
+      new ResizeObserver(() => {
+        const h = Math.round(header.getBoundingClientRect().height);
+        if (h > 0) document.documentElement.style.setProperty('--header-h', `${h}px`);
+      }).observe(header);
+    }
   }
 
   // Dim / true-black toggle. Pre-paint script in BaseLayout applied the saved

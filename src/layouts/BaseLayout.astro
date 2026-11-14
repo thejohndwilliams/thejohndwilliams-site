@@ -471,6 +471,13 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
 
         function startLoop() {
           if (!lenis || lenis.isStopped || document.hidden || motionQuery.matches) return;
+          // 2026-11-14 (owner: "a slight stutter when scrolling"): Lenis
+          // measures each frame against its last raf time. After the idle
+          // stop below, the first frame of a new gesture saw the whole idle
+          // gap (often seconds) as one frame, so the 1.4s wheel tween
+          // completed instantly: a jump, then a glide. Zeroing the clock on
+          // wake makes that first frame a zero-length step.
+          if (!loopOn) lenis.time = 0;
           loopOn = true;
           idleSince = -1;
           if (!rafId) rafId = requestAnimationFrame(tick);
