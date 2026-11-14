@@ -27,6 +27,8 @@ export default defineConfig({
       // without prefix rewriting: both declarations survive, unprefixed
       // wins where both parse, -webkit- carries old Safari. Verified by
       // injected-stylesheet computed-style test in Chrome 151.
+      // 2026-11-14: Vite in Astro 7.4 no longer ships esbuild, so it is a
+      // direct devDependency now. Removing it breaks the build outright.
       cssMinify: 'esbuild',
       // 2026-08-22: script-src has no unsafe-inline. Vite's default inline
       // threshold emitted hoisted page scripts as <script type="module">
