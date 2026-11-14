@@ -418,6 +418,9 @@ const charities = [
       clone.className = 'hero-xfade';
       clone.alt = '';
       clone.setAttribute('aria-hidden', 'true');
+      // Full-bleed like the hero it fades over (2026-11-14): the dawn and
+      // golden masters are 2400px, narrower than a 2560 screen.
+      clone.setAttribute('data-bleed-short', '');
       clone.decoding = 'sync';
       clone.src = url;
       const picture = img.closest('picture');
