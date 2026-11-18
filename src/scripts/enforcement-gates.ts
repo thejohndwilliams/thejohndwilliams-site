@@ -5,30 +5,28 @@
  * spam piles up from the baseline as filled cream dots, legitimate messages
  * hang below it as grey rings. Two handles set the review floor and the
  * auto-action gate; each arrow key moves a line past exactly one message.
- * The accent colour marks only harms: legitimate messages above the gate
- * (wrongly removed) and spam below the floor (missed).
+ * Step buttons do the same with a single pointer. The accent colour marks
+ * only harms: legitimate messages above the gate (wrongly removed) and spam
+ * below the floor (missed).
  *
- * Every number on the readout and in the lede is recomputed from prefix
- * sums on each move. No chart library; SVG presentation is all classes in
- * enforcement-gates.css (the CSP forbids inline <style>).
+ * Positions are CSS variables (--hf, --lf, --plot-ar), never inline
+ * transforms: the production CSP is style-src 'self'. One polite live
+ * region announces button changes. A focused handle announces itself.
  */
 import data from '../data/enforcement-sample.json';
 import { wilson } from '../utils/wilson';
+import { clampLabelCenter, lineX, logit, plotGeometry, type PlotGeometry, type PlotPoint } from '../utils/enforcement-layout';
+import { autoValueText, caughtText, liveSummary, reviewValueText } from '../utils/enforcement-counts';
 
-type Point = { s: number; y: number; x: number; py: number; el?: SVGCircleElement; state?: string };
+type Point = PlotPoint & { el?: SVGCircleElement; state?: string };
 
 const SVGNS = 'http://www.w3.org/2000/svg';
-const EPS = 1e-4;
 const TICKS = [0.001, 0.01, 0.1, 0.5, 0.9, 0.99, 0.999];
 
 let abort: AbortController | null = null;
 let resizeObs: ResizeObserver | null = null;
 let liveTimer = 0;
 
-const logit = (p: number) => {
-  const q = Math.min(1 - EPS, Math.max(EPS, p));
-  return Math.log(q / (1 - q));
-};
 const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 
 function teardown(): void {
@@ -60,96 +58,41 @@ export function initEnforcementGates(): void {
   abort = new AbortController();
   const { signal } = abort;
 
-  const pts: Point[] = (data.points as [number, number][]).map(([s, y]) => ({ s, y, x: 0, py: 0 }));
-  const n = pts.length;
+  const raw = data.points as [number, number][];
+  let geo: PlotGeometry = plotGeometry(raw, plot.clientWidth || 640);
+  let pts = geo.pts as Point[];
+  const n = raw.length;
   const spamPrefix = new Int32Array(n + 1);
-  for (let i = 0; i < n; i++) spamPrefix[i + 1] = spamPrefix[i] + pts[i].y;
+  for (let i = 0; i < n; i++) spamPrefix[i + 1] = spamPrefix[i] + raw[i][1];
   const totalSpam = spamPrefix[n];
   const firstAtLeast = (t: number) => {
     let lo = 0;
     let hi = n;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
-      if (pts[mid].s < t) lo = mid + 1;
+      if (raw[mid][0] < t) lo = mid + 1;
       else hi = mid;
     }
     return lo;
   };
   const PUBLISHED = { auto: firstAtLeast(data.gates.auto), review: firstAtLeast(data.gates.review) };
   const st = { ...PUBLISHED };
+  let lastHandle: HTMLElement = hAuto;
 
-  const lmin = logit(pts[0].s) - 0.4;
-  const lmax = logit(pts[n - 1].s) + 0.4;
-  let W = 0;
-  let H = 0;
-  let base = 0;
-  let padL = 0;
-  let padR = 0;
-  const xOf = (l: number) => padL + ((l - lmin) / (lmax - lmin)) * (W - padL - padR);
-  // A line sits between the last message it lets through and the first it takes.
-  const lineX = (idx: number) => {
-    if (idx <= 0) return padL - 6;
-    if (idx >= n) return W - padR + 6;
-    return (pts[idx - 1].x + pts[idx].x) / 2;
-  };
-
-  let bandAuto: SVGRectElement;
-  let bandReview: SVGRectElement;
+  let bandAuto: SVGRectElement | undefined;
+  let bandReview: SVGRectElement | undefined;
 
   function layout(): void {
-    W = Math.round(plot!.clientWidth);
+    const W = Math.round(plot!.clientWidth);
     if (W < 10) return;
-    padL = 10;
-    padR = 10;
-    const r = Math.min(2.4, Math.max(1.45, W / 430));
-    // Legitimate messages outnumber spam seven to one and crowd one region;
-    // a slightly smaller ring keeps that pile from dwarfing the figure.
-    const rh = r * 0.78;
-    for (const p of pts) p.x = xOf(logit(p.s));
-
-    // Greedy dodge per side: keep x exact, stack away from the baseline.
-    const place = (side: Point[], step: number) => {
-      const placed: Point[] = [];
-      let maxH = 0;
-      for (const p of side) {
-        let k = 0;
-        for (;;) {
-          const yy = k * step;
-          let hit = false;
-          for (let j = placed.length - 1; j >= 0; j--) {
-            const q = placed[j];
-            const dx = p.x - q.x;
-            if (dx > step) break;
-            const dy = yy - q.py;
-            if (dx * dx + dy * dy < step * step) {
-              hit = true;
-              break;
-            }
-          }
-          if (!hit) {
-            p.py = yy;
-            break;
-          }
-          k += 1;
-        }
-        // Keep placed sorted by x (input is already x-ordered).
-        placed.push(p);
-        maxH = Math.max(maxH, p.py);
-      }
-      return maxH;
-    };
-    const spam = pts.filter((p) => p.y === 1);
-    const ham = pts.filter((p) => p.y === 0);
-    const upH = place(spam, r * 2 + 0.7);
-    const downH = place(ham, rh * 2 + 0.55);
-    const top = 14;
-    const axis = 30;
-    base = top + upH + r + 6;
-    H = Math.ceil(base + 6 + downH + rh + axis);
+    geo = plotGeometry(raw, W);
+    pts = geo.pts as Point[];
+    const { H, padL, padR, base, axis, r, rh } = geo;
 
     svg!.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg!.setAttribute('width', String(W));
     svg!.setAttribute('height', String(H));
+    plot!.style.setProperty('--plot-ar', `${W} / ${H}`);
     svg!.replaceChildren();
 
     const defs = document.createElementNS(SVGNS, 'defs');
@@ -188,6 +131,9 @@ export function initEnforcementGates(): void {
     baseline.setAttribute('y2', String(base));
     svg!.appendChild(baseline);
 
+    const lmin = logit(pts[0].s) - 0.4;
+    const lmax = logit(pts[n - 1].s) + 0.4;
+    const xOf = (l: number) => padL + ((l - lmin) / (lmax - lmin)) * (W - padL - padR);
     for (const t of TICKS) {
       const x = xOf(logit(t));
       if (x < padL || x > W - padR) continue;
@@ -227,6 +173,24 @@ export function initEnforcementGates(): void {
     });
   }
 
+  function placeLabel(el: HTMLElement | null, bandLeft: number, bandRight: number): void {
+    if (!el) return;
+    const width = el.offsetWidth;
+    const center = clampLabelCenter((bandLeft + bandRight) / 2, bandLeft, bandRight, width, geo.W);
+    el.style.setProperty('--lf', `${center}px`);
+    // A band narrower than its label cannot hold it. Hide it instead of
+    // painting across the neighbour. The element stays in the tree.
+    el.classList.toggle('is-clipped', bandRight - bandLeft < width + 4);
+  }
+
+  function scoreAt(idx: number): string {
+    if (n === 0) return 'unavailable';
+    if (idx >= n) return '1.000';
+    const score = pts[idx]?.s;
+    if (!(score >= 0)) return 'unavailable';
+    return score.toFixed(3);
+  }
+
   function update(announce = true): void {
     const a = st.auto;
     const rv = st.review;
@@ -236,17 +200,17 @@ export function initEnforcementGates(): void {
     const reviewN = a - rv;
     const reviewSpam = spamPrefix[a] - spamPrefix[rv];
     const missed = spamPrefix[rv];
-    const precision = autoN ? autoTp / autoN : 1;
     const [lo, hi] = wilson(autoTp, autoN);
+    const { W, padL, padR } = geo;
 
     setBind('auto', String(autoTp));
     setBind('review', String(reviewN));
     setBind('missed', String(missed));
     setBind('wrong', String(autoFp));
-    setBind('precision', autoN ? pct(precision) : 'n/a');
-    setBind('precisionCI', autoN ? `${pct(lo)} to ${pct(hi)}` : 'no actions');
+    setBind('precision', autoN > 0 ? pct(autoTp / autoN) : 'n/a');
+    setBind('precisionCI', autoN > 0 ? `${pct(lo)} to ${pct(hi)}` : 'no actions');
     setBind('reviewMix', `${reviewSpam} spam, ${reviewN - reviewSpam} legitimate`);
-    setBind('caught', `${pct((autoTp + reviewSpam) / totalSpam)} caught overall`);
+    setBind('caught', caughtText(autoTp + reviewSpam, totalSpam));
 
     for (let i = 0; i < n; i++) {
       const p = pts[i];
@@ -257,39 +221,41 @@ export function initEnforcementGates(): void {
       }
     }
 
-    const xa = lineX(a);
-    const xr = lineX(rv);
+    const xa = lineX(geo, a);
+    const xr = lineX(geo, rv);
     if (bandAuto) {
       bandAuto.setAttribute('x', String(xa));
       bandAuto.setAttribute('width', String(Math.max(0, W - xa)));
-      bandReview.setAttribute('x', String(xr));
-      bandReview.setAttribute('width', String(Math.max(0, xa - xr)));
+      bandReview!.setAttribute('x', String(xr));
+      bandReview!.setAttribute('width', String(Math.max(0, xa - xr)));
     }
-    hAuto!.style.transform = `translateX(${xa}px)`;
-    hReview!.style.transform = `translateX(${xr}px)`;
-    const mid = (x0: number, x1: number) => (x0 + x1) / 2;
-    if (labels.allow) labels.allow.style.transform = `translateX(${mid(padL, xr)}px)`;
-    if (labels.review) labels.review.style.transform = `translateX(${mid(xr, xa)}px)`;
-    if (labels.auto) labels.auto.style.transform = `translateX(${mid(xa, W - padR)}px)`;
+    const frac = (x: number) => (W > 0 ? x / W : 0);
+    hAuto!.style.setProperty('--hf', String(frac(xa)));
+    hReview!.style.setProperty('--hf', String(frac(xr)));
+    placeLabel(labels.allow, padL, xr);
+    placeLabel(labels.review, xr, xa);
+    placeLabel(labels.auto, xa, W - padR);
     root!.classList.toggle('is-narrow-review', xa - xr < 64);
 
-    const scoreAt = (idx: number) => (idx >= n ? 1 : pts[idx].s).toFixed(3);
-    for (const [h, idx, name] of [[hAuto, a, 'Auto-action gate'], [hReview, rv, 'Review floor']] as const) {
-      h!.setAttribute('aria-valuemin', '0');
-      h!.setAttribute('aria-valuemax', String(n));
-      h!.setAttribute('aria-valuenow', String(idx));
-    }
-    hAuto!.setAttribute('aria-valuetext', `Auto-action at score ${scoreAt(a)}. Precision ${pct(precision)}. ${autoFp} wrongly removed.`);
-    hReview!.setAttribute('aria-valuetext', `Review floor at score ${scoreAt(rv)}. ${reviewN} in review. ${missed} missed.`);
+    hAuto!.setAttribute('aria-valuemin', '0');
+    hAuto!.setAttribute('aria-valuemax', String(n));
+    hAuto!.setAttribute('aria-valuenow', String(a));
+    hReview!.setAttribute('aria-valuemin', '0');
+    hReview!.setAttribute('aria-valuemax', String(n));
+    hReview!.setAttribute('aria-valuenow', String(rv));
+    hAuto!.setAttribute('aria-valuetext', autoValueText(scoreAt(a), autoTp, autoN, autoFp));
+    hReview!.setAttribute('aria-valuetext', reviewValueText(scoreAt(rv), reviewN, missed));
 
     const moved = a !== PUBLISHED.auto || rv !== PUBLISHED.review;
     if (reset) reset.hidden = !moved;
-    if (announce && live) {
-      window.clearTimeout(liveTimer);
-      liveTimer = window.setTimeout(() => {
-        live.textContent = `Precision ${pct(precision)}. ${reviewN} in review. ${missed} missed. ${autoFp} wrongly removed.`;
-      }, 500);
-    }
+    if (!announce || !live) return;
+    const handleFocused = document.activeElement === hAuto || document.activeElement === hReview;
+    window.clearTimeout(liveTimer);
+    if (handleFocused) return;
+    const text = liveSummary(autoTp, autoN, reviewN, missed, autoFp);
+    liveTimer = window.setTimeout(() => {
+      if (live.textContent !== text) live.textContent = text;
+    }, 400);
   }
 
   function setIdx(which: 'auto' | 'review', idx: number): void {
@@ -300,7 +266,6 @@ export function initEnforcementGates(): void {
   }
 
   function idxFromX(x: number): number {
-    // The boundary index whose line position is nearest x.
     let lo = 0;
     let hi = n;
     while (lo < hi) {
@@ -313,9 +278,11 @@ export function initEnforcementGates(): void {
 
   for (const [h, which] of [[hAuto, 'auto'], [hReview, 'review']] as const) {
     h.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      lastHandle = h;
+      h.focus({ preventScroll: true });
       h.setPointerCapture(e.pointerId);
       root!.classList.add('is-dragging');
-      e.preventDefault();
     }, { signal });
     h.addEventListener('pointermove', (e) => {
       if (!h.hasPointerCapture(e.pointerId)) return;
@@ -329,6 +296,7 @@ export function initEnforcementGates(): void {
     h.addEventListener('pointerup', end, { signal });
     h.addEventListener('pointercancel', end, { signal });
     h.addEventListener('keydown', (e) => {
+      lastHandle = h;
       const cur = which === 'auto' ? st.auto : st.review;
       const map: Record<string, number> = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 };
       if (e.key in map) {
@@ -344,15 +312,31 @@ export function initEnforcementGates(): void {
     }, { signal });
   }
 
+  root.querySelectorAll<HTMLButtonElement>('[data-nudge]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.nudge === 'auto' ? 'auto' : 'review';
+      const dir = Number(btn.dataset.dir);
+      if (dir !== 1 && dir !== -1) return;
+      lastHandle = which === 'auto' ? hAuto! : hReview!;
+      const cur = which === 'auto' ? st.auto : st.review;
+      setIdx(which, cur + dir);
+    }, { signal });
+  });
+
   reset?.addEventListener('click', () => {
     st.auto = PUBLISHED.auto;
     st.review = PUBLISHED.review;
-    update();
+    lastHandle.focus({ preventScroll: true });
+    update(false);
   }, { signal });
 
   root.setAttribute('data-ready', '');
   layout();
-  let lastW = W;
+  document.fonts?.ready.then(() => {
+    if (signal.aborted) return;
+    update(false);
+  }).catch(() => undefined);
+  let lastW = geo.W;
   resizeObs = new ResizeObserver(() => {
     const w = Math.round(plot.clientWidth);
     if (w !== lastW) {

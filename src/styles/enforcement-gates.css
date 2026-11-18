@@ -6,11 +6,13 @@
 
 .enf-hero {
   min-height: 62vh;
+  min-height: 62svh;
 }
 
 @media (min-width: 768px) {
   .enf-hero {
     min-height: 72vh;
+    min-height: 72svh;
   }
 }
 
@@ -61,12 +63,21 @@
 .enf-step,
 .enf-band-label,
 .enf-flow__k,
+.enf-stepper__k,
 .enf-key {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.6875rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(244, 234, 222, 0.55);
+}
+
+/* Small labels: opaque stone, 7.5:1 on midnight. Translucent cream at
+   0.55 was the previous tone; alpha made the ratio depend on the plate. */
+.enf-stat__k,
+.enf-flow__k,
+.enf-stepper__k {
+  color: #a89f8c;
 }
 
 .enf-meta dd {
@@ -135,28 +146,28 @@
   position: relative;
   height: 1.25rem;
   margin-bottom: 0.5rem;
+  overflow-x: clip;
 }
 
 .enf-band-label {
   position: absolute;
-  left: 0;
+  left: var(--lf, 50%);
   top: 0;
   white-space: nowrap;
-  translate: -50% 0;
+  transform: translateX(-50%);
   color: rgba(244, 234, 222, 0.7);
 }
+
+.enf-band-label[data-band='allow'] { --lf: 22%; }
+.enf-band-label[data-band='review'] { --lf: 42%; }
+.enf-band-label[data-band='auto'] { --lf: 72%; }
 
 .enf-band-label[data-band='auto'] {
   color: #7e9cb8;
 }
 
-.enf-fig:not([data-ready]) .enf-bands,
-.enf-fig:not([data-ready]) .enf-handle,
-.enf-fig:not([data-ready]) .enf-key {
-  display: none;
-}
-
-.enf-fig.is-narrow-review .enf-band-label[data-band='review'] {
+.enf-fig.is-narrow-review .enf-band-label[data-band='review'],
+.enf-band-label.is-clipped {
   opacity: 0;
 }
 
@@ -164,14 +175,63 @@
   position: relative;
   width: 100%;
   touch-action: pan-y;
+  container-type: inline-size;
+  --plot-ar: 280 / 330;
 }
 
 .enf-svg {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: var(--plot-ar);
   overflow: visible;
 }
+
+@container (min-width: 280px) { .enf-plot { --plot-ar: 280 / 330; } }
+@container (min-width: 300px) { .enf-plot { --plot-ar: 300 / 316; } }
+@container (min-width: 320px) { .enf-plot { --plot-ar: 320 / 304; } }
+@container (min-width: 340px) { .enf-plot { --plot-ar: 340 / 289; } }
+@container (min-width: 360px) { .enf-plot { --plot-ar: 360 / 277; } }
+@container (min-width: 380px) { .enf-plot { --plot-ar: 380 / 272; } }
+@container (min-width: 400px) { .enf-plot { --plot-ar: 400 / 266; } }
+@container (min-width: 420px) { .enf-plot { --plot-ar: 420 / 261; } }
+@container (min-width: 440px) { .enf-plot { --plot-ar: 440 / 249; } }
+@container (min-width: 460px) { .enf-plot { --plot-ar: 460 / 240; } }
+@container (min-width: 480px) { .enf-plot { --plot-ar: 480 / 234; } }
+@container (min-width: 500px) { .enf-plot { --plot-ar: 500 / 222; } }
+@container (min-width: 520px) { .enf-plot { --plot-ar: 520 / 219; } }
+@container (min-width: 540px) { .enf-plot { --plot-ar: 540 / 213; } }
+@container (min-width: 560px) { .enf-plot { --plot-ar: 560 / 210; } }
+@container (min-width: 580px) { .enf-plot { --plot-ar: 580 / 208; } }
+@container (min-width: 600px) { .enf-plot { --plot-ar: 600 / 205; } }
+@container (min-width: 620px) { .enf-plot { --plot-ar: 620 / 202; } }
+@container (min-width: 640px) { .enf-plot { --plot-ar: 640 / 205; } }
+@container (min-width: 660px) { .enf-plot { --plot-ar: 660 / 209; } }
+@container (min-width: 680px) { .enf-plot { --plot-ar: 680 / 213; } }
+@container (min-width: 700px) { .enf-plot { --plot-ar: 700 / 216; } }
+@container (min-width: 720px) { .enf-plot { --plot-ar: 720 / 213; } }
+@container (min-width: 740px) { .enf-plot { --plot-ar: 740 / 217; } }
+@container (min-width: 760px) { .enf-plot { --plot-ar: 760 / 220; } }
+@container (min-width: 780px) { .enf-plot { --plot-ar: 780 / 224; } }
+@container (min-width: 800px) { .enf-plot { --plot-ar: 800 / 226; } }
+@container (min-width: 820px) { .enf-plot { --plot-ar: 820 / 226; } }
+@container (min-width: 840px) { .enf-plot { --plot-ar: 840 / 234; } }
+@container (min-width: 860px) { .enf-plot { --plot-ar: 860 / 237; } }
+@container (min-width: 880px) { .enf-plot { --plot-ar: 880 / 237; } }
+@container (min-width: 900px) { .enf-plot { --plot-ar: 900 / 240; } }
+@container (min-width: 920px) { .enf-plot { --plot-ar: 920 / 240; } }
+@container (min-width: 940px) { .enf-plot { --plot-ar: 940 / 244; } }
+@container (min-width: 960px) { .enf-plot { --plot-ar: 960 / 247; } }
+@container (min-width: 980px) { .enf-plot { --plot-ar: 980 / 250; } }
+@container (min-width: 1000px) { .enf-plot { --plot-ar: 1000 / 258; } }
+@container (min-width: 1020px) { .enf-plot { --plot-ar: 1020 / 257; } }
+@container (min-width: 1040px) { .enf-plot { --plot-ar: 1040 / 264; } }
+@container (min-width: 1060px) { .enf-plot { --plot-ar: 1060 / 255; } }
+@container (min-width: 1080px) { .enf-plot { --plot-ar: 1080 / 251; } }
+@container (min-width: 1100px) { .enf-plot { --plot-ar: 1100 / 246; } }
+@container (min-width: 1120px) { .enf-plot { --plot-ar: 1120 / 246; } }
+@container (min-width: 1140px) { .enf-plot { --plot-ar: 1140 / 246; } }
+@container (min-width: 1160px) { .enf-plot { --plot-ar: 1160 / 242; } }
 
 /* Bands */
 .enf-band--auto {
@@ -234,12 +294,15 @@
   position: absolute;
   top: -1.75rem;
   bottom: 1.5rem;
-  left: -22px;
+  left: calc(var(--hf, 0.4) * 100% - 22px);
   width: 44px;
   cursor: ew-resize;
   touch-action: none;
   outline: none;
 }
+
+.enf-handle[data-handle='review'] { --hf: 0.375; }
+.enf-handle[data-handle='auto'] { --hf: 0.459; }
 
 .enf-handle::before {
   content: '';
@@ -451,7 +514,85 @@
 }
 
 .enf-qa__cell.is-wrong {
+  border-radius: 50%;
   background: #7e9cb8;
+}
+
+.enf-qa__cell.is-wrong::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(#0a0a0a, #0a0a0a) center / 1.5px 70% no-repeat,
+    linear-gradient(#0a0a0a, #0a0a0a) center / 70% 1.5px no-repeat;
+  transform: rotate(45deg);
+}
+
+.enf-qa__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.enf-qa__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.enf-steppers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.enf-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.enf-stepper__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(244, 234, 222, 0.32);
+  color: #f4eade;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.enf-stepper__btn:hover {
+  border-color: #f4eade;
+}
+
+.enf-stepper__btn:focus-visible {
+  outline: 1px solid #7e9cb8;
+  outline-offset: 3px;
+}
+
+@media (pointer: coarse) {
+  .enf-stepper__btn {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 /* Appeal flow */
@@ -593,7 +734,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .enf-handle__knob,
-  .enf-action {
+  .enf-action,
+  .enf-stepper__btn {
     transition: none;
   }
 }

@@ -752,6 +752,26 @@ describe('enforcement-gates case study', () => {
     expect(page).toContain(`${t.auto_tp} of ${t.auto_tp + t.auto_fp} were`);
     expect(sample.points.length).toBe(sample.meta.split.test);
     expect(sample.meta.messages_unique).toBeLessThan(sample.meta.messages_raw);
+    expect(page).toContain('viewBox="0 0 640 205"');
+    expect(page).toContain('data-nudge="auto"');
+    expect(page).toContain('Wrongly removed');
+    expect(page).not.toMatch(/\sstyle="/);
+  });
+
+  it('serves the wide case-study card below the hero tier', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+    const card = work.match(/<picture\b[^>]*>[\s\S]*?img-7395-enhanced-sr[\s\S]*?<\/picture>/)?.[0];
+    expect(card, 'case study picture').toBeTruthy();
+    expect(card).toContain('/images/photography/card/img-7395-enhanced-sr.avif 1280w');
+    expect(card).toContain('/images/photography/gallery/img-7395-enhanced-sr.avif 1200w');
+    expect(card).toContain('/images/photography/thumb/img-7395-enhanced-sr.avif 400w');
+    expect(card).not.toContain('/images/photography/hero/img-7395-enhanced-sr');
+    expect(card).toContain('width="1280"');
+    expect(card).toContain('height="720"');
+    expect(card).toContain('loading="lazy"');
+    expect(card).toContain('decoding="async"');
+    expect(card).toContain('fetchpriority="low"');
+    expect(card).toContain('sizes="(max-width: 767px) 100vw, 1224px"');
   });
 
   it('carries no employer, platform or internal terms and no em dash', () => {

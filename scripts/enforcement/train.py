@@ -61,8 +61,50 @@ def band_counts(scores, y, auto, floor):
     }
 
 
+def choose_gates(scores, labels):
+    """Return (auto, floor) or None when no threshold reaches the rules."""
+    order = np.sort(np.unique(scores))
+    if order.size == 0:
+        return None
+    auto = None
+    for t in order:
+        act = scores >= t
+        n_act = int(np.asarray(act).sum())
+        if n_act == 0:
+            continue
+        if float((labels[act] == 1).sum()) / n_act >= 0.99:
+            auto = float(t)
+            break
+    if auto is None:
+        return None
+    total_spam = int((labels == 1).sum())
+    if total_spam <= 0:
+        return None
+    floor = None
+    for t in order[::-1]:
+        tv = float(t)
+        if tv > auto:
+            continue
+        caught = int(((scores >= t) & (labels == 1)).sum())
+        if caught / total_spam >= 0.98:
+            floor = tv
+            break
+    if floor is None:
+        floor = float(order[0])
+    if floor > auto:
+        floor = auto
+    return auto, floor
+
+
 def main(src):
-    raw = load(src)
+    path = Path(src)
+    if not path.is_file():
+        print(f'No input file at {path}. Nothing was written.', file=sys.stderr)
+        return 0
+    raw = load(path)
+    if not raw:
+        print('No labelled messages in the input. Nothing was written.', file=sys.stderr)
+        return 0
     seen, rows = set(), []
     for text, label in raw:
         if text in seen:
@@ -86,34 +128,31 @@ def main(src):
 
     s_cal, s_te = score(x_cal), score(x_te)
 
-    # Gates from calibration only.
-    order = np.sort(np.unique(s_cal))
-    auto = None
-    for t in order:
-        act = s_cal >= t
-        if act.sum() == 0:
-            continue
-        if (y_cal[act] == 1).mean() >= 0.99:
-            auto = float(t)
-            break
-    total_spam = int((y_cal == 1).sum())
-    floor = None
-    for t in order[::-1]:
-        if t > auto:
-            continue
-        caught = int(((s_cal >= t) & (y_cal == 1)).sum())
-        if caught / total_spam >= 0.98:
-            floor = float(t)
-            break
-    if floor is None:
-        floor = float(order[0])
-
-    cal = band_counts(s_cal, y_cal, auto, floor)
-    te = band_counts(s_te, y_te, auto, floor)
+    # Gates from calibration only. Counts are computed after the scores are
+    # snapped to the stored precision, so the integers always partition the
+    # split. Rounding is for the file, not for the arithmetic that precedes it.
+    picked = choose_gates(s_cal, y_cal)
+    if picked is None:
+        print('No gate qualifies: no calibration threshold reached precision 0.99. Nothing was written.', file=sys.stderr)
+        return 0
+    auto, floor = picked
+    auto_r = round(float(auto), 6)
+    floor_r = round(float(floor), 6)
+    if floor_r > auto_r:
+        floor_r = auto_r
+    s_cal_r = np.round(np.asarray(s_cal, dtype=float), 6)
+    s_te_r = np.round(np.asarray(s_te, dtype=float), 6)
+    cal = band_counts(s_cal_r, y_cal, auto_r, floor_r)
+    te = band_counts(s_te_r, y_te, auto_r, floor_r)
+    for name, counts, expected in (('calibration', cal, len(y_cal)), ('test', te, len(y_te))):
+        total = sum(counts.values())
+        if total != int(expected):
+            print(f'{name} counts sum to {total}, expected {expected}. Nothing was written.', file=sys.stderr)
+            return 0
     k, n = te['auto_tp'], te['auto_tp'] + te['auto_fp']
     lo, hi = wilson(k, n)
 
-    pts = sorted(zip(s_te.tolist(), y_te.tolist()))
+    pts = sorted(zip(s_te_r.tolist(), y_te.tolist()))
     out = {
         'meta': {
             'dataset': 'UCI SMS Spam Collection',
@@ -127,7 +166,7 @@ def main(src):
             'model': 'TF-IDF word 1-2 grams and character 3-5 grams, logistic regression',
             'seed': SEED,
         },
-        'gates': {'auto': round(auto, 6), 'review': round(floor, 6),
+        'gates': {'auto': auto_r, 'review': floor_r,
                   'rule_auto': 'lowest score with calibration precision at or above 0.99',
                   'rule_review': 'highest floor keeping auto plus review recall at or above 0.98'},
         'calibration': cal,
@@ -140,4 +179,7 @@ def main(src):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    if len(sys.argv) < 2:
+        print('Usage: python3 scripts/enforcement/train.py /path/to/SMSSpamCollection', file=sys.stderr)
+        raise SystemExit(0)
+    raise SystemExit(main(sys.argv[1]))

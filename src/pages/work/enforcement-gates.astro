@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import data from '../../data/enforcement-sample.json';
 import { wilson, runToCertify } from '../../utils/wilson';
+import { countsFromPoints } from '../../utils/enforcement-counts';
+import { plotGeometry } from '../../utils/enforcement-layout';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 
@@ -12,7 +14,12 @@ import '../../styles/enforcement-gates.css';
 const pageTitle = 'Precision-Gated Enforcement';
 const description = 'A classifier run as an enforcement system: where it may act alone, where a person decides, and what a sample of decisions can actually certify.';
 
-const { meta, gates, calibration: cal, test } = data;
+const { meta, gates, calibration: cal } = data;
+const plotted = data.points as [number, number][];
+// Counts come from the plotted points (integers), not from a second
+// rounding of the scores. Gate scores are rounded only where they are shown.
+const test = countsFromPoints(plotted, gates.auto, gates.review);
+const plotFrame = plotGeometry(plotted, 640);
 const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 const fmt = (v: number) => v.toLocaleString('en-US');
 
@@ -33,7 +40,7 @@ const ivTicks = [0.85, 0.9, 0.95, 0.99];
 
 // QA unit chart: one square per automatic removal on the test split, in
 // score order from the gate upward, so the mistakes sit where they fell.
-const qaCells = (data.points as [number, number][])
+const qaCells = plotted
   .filter(([s]) => s >= gates.auto)
   .map(([, label]) => ({ wrong: label === 0 }));
 
@@ -141,9 +148,22 @@ const jsonLd = {
       </div>
 
       <div class="enf-plot" data-enf-plot>
-        <svg class="enf-svg" data-enf-svg role="img" aria-label={`Each of the ${fmt(meta.split.test)} test messages as a dot, placed by model score. Spam rises above the line, legitimate messages fall below it.`}></svg>
-        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal"><span class="enf-handle__knob"></span></div>
-        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal"><span class="enf-handle__knob"></span></div>
+        <svg class="enf-svg" data-enf-svg viewBox={`0 0 ${plotFrame.W} ${plotFrame.H}`} width={plotFrame.W} height={plotFrame.H} role="img" aria-label={`Each of the ${fmt(meta.split.test)} test messages as a dot, placed by model score. Spam rises above the line, legitimate messages fall below it.`}></svg>
+        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Review floor"><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Auto-action gate"><span class="enf-handle__knob"></span></div>
+      </div>
+
+      <div class="enf-steppers">
+        <div class="enf-stepper">
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review floor −">−</button>
+          <span class="enf-stepper__k">Review floor</span>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review floor +">+</button>
+        </div>
+        <div class="enf-stepper">
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate −">−</button>
+          <span class="enf-stepper__k">Auto-action</span>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate +">+</button>
+        </div>
       </div>
 
       <figcaption class="enf-cap">
@@ -203,6 +223,10 @@ const jsonLd = {
         <div class="enf-qa__grid" role="img" aria-label={`${testN} automatic removals, ${test.auto_fp} of them legitimate messages.`}>
           {qaCells.map((c) => <span class:list={['enf-qa__cell', { 'is-wrong': c.wrong }]}></span>)}
         </div>
+        <ul class="enf-qa__legend">
+          <li><span class="enf-qa__cell" aria-hidden="true"></span><span>Spam removed</span></li>
+          <li><span class="enf-qa__cell is-wrong" aria-hidden="true"></span><span>Wrongly removed</span></li>
+        </ul>
         <figcaption class="enf-cap"><span>{qaCells.length} removals, lowest score first.</span></figcaption>
       </figure>
     </section>
