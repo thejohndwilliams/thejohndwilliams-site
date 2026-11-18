@@ -171,11 +171,15 @@
   opacity: 0;
 }
 
+.enf-plot-frame {
+  container-type: inline-size;
+  width: 100%;
+}
+
 .enf-plot {
   position: relative;
   width: 100%;
   touch-action: pan-y;
-  container-type: inline-size;
   --plot-ar: 280 / 330;
 }
 
@@ -292,13 +296,17 @@
 /* Handles: a 1px rule the plot's full height, a blue knob, a 44px hit area. */
 .enf-handle {
   position: absolute;
-  top: -1.75rem;
-  bottom: 1.5rem;
-  left: calc(var(--hf, 0.4) * 100% - 22px);
+  top: 0;
+  bottom: 0;
+  left: clamp(0px, calc(var(--hf, 0.4) * 100% - 22px), calc(100% - 44px));
   width: 44px;
   cursor: ew-resize;
   touch-action: none;
   outline: none;
+}
+
+.enf-fig.is-dragging {
+  user-select: none;
 }
 
 .enf-handle[data-handle='review'] { --hf: 0.375; }
@@ -307,7 +315,7 @@
 .enf-handle::before {
   content: '';
   position: absolute;
-  top: 1.75rem;
+  top: 0;
   bottom: 0;
   left: 21.5px;
   width: 1px;
@@ -316,7 +324,7 @@
 
 .enf-handle__knob {
   position: absolute;
-  top: calc(1.75rem - 7px);
+  top: 0;
   left: 15px;
   width: 14px;
   height: 14px;
@@ -571,7 +579,7 @@
   padding: 0;
   appearance: none;
   background: transparent;
-  border: 1px solid rgba(244, 234, 222, 0.32);
+  border: 1px solid #6f6a64;
   color: #f4eade;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 1.125rem;
@@ -586,13 +594,6 @@
 .enf-stepper__btn:focus-visible {
   outline: 1px solid #7e9cb8;
   outline-offset: 3px;
-}
-
-@media (pointer: coarse) {
-  .enf-stepper__btn {
-    width: 44px;
-    height: 44px;
-  }
 }
 
 /* Appeal flow */

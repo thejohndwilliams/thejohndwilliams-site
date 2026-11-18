@@ -2,10 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import data from '../../data/enforcement-sample.json';
 import { wilson, runToCertify } from '../../utils/wilson';
-import { countsFromPoints } from '../../utils/enforcement-counts';
+import { countsFromPoints, indexAtLeast, sliderText } from '../../utils/enforcement-counts';
 import { plotGeometry } from '../../utils/enforcement-layout';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
+import '../../styles/enforcement-story.css';
 
 // Case study: a classifier used as an enforcement system with three bands.
 // Public data only (UCI SMS Spam Collection, CC BY 4.0). Every number on
@@ -20,6 +21,7 @@ const plotted = data.points as [number, number][];
 // rounding of the scores. Gate scores are rounded only where they are shown.
 const test = countsFromPoints(plotted, gates.auto, gates.review);
 const plotFrame = plotGeometry(plotted, 640);
+const published = sliderText(plotted, indexAtLeast(plotted, gates.auto), indexAtLeast(plotted, gates.review));
 const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 const fmt = (v: number) => v.toLocaleString('en-US');
 
@@ -118,6 +120,25 @@ const jsonLd = {
     <!-- HERO FIGURE. Hydrated by src/scripts/enforcement-gates.ts. Without
          JS the readout and the table below still carry every number. -->
     <figure class="enf-fig" data-enf-figure>
+      <!-- SCROLL STORY. src/scripts/enforcement-story.ts pins the stage and
+           walks the dots through the steps below as the reader scrolls.
+           Without it (no script, reduced motion, a short viewport) the
+           steps read as an ordered list and the figure is interactive. -->
+      <div class="enf-scrolly" data-enf-scrolly>
+      <div class="enf-stage" data-enf-stage>
+      <div class="enf-story-rail" aria-hidden="true">
+        {Array.from({ length: 8 }, () => <span class="enf-story-rail__tick" data-story-tick></span>)}
+      </div>
+      <ol class="enf-story" aria-label="How the system decides, step by step">
+        <li data-story-step><span class="enf-count" data-count={meta.split.test}>{fmt(meta.split.test)}</span> messages arrive. Nobody can read them all.</li>
+        <li data-story-step>A model reads each one and gives it a score. Low means probably fine. High means probably spam.</li>
+        <li data-story-step>Now the answer key. Spam rises above the line, legitimate messages fall below it. The piles overlap in the middle, and the overlap is the whole problem.</li>
+        <li data-story-step>Draw one line. Everything to its right is removed with no person involved: <span class="enf-count" data-count={testN}>{testN}</span> messages.</li>
+        <li data-story-step><span class="enf-count" data-count={test.auto_fp}>{test.auto_fp}</span> of them were legitimate. Precision {pct(testP)}, short of the 99% the line was set to hold.</li>
+        <li data-story-step>A second line opens a band where a person decides. <span class="enf-count" data-count={test.review_spam + test.review_ham}>{test.review_spam + test.review_ham}</span> messages land there. That is the reviewer's workload.</li>
+        <li data-story-step>Below the floor, nothing happens. <span class="enf-count" data-count={test.allow_spam}>{test.allow_spam}</span> spam messages scored too low and got through.</li>
+        <li data-story-step>Two lines, three outcomes, a cost on every side. Now move the lines yourself.</li>
+      </ol>
       <div class="enf-readout" aria-hidden="false">
         <div class="enf-stat">
           <p class="enf-stat__k">Precision</p>
@@ -147,22 +168,26 @@ const jsonLd = {
         <span class="enf-band-label" data-band="auto">Auto-action</span>
       </div>
 
+      <div class="enf-plot-frame">
       <div class="enf-plot" data-enf-plot>
         <svg class="enf-svg" data-enf-svg viewBox={`0 0 ${plotFrame.W} ${plotFrame.H}`} width={plotFrame.W} height={plotFrame.H} role="img" aria-label={`Each of the ${fmt(meta.split.test)} test messages as a dot, placed by model score. Spam rises above the line, legitimate messages fall below it.`}></svg>
-        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Review floor"><span class="enf-handle__knob"></span></div>
-        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Auto-action gate"><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.reviewNow} aria-valuetext={published.reviewText}><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.autoNow} aria-valuetext={published.autoText}><span class="enf-handle__knob"></span></div>
+      </div>
+      </div>
+      </div>
       </div>
 
       <div class="enf-steppers">
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review floor −">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review gate">−</button>
           <span class="enf-stepper__k">Review floor</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review floor +">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review gate">+</button>
         </div>
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate −">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate">−</button>
           <span class="enf-stepper__k">Auto-action</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate +">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate">+</button>
         </div>
       </div>
 
@@ -189,7 +214,7 @@ const jsonLd = {
       <p class="enf-step">02</p>
       <h2>The gate held where it was set</h2>
       <p>On calibration, {cal.auto_tp} of {calN} automatic removals were spam: {pct(calP)}. On the test split, {test.auto_tp} of {testN} were: {pct(testP)}. The rule was met where it was written and missed where it was checked, and the intervals say why.</p>
-      <figure class="enf-ci">
+      <figure class="enf-ci" data-enf-ci>
         <svg viewBox={`0 0 ${IV.w} ${IV.h}`} class="enf-ci__svg" role="img" aria-label={`Precision with 95 percent intervals. Calibration ${pct(calP)}, interval ${pct(calCI[0])} to ${pct(calCI[1])}. Test ${pct(testP)}, interval ${pct(testCI[0])} to ${pct(testCI[1])}. Target 99 percent.`}>
           {ivTicks.map((t) => (
             <g>
@@ -202,7 +227,7 @@ const jsonLd = {
             { y: 56, label: 'Calibration', p: calP, ci: calCI, n: calN },
             { y: 104, label: 'Test', p: testP, ci: testCI, n: testN },
           ].map((row) => (
-            <g>
+            <g data-ci-row>
               <text x="0" y={row.y + 4} class="enf-ci__label">{row.label}</text>
               <line x1={ix(Math.max(IV.lo, row.ci[0]))} x2={ix(row.ci[1])} y1={row.y} y2={row.y} class="enf-ci__range" />
               <circle cx={ix(row.p)} cy={row.y} r="5" class="enf-ci__point" />
@@ -213,6 +238,20 @@ const jsonLd = {
         <figcaption class="enf-cap"><span>Precision, with 95% Wilson intervals.</span></figcaption>
       </figure>
       <p>{calN} decisions cannot certify 99%. Even with none wrong, the lower bound only clears 99% after {certify99} consecutive correct removals. The calibration result was a point estimate dressed as a guarantee. A program that wants a 99% gate has to fund the sample that proves it, and keep paying for it as the content shifts.</p>
+      <figure class="enf-run" data-enf-run>
+        <div class="enf-run__head">
+          <p class="enf-run__stat"><span class="enf-run__k">Correct in a row</span><span class="enf-run__v" data-run-n>{certify99}</span></p>
+          <p class="enf-run__stat"><span class="enf-run__k">Proves at least</span><span class="enf-run__v" data-run-lb>{pct(wilson(certify99, certify99)[0])}</span></p>
+        </div>
+        <div class="enf-run__grid" role="img" aria-label={`${certify99} squares, one per correct removal. The first ${calN} are what calibration had. A 99 percent lower bound needs all ${certify99}.`}>
+          {Array.from({ length: certify99 }, (_, i) => <span class:list={['enf-run__cell', { 'is-cal': i < calN }]}></span>)}
+        </div>
+        <ul class="enf-run__legend">
+          <li><span class="enf-run__cell is-cal is-on" aria-hidden="true"></span><span>The {calN} calibration had</span></li>
+          <li><span class="enf-run__cell is-on" aria-hidden="true"></span><span>The rest a 99% claim needs</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>Wilson lower bound at 95%, with every decision correct.</span></figcaption>
+      </figure>
     </section>
 
     <section class="enf-block">
@@ -278,4 +317,5 @@ const jsonLd = {
   </article>
 
   <script src="../../scripts/enforcement-gates.ts"></script>
+  <script src="../../scripts/enforcement-story.ts"></script>
 </BaseLayout>

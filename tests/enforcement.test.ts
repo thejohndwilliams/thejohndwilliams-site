@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sample from '../src/data/enforcement-sample.json';
-import { bandTotal, countsFromPoints, autoValueText, caughtText, liveSummary } from '../src/utils/enforcement-counts';
+import { bandTotal, countsFromPoints, indexAtLeast, sliderText, autoValueText, caughtText, liveSummary } from '../src/utils/enforcement-counts';
 import { clampLabelCenter, plotGeometry } from '../src/utils/enforcement-layout';
 
 const read = (rel: string) => readFileSync(join(process.cwd(), rel), 'utf8');
@@ -29,6 +29,28 @@ describe('enforcement counts', () => {
     const frame = plotGeometry(points, 640);
     expect(frame.W).toBe(640);
     expect(frame.H).toBe(205);
+  });
+
+  it('partitions the points at arbitrary thresholds', () => {
+    const cuts = [0, 0.001, 0.01, 0.05, 0.2, 0.5, 0.9, 0.99, 1, 2];
+    for (const auto of cuts) {
+      for (const floor of cuts) {
+        const counts = countsFromPoints(points, auto, Math.min(floor, auto));
+        expect(bandTotal(counts)).toBe(points.length);
+      }
+    }
+  });
+
+  it('names the published gates before script runs', () => {
+    const autoIdx = indexAtLeast(points, sample.gates.auto);
+    const reviewIdx = indexAtLeast(points, sample.gates.review);
+    const text = sliderText(points, autoIdx, reviewIdx);
+    expect(text.autoNow).toBeGreaterThan(0);
+    expect(text.reviewNow).toBeGreaterThan(0);
+    expect(text.reviewNow).toBeLessThan(text.autoNow);
+    expect(text.autoText).toContain('Precision');
+    expect(text.autoText).not.toMatch(/100%|NaN/);
+    expect(text.reviewText).toContain('in review');
   });
 });
 
@@ -57,6 +79,9 @@ describe('enforcement source locks', () => {
     expect(script).toContain("setProperty('--hf'");
     expect(script).toContain("setProperty('--lf'");
     expect(css).toContain('overflow-x: clip');
+    expect(css).toContain('.enf-plot-frame {\n  container-type: inline-size;');
+    expect(css).not.toMatch(/\.enf-plot \{[^}]*container-type/);
+    expect(script.indexOf('layout();\n  root.setAttribute(\'data-ready\'')).toBeGreaterThan(0);
     expect(css).toContain('min-height: 62svh');
     expect(css).toContain('min-height: 62vh');
     expect(page).not.toMatch(/\sstyle="/);

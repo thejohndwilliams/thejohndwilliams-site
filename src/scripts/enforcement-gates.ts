@@ -92,7 +92,6 @@ export function initEnforcementGates(): void {
     svg!.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg!.setAttribute('width', String(W));
     svg!.setAttribute('height', String(H));
-    plot!.style.setProperty('--plot-ar', `${W} / ${H}`);
     svg!.replaceChildren();
 
     const defs = document.createElementNS(SVGNS, 'defs');
@@ -324,14 +323,17 @@ export function initEnforcementGates(): void {
   });
 
   reset?.addEventListener('click', () => {
+    window.clearTimeout(liveTimer);
+    liveTimer = 0;
+    if (live) live.textContent = '';
     st.auto = PUBLISHED.auto;
     st.review = PUBLISHED.review;
     lastHandle.focus({ preventScroll: true });
     update(false);
   }, { signal });
 
-  root.setAttribute('data-ready', '');
   layout();
+  root.setAttribute('data-ready', '');
   document.fonts?.ready.then(() => {
     if (signal.aborted) return;
     update(false);
