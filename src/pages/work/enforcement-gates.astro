@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import data from '../../data/enforcement-sample.json';
 import { wilson, runToCertify } from '../../utils/wilson';
-import { countsFromPoints } from '../../utils/enforcement-counts';
+import { countsFromPoints, indexAtLeast, sliderText } from '../../utils/enforcement-counts';
 import { plotGeometry } from '../../utils/enforcement-layout';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
@@ -20,6 +20,7 @@ const plotted = data.points as [number, number][];
 // rounding of the scores. Gate scores are rounded only where they are shown.
 const test = countsFromPoints(plotted, gates.auto, gates.review);
 const plotFrame = plotGeometry(plotted, 640);
+const published = sliderText(plotted, indexAtLeast(plotted, gates.auto), indexAtLeast(plotted, gates.review));
 const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 const fmt = (v: number) => v.toLocaleString('en-US');
 
@@ -147,22 +148,24 @@ const jsonLd = {
         <span class="enf-band-label" data-band="auto">Auto-action</span>
       </div>
 
+      <div class="enf-plot-frame">
       <div class="enf-plot" data-enf-plot>
         <svg class="enf-svg" data-enf-svg viewBox={`0 0 ${plotFrame.W} ${plotFrame.H}`} width={plotFrame.W} height={plotFrame.H} role="img" aria-label={`Each of the ${fmt(meta.split.test)} test messages as a dot, placed by model score. Spam rises above the line, legitimate messages fall below it.`}></svg>
-        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Review floor"><span class="enf-handle__knob"></span></div>
-        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow="0" aria-valuetext="Auto-action gate"><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.reviewNow} aria-valuetext={published.reviewText}><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.autoNow} aria-valuetext={published.autoText}><span class="enf-handle__knob"></span></div>
+      </div>
       </div>
 
       <div class="enf-steppers">
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review floor −">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review gate">−</button>
           <span class="enf-stepper__k">Review floor</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review floor +">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review gate">+</button>
         </div>
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate −">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate">−</button>
           <span class="enf-stepper__k">Auto-action</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate +">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate">+</button>
         </div>
       </div>
 

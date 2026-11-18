@@ -100,11 +100,11 @@ def main(src):
     path = Path(src)
     if not path.is_file():
         print(f'No input file at {path}. Nothing was written.', file=sys.stderr)
-        return 0
+        return 1
     raw = load(path)
     if not raw:
         print('No labelled messages in the input. Nothing was written.', file=sys.stderr)
-        return 0
+        return 1
     seen, rows = set(), []
     for text, label in raw:
         if text in seen:
@@ -128,27 +128,31 @@ def main(src):
 
     s_cal, s_te = score(x_cal), score(x_te)
 
-    # Gates from calibration only. Counts are computed after the scores are
-    # snapped to the stored precision, so the integers always partition the
-    # split. Rounding is for the file, not for the arithmetic that precedes it.
-    picked = choose_gates(s_cal, y_cal)
+    # Gates and counts use the same 6-decimal scores the page stores.
+    s_cal_r = np.round(np.asarray(s_cal, dtype=float), 6)
+    s_te_r = np.round(np.asarray(s_te, dtype=float), 6)
+    picked = choose_gates(s_cal_r, y_cal)
     if picked is None:
         print('No gate qualifies: no calibration threshold reached precision 0.99. Nothing was written.', file=sys.stderr)
-        return 0
+        return 1
     auto, floor = picked
     auto_r = round(float(auto), 6)
     floor_r = round(float(floor), 6)
     if floor_r > auto_r:
         floor_r = auto_r
-    s_cal_r = np.round(np.asarray(s_cal, dtype=float), 6)
-    s_te_r = np.round(np.asarray(s_te, dtype=float), 6)
+    act = s_cal_r >= auto_r
+    n_act = int(np.asarray(act).sum())
+    precision = (float((y_cal[act] == 1).sum()) / n_act) if n_act else 0.0
+    if n_act == 0 or precision < 0.99:
+        print(f'Rounded auto gate does not meet precision 0.99 (got {precision:.4f} on {n_act}). Nothing was written.', file=sys.stderr)
+        return 1
     cal = band_counts(s_cal_r, y_cal, auto_r, floor_r)
     te = band_counts(s_te_r, y_te, auto_r, floor_r)
     for name, counts, expected in (('calibration', cal, len(y_cal)), ('test', te, len(y_te))):
         total = sum(counts.values())
         if total != int(expected):
             print(f'{name} counts sum to {total}, expected {expected}. Nothing was written.', file=sys.stderr)
-            return 0
+            return 1
     k, n = te['auto_tp'], te['auto_tp'] + te['auto_fp']
     lo, hi = wilson(k, n)
 
@@ -176,10 +180,11 @@ def main(src):
     }
     OUT.write_text(json.dumps(out, separators=(',', ':')))
     print(json.dumps({k: v for k, v in out.items() if k != 'points'}, indent=1))
+    return 0
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Usage: python3 scripts/enforcement/train.py /path/to/SMSSpamCollection', file=sys.stderr)
-        raise SystemExit(0)
+        raise SystemExit(2)
     raise SystemExit(main(sys.argv[1]))

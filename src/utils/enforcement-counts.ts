@@ -41,6 +41,50 @@ export function bandTotal(c: Bands): number {
   return c.auto_tp + c.auto_fp + c.review_spam + c.review_ham + c.allow_spam + c.allow_ham;
 }
 
+export function indexAtLeast(points: ReadonlyArray<readonly [number, number]>, threshold: number): number {
+  let lo = 0;
+  let hi = points.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (points[mid][0] < threshold) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+export function scoreLabel(points: ReadonlyArray<readonly [number, number]>, idx: number): string {
+  if (points.length === 0) return 'unavailable';
+  if (idx >= points.length) return '1.000';
+  const score = points[idx]?.[0];
+  if (!(typeof score === 'number') || !(score >= 0)) return 'unavailable';
+  return score.toFixed(3);
+}
+
+function spamBetween(points: ReadonlyArray<readonly [number, number]>, from: number, to: number): number {
+  let n = 0;
+  for (let i = from; i < to; i++) if (points[i][1] === 1) n += 1;
+  return n;
+}
+
+/** Accessible value of the two sliders at a pair of boundary indexes. */
+export function sliderText(
+  points: ReadonlyArray<readonly [number, number]>,
+  autoIdx: number,
+  reviewIdx: number,
+): { autoNow: number; reviewNow: number; autoText: string; reviewText: string } {
+  const n = points.length;
+  const autoN = n - autoIdx;
+  const autoTp = spamBetween(points, autoIdx, n);
+  const reviewN = autoIdx - reviewIdx;
+  const missed = spamBetween(points, 0, reviewIdx);
+  return {
+    autoNow: autoIdx,
+    reviewNow: reviewIdx,
+    autoText: autoValueText(scoreLabel(points, autoIdx), autoTp, autoN, autoN - autoTp),
+    reviewText: reviewValueText(scoreLabel(points, reviewIdx), reviewN, missed),
+  };
+}
+
 const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 
 /** Accessible value for the auto-action slider. Zero actions are named,
