@@ -82,8 +82,15 @@ export function initEnforcementGates(): void {
   let bandAuto: SVGRectElement | undefined;
   let bandReview: SVGRectElement | undefined;
 
+  // The plot is drawn at most MAX_W logical pixels wide. Wider containers
+  // (the pinned story stage on large screens) scale the SVG up whole, so
+  // dots, piles and lines grow together instead of the swarm going flat.
+  // CSS px = logical px * scale().
+  const MAX_W = 1160;
+  const scale = () => (geo.W > 0 ? plot!.clientWidth / geo.W : 1);
+
   function layout(): void {
-    const W = Math.round(plot!.clientWidth);
+    const W = Math.min(MAX_W, Math.round(plot!.clientWidth));
     if (W < 10) return;
     geo = plotGeometry(raw, W);
     pts = geo.pts as Point[];
@@ -175,11 +182,14 @@ export function initEnforcementGates(): void {
   function placeLabel(el: HTMLElement | null, bandLeft: number, bandRight: number): void {
     if (!el) return;
     const width = el.offsetWidth;
-    const center = clampLabelCenter((bandLeft + bandRight) / 2, bandLeft, bandRight, width, geo.W);
+    const k = scale();
+    const l = bandLeft * k;
+    const r = bandRight * k;
+    const center = clampLabelCenter((l + r) / 2, l, r, width, geo.W * k);
     el.style.setProperty('--lf', `${center}px`);
     // A band narrower than its label cannot hold it. Hide it instead of
     // painting across the neighbour. The element stays in the tree.
-    el.classList.toggle('is-clipped', bandRight - bandLeft < width + 4);
+    el.classList.toggle('is-clipped', r - l < width + 4);
   }
 
   function scoreAt(idx: number): string {
@@ -234,7 +244,7 @@ export function initEnforcementGates(): void {
     placeLabel(labels.allow, padL, xr);
     placeLabel(labels.review, xr, xa);
     placeLabel(labels.auto, xa, W - padR);
-    root!.classList.toggle('is-narrow-review', xa - xr < 64);
+    root!.classList.toggle('is-narrow-review', (xa - xr) * scale() < 64);
 
     hAuto!.setAttribute('aria-valuemin', '0');
     hAuto!.setAttribute('aria-valuemax', String(n));
@@ -286,7 +296,7 @@ export function initEnforcementGates(): void {
     h.addEventListener('pointermove', (e) => {
       if (!h.hasPointerCapture(e.pointerId)) return;
       const rect = plot!.getBoundingClientRect();
-      setIdx(which, idxFromX(e.clientX - rect.left));
+      setIdx(which, idxFromX((e.clientX - rect.left) / scale()));
     }, { signal });
     const end = (e: PointerEvent) => {
       if (h.hasPointerCapture(e.pointerId)) h.releasePointerCapture(e.pointerId);
@@ -338,13 +348,15 @@ export function initEnforcementGates(): void {
     if (signal.aborted) return;
     update(false);
   }).catch(() => undefined);
-  let lastW = geo.W;
+  let lastW = Math.round(plot.clientWidth);
   resizeObs = new ResizeObserver(() => {
     const w = Math.round(plot.clientWidth);
-    if (w !== lastW) {
-      lastW = w;
-      layout();
-    }
+    if (w === lastW) return;
+    lastW = w;
+    // Past MAX_W the drawing is unchanged; only the CSS scale moves, so the
+    // labels need re-placing but the dots do not need redrawing.
+    if (Math.min(MAX_W, w) !== geo.W) layout();
+    else update(false);
   });
   resizeObs.observe(plot);
   document.addEventListener('astro:before-swap', teardown, { once: true, signal });

@@ -45,6 +45,16 @@
   overflow-x: clip;
 }
 
+/* On wide screens the pinned stage breaks out of the 64rem article column
+   so the dots fill the view. Negative inline margins only; the stage never
+   exceeds the viewport less 8rem, so the page does not scroll sideways. */
+@media (min-width: 1440px) {
+  .enf-fig.is-scrolly .enf-stage {
+    --stage-w: min(96rem, calc(100vw - 8rem));
+    margin-inline: calc((100% - var(--stage-w)) / 2);
+  }
+}
+
 .enf-fig.is-scrolly .enf-story-rail {
   display: flex;
   gap: 6px;
