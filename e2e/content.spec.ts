@@ -45,16 +45,29 @@ test.describe('Work page', () => {
   });
 
   test('links the agent governance case study', async ({ page }) => {
+    // 2026-11-17 (PR #112): CI WebKit decodes the Work card AVIFs in
+    // software and stops producing frames for 5 to 13 seconds while it
+    // does (measured: 2 rAF frames in 12s on /work, 115 on production).
+    // Click stability and the view transition both wait on frames, so
+    // wait for the visible images to finish, then give the click room.
+    test.slow();
     await page.goto('/work/');
     const link = page.locator('a[href="/work/agent-governance/"]');
     await expect(link).toBeVisible();
-    // The card sits below the fold. Scroll first and let smooth-scroll
-    // momentum settle: WebKit on CI hardware stalls a view-transition
-    // navigation that starts mid-scroll (same pattern as lightbox.spec).
     await link.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(1000);
-    await link.click();
-    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/, { timeout: 10000 });
+    await page.waitForFunction(
+      () =>
+        [...document.images]
+          .filter((img) => {
+            const r = img.getBoundingClientRect();
+            return r.bottom > 0 && r.top < window.innerHeight;
+          })
+          .every((img) => img.complete),
+      null,
+      { polling: 250, timeout: 30000 },
+    );
+    await link.click({ timeout: 60000 });
+    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/, { timeout: 30000 });
     await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties');
   });
 });
