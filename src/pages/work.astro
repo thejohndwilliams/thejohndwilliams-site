@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { bleedSizes, heroCapClass, photoSrcset, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
+import { bleedSizes, heroCapClass, photoSrcset, photoTiers, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
 type ProjectCard = {
@@ -44,6 +44,14 @@ const projects: ProjectCard[] = [
     alt: 'Japanese alleyway at night'
   },
   {
+    title: 'Precision-Gated Enforcement',
+    description: 'A classifier run as an enforcement system: an auto-action gate, a review band, an appeal path, and the sample size it takes to prove a 99% gate. Public data only.',
+    tags: ['Classifiers', 'Thresholds', 'Quality'],
+    page: '/work/enforcement-gates/',
+    image: 'dsc-0131',
+    alt: 'Storm front massing over rooftops'
+  },
+  {
     title: 'Human Oversight for a Multi-Agent System',
     description: 'Approval gates, role boundaries and an evidence trail that let one person govern a group of AI agents.',
     tags: ['Approval gates', 'Evidence', 'Duties'],
@@ -53,6 +61,32 @@ const projects: ProjectCard[] = [
     wideRow: true
   }
 ];
+
+const CARD_W = 1280;
+const CARD_H = 720;
+
+/** Wide case-study card. A 1224px slot is just past the 1200 gallery file,
+ *  so a full srcset was selecting the 2400 hero (about 3x the pixels).
+ *  Thumb, gallery, and a 1280 card file cover the slot without that decode. */
+function projectPicture(file: string, wideCase: boolean) {
+  const row = photoTiers(file);
+  if (wideCase) {
+    return {
+      avif: `/images/photography/thumb/${file}.avif ${row.thumb.w}w, /images/photography/gallery/${file}.avif ${row.gallery.w}w, /images/photography/card/${file}.avif ${CARD_W}w`,
+      webp: `/images/photography/thumb/${file}.webp ${row.thumb.w}w, /images/photography/gallery/${file}.webp ${row.gallery.w}w, /images/photography/card/${file}.webp ${CARD_W}w`,
+      src: `/images/photography/card/${file}.webp`,
+      w: CARD_W,
+      h: CARD_H,
+    };
+  }
+  return {
+    avif: photoSrcset(file, 'avif'),
+    webp: photoSrcset(file, 'webp'),
+    src: `/images/photography/hero/${file}.webp`,
+    w: row.hero.w,
+    h: row.hero.h,
+  };
+}
 
 const expertise = [
   'Data Engineering', 'Cybersecurity', 'Process Controls', 'Python',
@@ -129,13 +163,15 @@ const expertise = [
             : isWide
               ? PROJECT_WIDE_SIZES
               : PROJECT_NARROW_SIZES;
+          const wideCase = Boolean(project.wideRow && project.page);
+          const picture = projectPicture(project.image, wideCase);
           const showCopy = isWide || project.wideRow || isLone;
           return (
             <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
               <picture>
-                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={sizes} />
-                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={sizes} />
-                <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" />
+                <source type="image/avif" srcset={picture.avif} sizes={sizes} />
+                <source type="image/webp" srcset={picture.webp} sizes={sizes} />
+                <img src={picture.src} width={picture.w} height={picture.h} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" fetchpriority="low" />
               </picture>
               <div class="overlay-scrim-work absolute inset-0"></div>
               <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
@@ -155,7 +191,7 @@ const expertise = [
                       rel={project.page ? undefined : 'noopener noreferrer'}
                       class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center"
                     >
-                      {project.page ? 'Read the case study →' : 'View on GitHub →'}
+                      {project.page ? 'Read the case study →' : 'View on GitHub →'}{project.page && <span class="sr-only">{` : ${project.title}`}</span>}
                     </a>
                   )}
                 </div>
