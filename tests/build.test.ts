@@ -760,7 +760,7 @@ describe('enforcement-gates case study', () => {
 
   it('serves the wide case-study card below the hero tier', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
-    const card = work.match(/<picture\b[^>]*>[\s\S]*?img-7395-enhanced-sr[\s\S]*?<\/picture>/)?.[0];
+    const card = work.match(/<picture\b[^>]*>(?:(?!<\/picture>)[\s\S])*?img-7395-enhanced-sr(?:(?!<\/picture>)[\s\S])*?<\/picture>/)?.[0];
     expect(card, 'case study picture').toBeTruthy();
     expect(card).toContain('/images/photography/card/img-7395-enhanced-sr.avif 1280w');
     expect(card).toContain('/images/photography/gallery/img-7395-enhanced-sr.avif 1200w');
