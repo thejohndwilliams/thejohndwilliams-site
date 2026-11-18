@@ -48,8 +48,13 @@ test.describe('Work page', () => {
     await page.goto('/work/');
     const link = page.locator('a[href="/work/agent-governance/"]');
     await expect(link).toBeVisible();
+    // The card sits below the fold. Scroll first and let smooth-scroll
+    // momentum settle: WebKit on CI hardware stalls a view-transition
+    // navigation that starts mid-scroll (same pattern as lightbox.spec).
+    await link.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1000);
     await link.click();
-    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/);
+    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/, { timeout: 10000 });
     await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties');
   });
 });
