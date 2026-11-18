@@ -734,3 +734,33 @@ describe('no print-sale offer while prints are not for sale', () => {
     expect(hits, hits.slice(0, 10).join('\n')).toEqual([]);
   });
 });
+
+// Enforcement-gates case study (2026-11-17). Public data only; the page's
+// numbers come from src/data/enforcement-sample.json written by
+// scripts/enforcement/train.py. These locks keep the page honest: the
+// published counts must match the data file, and no employer, platform or
+// internal term may appear on it.
+describe('enforcement-gates case study', () => {
+  const html = () => fs.readFileSync(path.join(distDir, 'work', 'enforcement-gates', 'index.html'), 'utf8');
+  const sample = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src', 'data', 'enforcement-sample.json'), 'utf8'));
+
+  it('is linked from Work and built from the data file', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work', 'index.html'), 'utf8');
+    expect(work).toContain('href="/work/enforcement-gates/"');
+    const page = html();
+    const t = sample.test;
+    expect(page).toContain(`${t.auto_tp} of ${t.auto_tp + t.auto_fp} were`);
+    expect(sample.points.length).toBe(sample.meta.split.test);
+    expect(sample.meta.messages_unique).toBeLessThan(sample.meta.messages_raw);
+  });
+
+  it('carries no employer, platform or internal terms and no em dash', () => {
+    const page = html();
+    for (const term of ['Starlink', 'SpaceX', 'Sprinklr', 'xAI', 'Grok', 'Starshield', 'ITAR']) {
+      expect(page, term).not.toContain(term);
+    }
+    expect(page).not.toContain('—');
+    expect(page).not.toMatch(/<style[\s>]/);
+    expect(page).not.toMatch(/<script type="module">/);
+  });
+});

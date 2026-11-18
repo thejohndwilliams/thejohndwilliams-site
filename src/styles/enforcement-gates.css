@@ -1,0 +1,599 @@
+/* /work/enforcement-gates/. Ink, ivory and one accent.
+   The blue-hour accent (#7E9CB8) means a harm or a decision, nothing else:
+   a legitimate message wrongly removed, spam that got through, the handles
+   that set those outcomes. No red, no green, no cards with shadows.
+   Measure 38rem for text, 64rem for figures. 2026-11-17. */
+
+.enf-hero {
+  min-height: 62vh;
+}
+
+@media (min-width: 768px) {
+  .enf-hero {
+    min-height: 72vh;
+  }
+}
+
+.enf-hero__img {
+  object-position: 50% 72%;
+}
+
+.enf-deck {
+  margin: 0;
+  max-width: 34rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  line-height: 1.4;
+  color: rgba(244, 234, 222, 0.86);
+  font-variant-numeric: lining-nums;
+}
+
+.enf-page {
+  --measure: 38rem;
+  --figure: 64rem;
+  width: min(var(--figure), calc(100% - 2 * clamp(1.25rem, 4vw, 2.5rem)));
+  margin: 0 auto;
+  padding: 3rem 0 6.5rem;
+}
+
+.enf-page p {
+  line-height: 1.65;
+}
+
+/* Metadata row */
+.enf-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
+  margin: 0 0 4rem;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.1);
+}
+
+@media (min-width: 768px) {
+  .enf-meta {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.enf-meta dt,
+.enf-stat__k,
+.enf-step,
+.enf-band-label,
+.enf-flow__k,
+.enf-key {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 222, 0.55);
+}
+
+.enf-meta dd {
+  margin: 0.4rem 0 0;
+  color: rgba(244, 234, 222, 0.88);
+  font-size: 0.9375rem;
+}
+
+/* Lede: one quantified sentence, bound to the figure. */
+.enf-lede {
+  max-width: 40rem;
+  margin: 0 0 3rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+  line-height: 1.35;
+  color: #f4eade;
+  font-variant-numeric: lining-nums;
+}
+
+.enf-num {
+  font-variant-numeric: lining-nums tabular-nums;
+  color: #7e9cb8;
+}
+
+/* Hero figure */
+.enf-fig {
+  margin: 0;
+}
+
+.enf-readout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 1.5rem;
+  margin-bottom: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .enf-readout {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.enf-stat p {
+  margin: 0;
+}
+
+.enf-stat__v {
+  margin-top: 0.5rem !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: clamp(1.625rem, 1.3rem + 1.2vw, 2.25rem);
+  line-height: 1;
+  color: #f4eade;
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+}
+
+.enf-stat__sub {
+  margin-top: 0.5rem !important;
+  font-size: 0.8125rem;
+  line-height: 1.4 !important;
+  color: #868686;
+  font-variant-numeric: tabular-nums;
+}
+
+.enf-bands {
+  position: relative;
+  height: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.enf-band-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  translate: -50% 0;
+  color: rgba(244, 234, 222, 0.7);
+}
+
+.enf-band-label[data-band='auto'] {
+  color: #7e9cb8;
+}
+
+.enf-fig:not([data-ready]) .enf-bands,
+.enf-fig:not([data-ready]) .enf-handle,
+.enf-fig:not([data-ready]) .enf-key {
+  display: none;
+}
+
+.enf-fig.is-narrow-review .enf-band-label[data-band='review'] {
+  opacity: 0;
+}
+
+.enf-plot {
+  position: relative;
+  width: 100%;
+  touch-action: pan-y;
+}
+
+.enf-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Bands */
+.enf-band--auto {
+  fill: rgba(126, 156, 184, 0.07);
+}
+
+.enf-band--review {
+  fill: url(#enf-hatch);
+}
+
+.enf-hatch-line {
+  stroke: rgba(244, 234, 222, 0.09);
+  stroke-width: 1;
+}
+
+.enf-baseline {
+  stroke: rgba(244, 234, 222, 0.35);
+  stroke-width: 1;
+}
+
+.enf-tick {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  fill: #868686;
+}
+
+.enf-tick-mark {
+  stroke: rgba(244, 234, 222, 0.3);
+  stroke-width: 1;
+}
+
+/* Dots. Position is the primary cue, fill the backup. */
+.d.s {
+  fill: #f4eade;
+  fill-opacity: 0.9;
+}
+
+.d.h {
+  fill: none;
+  stroke: #868686;
+  stroke-opacity: 0.75;
+  stroke-width: 1;
+}
+
+.d.h.is-wrong {
+  fill: #7e9cb8;
+  stroke: #7e9cb8;
+  stroke-opacity: 1;
+}
+
+.d.s.is-missed {
+  fill: none;
+  stroke: #7e9cb8;
+  stroke-width: 1.5;
+}
+
+/* Handles: a 1px rule the plot's full height, a blue knob, a 44px hit area. */
+.enf-handle {
+  position: absolute;
+  top: -1.75rem;
+  bottom: 1.5rem;
+  left: -22px;
+  width: 44px;
+  cursor: ew-resize;
+  touch-action: none;
+  outline: none;
+}
+
+.enf-handle::before {
+  content: '';
+  position: absolute;
+  top: 1.75rem;
+  bottom: 0;
+  left: 21.5px;
+  width: 1px;
+  background: rgba(244, 234, 222, 0.85);
+}
+
+.enf-handle__knob {
+  position: absolute;
+  top: calc(1.75rem - 7px);
+  left: 15px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #7e9cb8;
+  box-shadow: 0 0 0 2px #0a0a0a;
+  transition: transform 160ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.enf-handle:hover .enf-handle__knob,
+.enf-fig.is-dragging .enf-handle__knob {
+  transform: scale(1.2);
+}
+
+.enf-handle:focus-visible .enf-handle__knob {
+  box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #7e9cb8;
+}
+
+.enf-handle[data-handle='review'] .enf-handle__knob {
+  background: #0a0a0a;
+  box-shadow: inset 0 0 0 2px #7e9cb8, 0 0 0 2px #0a0a0a;
+}
+
+.enf-handle[data-handle='review']:focus-visible .enf-handle__knob {
+  box-shadow: inset 0 0 0 2px #7e9cb8, 0 0 0 2px #0a0a0a, 0 0 0 4px #7e9cb8;
+}
+
+.enf-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: #868686;
+  font-variant-numeric: lining-nums;
+}
+
+.enf-action {
+  appearance: none;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  background: transparent;
+  border: 1px solid rgba(244, 234, 222, 0.32);
+  color: rgba(244, 234, 222, 0.75);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-style: normal;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms linear, color 160ms linear;
+}
+
+.enf-action:hover {
+  border-color: #f4eade;
+  color: #f4eade;
+}
+
+.enf-action:focus-visible {
+  outline: 1px solid #7e9cb8;
+  outline-offset: 3px;
+}
+
+.enf-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
+  margin: 0.75rem 0 0;
+  letter-spacing: 0.08em;
+}
+
+.enf-key__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.enf-swatch {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.enf-swatch--spam { background: #f4eade; }
+.enf-swatch--ham { box-shadow: inset 0 0 0 1px #868686; }
+.enf-swatch--wrong { background: #7e9cb8; }
+
+/* Sections */
+.enf-block {
+  position: relative;
+  max-width: var(--measure);
+  margin-top: 6.5rem;
+}
+
+.enf-step {
+  margin: 0 0 0.75rem !important;
+  color: #7e9cb8;
+}
+
+.enf-block h2 {
+  margin: 0 0 1.5rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+}
+
+.enf-block p {
+  margin: 0 0 1.25rem;
+  color: rgba(244, 234, 222, 0.82);
+}
+
+/* Interval figure */
+.enf-ci {
+  margin: 2.5rem 0;
+  max-width: 40rem;
+}
+
+.enf-ci__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.enf-ci__grid {
+  stroke: rgba(244, 234, 222, 0.12);
+  stroke-width: 1;
+}
+
+.enf-ci__target {
+  stroke: #7e9cb8;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.enf-ci__tick,
+.enf-ci__n {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  fill: #868686;
+}
+
+.enf-ci__tick--target {
+  fill: #7e9cb8;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.enf-ci__label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: rgba(244, 234, 222, 0.7);
+}
+
+.enf-ci__range {
+  stroke: #f4eade;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.enf-ci__point {
+  fill: #0a0a0a;
+  stroke: #f4eade;
+  stroke-width: 1.5;
+}
+
+/* QA unit chart */
+.enf-qa {
+  margin: 2.5rem 0 0;
+}
+
+.enf-qa__grid {
+  display: grid;
+  grid-template-columns: repeat(16, 12px);
+  gap: 5px;
+}
+
+@media (min-width: 640px) {
+  .enf-qa__grid {
+    grid-template-columns: repeat(25, 12px);
+  }
+}
+
+.enf-qa__cell {
+  width: 12px;
+  height: 12px;
+  background: rgba(244, 234, 222, 0.82);
+}
+
+.enf-qa__cell.is-wrong {
+  background: #7e9cb8;
+}
+
+/* Appeal flow */
+.enf-flow {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0 2rem;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .enf-flow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.enf-flow li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(244, 234, 222, 0.18);
+}
+
+.enf-flow__v {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 1.625rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #f4eade;
+}
+
+/* Requirements: Garamond numerals hung in the margin. */
+.enf-req-list {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  counter-reset: none;
+}
+
+.enf-req-list li {
+  position: relative;
+  padding-left: 3rem;
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 1100px) {
+  .enf-req-list li {
+    padding-left: 0;
+  }
+}
+
+.enf-req__n {
+  position: absolute;
+  left: 0;
+  top: -0.3rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 2.25rem;
+  line-height: 1;
+  color: #7e9cb8;
+  font-variant-numeric: lining-nums;
+}
+
+@media (min-width: 1100px) {
+  .enf-req__n {
+    left: -3.25rem;
+  }
+}
+
+.enf-req-list p {
+  margin: 0 !important;
+}
+
+.enf-req-list strong {
+  font-weight: 500;
+  color: #f4eade;
+}
+
+/* Method */
+.enf-table {
+  width: 100%;
+  margin: 0 0 2rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+}
+
+.enf-table th,
+.enf-table td {
+  padding: 0.6rem 0.5rem;
+  text-align: right;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.08);
+}
+
+.enf-table th:first-child,
+.enf-table tbody th {
+  text-align: left;
+}
+
+.enf-table thead tr:first-child th {
+  text-align: center;
+  border-bottom-color: rgba(244, 234, 222, 0.2);
+}
+
+.enf-table thead th {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #868686;
+}
+
+.enf-table tbody th {
+  font-weight: 400;
+  color: rgba(244, 234, 222, 0.82);
+}
+
+.enf-code a,
+.enf-return a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.enf-return a {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #868686;
+}
+
+.enf-return a:hover {
+  color: #f4eade;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enf-handle__knob,
+  .enf-action {
+    transition: none;
+  }
+}

@@ -44,6 +44,14 @@ const projects: ProjectCard[] = [
     alt: 'Japanese alleyway at night'
   },
   {
+    title: 'Precision-Gated Enforcement',
+    description: 'A classifier run as an enforcement system: an auto-action gate, a review band, an appeal path, and the sample size it takes to prove a 99% gate. Public data only.',
+    tags: ['Classifiers', 'Thresholds', 'Quality'],
+    page: '/work/enforcement-gates/',
+    image: 'dsc-0131',
+    alt: 'Storm front massing over rooftops'
+  },
+  {
     title: 'Human Oversight for a Multi-Agent System',
     description: 'Approval gates, role boundaries and an evidence trail that let one person govern a group of AI agents.',
     tags: ['Approval gates', 'Evidence', 'Duties'],
@@ -155,7 +163,7 @@ const expertise = [
                       rel={project.page ? undefined : 'noopener noreferrer'}
                       class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center"
                     >
-                      {project.page ? 'Read the case study →' : 'View on GitHub →'}
+                      {project.page ? 'Read the case study →' : 'View on GitHub →'}{project.page && <span class="sr-only">{` : ${project.title}`}</span>}
                     </a>
                   )}
                 </div>
