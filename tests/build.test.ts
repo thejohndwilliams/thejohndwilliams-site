@@ -774,6 +774,29 @@ describe('enforcement-gates case study', () => {
     expect(card).toContain('sizes="(max-width: 767px) 100vw, 1224px"');
   });
 
+  it('tells the scroll story from the data, with a static fallback', () => {
+    const page = html();
+    // Eight steps, each a real list item, so the story reads without script.
+    expect(page.match(/data-story-step/g)?.length).toBe(8);
+    expect(page.match(/data-story-tick/g)?.length).toBe(8);
+    expect(page).toContain('data-enf-scrolly');
+    expect(page).toContain('data-enf-stage');
+    // Story numbers come from the sample, not from copy.
+    const t = sample.points.filter(([s]: [number, number]) => s >= sample.gates.auto);
+    const autoN = t.length;
+    const autoFp = t.filter(([, l]: [number, number]) => l === 0).length;
+    expect(page).toContain(`data-count="${sample.meta.split.test}"`);
+    expect(page).toContain(`data-count="${autoN}"`);
+    expect(page).toContain(`data-count="${autoFp}"`);
+    // Certification run: one square per decision a 99% claim needs.
+    const run = page.match(/<figure class="enf-run"[\s\S]*?<\/figure>/)?.[0] ?? '';
+    expect(run.match(/class="enf-run__cell[^"]*"/g)?.length).toBe(381 + 2);
+    expect(run).toContain('data-run-n>381<');
+    // The story and the gates ship as external modules (CSP: no inline).
+    expect(page).not.toMatch(/<script type="module">/);
+    expect(page).not.toMatch(/<style[\s>]/);
+  });
+
   it('carries no employer, platform or internal terms and no em dash', () => {
     const page = html();
     for (const term of ['Starlink', 'SpaceX', 'Sprinklr', 'xAI', 'Grok', 'Starshield', 'ITAR']) {
