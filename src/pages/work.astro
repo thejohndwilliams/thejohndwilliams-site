@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceRecord from '../components/ExperienceRecord.astro';
 import { bleedSizes, heroCapClass, photoSrcset, photoTiers, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
@@ -88,10 +89,6 @@ function projectPicture(file: string, wideCase: boolean) {
   };
 }
 
-const expertise = [
-  'Data Engineering', 'Cybersecurity', 'Process Controls', 'Python',
-  'Power BI', 'SQL', 'Operations Analytics', 'Photography'
-];
 ---
 
 <BaseLayout
@@ -200,14 +197,10 @@ const expertise = [
           );
         })}
       </div>
-      <div class="reveal mt-8 sm:mt-12">
-        <div class="flex flex-wrap gap-2">
-          {expertise.map((skill) => (
-            <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-sm text-mute rounded-md sm:rounded-lg">{skill}</span>
-          ))}
-        </div>
-      </div>
-      <p class="reveal mt-8 sm:mt-10 text-base text-mute">
+      {/* 2026-11-24 (owner): the expertise chip cloud read as filler. Its
+          terms moved into the record below the ram, as chips on the roles
+          they came from and a Tools line. */}
+      <p class="reveal mt-8 sm:mt-12 text-base text-mute">
         The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>
       {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
@@ -242,6 +235,9 @@ const expertise = [
       </div>
     </div>
   </section>
+
+  <!-- THE RECORD. "Here am I. Send me." opens onto where he was sent. -->
+  <ExperienceRecord />
 
   
 </BaseLayout>

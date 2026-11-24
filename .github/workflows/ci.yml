@@ -78,7 +78,18 @@ jobs:
           path: dist
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        # 2026-11-24: the runner's default apt mirror (us-east-2 ec2 archive)
+        # crawled for two days, hanging this step 20+ minutes on most runs.
+        # The runner reads its mirror list from /etc/apt/apt-mirrors.txt
+        # (mirror+file: source), so list reliable mirrors first; apt falls
+        # through the list on failure, times out stalled fetches and
+        # retries them. Do not wrap the install in `timeout`: killing it
+        # leaves its root apt-get holding the dpkg lock (seen in this run).
+        timeout-minutes: 18
+        run: |
+          printf 'http://azure.archive.ubuntu.com/ubuntu/\tpriority:1\nhttp://archive.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt > /dev/null
+          echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30";' | sudo tee /etc/apt/apt.conf.d/80-ci-retries > /dev/null
+          npx playwright install --with-deps chromium webkit
 
       - name: e2e (chromium + webkit + iphone)
         run: npx playwright test
