@@ -1000,7 +1000,21 @@ html.lenis body { height: auto; }
    height on top (py-10 / sm:py-16 / md:py-24 on the 8pt scale). */
 .about-hero[data-hero-under] { padding-top: calc(4.444rem + var(--header-h)); }
 @media (min-width: 640px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
-@media (min-width: 768px) { .about-hero[data-hero-under] { padding-top: calc(10.667rem + var(--header-h)); } }
+@media (min-width: 768px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
+/* About hero, 2026-11-24: the white-ground portrait hangs as a print on
+   the dark wall. Lockup left, print right; stacked on phones. The print
+   carries a hairline and a low shadow, no glass and no frame ornament. */
+.about-hero__grid { display: grid; gap: 2.667rem; align-items: end; }
+@media (min-width: 1024px) {
+  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 24rem; gap: 4.444rem; }
+}
+.about-print { margin: 0; width: min(24rem, 78vw); }
+.about-print__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 0 1px rgba(244, 234, 222, 0.08), 0 24px 60px -28px rgba(0, 0, 0, 0.9);
+}
 #site-header:not(.scrolled) {
   background: linear-gradient(to bottom, rgba(10, 10, 10, 0.62), rgba(10, 10, 10, 0));
   /* The gradient is sized to the padding box and would tile one row into

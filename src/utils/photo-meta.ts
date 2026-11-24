@@ -46,14 +46,40 @@ function stripEnhancementSuffix(basename: string): string {
                  .replace(/-sr$/i, '');
 }
 
+/** EXIF writes model codes ("SONY ILCE-7RM5", "Canon Canon EOS 7D").
+    The page shows the names a person would say. 2026-11-24 cohesion pass. */
+const CAMERA_NAMES: Record<string, string> = {
+  'SONY ILCE-7RM5': 'Sony α7R V',
+  'FUJIFILM X100VI': 'Fujifilm X100VI',
+  'NIKON CORPORATION NIKON D5000': 'Nikon D5000',
+  'Canon Canon EOS Rebel T6': 'Canon EOS Rebel T6',
+  'Canon Canon EOS 7D': 'Canon EOS 7D',
+};
+
+export function displayCamera(raw?: string): string | undefined {
+  if (!raw) return raw;
+  return CAMERA_NAMES[raw] ?? raw;
+}
+
+export function displayLens(raw?: string): string | undefined {
+  if (!raw) return raw;
+  // Phone lens strings restate the camera ("iPhone 6 back camera 4.15mm").
+  if (/^iPhone\b/i.test(raw)) return undefined;
+  if (raw === '24-70mm F2.8 DG DN | Art 019') return 'Sigma 24-70mm F2.8 DG DN Art';
+  const zoom = raw.match(/^(\d+)\.0-(\d+)\.0 mm (f\/[\d.]+-[\d.]+)$/);
+  if (zoom) return `${zoom[1]}-${zoom[2]}mm ${zoom[3]}`;
+  return raw;
+}
+
 export function getPhotoMeta(basename: string): ExifEntry {
   const m = exifManifest as Record<string, ExifEntry>;
   // Try literal basename first, then progressively strip enhancement suffixes
   const stripped = stripEnhancementSuffix(basename);
   const manifest = m[basename] ?? m[stripped] ?? {};
   return {
-    camera: manifest.camera ?? inferCameraFromFilename(basename),
     ...manifest,
+    camera: displayCamera(manifest.camera) ?? inferCameraFromFilename(basename),
+    lens: displayLens(manifest.lens),
   };
 }
 

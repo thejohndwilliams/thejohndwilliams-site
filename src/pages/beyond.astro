@@ -225,9 +225,7 @@ const thumbDims = Object.fromEntries(
           palettes, each taken from one photograph, free to take.
         </p>
         <p class="beyond-copy beyond-copy--italic">
-          Studies in texture. The blur behind each plate is a Gaussian
-          convolution, the closed-form solution to the heat equation. Light
-          diffuses through the glass the way heat moves through a solid.
+          Studies in texture, each one built from a single photograph.
         </p>
       </div>
       <div class="beyond-plates">
@@ -240,22 +238,18 @@ const thumbDims = Object.fromEntries(
 
   <ReliefStudies />
 
-  <!-- CLOSE. The open questions and the calibration note were two
-       sections; they are one restrained closing now. -->
+  <!-- CLOSE. One open question. 2026-11-24 cohesion pass (owner): the
+       calibration paragraph (blur, saturation and contrast bounds) was the
+       builder talking to himself; the bounds live in the CSS and its tests,
+       not in the page. -->
   <section id="method" class="beyond-section beyond-anchor">
     <div class="beyond-col">
       <div class="beyond-text beyond-head">
         <p class="eyebrow">Open questions</p>
-        <h2 class="t-sub font-serif">The envelope</h2>
+        <h2 class="t-sub font-serif">What only a print can answer</h2>
         <p class="beyond-copy">
           Which relief depth survives ordinary room light? That one gets
           answered by a printed sample, not by a render.
-        </p>
-        <p class="beyond-copy">
-          Every material on this site holds calibrated bounds: blur no higher
-          than 44 pixels, saturation no higher than 1.85, text contrast at or
-          above 4.5:1 at every tested opacity. Settings that survived a sweep,
-          not settings that looked good once.
         </p>
         <p class="beyond-return">
           <a href="/photography/">Back to the photographs</a>

@@ -119,7 +119,7 @@ describe('/beyond figure and header grammar', () => {
     expect(main).toMatch(/<p class="eyebrow">Depth<\/p>\s*<h2 class="t-sub font-serif">/);
     expect(main).toMatch(/<p class="eyebrow">Texture<\/p>\s*<h2 class="t-sub font-serif">/);
     expect(relief).toMatch(/<p class="eyebrow">Surface<\/p>\s*<h2 class="t-sub font-serif">/);
-    expect(main).toMatch(/<p class="eyebrow">Open questions<\/p>\s*<h2 class="t-sub font-serif">The envelope<\/h2>/);
+    expect(main).toMatch(/<p class="eyebrow">Open questions<\/p>\s*<h2 class="t-sub font-serif">What only a print can answer<\/h2>/);
     // The depth study is the act's second figure, not a second heading.
     expect(beyond).not.toContain('The depth studies');
     expect(beyond).not.toContain('Texture and Gaussian studies');
