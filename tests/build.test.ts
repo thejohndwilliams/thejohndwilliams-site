@@ -525,6 +525,33 @@ describe('Glass Build B promotion: hero complications are refractive C', () => {
   });
 });
 
+describe('Work: the record under the ram (owner order 2026-11-24)', () => {
+  const work = () => fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+
+  it('sits after the Isaiah 6:8 divider and replaces the chip cloud', () => {
+    const page = work();
+    const ram = page.indexOf('Isaiah 6:8');
+    const record = page.indexOf('data-xp ');
+    expect(ram).toBeGreaterThan(-1);
+    expect(record).toBeGreaterThan(ram);
+    expect(page).toContain('Film, then business, then operations.');
+    // Six entries, each a native disclosure that opens without script.
+    expect(page.match(/data-xp-item=/g)?.length).toBe(6);
+    expect(page.match(/<details class="xp-entry"/g)?.length).toBe(6);
+    expect(page.match(/data-xp-span=/g)?.length).toBe(6);
+  });
+
+  it('names SpaceX with title and years only (OPSEC ruling)', () => {
+    const page = work();
+    expect(page).toContain('Process Specialist');
+    expect(page).toContain('SpaceX');
+    for (const term of ['Starlink', 'Customer Support Associate', 'Enterprise Associate', 'Enterprise Support', 'ITAR', 'Incident', 'Bastrop', 'Sprinklr', 'P1', 'GPA', 'Juris', 'Law']) {
+      expect(page, term).not.toContain(term);
+    }
+    expect(page).not.toContain('—');
+  });
+});
+
 describe('The spread (owner order 2026-08-01): the material takes its seats', () => {
   it('work: the practice strip sits under Selected Work', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
