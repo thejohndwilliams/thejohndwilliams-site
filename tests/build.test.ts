@@ -270,13 +270,13 @@ describe('Generated HTML Content', () => {
       expect(aboutHtml).toContain('data');
     });
 
-    it('hangs the portrait as a print on the dark wall (2026-11-24)', () => {
-      // The white-ground portrait was the one light surface on an ink site
-      // when it ran full bleed. It now sits beside the lockup as a print:
-      // no scrim over it, no opacity on it, its own crop at its own size.
-      expect(aboutHtml).toContain('class="about-print');
-      expect(aboutHtml).toContain('/images/photography/portrait/john-portrait-bw.webp');
-      expect(aboutHtml).not.toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
+    it('uses the multi-stop dither-resistant hero gradient', () => {
+      // 2026-11-24 second pass (owner): the full-bleed portrait hero is
+      // restored. Gradient starts semi-transparent (not solid black) and
+      // fades to fully transparent so the photograph breathes.
+      expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
+      expect(aboutHtml).toContain('rgba(10,10,10,0)');
+      expect(aboutHtml).not.toContain('about-print');
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
@@ -596,16 +596,18 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(about).not.toContain('Resume (PDF)');
     expect(about).not.toContain('/files/Williams-John-D-Resume.pdf');
     // Page-level pill removed. Footer Contact remains, so the count
-    // is the hero pill (Selected work) + footer. Header Contact is a plain
-    // link, not a glass pill.
+    // is More + footer. Header Contact is a plain link, not a glass pill.
     expect((about.match(/data-gpill/g) || []).length).toBe(2);
     expect(about).toContain('/data/kinetic/earth.json');
     expect(about).not.toContain('/data/kinetic/structure.json');
     expect(about).not.toContain('/data/kinetic/sky.json');
-    expect(about).not.toContain('Neon traced across the night');
-    expect(about).toContain('A dark stream threading the woods');
+    // Elemental sequence (2026-11-24 second pass): Earth, Light, Water.
+    expect(about).toContain('Earth · rain-wet leaf');
+    expect(about).toContain('Light · neon traced across the night');
+    expect(about).toContain('Water · turquoise sea against rock formations');
+    expect(about.indexOf('Light · ')).toBeLessThan(about.indexOf('Water · '));
     expect(about).not.toContain('Credentials &amp; Practice');
-    expect(about).toContain('Turquoise sea against rock formations');
+    expect(about).not.toContain('<h2>Outside of work</h2>');
   });
   it('beyond: photograph at rest, plates stay in templates until a mode is chosen', async () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
@@ -927,5 +929,33 @@ describe('iPhone Duo (2026-11-24)', () => {
     const all = css();
     expect(all).toContain('[class].hero-lockup');
     expect(all).toContain('env(safe-area-inset-left)');
+  });
+});
+
+describe('Case studies say it with figures (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('governance: five gated acts, six ranked rules, the loop, the injection catch', () => {
+    const page = read('work/agent-governance/index.html');
+    expect((page.match(/class="gov-act"/g) || []).length).toBe(5);
+    expect((page.match(/class="gov-rung"/g) || []).length).toBe(6);
+    expect(page).toContain('class="gov-loop enf-wide"');
+    expect(page).toContain('class="gov-inject enf-wide"');
+    expect((page.match(/data-gov-anim/g) || []).length).toBe(5);
+    // The disclaimer prints once, as the colophon.
+    expect((page.match(/Not endorsed by or affiliated with NIST or ISO\./g) || []).length).toBe(1);
+    expect(page).not.toContain('Other mechanics, briefly');
+  });
+  it('enforcement: the rules as cards, the appeal as a picture of who appeals', () => {
+    const page = read('work/enforcement-gates/index.html');
+    expect((page.match(/class="enf-rule[ "]/g) || []).length).toBe(3);
+    expect(page).toContain('data-enf-appeal');
+    expect(page).toContain('rounded to whole people');
+    expect(page).not.toContain('A reversal rate that high is a signal, not a nuisance.');
+  });
+  it('about: the full-bleed portrait and the elemental sequence are back', () => {
+    const about = read('about/index.html');
+    expect(about).toContain('object-[center_12%]');
+    expect(about).toMatch(/>More<|More<span/);
+    expect(about).toContain('Light · neon traced across the night');
   });
 });

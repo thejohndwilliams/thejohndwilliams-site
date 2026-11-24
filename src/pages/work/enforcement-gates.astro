@@ -206,8 +206,24 @@ const jsonLd = {
     <section class="enf-block">
       <p class="enf-step">01</p>
       <h2>Three bands, two lines</h2>
-      <p>A classifier gives every message a score. The program decides what that score is allowed to do. Above the gate the system acts without a person. Between the gate and the floor, a reviewer decides. Below the floor, nothing happens. Drag either line: the gate trades wrongful removals against reviewer load, and the floor trades reviewer load against what gets through.</p>
-      <p>Both lines were set on a calibration split and are reported here on a test split the model and the gates never saw. The gate rule: the lowest score where calibration precision reached 99%. The floor rule: keep at least 98% of spam inside the two acting bands.</p>
+      <p>The score decides nothing. Two lines decide what it is allowed to do, and both were set on one split and checked on another the model never saw.</p>
+      <div class="enf-rules enf-wide" data-enf-rules>
+        <div class="enf-rule">
+          <p class="enf-rule__k">Gate · act alone</p>
+          <p class="enf-rule__v">The lowest score where calibration precision reached 99%</p>
+          <p class="enf-rule__n">Score {gates.auto.toFixed(3)}</p>
+        </div>
+        <div class="enf-rule">
+          <p class="enf-rule__k">Floor · a person decides</p>
+          <p class="enf-rule__v">Keep at least 98% of spam inside the two acting bands</p>
+          <p class="enf-rule__n">Score {gates.review.toFixed(3)}</p>
+        </div>
+        <div class="enf-rule enf-rule--quiet">
+          <p class="enf-rule__k">Below · nothing happens</p>
+          <p class="enf-rule__v">Allowed through, unread</p>
+          <p class="enf-rule__n">{test.allow_spam} spam missed</p>
+        </div>
+      </div>
     </section>
 
     <section class="enf-block">
@@ -237,7 +253,7 @@ const jsonLd = {
         </svg>
         <figcaption class="enf-cap"><span>Precision, with 95% Wilson intervals.</span></figcaption>
       </figure>
-      <p>{calN} decisions cannot certify 99%. Even with none wrong, the lower bound only clears 99% after {certify99} consecutive correct removals. The calibration result was a point estimate dressed as a guarantee. A program that wants a 99% gate has to fund the sample that proves it, and keep paying for it as the content shifts.</p>
+      <p>{calN} decisions cannot certify 99%. Even with none wrong, the lower bound only clears 99% after {certify99} consecutive correct removals.</p>
       <figure class="enf-run" data-enf-run>
         <div class="enf-run__head">
           <p class="enf-run__stat"><span class="enf-run__k">Correct in a row</span><span class="enf-run__v" data-run-n>{certify99}</span></p>
@@ -257,7 +273,7 @@ const jsonLd = {
     <section class="enf-block">
       <p class="enf-step">03</p>
       <h2>What a reviewer would find</h2>
-      <p>Every automatic removal on the test split, one square each. A quality sample of this band is how the gate gets checked in production, and these are the {test.auto_fp} a reviewer would overturn.</p>
+      <p>Every automatic removal on the test split, one square each. These are the {test.auto_fp} a reviewer would overturn.</p>
       <figure class="enf-qa">
         <div class="enf-qa__grid" role="img" aria-label={`${testN} automatic removals, ${test.auto_fp} of them legitimate messages.`}>
           {qaCells.map((c) => <span class:list={['enf-qa__cell', { 'is-wrong': c.wrong }]}></span>)}
@@ -274,13 +290,32 @@ const jsonLd = {
       <p class="enf-step">04</p>
       <h2>The appeal path</h2>
       <p>Every automatic action needs a way back. This part is simulated, with the assumptions stated: {pct(APPEAL_WRONG, 0)} of wrongly removed senders appeal, {pct(APPEAL_RIGHT, 0)} of rightly removed ones do, and review reverses every wrongful removal it sees.</p>
+      <figure class="enf-appeal reveal" data-enf-appeal>
+        <div class="enf-appeal__row">
+          <p class="enf-appeal__k">Wrongly removed · {test.auto_fp}</p>
+          <div class="enf-appeal__cells" role="img" aria-label={`${test.auto_fp} wrongly removed senders; about ${Math.round(appealsWrong)} appeal and are reinstated.`}>
+            {Array.from({ length: test.auto_fp }, (_, i) => <span class:list={['enf-appeal__cell', 'is-wrong', { 'is-appeal': i < Math.round(appealsWrong) }]}></span>)}
+          </div>
+        </div>
+        <div class="enf-appeal__row">
+          <p class="enf-appeal__k">Rightly removed · {test.auto_tp}</p>
+          <div class="enf-appeal__cells" role="img" aria-label={`${test.auto_tp} rightly removed senders; about ${Math.round(appealsRight)} appeal and lose.`}>
+            {Array.from({ length: test.auto_tp }, (_, i) => <span class:list={['enf-appeal__cell', { 'is-appeal': i < Math.round(appealsRight) }]}></span>)}
+          </div>
+        </div>
+        <ul class="enf-appeal__legend">
+          <li><span class="enf-appeal__cell is-wrong is-appeal" aria-hidden="true"></span><span>Appeals and wins</span></li>
+          <li><span class="enf-appeal__cell is-appeal" aria-hidden="true"></span><span>Appeals and loses</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>Expected appeals at the published gates, rounded to whole people.</span></figcaption>
+      </figure>
       <ol class="enf-flow" aria-label="Appeal path at the published gates">
         <li><span class="enf-flow__v">{testN}</span><span class="enf-flow__k">Removed automatically</span></li>
         <li><span class="enf-flow__v">{appealsTotal.toFixed(1)}</span><span class="enf-flow__k">Appeals expected</span></li>
         <li><span class="enf-flow__v">{appealsWrong.toFixed(1)}</span><span class="enf-flow__k">Reversed</span></li>
         <li><span class="enf-flow__v">{pct(reversalRate, 0)}</span><span class="enf-flow__k">Of appeals succeed</span></li>
       </ol>
-      <p>A reversal rate that high is a signal, not a nuisance. When most appeals win, the gate is too low or the policy is unclear, and the appeal queue is where that shows first.</p>
+      <p>When most appeals win, the gate is too low or the policy is unclear. The appeal queue shows it first.</p>
     </section>
 
     <section class="enf-block enf-reqs">

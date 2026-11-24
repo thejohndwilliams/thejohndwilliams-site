@@ -113,6 +113,28 @@ function mountFilters(figure: HTMLElement, signal: AbortSignal): void {
   apply(initial >= 0 ? initial : 0, false, false);
 }
 
+/** Scroll reveals for the page's own figures (2026-11-24). The root
+ *  carries gov-anim-on only while this runs, so no-JS and reduced motion
+ *  read every figure in its final state. */
+function mountReveals(root: HTMLElement, signal: AbortSignal): void {
+  const items = Array.from(root.querySelectorAll<HTMLElement>('[data-gov-anim]'));
+  if (items.length === 0 || !('IntersectionObserver' in window)) return;
+  root.classList.add('gov-anim-on');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }
+    }
+  }, { rootMargin: '0px 0px -18% 0px', threshold: 0.2 });
+  items.forEach((el) => io.observe(el));
+  signal.addEventListener('abort', () => {
+    io.disconnect();
+    root.classList.remove('gov-anim-on');
+  });
+}
+
 function initAgentGovernance(): void {
   abort?.abort();
   const root = document.querySelector<HTMLElement>('[data-agent-governance]');
@@ -130,6 +152,7 @@ function initAgentGovernance(): void {
   });
   const map = root.querySelector<HTMLElement>('[data-gov="map"]');
   if (map) mountFilters(map, signal);
+  mountReveals(root, signal);
 }
 
 initAgentGovernance();
