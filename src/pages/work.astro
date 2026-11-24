@@ -168,11 +168,16 @@ function projectPicture(file: string, wideCase: boolean) {
               // 18px root, minus 2rem of padding on each side. A rem length in
               // sizes uses the 16px initial size, so 72rem there is 1152px and
               // the 1200 file is chosen for this wider card.
+              // Half-row cards (span 6) are half the container, wider than
+              // the 42vw narrow slot: say so, or a 2.5x screen picks a file
+              // smaller than it draws (e2e image-resolution, 2026-11-24).
               const sizes = full
                 ? '(max-width: 767px) 100vw, 1224px'
                 : project.span >= 7
                   ? PROJECT_WIDE_SIZES
-                  : PROJECT_NARROW_SIZES;
+                  : project.span === 6
+                    ? '(max-width: 767px) 100vw, min(50vw, 612px)'
+                    : PROJECT_NARROW_SIZES;
               const picture = projectPicture(project.image, full && Boolean(project.page));
               return (
                 <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[300px] sm:min-h-[360px] flex ${span}`}>

@@ -9,7 +9,9 @@
   margin: 2.5rem 0 2rem;
 }
 
-.vg-console__live {
+.vg-console__live[hidden] { display: none; }
+
+.vg-console__live:not([hidden]) {
   display: grid;
   gap: 1.75rem;
   padding: 1.75rem 0 2rem;
