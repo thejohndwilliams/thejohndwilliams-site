@@ -1001,34 +1001,26 @@ html.lenis body { height: auto; }
 .about-hero[data-hero-under] { padding-top: calc(4.444rem + var(--header-h)); }
 @media (min-width: 640px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
 @media (min-width: 768px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
-/* About hero, 2026-11-24: the white-ground portrait hangs as a print on
-   the dark wall. Lockup left, print right; stacked on phones. The print
-   carries a hairline and a low shadow, no glass and no frame ornament. */
-.about-hero__grid { display: grid; gap: 2.667rem; align-items: end; }
-/* From 880px, lockup and print sit side by side: the iPhone Duo opened
-   (951 points wide) gets the wall-and-print layout, not a stack. */
-@media (min-width: 880px) {
-  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 20rem; gap: 3.556rem; }
-}
+/* About rows, 2026-11-24 second pass: one grammar for the three
+   sections. Text and figure share a row from 1024px, centred on each other
+   so neither leaves a void; the figure column is 560px; captions read
+   Element · subject in the plate's register. */
+.about-row { display: flex; flex-direction: column; gap: 2.667rem; }
 @media (min-width: 1024px) {
-  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 24rem; gap: 4.444rem; }
+  .about-row { flex-direction: row; align-items: center; gap: 4.444rem; }
 }
-.about-print { margin: 0; width: min(24rem, 78vw); }
-@media (min-width: 880px) { .about-print { width: 100%; } }
-/* Short screens (the Duo open is 669 points tall): less wall above the
-   lockup, so the name and the print both land in the first view. */
+.about-figure { flex-shrink: 0; width: 100%; }
+@media (min-width: 1024px) { .about-figure { width: 560px; } }
+.about-caption {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #868686;
+}
+/* Short screens (the Duo open is 669 points tall): less wall above the name. */
 @media (max-height: 720px) {
-  .about-hero[data-hero-under] { padding-top: calc(2.667rem + var(--header-h)); }
-  .about-hero__grid { align-items: center; }
-}
-@media (min-width: 880px) and (max-height: 720px) {
-  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 17rem; }
-}
-.about-print__img {
-  display: block;
-  width: 100%;
-  height: auto;
-  box-shadow: 0 0 0 1px rgba(244, 234, 222, 0.08), 0 24px 60px -28px rgba(0, 0, 0, 0.9);
+  .about-hero[data-hero-under] { padding-top: calc(4.444rem + var(--header-h)); }
 }
 #site-header:not(.scrolled) {
   background: linear-gradient(to bottom, rgba(10, 10, 10, 0.62), rgba(10, 10, 10, 0));

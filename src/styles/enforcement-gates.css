@@ -747,3 +747,47 @@
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
 }
+
+/* 2026-11-24 (owner: "graphics and animations that help get the point
+   across with less words"). Section 01's two paragraphs became the three
+   rule cards; the appeal path gained a picture of who appeals. */
+.enf-rules {
+  display: grid;
+  gap: 1px;
+  margin: 2rem 0 0;
+  background: rgba(244, 234, 222, 0.1);
+  border: 1px solid rgba(244, 234, 222, 0.1);
+}
+@media (min-width: 768px) { .enf-rules { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.enf-rule { margin: 0; padding: 1.5rem 1.4rem; background: #0a0a0a; }
+.enf-rule__k {
+  margin: 0 0 0.75rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a89f8c;
+}
+.enf-rule__v { margin: 0 0 1rem; font-family: 'EB Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.35; color: #f4eade; }
+.enf-rule__n { margin: 0; font-variant-numeric: tabular-nums lining-nums; color: #7e9cb8; font-size: 0.9375rem; }
+.enf-rule--quiet .enf-rule__v { color: rgba(244, 234, 222, 0.6); }
+
+.enf-appeal { margin: 2rem 0 2.25rem; display: grid; gap: 1.25rem; }
+.enf-appeal__k {
+  margin: 0 0 0.5rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a89f8c;
+}
+.enf-appeal__cells { display: flex; flex-wrap: wrap; gap: 4px; }
+.enf-appeal__cell {
+  width: 10px; height: 10px; display: inline-block;
+  background: rgba(244, 234, 222, 0.16);
+}
+.enf-appeal__cell.is-wrong { background: rgba(126, 156, 184, 0.35); }
+.enf-appeal__cell.is-appeal { background: #f4eade; }
+.enf-appeal__cell.is-wrong.is-appeal { background: #7e9cb8; }
+.enf-appeal__legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; color: rgba(244, 234, 222, 0.8); font-size: 0.875rem; }
+.enf-appeal__legend li { display: inline-flex; align-items: center; gap: 0.6rem; }
+
+/* Wide figures inside a measured block: the article is an inline-size
+   container, so a figure can take the article's full width (100cqi)
+   while the block's text keeps its 38rem measure. 2026-11-24. */
+.enf-page { container-type: inline-size; }
+.enf-page .enf-wide { width: 100cqi; max-width: none; }

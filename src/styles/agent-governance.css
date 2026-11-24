@@ -394,3 +394,128 @@
   max-width: 40rem;
   color: #A89F8C;
 }
+
+/* ============================================================
+   Figures that replace prose (2026-11-24, owner: "graphics and animations
+   that help get the point across with less words"). Matte, hairlines, the
+   blue-hour accent only where something is stopped or refused. Motion is
+   gated by .gov-anim-on (set by agent-governance.ts only when motion is
+   allowed); without it every figure reads in its final state.
+   ============================================================ */
+.gov-fine { color: #a89f8c; font-size: 0.9375rem; }
+
+/* 02 · the five acts */
+.gov-acts { margin: 2rem 0 2.5rem; }
+.gov-acts__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(244, 234, 222, 0.1); }
+.gov-act {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(3rem, 1fr) minmax(0, 2.2fr);
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.1);
+}
+.gov-act__verb { font-family: 'EB Garamond', Georgia, serif; font-size: 1.5rem; color: #f4eade; }
+.gov-act__gate { position: relative; height: 1px; background: rgba(244, 234, 222, 0.14); }
+.gov-act__bar {
+  position: absolute; right: 0; top: -9px; width: 2px; height: 19px; background: #7e9cb8;
+}
+.gov-act__needs { color: rgba(244, 234, 222, 0.78); font-size: 0.9375rem; line-height: 1.5; }
+@media (max-width: 639px) {
+  .gov-act { grid-template-columns: 5rem minmax(0, 1fr); }
+  .gov-act__gate { display: none; }
+}
+
+/* Ranked rules */
+.gov-ladder { margin: 1.5rem 0 2rem; }
+.gov-ladder__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.gov-rung {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid rgba(244, 234, 222, 0.12);
+  color: rgba(244, 234, 222, 0.9);
+}
+.gov-rung:nth-child(1) { width: 100%; border-color: rgba(244, 234, 222, 0.32); }
+.gov-rung:nth-child(2) { width: 94%; }
+.gov-rung:nth-child(3) { width: 88%; }
+.gov-rung:nth-child(4) { width: 82%; border-left: 2px solid #7e9cb8; }
+.gov-rung:nth-child(5) { width: 76%; }
+.gov-rung:nth-child(6) { width: 70%; color: rgba(244, 234, 222, 0.62); }
+.gov-rung__n { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.75rem; color: #a89f8c; min-width: 1.25rem; }
+@media (max-width: 639px) { .gov-rung { width: 100% !important; } }
+
+/* 03 · the improvement loop */
+.gov-loop { margin: 2rem 0 2.5rem; display: grid; gap: 2rem; align-items: center; }
+@media (min-width: 768px) { .gov-loop { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); } .gov-loop .enf-cap { grid-column: 1 / -1; } }
+.gov-loop__svg { width: 100%; max-width: 20rem; height: auto; overflow: visible; }
+.gov-loop__ring { fill: none; stroke: rgba(244, 234, 222, 0.1); stroke-width: 1; }
+.gov-loop__draw { fill: none; stroke: rgba(244, 234, 222, 0.55); stroke-width: 1.25; stroke-dasharray: 100; stroke-dashoffset: 0; transform: rotate(-90deg); transform-origin: 160px 160px; }
+.gov-loop__pin { fill: #0a0a0a; stroke: rgba(244, 234, 222, 0.7); stroke-width: 1.25; }
+.gov-loop__dot { fill: #f4eade; }
+.gov-loop__spin { transform-origin: 160px 160px; }
+.gov-loop__k { fill: #a89f8c; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+.gov-loop__legend { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; color: rgba(244, 234, 222, 0.82); font-size: 0.9375rem; line-height: 1.5; }
+.gov-loop__legend strong { color: #f4eade; font-weight: 500; }
+
+/* 04 · refusals read as stops */
+.gov-duties .gov-refuses { color: rgba(244, 234, 222, 0.72); }
+.gov-duties .gov-refuses::before {
+  content: ''; display: inline-block; width: 0.7rem; height: 0.7rem; margin-right: 0.55rem;
+  border: 1.5px solid #7e9cb8; border-radius: 50%;
+  background: linear-gradient(135deg, transparent 45%, #7e9cb8 45%, #7e9cb8 55%, transparent 55%);
+  vertical-align: -0.05rem;
+}
+
+/* 05 · untrusted content */
+.gov-inject { margin: 2rem 0 2.5rem; display: grid; gap: 1.25rem; align-items: center; }
+@media (min-width: 768px) { .gov-inject { grid-template-columns: minmax(0, 1.2fr) 3rem minmax(0, 1fr); } .gov-inject .enf-cap { grid-column: 1 / -1; } }
+.gov-inject__mail, .gov-inject__reply { padding: 1.25rem 1.4rem; border: 1px solid rgba(244, 234, 222, 0.12); }
+.gov-inject__k { margin: 0 0 0.75rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a89f8c; }
+.gov-inject__line { margin: 0 0 0.4rem; font-size: 0.9375rem; color: rgba(244, 234, 222, 0.8); }
+.gov-inject__bad { color: #f4eade; text-decoration: underline; text-decoration-color: #7e9cb8; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.gov-inject__arrow { display: block; height: 1px; background: rgba(244, 234, 222, 0.4); position: relative; }
+.gov-inject__arrow::after { content: ''; position: absolute; right: 0; top: -4px; border: 4.5px solid transparent; border-left-color: rgba(244, 234, 222, 0.4); border-right: 0; }
+@media (max-width: 767px) { .gov-inject__arrow { width: 1px; height: 2rem; margin-left: 1.4rem; } .gov-inject__arrow::after { display: none; } }
+
+/* Motion: only while agent-governance.ts allows it. */
+.gov-anim-on [data-gov-anim] .gov-act,
+.gov-anim-on [data-gov-anim] .gov-rung,
+.gov-anim-on [data-gov-anim] .gov-duties tbody tr,
+.gov-anim-on [data-gov-anim] .gov-loop__legend li {
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gov-anim-on [data-gov-anim]:not(.is-in) .gov-act,
+.gov-anim-on [data-gov-anim]:not(.is-in) .gov-rung,
+.gov-anim-on [data-gov-anim]:not(.is-in) .gov-duties tbody tr,
+.gov-anim-on [data-gov-anim]:not(.is-in) .gov-loop__legend li {
+  opacity: 0; transform: translateY(12px);
+}
+.gov-anim-on [data-gov-anim] :is(.gov-act, .gov-rung, .gov-duties tbody tr, .gov-loop__legend li):nth-child(2) { transition-delay: 0.08s; }
+.gov-anim-on [data-gov-anim] :is(.gov-act, .gov-rung, .gov-duties tbody tr, .gov-loop__legend li):nth-child(3) { transition-delay: 0.16s; }
+.gov-anim-on [data-gov-anim] :is(.gov-act, .gov-rung, .gov-duties tbody tr, .gov-loop__legend li):nth-child(4) { transition-delay: 0.24s; }
+.gov-anim-on [data-gov-anim] :is(.gov-act, .gov-rung, .gov-duties tbody tr, .gov-loop__legend li):nth-child(5) { transition-delay: 0.32s; }
+.gov-anim-on [data-gov-anim] :is(.gov-act, .gov-rung, .gov-duties tbody tr, .gov-loop__legend li):nth-child(6) { transition-delay: 0.4s; }
+.gov-anim-on [data-gov-anim] :is(.gov-duties tbody tr):nth-child(7) { transition-delay: 0.48s; }
+
+/* The gate bar drops into place after its row arrives. */
+.gov-anim-on .gov-acts .gov-act__bar { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.45s; transform-origin: top; }
+.gov-anim-on .gov-acts:not(.is-in) .gov-act__bar { transform: scaleY(0); }
+
+/* The loop draws itself, then a point travels it. */
+.gov-anim-on .gov-loop__draw { transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.gov-anim-on .gov-loop:not(.is-in) .gov-loop__draw { stroke-dashoffset: 100; }
+.gov-anim-on .gov-loop.is-in .gov-loop__spin { animation: gov-orbit 9s linear 1.6s infinite; }
+@keyframes gov-orbit { to { transform: rotate(360deg); } }
+
+/* The injected line is caught, then the reply appears. */
+.gov-anim-on .gov-inject .gov-inject__reply,
+.gov-anim-on .gov-inject .gov-inject__arrow { transition: opacity 0.6s ease 0.9s; }
+.gov-anim-on .gov-inject:not(.is-in) .gov-inject__reply,
+.gov-anim-on .gov-inject:not(.is-in) .gov-inject__arrow { opacity: 0; }
+.gov-anim-on .gov-inject .gov-inject__bad { transition: text-decoration-color 0.6s ease 0.4s; }
+.gov-anim-on .gov-inject:not(.is-in) .gov-inject__bad { text-decoration-color: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gov-loop__spin { animation: none !important; }
+}
+.gov-page .enf-wide .enf-cap { max-width: 40rem; }
