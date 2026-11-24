@@ -270,12 +270,13 @@ describe('Generated HTML Content', () => {
       expect(aboutHtml).toContain('data');
     });
 
-    it('uses the multi-stop dither-resistant hero gradient', () => {
-      // Gradient starts with a semi-transparent scrim (not solid black) so
-      // the portrait reads through on the left, then fades to fully
-      // transparent on the right to let the photograph breathe.
-      expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
-      expect(aboutHtml).toContain('rgba(10,10,10,0)');
+    it('hangs the portrait as a print on the dark wall (2026-11-24)', () => {
+      // The white-ground portrait was the one light surface on an ink site
+      // when it ran full bleed. It now sits beside the lockup as a print:
+      // no scrim over it, no opacity on it, its own crop at its own size.
+      expect(aboutHtml).toContain('class="about-print');
+      expect(aboutHtml).toContain('/images/photography/portrait/john-portrait-bw.webp');
+      expect(aboutHtml).not.toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
@@ -398,7 +399,9 @@ describe('SEO and Meta Tags', () => {
   });
 
   it('contains the updated default meta description', () => {
-    expect(indexHtml).toContain('Photography, cybersecurity, and data');
+    // 2026-11-24 cohesion pass: one positioning line across hero, meta and links.
+    expect(indexHtml).toContain('Operations, risk and controls; fine-art photography.');
+    expect(indexHtml).not.toContain('threats on a network');
   });
 
   it('contains JSON-LD Person schema', () => {
@@ -578,18 +581,21 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(work).not.toContain('Forecasting tool for enterprise support operations');
     expect((work.match(/Forecasting/g) || []).length).toBe(0);
   });
-  it('about: the consulting card is retired; More stands under the name', () => {
+  it('about: the consulting card is retired; one pill under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
     expect(about).not.toContain('I take on select consulting work');
     expect(about).not.toContain('Resume (PDF)');
     expect(about).not.toContain('/files/Williams-John-D-Resume.pdf');
     // Page-level pill removed. Footer Contact remains, so the count
-    // is More + footer. Header Contact is a plain link, not a glass pill.
+    // is the hero pill (Selected work) + footer. Header Contact is a plain
+    // link, not a glass pill.
     expect((about.match(/data-gpill/g) || []).length).toBe(2);
     expect(about).toContain('/data/kinetic/earth.json');
     expect(about).not.toContain('/data/kinetic/structure.json');
     expect(about).not.toContain('/data/kinetic/sky.json');
-    expect(about).toContain('Neon traced across the night');
+    expect(about).not.toContain('Neon traced across the night');
+    expect(about).toContain('A dark stream threading the woods');
+    expect(about).not.toContain('Credentials &amp; Practice');
     expect(about).toContain('Turquoise sea against rock formations');
   });
   it('beyond: photograph at rest, plates stay in templates until a mode is chosen', async () => {
@@ -641,7 +647,9 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect((beyond.match(/fetchpriority="high"/g) || []).length).toBe(2);
     expect(beyond).not.toContain('The same frame, as space');
     expect(beyond).not.toContain('Beyond%20Photography');
-    expect(beyond).toContain('The envelope');
+    // 2026-11-24 cohesion pass: the calibration paragraph left the page.
+    expect(beyond).toContain('What only a print can answer');
+    expect(beyond).not.toContain('calibrated bounds');
     expect(beyond).toContain('img-2528');
     expect(beyond).toContain('dsc-0014');
     expect(beyond).toContain('dscf1022');
@@ -656,12 +664,12 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(main).not.toContain('Hahnemühle');
     expect(main).not.toContain('cut to order');
     expect(main).not.toContain('—');
-    expect(main).toContain('Studies in texture.');
+    expect(main).toContain('Studies in texture, each one built from a single photograph.');
     expect(main).toContain('Scale study');
     expect(main).toContain('One depth, three sizes');
     expect(main).toContain('Open questions');
     expect(main).toContain('Which relief depth survives ordinary room light?');
-    expect(main).toContain('a Gaussian convolution, the closed-form');
+    expect(main).not.toContain('heat equation');
     expect(main).toContain('Back to the photographs');
     // 2026-10-28 rebuild: the hero is full-bleed under the bleed-short
     // exemption, the seven relief thumbnails are one scrubbed figure, and
@@ -841,5 +849,42 @@ describe('enforcement-gates case study', () => {
     expect(page).not.toContain('—');
     expect(page).not.toMatch(/<style[\s>]/);
     expect(page).not.toMatch(/<script type="module">/);
+  });
+});
+
+describe('Cohesion pass (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('home: identity, the rooms, then service, then connect', () => {
+    const home = read('index.html');
+    const inside = home.indexOf('>Inside<');
+    const service = home.indexOf('>In Service<');
+    const connect = home.indexOf('>Connect<');
+    expect(inside).toBeGreaterThan(0);
+    expect(service).toBeGreaterThan(inside);
+    expect(connect).toBeGreaterThan(service);
+    expect(home).not.toContain('>The Work<');
+  });
+  it('sky: the midday-blue frames left the gallery and their URLs 301', () => {
+    const gallery = read('photography/index.html');
+    const gone = ['dscf0088', 'dscf0056', 'dscf0060', 'dscf1275', 'dscf0090', 'dscf0091', 'dscf0082', 'dscf0086', 'dscf0069', 'dscf0936', '7r52355', '7r52352', 'img-7029-hdr-enhanced'];
+    const redirects = fs.readFileSync(path.join(process.cwd(), 'public/_redirects'), 'utf8');
+    for (const f of gone) {
+      expect(gallery, f).not.toContain(`/photography/${f}/`);
+      expect(fs.existsSync(path.join(distDir, 'photography', f)), f).toBe(false);
+      expect(redirects, f).toContain(`/photography/${f}/ /photography/ 301`);
+    }
+  });
+  it('photo pages: settings print once, under names a person would say', () => {
+    const page = read('photography/7r52326/index.html');
+    expect(page).not.toContain('ILCE-7RM5');
+    expect(page).toContain('Sony α7R V');
+    expect(page).toContain('Sigma 24-70mm F2.8 DG DN Art');
+    expect(page).not.toContain('| Art 019');
+  });
+  it('404: stands in a photograph like every other room', () => {
+    const nf = read('404.html');
+    expect(nf).toContain('/images/photography/hero/dsc-0329.webp');
+    expect(nf).toContain('This page does not exist.');
+    expect(nf).not.toContain("doesn't");
   });
 });

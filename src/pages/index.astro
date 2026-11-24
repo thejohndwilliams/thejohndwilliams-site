@@ -38,7 +38,7 @@ const charities = [
 
 ---
 
-<BaseLayout title="Home" description="Making visible: threats on a network, patterns in data, light on a moment. Photography, cybersecurity, and data by John D. Williams." ogImage="/og/pages/home.jpg" ogImageWidth={1200} ogImageHeight={630} lcpImage="7r52326" lcpImagePortrait="7r52326" lcpImageSizes={bleedSizes('7r52326')}>
+<BaseLayout title="Home" description="John D. Williams. Operations, risk and controls; fine-art photography. Case studies, photographs and experiments in making things visible." ogImage="/og/pages/home.jpg" ogImageWidth={1200} ogImageHeight={630} lcpImage="7r52326" lcpImagePortrait="7r52326" lcpImageSizes={bleedSizes('7r52326')}>
 
   {/* HERO - Full-bleed cloudscape with left-aligned identity.
       The section stops at the bitmap width. Phone art direction keeps its own crop. */}
@@ -95,8 +95,93 @@ const charities = [
   </section>
 
 
-  {/* IN SERVICE - charitable organizations, staggered bento */}
+  {/* NAVIGATION CARDS - bento grid with visual hierarchy */}
   <section class="section-light py-12 sm:py-16 md:py-24">
+    <div class="container-wide">
+      <h2 class="text-subhead mb-6 sm:mb-8 reveal">Inside</h2>
+      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5">
+        {/* Photography - the flagship. Spans all three rows of the right-hand
+            stack; the image is absolutely positioned so the three 16:10 cards
+            alone define the grid's row heights. */}
+        <a href="/photography/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-3 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
+          <picture>
+            <source type="image/avif" srcset={photoSrcset('7r51848', 'avif')} sizes={WORK_TILE_WIDE_SIZES} />
+            <source type="image/webp" srcset={photoSrcset('7r51848', 'webp')} sizes={WORK_TILE_WIDE_SIZES} />
+            <img
+              src="/images/photography/hero/7r51848.webp"
+              alt="A storm shelf at dusk, one ember of sunset at the horizon"
+              class="absolute inset-0 w-full h-full object-cover object-[center_62%] transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <div class="overlay-scrim-card absolute inset-0"></div>
+          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6 md:p-8">
+            <h3 class="t-sub font-serif mb-1.5 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Photography</h3>
+            <p class="text-sm sm:text-base">Sky, earth, water, structure, light.</p>
+          </div>
+        </a>
+        {/* About */}
+        <a href="/about/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
+          <picture>
+            <source type="image/avif" srcset={photoSrcset('img-0132', 'avif')} sizes={WORK_TILE_NARROW_SIZES} />
+            <source type="image/webp" srcset={photoSrcset('img-0132', 'webp')} sizes={WORK_TILE_NARROW_SIZES} />
+            <img
+              src="/images/photography/hero/img-0132.webp"
+              alt="A crystal chandelier lit low in a dark hall"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <div class="overlay-scrim-card absolute inset-0"></div>
+          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
+            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">About</h3>
+            <p class="text-base">Film, then business, then operations.</p>
+          </div>
+        </a>
+        {/* Work */}
+        <a href="/work/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
+          <picture>
+            <source type="image/avif" srcset={photoSrcset('dscf1928', 'avif')} sizes={WORK_TILE_NARROW_SIZES} />
+            <source type="image/webp" srcset={photoSrcset('dscf1928', 'webp')} sizes={WORK_TILE_NARROW_SIZES} />
+            <img
+              src="/images/photography/hero/dscf1928.webp"
+              alt="Windows lit at dusk across the water"
+              class="absolute inset-0 w-full h-full object-cover object-[center_32%] transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <div class="overlay-scrim-card absolute inset-0"></div>
+          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
+            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Work</h3>
+            <p class="text-sm sm:text-base">Case studies in controls and evidence.</p>
+          </div>
+        </a>
+        {/* Relief - the object axis. The asset is a purpose-rendered 16:10
+            detail of the carved hull (native 1280x800). max-w keeps the tile
+            inside that bitmap. */}
+        <a href="/beyond/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 max-w-[1280px] ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
+          <picture>
+            <source type="image/avif" srcset="/images/relief/card.avif" />
+            <img src="/images/relief/card.webp" alt="A tower carved as plaster relief, raked by one low light" width="1280" height="800" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105" loading="lazy" decoding="async" />
+          </picture>
+          <div class="overlay-scrim-card absolute inset-0"></div>
+          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
+            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Beyond</h3>
+            <p class="text-base">Depth, holograms, and a photograph cut as a surface.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* IN SERVICE - charitable organizations, staggered bento.
+      2026-11-24 cohesion pass (owner): follows the site's own rooms, so the
+      page reads identity, then the work, then service, then connect.
+      Section backgrounds re-alternate around the move. */}
+  <section class="py-12 sm:py-16 md:py-24">
     <div class="container-wide">
       <h2 class="text-subhead mb-6 sm:mb-8 reveal">In Service</h2>
       <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-5">
@@ -136,88 +221,6 @@ const charities = [
             </a>
           );
         })}
-      </div>
-    </div>
-  </section>
-
-  {/* NAVIGATION CARDS - bento grid with visual hierarchy */}
-  <section class="py-12 sm:py-16 md:py-24">
-    <div class="container-wide">
-      <h2 class="text-subhead mb-6 sm:mb-8 reveal">The Work</h2>
-      <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-5">
-        {/* Photography - the flagship. Spans all three rows of the right-hand
-            stack; the image is absolutely positioned so the three 16:10 cards
-            alone define the grid's row heights. */}
-        <a href="/photography/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-3 md:col-span-7 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
-          <picture>
-            <source type="image/avif" srcset={photoSrcset('7r51848', 'avif')} sizes={WORK_TILE_WIDE_SIZES} />
-            <source type="image/webp" srcset={photoSrcset('7r51848', 'webp')} sizes={WORK_TILE_WIDE_SIZES} />
-            <img
-              src="/images/photography/hero/7r51848.webp"
-              alt="A storm shelf at dusk, one ember of sunset at the horizon"
-              class="absolute inset-0 w-full h-full object-cover object-[center_62%] transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          <div class="overlay-scrim-card absolute inset-0"></div>
-          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6 md:p-8">
-            <h3 class="t-sub font-serif mb-1.5 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Photography</h3>
-            <p class="text-sm sm:text-base">Sky, earth, water, structure, light.</p>
-          </div>
-        </a>
-        {/* About */}
-        <a href="/about/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
-          <picture>
-            <source type="image/avif" srcset={photoSrcset('img-0132', 'avif')} sizes={WORK_TILE_NARROW_SIZES} />
-            <source type="image/webp" srcset={photoSrcset('img-0132', 'webp')} sizes={WORK_TILE_NARROW_SIZES} />
-            <img
-              src="/images/photography/hero/img-0132.webp"
-              alt="A crystal chandelier lit low in a dark hall"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          <div class="overlay-scrim-card absolute inset-0"></div>
-          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
-            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">About</h3>
-            <p class="text-base">Operations, risk and controls. Film-trained eye.</p>
-          </div>
-        </a>
-        {/* Work */}
-        <a href="/work/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
-          <picture>
-            <source type="image/avif" srcset={photoSrcset('dscf1928', 'avif')} sizes={WORK_TILE_NARROW_SIZES} />
-            <source type="image/webp" srcset={photoSrcset('dscf1928', 'webp')} sizes={WORK_TILE_NARROW_SIZES} />
-            <img
-              src="/images/photography/hero/dscf1928.webp"
-              alt="Windows lit at dusk across the water"
-              class="absolute inset-0 w-full h-full object-cover object-[center_32%] transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          <div class="overlay-scrim-card absolute inset-0"></div>
-          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
-            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Work</h3>
-            <p class="text-sm sm:text-base">Data, security, operations.</p>
-          </div>
-        </a>
-        {/* Relief - the object axis. The asset is a purpose-rendered 16:10
-            detail of the carved hull (native 1280x800). max-w keeps the tile
-            inside that bitmap. */}
-        <a href="/beyond/" class="press-feedback glass-luminous group relative block rounded-card overflow-hidden aspect-[16/9] md:aspect-[16/10] md:col-span-5 max-w-[1280px] ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth">
-          <picture>
-            <source type="image/avif" srcset="/images/relief/card.avif" />
-            <img src="/images/relief/card.webp" alt="A tower carved as plaster relief, raked by one low light" width="1280" height="800" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-visible:scale-105" loading="lazy" decoding="async" />
-          </picture>
-          <div class="overlay-scrim-card absolute inset-0"></div>
-          <div class="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
-            <h3 class="t-sub font-serif mb-1 group-hover:text-cream group-focus-visible:text-cream transition-colors duration-300">Beyond</h3>
-            <p class="text-base">Depth, holograms, and a photograph cut as a surface.</p>
-          </div>
-        </a>
       </div>
     </div>
   </section>

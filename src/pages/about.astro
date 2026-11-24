@@ -5,13 +5,20 @@ import KineticPlate from '../components/KineticPlate.astro';
 import KineticPlate3D from '../components/KineticPlate3D.astro';
 import Photo from '../components/Photo.astro';
 import { getPhotoBySlug } from '../data/photography';
-import { bleedSizes, heroCapClass, photoSrcset, portraitSizes, portraitSrcset } from '../utils/photo-src';
+import { photoTiers, portraitSrcset } from '../utils/photo-src';
 
-const lightStill = getPhotoBySlug('dsc-0378');
+const streamStill = getPhotoBySlug('dscf1792');
 const waterStill = getPhotoBySlug('7r50680-enhanced-sr');
-if (!lightStill || !waterStill) {
+if (!streamStill || !waterStill) {
   throw new Error('About stills are missing from photography.ts');
 }
+
+// 2026-11-24 cohesion pass (owner): the portrait is a white-ground
+// photograph, and full-bleed it made About the one light surface on an ink
+// site. It now hangs as a print on the dark wall, the way the gallery hangs
+// photographs: the white stays inside the frame instead of becoming the page.
+const portrait = photoTiers('john-portrait-bw').portrait!;
+const PRINT_SIZES = '(min-width: 1024px) 432px, 78vw';
 ---
 
 <BaseLayout
@@ -20,63 +27,50 @@ if (!lightStill || !waterStill) {
   ogImage="/og/pages/about.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
-  lcpImage="john-portrait-bw"
-  lcpImagePortrait="john-portrait-bw"
-  lcpImageSizes={bleedSizes('john-portrait-bw')}
 >
-  <!-- Scroll progress indicator -->
-
-  <!-- HERO - Portrait with full-bleed image. Width stops at the bitmap. -->
-  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'about-hero relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench data-hero-under>
-    <picture>
-      <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('john-portrait-bw', 'avif')} sizes={portraitSizes('john-portrait-bw')} />
-      <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('john-portrait-bw', 'webp')} sizes={portraitSizes('john-portrait-bw')} />
-      <source
-        type="image/avif"
-        srcset={photoSrcset('john-portrait-bw', 'avif')}
-        sizes={bleedSizes('john-portrait-bw')}
-      />
-      <source
-        type="image/webp"
-        srcset={photoSrcset('john-portrait-bw', 'webp')}
-        sizes={bleedSizes('john-portrait-bw')}
-      />
-      <img
-        src="/images/photography/hero/john-portrait-bw.webp"
-        alt="John D. Williams, black and white portrait"
-        class="absolute inset-0 w-full h-full object-cover object-[center_12%]"
-        data-bleed-short
-        fetchpriority="high"
-      />
-    </picture>
-    <div
-      class="absolute inset-0"
-      style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"
-    ></div>
-    <!-- (removed) duplicate hero grain: global body::before already supplies film grain across the whole site -->
-    <div class="relative z-10 container-narrow">
-      <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-3 sm:mb-4">Rising</p>
-        <h1 class="mb-5 sm:mb-8">John D. Williams</h1>
-      </div>
-      {/* More stays under the name. The page-level pill is gone:
-          the footer Contact is on this page. */}
-      <div class="reveal reveal-delay-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
-        <GlassPillGL label="More" href="/" variant="c" class="w-full sm:w-auto justify-center" srSuffix=" from John D. Williams" />
+  <!-- HERO. Lockup on the dark wall, the portrait hung beside it as a print. -->
+  <section class="about-hero relative overflow-hidden pb-12 sm:pb-16 md:pb-24" data-hero-under>
+    <div class="relative z-10 container-wide">
+      <div class="about-hero__grid">
+        <div class="reveal about-hero__lockup">
+          <p class="eyebrow mb-3 sm:mb-4">Rising</p>
+          <h1 class="t-title font-serif tracking-tight mb-4 sm:mb-5">John D. Williams</h1>
+          <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
+            Film, then business, then operations.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+            <GlassPillGL label="Selected work" href="/work/" variant="c" class="w-full sm:w-auto justify-center" />
+          </div>
+        </div>
+        <figure class="reveal reveal-delay-2 about-print">
+          <picture>
+            <source type="image/avif" srcset={portraitSrcset('john-portrait-bw', 'avif')} sizes={PRINT_SIZES} />
+            <source type="image/webp" srcset={portraitSrcset('john-portrait-bw', 'webp')} sizes={PRINT_SIZES} />
+            <img
+              src="/images/photography/portrait/john-portrait-bw.webp"
+              width={portrait.w}
+              height={portrait.h}
+              alt="John D. Williams, black and white portrait"
+              class="about-print__img"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- BACKGROUND - single merged section, no accordion -->
+  <!-- BACKGROUND -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-wide">
       <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
         <div class="reveal prose max-w-2xl lg:flex-1">
           <h2>Background</h2>
           <p>
-            BA in Film and Digital Media from Baylor, 2015. That degree taught me
-            composition, narrative structure, and visual communication: skills I use
-            daily. An MBA in Cybersecurity from Baylor followed in 2024.
+            A BA in Film and Digital Media from Baylor in 2015, then an MBA in
+            Cybersecurity from Baylor in 2024. Film taught composition,
+            narrative structure and visual communication. I use all three daily.
           </p>
           <p>
             I work in operations, risk and controls: process design, escalation
@@ -99,12 +93,12 @@ if (!lightStill || !waterStill) {
     </div>
   </section>
 
-  <!-- WHAT I AM BUILDING -->
+  <!-- OUTSIDE OF WORK -->
   <section class="py-10 sm:py-16 md:py-24">
     <div class="container-wide">
       <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
         <div class="reveal prose max-w-2xl lg:flex-1 lg:order-2">
-          <h2>What I Am Building</h2>
+          <h2>Outside of work</h2>
           <p>
             Outside of work I run Noticing: technology consulting, a photography
             practice in landscape and nature work, and a faith-based content
@@ -117,29 +111,25 @@ if (!lightStill || !waterStill) {
         </div>
         <aside class="reveal shrink-0 lg:order-1 lg:w-[560px] lg:pt-2">
           <Photo
-            image={lightStill.image}
+            image={streamStill.image}
             sizes="(min-width: 1024px) 560px, 100vw"
             class="block w-full h-auto"
             fallbackTier="gallery"
           />
-          <p class="mt-3 text-sm tracking-[0.22em] uppercase text-mute">{lightStill.image.alt}</p>
+          <p class="mt-3 text-sm tracking-[0.22em] uppercase text-mute">{streamStill.image.alt}</p>
         </aside>
       </div>
     </div>
   </section>
 
-  <!-- CREDENTIALS + OUTSIDE WORK - merged, tight -->
+  <!-- PRACTICE. Credentials live in the record on Work; this is the person. -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-wide">
       <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
         <div class="reveal prose max-w-2xl lg:flex-1">
-          <h2>Credentials &amp; Practice</h2>
+          <h2>Practice</h2>
           <p>
-            BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
-            Baylor University (2024). Eagle Scout.
-          </p>
-          <p>
-            I am a nature photographer. I am a person of faith.
+            I am an Eagle Scout, a nature photographer and a person of faith.
             I believe in service, in showing up when it is hard, and in
             doing the work in front of you without waiting for applause.
           </p>
