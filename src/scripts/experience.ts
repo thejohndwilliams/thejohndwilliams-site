@@ -61,6 +61,10 @@ export function initExperience(): void {
     },
   ], signal);
 
+  // Print (2026-11-24): the printed Work page carries every role's line.
+  window.addEventListener('beforeprint', () => {
+    root.querySelectorAll<HTMLDetailsElement>('details.xp-entry').forEach((d) => { d.open = true; });
+  }, { signal });
   document.addEventListener('astro:before-swap', teardown, { once: true, signal });
 }
 
