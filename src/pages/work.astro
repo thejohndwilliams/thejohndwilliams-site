@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ExperienceRecord from '../components/ExperienceRecord.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
 import '../styles/work-print.css';
 import { bleedSizes, heroCapClass, photoSrcset, photoTiers, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
@@ -158,9 +159,14 @@ function projectPicture(file: string, wideCase: boolean) {
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Proving</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-        <p class="text-base leading-relaxed max-w-xl">
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
           Case studies in controls, evidence and automated decisions.
         </p>
+        <!-- Résumé restored 2026-11-24 (owner ruling 2026-10-25: back only
+             with a new PDF in the cleared framing; owner approved the draft). -->
+        <div class="reveal reveal-delay-2 work-print-hide flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+          <GlassPillGL label="Résumé (PDF)" href="/files/John-D-Williams-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
+        </div>
       </div>
     </div>
   </section>
