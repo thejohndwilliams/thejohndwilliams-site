@@ -975,3 +975,13 @@ describe('Work serves a hiring conversation (owner order 2026-11-24)', () => {
     expect(all).toContain('.xp-entry::details-content');
   });
 });
+
+describe('Contrast holds in every state (2026-11-24)', () => {
+  it('Work timeline years brighten as the line passes; they never fade below AA', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    const rule = all.match(/\.xp-ribbon__year\{[^}]*\}/)?.[0] ?? '';
+    expect(rule).toContain('color-mix(');
+    expect(rule).not.toMatch(/opacity:clamp\(0?\.2/);
+  });
+});

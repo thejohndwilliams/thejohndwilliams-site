@@ -193,8 +193,10 @@
   transform: translateX(-50%);
   font-size: 0.625rem;
   letter-spacing: 0.06em;
+  /* The line passing a year brightens it. Unplayed years stay at #868686
+     (5:1 on the page), never faded out: small type keeps AA in every state. */
   color: #868686;
-  opacity: clamp(0.2, (var(--play, 1) - var(--x0)) * 40 + 1, 1);
+  color: color-mix(in srgb, #d8cfbf calc(clamp(0, (var(--play, 1) - var(--x0)) * 40 + 1, 1) * 100%), #868686);
 }
 
 .xp-ribbon__year::before {
@@ -213,7 +215,10 @@
   }
 
   .xp-ribbon__year.is-minor {
-    color: transparent;
+    visibility: hidden;
+  }
+  .xp-ribbon__year.is-minor::before {
+    visibility: visible;
   }
 }
 
