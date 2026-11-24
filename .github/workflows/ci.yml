@@ -78,7 +78,18 @@ jobs:
           path: dist
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        # 2026-11-24: the runner's apt mirror (us-east-2 archive) stalled
+        # mid-download on most runs for two days, hanging this step 20+
+        # minutes with no timeout. apt now times out and retries its own
+        # fetches, each attempt is bounded, and the step retries twice.
+        timeout-minutes: 18
+        run: |
+          echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30";' | sudo tee /etc/apt/apt.conf.d/80-ci-retries > /dev/null
+          for i in 1 2 3; do
+            timeout 300 npx playwright install --with-deps chromium webkit && exit 0
+            echo "Playwright install attempt $i failed or stalled; retrying."
+          done
+          exit 1
 
       - name: e2e (chromium + webkit + iphone)
         run: npx playwright test
