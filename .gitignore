@@ -50,6 +50,9 @@ plates-source/
 visual-baseline/
 visual-diff/
 
+# Visual judge captures + reports (scripts/visual-judge; CI uploads them as artifacts)
+visual-judge-out/
+
 # axe a11y test scratch build
 dist-a11y-test/
 
