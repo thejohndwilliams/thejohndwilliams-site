@@ -959,3 +959,29 @@ describe('Case studies say it with figures (owner order 2026-11-24)', () => {
     expect(about).toContain('Light · neon traced across the night');
   });
 });
+
+describe('Work serves a hiring conversation (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every skill names where to see it', () => {
+    const page = read('work/index.html');
+    expect(page).toContain('id="evidence"');
+    expect((page.match(/class="work-evidence__row"/g) || []).length).toBeGreaterThanOrEqual(6);
+    expect(page).toContain('id="record"');
+  });
+  it('Work prints as words on white, with the record open', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    expect(all).toMatch(/@media print\{@page\{size:letter/);
+    expect(all).toContain('.xp-entry::details-content');
+  });
+});
+
+describe('Contrast holds in every state (2026-11-24)', () => {
+  it('Work timeline years brighten as the line passes; they never fade below AA', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    const rule = all.match(/\.xp-ribbon__year\{[^}]*\}/)?.[0] ?? '';
+    expect(rule).toContain('color-mix(');
+    expect(rule).not.toMatch(/opacity:clamp\(0?\.2/);
+  });
+});
