@@ -1013,7 +1013,7 @@ html.lenis body { height: auto; }
 @media (min-width: 1024px) { .about-figure { width: 560px; } }
 .about-caption {
   margin-top: 0.75rem;
-  font-size: 0.778rem; /* 14px at the 18px root: the touch-targets type floor */
+  font-size: max(14px, 0.778rem); /* the touch-targets type floor; the root is fluid on phones */
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #868686;
