@@ -914,3 +914,18 @@ describe('Verification gate case study (2026-11-24)', () => {
     for (const banned of ['SpaceX', 'Starlink', 'Sprinklr', 'ITAR', 'gpt-', 'grok-']) expect(page, banned).not.toContain(banned);
   });
 });
+
+describe('iPhone Duo (2026-11-24)', () => {
+  const css = () => {
+    const dir = path.join(distDir, '_assets');
+    return fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+  };
+  it('heroes keep their lockup clear of the header on short screens', () => {
+    expect(css()).toMatch(/\[data-hero-under\]:not\(\.about-hero\):not\(\.beyond-banner\)\{padding-top:calc\(var\(--header-h\) \+ 1\.333rem\)\}/);
+  });
+  it('lockups take the side safe-area inset as a floor', () => {
+    const all = css();
+    expect(all).toContain('[class].hero-lockup');
+    expect(all).toContain('env(safe-area-inset-left)');
+  });
+});

@@ -740,3 +740,10 @@
     transition: none;
   }
 }
+
+/* iPhone Duo (2026-11-24): the side status island. The article keeps its
+   centred width and gives the inset back as inner padding. */
+.enf-page {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
