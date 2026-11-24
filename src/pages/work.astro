@@ -8,60 +8,83 @@ type ProjectCard = {
   title: string;
   description: string;
   tags: string[];
-  outcome?: string;
+  /** One line: what kind of work and where it came from. */
+  meta: string;
   github?: string;
   page?: string;
   image: string;
   alt: string;
-  wideRow?: boolean;
+  /** Grid span at md and up, out of 12. 12 is a full row. */
+  span: 5 | 6 | 7 | 12;
 };
 
-const projects: ProjectCard[] = [
-  {
-    title: 'Job Application Analytics',
-    description: 'Analysis of 580+ job applications over two years. Predictive models for rejection patterns, anomaly detection on response rates, isolation of which variables actually move hiring outcomes. Python, full statistical methodology.',
-    tags: ['Python', 'Machine Learning', 'Data Analysis', 'Statistics'],
-    outcome: 'Identified actionable patterns across 580+ applications',
-    github: 'https://github.com/thejohndwilliams/jobappanalysis',
-    image: 'dscf1059',
-    alt: 'A spire against a bruised twilight'
-  },
-  {
-    title: 'Government Cybersecurity Assessment',
-    description: 'NIST-framework risk assessment for government sector organizations. Threat analysis, control mapping, and remediation planning against NIST CSF and 800-53 Rev 5.',
-    tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Cybersecurity'],
-    outcome: 'Full threat model with prioritized remediation roadmap',
-    github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment',
-    image: 'dsc-0329',
-    alt: 'Light through a derelict hall'
-  },
-  {
-    title: 'Healthcare Security Strategy',
-    description: 'MBA capstone at Baylor. Security framework for a healthcare organization: NIST CSF and 800-53 Rev 5 controls, risk assessment methodology, compliance mapping, implementation roadmap.',
-    tags: ['NIST CSF', 'NIST 800-53', 'Capstone', 'Compliance'],
-    outcome: 'Baylor University MBA Cybersecurity Capstone',
-    github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
-    image: 'dscf0423',
-    alt: 'Japanese alleyway at night'
-  },
+// 2026-11-24 cohesion pass (owner): every card carries a standfirst, a
+// provenance line and a link to the artifact; no resume outcome lines.
+// Case studies first; the MBA work below, named as coursework. Job
+// Application Analytics left the page (its repository stays public).
+const caseStudies: ProjectCard[] = [
   {
     title: 'Precision-Gated Enforcement',
-    description: 'A classifier run as an enforcement system: an auto-action gate, a review band, an appeal path, and the sample size it takes to prove a 99% gate. Public data only.',
-    tags: ['Classifiers', 'Thresholds', 'Quality'],
+    description: 'A classifier run as an enforcement system: an auto-action gate, a review band, an appeal path, and the sample size it takes to prove a 99% gate.',
+    tags: ['Classifiers', 'Thresholds', 'Appeals'],
+    meta: 'Personal project · Public data',
     page: '/work/enforcement-gates/',
     image: 'dsc-0131',
-    alt: 'Storm front massing over rooftops'
+    alt: 'Storm front massing over rooftops',
+    span: 7,
+  },
+  {
+    title: 'Adversarial Verification for AI Claims',
+    description: 'Two models from different vendors are told a claim is wrong. They pass it only by citing raw evidence, and the gate blocks the rest.',
+    tags: ['AI assurance', 'Evidence', 'Decision rules'],
+    meta: 'Personal project · Python',
+    page: '/work/verification-gate/',
+    image: 'img-1066',
+    alt: 'A shelf cloud rolling over an open field',
+    span: 5,
   },
   {
     title: 'Human Oversight for a Multi-Agent System',
     description: 'Approval gates, role boundaries and an evidence trail that let one person govern a group of AI agents.',
     tags: ['Approval gates', 'Evidence', 'Duties'],
+    meta: 'Personal project · Mapped to NIST AI RMF',
     page: '/work/agent-governance/',
     image: 'img-7395-enhanced-sr',
     alt: 'Temple gate against blue sky',
-    wideRow: true
-  }
+    span: 12,
+  },
 ];
+
+const coursework: ProjectCard[] = [
+  {
+    title: 'Government Sector Breach Assessment',
+    description: 'Three public breach cases read against NIST SP 800-30, from Privacy Rights Clearinghouse records, 2009 to 2018. Most turned on process failures, not technical sophistication.',
+    tags: ['NIST SP 800-30', 'Breach data', 'Risk'],
+    meta: 'Baylor MBA coursework',
+    github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment',
+    image: 'dsc-0329',
+    alt: 'Light through a derelict hall',
+    span: 6,
+  },
+  {
+    title: 'Healthcare Security Strategy',
+    description: 'A security policy suite for a fictional medical technology company, aligned to the NIST CSF, then raised to NIST SP 800-53 Rev. 5 High for a government-funded data center.',
+    tags: ['NIST CSF', 'NIST 800-53', 'RMF'],
+    meta: 'Baylor MBA capstone, 2024',
+    github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
+    image: 'dscf0423',
+    alt: 'A narrow alley lit by one lamp',
+    span: 6,
+  },
+];
+
+const groups = [
+  { id: 'case-studies', label: 'Case studies', line: 'Built on public data and on my own systems. The discipline, not the details.', cards: caseStudies },
+  { id: 'coursework', label: 'Coursework', line: 'Baylor University, MBA in Cybersecurity.', cards: coursework },
+];
+
+// Literal class names so Tailwind's scanner emits them.
+const SPAN = { 5: 'md:col-span-5', 6: 'md:col-span-6', 7: 'md:col-span-7', 12: 'md:col-span-12' } as const;
 
 const CARD_W = 1280;
 const CARD_H = 720;
@@ -93,7 +116,7 @@ function projectPicture(file: string, wideCase: boolean) {
 
 <BaseLayout
   title="Work"
-  description="Data, cybersecurity and operations projects by John D. Williams, with writings and research to come."
+  description="Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done."
   ogImage="/og/pages/work.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
@@ -118,94 +141,77 @@ function projectPicture(file: string, wideCase: boolean) {
     <div class="hero-scrim-left absolute inset-0"></div>
     <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-3 sm:mb-4">Building</p>
+        <p class="eyebrow mb-3 sm:mb-4">Proving</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
         <p class="text-base leading-relaxed max-w-xl">
-          Consulting in data engineering, cybersecurity, and operational
-          analytics.
+          Case studies in controls, evidence and automated decisions.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ACT I - THE WORK · image-backed bento -->
+  <!-- ACT I - THE WORK. Case studies, then coursework, each card a
+       standfirst, a provenance line and the link to its artifact. -->
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
-      <div class="reveal max-w-2xl mb-8 sm:mb-12">
-        <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Selected work</p>
-        <p class="text-base text-mute">
-          Data, security, and operations. The discipline, not the details.
-        </p>
-      </div>
-      <div class="stagger-children grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
-        {projects.map((project, i) => {
-          const isWide = i === 0 || i === 3;
-          // A narrow card with no partner (the row before a full-width card,
-          // or the last card) takes the full row instead of leaving a half
-          // row empty. 2026-11-14: Healthcare sat alone after the queue card
-          // was erased (#99).
-          const next = projects[i + 1];
-          const isLone = !isWide && !project.wideRow && i % 2 === 0 && (!next || next.wideRow);
-          const span = project.wideRow || isLone
-            ? 'sm:col-span-2 md:col-span-12'
-            : isWide
-              ? 'sm:col-span-2 md:col-span-7'
-              : 'md:col-span-5';
-          // Full row. Content box caps at 1224px: container-wide is 72rem at the
-          // 18px root, minus 2rem of padding on each side. A rem length in
-          // sizes uses the 16px initial size, so 72rem there is 1152px and
-          // the 1200 file is chosen for this wider card.
-          const sizes = project.wideRow || isLone
-            ? '(max-width: 767px) 100vw, 1224px'
-            : isWide
-              ? PROJECT_WIDE_SIZES
-              : PROJECT_NARROW_SIZES;
-          const wideCase = Boolean(project.wideRow && project.page);
-          const picture = projectPicture(project.image, wideCase);
-          const showCopy = isWide || project.wideRow || isLone;
-          return (
-            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
-              <picture>
-                <source type="image/avif" srcset={picture.avif} sizes={sizes} />
-                <source type="image/webp" srcset={picture.webp} sizes={sizes} />
-                <img src={picture.src} width={picture.w} height={picture.h} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" fetchpriority="low" />
-              </picture>
-              <div class="overlay-scrim-work absolute inset-0"></div>
-              <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
-                <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
-                <div class="flex flex-wrap gap-1.5 mb-3">
-                  {project.tags.slice(0, 3).map((tag: string) => (
-                    <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
-                  ))}
-                </div>
-                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${showCopy ? '' : 'sm:hidden md:block'}`}>{project.description}</p>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  {project.outcome && <p class="text-base text-stone-light">{project.outcome}</p>}
-                  {(project.page || project.github) && (
+      {groups.map((group, g) => (
+        <div class:list={[{ 'mt-14 sm:mt-20': g > 0 }]} id={group.id}>
+          <div class="reveal max-w-2xl mb-8 sm:mb-12">
+            <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">{group.label}</p>
+            <p class="text-base text-mute">{group.line}</p>
+          </div>
+          <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
+            {group.cards.map((project) => {
+              const full = project.span === 12;
+              const span = SPAN[project.span];
+              // Full row. Content box caps at 1224px: container-wide is 72rem at the
+              // 18px root, minus 2rem of padding on each side. A rem length in
+              // sizes uses the 16px initial size, so 72rem there is 1152px and
+              // the 1200 file is chosen for this wider card.
+              const sizes = full
+                ? '(max-width: 767px) 100vw, 1224px'
+                : project.span >= 7
+                  ? PROJECT_WIDE_SIZES
+                  : PROJECT_NARROW_SIZES;
+              const picture = projectPicture(project.image, full && Boolean(project.page));
+              return (
+                <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[300px] sm:min-h-[360px] flex ${span}`}>
+                  <picture>
+                    <source type="image/avif" srcset={picture.avif} sizes={sizes} />
+                    <source type="image/webp" srcset={picture.webp} sizes={sizes} />
+                    <img src={picture.src} width={picture.w} height={picture.h} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" fetchpriority="low" />
+                  </picture>
+                  <div class="overlay-scrim-work absolute inset-0"></div>
+                  <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
+                    <p class="text-sm tracking-[0.12em] uppercase text-stone-light mb-2">{project.meta}</p>
+                    <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                      {project.tags.slice(0, 3).map((tag: string) => (
+                        <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
+                      ))}
+                    </div>
+                    <p class="text-base mb-3 sm:mb-4 leading-relaxed max-w-2xl">{project.description}</p>
                     <a
                       href={project.page || project.github}
                       target={project.page ? undefined : '_blank'}
                       rel={project.page ? undefined : 'noopener noreferrer'}
-                      class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center"
+                      class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center self-start"
                     >
-                      {project.page ? 'Read the case study →' : 'View on GitHub →'}{project.page && <span class="sr-only">{` : ${project.title}`}</span>}
+                      {project.page ? 'Read the case study →' : 'View the work on GitHub →'}<span class="sr-only">{` : ${project.title}`}</span>
                     </a>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
       {/* 2026-11-24 (owner): the expertise chip cloud read as filler. Its
           terms moved into the record below the ram, as chips on the roles
           they came from and a Tools line. */}
       <p class="reveal mt-8 sm:mt-12 text-base text-mute">
         The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>
-      {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
-          loud. One flame, one whisper: the resume becomes a drawn-underline
-          text link; the inquiry keeps the ivory, compact. */}
     </div>
   </section>
 

@@ -1,5 +1,10 @@
-/* Case study page. Ink and ivory. One glass surface lives on .gov-summary.
-   Figures stay matte. No hue accent. 8px rhythm. */
+/* Case study page. Ink and ivory. 2026-11-24: the page rides the shared
+   case-study grammar (enforcement-gates.css: .enf-hero, .enf-page,
+   .enf-block); this file keeps the figures, lists and tables. The glass
+   summary card is retired. Figures stay matte. 8px rhythm. */
+
+.gov-hero__img { object-position: 50% 58%; }
+.gov-page .gov-block > h2 { margin-top: 0; }
 
 .gov-lead {
   max-width: 40rem;

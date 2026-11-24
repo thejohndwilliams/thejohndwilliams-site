@@ -1,0 +1,201 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { decide, CASES, type ReviewerInput } from '../../utils/verification-gate';
+import { photoSrcset, photoTiers } from '../../utils/photo-src';
+import '../../styles/enforcement-gates.css';
+import '../../styles/verification-gate.css';
+
+// Case study: the verification gate John runs over his own AI agents' claims
+// (tri_fleet_gate.py, claim_lint.py and receipt_lint.py in his personal
+// tooling). Every rule on this page is read from that code; the figure runs
+// a port of its decision step (src/utils/verification-gate.ts, unit-tested
+// in tests/verification-gate.test.ts). No run counts are claimed: the run
+// history is not retained, so the page describes the rule, not results.
+// Shares the case-study grammar of /work/enforcement-gates/ (2026-11-24).
+const pageTitle = 'Adversarial Verification for AI Claims';
+const description = 'A gate for work done by AI agents: two models from different vendors are told a claim is wrong, must cite raw evidence to pass it, and block anything they cannot prove.';
+
+const HERO = 'img-1066';
+const hero = photoTiers(HERO);
+
+const describe = (r: ReviewerInput) =>
+  r.returned === 'none' ? 'No answer'
+  : r.returned === 'prose' ? 'Prose'
+  : r.returned === 'fail' ? 'Fail'
+  : r.cited ? 'Pass, cites evidence' : 'Pass, cites nothing';
+
+const cases = CASES.map((c) => ({ ...c, result: decide([c.a, c.b], c.severity) }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: pageTitle,
+  description,
+  url: 'https://thejohndwilliams.com/work/verification-gate/',
+  author: { '@type': 'Person', name: 'John D. Williams', url: 'https://thejohndwilliams.com' },
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={description}
+  ogImage="/og/pages/work.jpg"
+  ogImageWidth={1200}
+  ogImageHeight={630}
+  lcpImage={HERO}
+  lcpImageSizes="100vw"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+  <section class="enf-hero relative flex items-end overflow-hidden" data-hero-under>
+    <picture>
+      <source type="image/avif" srcset={photoSrcset(HERO, 'avif')} sizes="100vw" />
+      <source type="image/webp" srcset={photoSrcset(HERO, 'webp')} sizes="100vw" />
+      <img
+        src={`/images/photography/hero/${HERO}.webp`}
+        width={hero.hero.w}
+        height={hero.hero.h}
+        alt="A shelf cloud rolling over an open field"
+        class="vg-hero__img absolute inset-0 h-full w-full object-cover"
+        data-bleed-short
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+    <div class="hero-scrim-left absolute inset-0"></div>
+    <div class="enf-hero__lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Case study · AI assurance</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">{pageTitle}</h1>
+        <p class="enf-deck">Two models from different vendors are told a claim is wrong. They pass it only by citing raw evidence, and the gate blocks anything they cannot prove.</p>
+      </div>
+    </div>
+  </section>
+
+  <article class="enf-page vg-page" data-vg-page>
+    <dl class="enf-meta">
+      <div><dt>Scope</dt><dd>Personal project</dd></div>
+      <div><dt>Reviewers</dt><dd>Two models, two vendors</dd></div>
+      <div><dt>Verdict</dt><dd>Pass or blocked</dd></div>
+      <div><dt>Code</dt><dd>Python</dd></div>
+    </dl>
+
+    <p class="enf-lede">An agent that says <span class="enf-num">done</span> has made a claim. This gate treats every such claim as wrong until two independent reviewers can point to the proof.</p>
+
+    <section class="enf-block">
+      <p class="enf-step">01</p>
+      <h2>Agreement is cheap</h2>
+      <p>I run a group of AI agents that research, draft and build for me. Their failure mode is not lying. It is fluency: a confident summary reads like evidence, a second agent agrees with the first, and the claim moves forward without anyone having looked at the record. On anything consequential, I want a step that cannot be talked past.</p>
+      <p>This page describes the rules and the code. It makes no claim about how often the gate has blocked; that history is not kept.</p>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">02</p>
+      <h2>A claim, packed with its evidence</h2>
+      <p>The agent that did the work fills in one file before the gate runs. Reviewers see this file and nothing else.</p>
+      <ol class="enf-req-list vg-fields">
+        <li><span class="enf-req__n">1</span><p><strong>Intent.</strong> What the work was supposed to achieve.</p></li>
+        <li><span class="enf-req__n">2</span><p><strong>Claim.</strong> What the agent asserts is now true or done.</p></li>
+        <li><span class="enf-req__n">3</span><p><strong>Raw evidence.</strong> Tool output, log lines, scan results. Not a summary. Cut at 12,000 characters.</p></li>
+        <li><span class="enf-req__n">4</span><p><strong>Interpretation.</strong> The agent's own reading, labelled as a hypothesis to be challenged, never as evidence.</p></li>
+        <li><span class="enf-req__n">5</span><p><strong>Re-derivation command.</strong> The exact command a reviewer would run to produce the evidence again.</p></li>
+        <li><span class="enf-req__n">6</span><p><strong>Consequential, yes or no.</strong> Whether a wrong answer would be costly or hard to undo. This sets the severity.</p></li>
+      </ol>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">03</p>
+      <h2>Two reviewers, told the claim is wrong</h2>
+      <p>Each reviewer is a model from a different vendor, with no shared context and no write access. Each is instructed to assume the claim is wrong, to weigh only the raw output, and to return a binary verdict in a fixed schema: pass or fail, the gaps it found, and the exact values it cites. "Looks fine" is a fail.</p>
+      <p>The answers are then read strictly. A verdict in prose instead of the schema is a fail. A pass that cites no evidence is demoted to a fail. A reviewer that returns nothing is unusable. And if a vendor quietly serves a weaker model than the one requested, that review is void.</p>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">04</p>
+      <h2>The rule</h2>
+      <p>Consequential claims run strict: both reviewers must pass, and any gap or disagreement blocks. Routine work runs standard: one cited pass carries it, and the dissent is written down beside the result. Fewer than two usable reviewers blocks. A blocked run exits with a non-zero code, so the program that called the gate cannot carry on by ignoring a paragraph of text.</p>
+
+      <figure class="vg-console" data-vg-console>
+        <div class="vg-console__live" data-vg-live hidden>
+          <div class="vg-sev" role="group" aria-label="Severity">
+            <span class="vg-label">The claim is</span>
+            <button type="button" class="vg-opt" data-sev="strict" aria-pressed="true">Consequential</button>
+            <button type="button" class="vg-opt" data-sev="standard" aria-pressed="false">Routine</button>
+          </div>
+          <div class="vg-reviewers">
+            {['A', 'B'].map((r) => (
+              <fieldset class="vg-reviewer" data-reviewer={r}>
+                <legend class="vg-label">Reviewer {r} returns</legend>
+                <div class="vg-row" role="group" aria-label={`Reviewer ${r} answer`}>
+                  <button type="button" class="vg-opt" data-ret="pass" aria-pressed="true">Pass</button>
+                  <button type="button" class="vg-opt" data-ret="fail" aria-pressed="false">Fail</button>
+                  <button type="button" class="vg-opt" data-ret="prose" aria-pressed="false">Prose</button>
+                  <button type="button" class="vg-opt" data-ret="none" aria-pressed="false">Nothing</button>
+                </div>
+                <label class="vg-check"><input type="checkbox" data-cited checked /> <span>Cites raw evidence</span></label>
+                <label class="vg-check"><input type="checkbox" data-down /> <span>Vendor served a weaker model</span></label>
+              </fieldset>
+            ))}
+          </div>
+          <div class="vg-out" aria-live="polite">
+            <p class="vg-out__k">Decision</p>
+            <p class="vg-out__v" data-vg-decision>Pass</p>
+            <ul class="vg-out__list" data-vg-reasons></ul>
+          </div>
+        </div>
+        <table class="enf-table vg-cases">
+          <caption class="enf-cap vg-cases__cap">Worked cases, computed by the same rule.</caption>
+          <thead>
+            <tr><th scope="col">Case</th><th scope="col">Reviewer A</th><th scope="col">Reviewer B</th><th scope="col">Decision</th></tr>
+          </thead>
+          <tbody>
+            {cases.map((c) => (
+              <tr>
+                <th scope="row">{c.label}</th>
+                <td>{describe(c.a)}{c.a.downgraded ? ', weaker model' : ''}</td>
+                <td>{describe(c.b)}{c.b.downgraded ? ', weaker model' : ''}</td>
+                <td class:list={['vg-cases__d', { 'is-blocked': c.result.decision === 'BLOCKED' }]}>{c.result.decision === 'PASS' ? 'Pass' : 'Blocked'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </figure>
+      <p>Disagreement is never averaged. Two reviewers that split are a signal to go and look at the disputed item, not a score of fifty percent.</p>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">05</p>
+      <h2>Before the gate</h2>
+      <p>Three routine runs in a row were once blocked, and every dissent was about how the claim was scoped or packed, never about the facts. So a lint step now runs in front of the gate. It flags strength words such as all, never and proves; too few verbatim quotes from the raw output; an interpretation that is not labelled as one; a missing re-derivation command; and claims about files with no file path in the evidence.</p>
+      <p>A second lint runs on the finished deliverable. Every number, date, link, quote, citation and proper name has to trace to an evidence file the deliverable declares. A deliverable that declares no evidence fails outright: the check fails closed.</p>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">06</p>
+      <h2>What it does not do</h2>
+      <p>It is a filter on evidence quality, not a truth machine. Two models can share a blind spot. Strict severity will block a true claim whose evidence was only a summary, which is the intended cost. Verdicts vary from run to run, so the rule about reruns is decided before the run: never rerun until it passes. A block on a true claim means the evidence pack was weak; the fix is a better pack, not a friendlier reviewer.</p>
+      <p>A gate that can never pass gets ignored, which is worse than no gate. That is why routine work runs at standard severity and only consequential work runs strict.</p>
+    </section>
+
+    <section class="enf-block enf-reqs">
+      <p class="enf-step">07</p>
+      <h2>Requirements I would set</h2>
+      <ol class="enf-req-list">
+        <li><span class="enf-req__n">1</span><p><strong>No claim without its raw evidence.</strong> A summary is a lead, not a proof, and reviewers are given only the record.</p></li>
+        <li><span class="enf-req__n">2</span><p><strong>Reviewers independent by construction.</strong> Different vendors, no shared context, no write access to the work.</p></li>
+        <li><span class="enf-req__n">3</span><p><strong>A schema, not an opinion.</strong> Anything that does not parse as a cited pass is a fail.</p></li>
+        <li><span class="enf-req__n">4</span><p><strong>Severity set by consequence.</strong> Strict where a mistake is costly or permanent; standard elsewhere, with dissent recorded.</p></li>
+        <li><span class="enf-req__n">5</span><p><strong>Block in code.</strong> A blocked result stops the caller. Nobody has to remember to read it.</p></li>
+      </ol>
+    </section>
+
+    <section class="enf-block enf-method">
+      <p class="enf-step">08</p>
+      <h2>Method</h2>
+      <p>The gate is about 230 lines of Python, with two lint scripts in front of it. Its adversarial framing is adapted from the open-source adversarial-execution pattern (MIT licence). The code runs on my own machine against my own agents and is not public; the decision rule on this page is a tested port of it.</p>
+      <p class="enf-return"><a href="/work/">Back to the work</a></p>
+    </section>
+  </article>
+
+  <script src="../../scripts/verification-gate.ts"></script>
+</BaseLayout>

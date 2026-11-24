@@ -1,0 +1,141 @@
+/* /work/verification-gate/. Rides the case-study grammar in
+   enforcement-gates.css; this file holds only the decision console.
+   Same colour law: the blue-hour accent (#7E9CB8) marks a decision that
+   stops the work, nothing else. Hairlines, no cards, no glass. 2026-11-24. */
+
+.vg-hero__img { object-position: 50% 60%; }
+
+.vg-console {
+  margin: 2.5rem 0 2rem;
+}
+
+.vg-console__live {
+  display: grid;
+  gap: 1.75rem;
+  padding: 1.75rem 0 2rem;
+  border-top: 1px solid rgba(244, 234, 222, 0.1);
+  border-bottom: 1px solid rgba(244, 234, 222, 0.1);
+  margin-bottom: 2.5rem;
+}
+
+.vg-label {
+  display: block;
+  margin: 0 0 0.6rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.vg-sev,
+.vg-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vg-sev .vg-label { margin: 0 0.5rem 0 0; }
+
+.vg-opt {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid rgba(244, 234, 222, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(244, 234, 222, 0.72);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.vg-opt:hover { color: #f4eade; border-color: rgba(244, 234, 222, 0.32); }
+
+.vg-opt[aria-pressed='true'] {
+  color: #0a0a0a;
+  background: #f4eade;
+  border-color: #f4eade;
+}
+
+.vg-opt:focus-visible,
+.vg-check input:focus-visible {
+  outline: 2px solid #7e9cb8;
+  outline-offset: 3px;
+}
+
+.vg-reviewers {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .vg-reviewers { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem; }
+}
+
+.vg-reviewer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.vg-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  color: rgba(244, 234, 222, 0.8);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.vg-check input { width: 1.1rem; height: 1.1rem; accent-color: #f4eade; }
+.vg-check input:disabled + span { color: rgba(244, 234, 222, 0.4); }
+
+.vg-out__k {
+  margin: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.vg-out__v {
+  margin: 0.25rem 0 0.75rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+  line-height: 1.1;
+  color: #f4eade;
+  transition: color 0.3s ease;
+}
+
+[data-decision='blocked'] .vg-out__v { color: #7e9cb8; }
+
+.vg-out__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+  max-width: 40rem;
+  color: rgba(244, 234, 222, 0.78);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.vg-cases { margin-top: 0; }
+.vg-cases__cap { caption-side: bottom; text-align: left; padding-top: 0.75rem; }
+.vg-cases__d { color: rgba(244, 234, 222, 0.9); }
+.vg-cases__d.is-blocked { color: #7e9cb8; }
+
+.vg-fields { margin-top: 1.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vg-opt, .vg-out__v { transition: none; }
+}
+
+/* The worked cases are words, not counts: read them left to right. */
+.vg-cases th,
+.vg-cases td { text-align: left; vertical-align: top; }

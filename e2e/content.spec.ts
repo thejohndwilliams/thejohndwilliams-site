@@ -62,7 +62,7 @@ test.describe('Work page', () => {
       await link.click();
     }
     await expect(page).toHaveURL(/\/work\/agent-governance\/?$/);
-    await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties');
+    await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System');
   });
 });
 

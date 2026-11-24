@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 const PATH = '/work/agent-governance/';
-const TITLE = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
+const TITLE = 'Human Oversight for a Multi-Agent System';
 
 async function overflowPx(page: Page): Promise<number> {
   return page.evaluate(() => {
