@@ -11,7 +11,7 @@ export type Lane = 'work' | 'study';
 export type RecordEntry = {
   id: string;
   org: string;
-  mark: 'spacex' | 'apple' | 'monogram';
+  mark: 'spacex' | 'apple' | 'ptd' | 'monogram';
   monogram?: string;
   role: string;
   lane: Lane;
@@ -32,8 +32,11 @@ export const RECORD: RecordEntry[] = [
     lane: 'work',
     from: '2025-03',
     to: null,
-    line: 'Operations, risk and controls: how the work is designed, measured and kept honest.',
-    chips: ['Process Controls', 'Risk', 'Analytics', 'Automation'],
+    // Owner 2026-11-24: the work is customer intelligence. Source: vault
+    // 02_Entities/Sprinklr_Platform.md. Public copy names no vendor, product,
+    // segment or number (OPSEC); owner may rewrite this line.
+    line: 'Customer intelligence: a system that reads public conversation for sentiment, outages and emerging defects, and routes each signal to the people who act on it.',
+    chips: ['Customer intelligence', 'Sentiment', 'Alerting', 'Process Controls'],
   },
   {
     id: 'baylor-mba',
@@ -61,8 +64,7 @@ export const RECORD: RecordEntry[] = [
   {
     id: 'pennies-to-dollars',
     org: 'Pennies to Dollars',
-    mark: 'monogram',
-    monogram: 'Pd',
+    mark: 'ptd',
     role: 'Co-Founder, Technology Operations',
     lane: 'work',
     from: '2020-07',
