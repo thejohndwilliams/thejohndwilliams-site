@@ -8,7 +8,7 @@
 .work-evidence__row {
   display: grid;
   gap: 0.35rem 2rem;
-  padding: 0.9rem 0;
+  padding: 0.35rem 0;
   border-bottom: 1px solid rgba(244, 234, 222, 0.1);
 }
 @media (min-width: 768px) {
@@ -16,7 +16,13 @@
 }
 .work-evidence dt { color: #f4eade; font-size: 1rem; }
 .work-evidence dd { margin: 0; color: rgba(244, 234, 222, 0.78); font-size: 0.9375rem; }
-.work-evidence a { color: rgba(244, 234, 222, 0.85); }
+.work-evidence a {
+  /* A tap target, not just a word: 44px tall, the row's padding trims to match. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: rgba(244, 234, 222, 0.85);
+}
 .work-evidence a:hover { color: #f4eade; }
 .work-evidence__sep { color: #868686; }
 
@@ -62,6 +68,7 @@
   .work-evidence__row { display: grid !important; grid-template-columns: 1.4fr 1fr !important; padding: 3pt 0 !important; break-inside: avoid; }
   .work-evidence dt, .work-evidence dd { font-size: 9pt !important; }
   .work-evidence a::after { content: none !important; }
+  .work-evidence a { display: inline !important; min-height: 0 !important; }
 
   /* The record: every entry open, its line and chips in plain type. */
   .xp { padding-top: 10pt !important; }

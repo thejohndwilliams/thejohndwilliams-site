@@ -46,7 +46,8 @@ test.describe('Work page', () => {
 
   test('links the agent governance case study', async ({ page, browserName }) => {
     await page.goto('/work/');
-    const link = page.locator('a[href="/work/agent-governance/"]');
+    // The case-study card comes first; Skills and evidence links it again below.
+    const link = page.locator('a[href="/work/agent-governance/"]').first();
     await expect(link).toBeVisible();
     if (browserName === 'webkit') {
       // 2026-11-17 (PR #112): CI WebKit stops producing animation frames
