@@ -673,3 +673,30 @@ main > .beyond-section:last-child {
     transition: none;
   }
 }
+
+/* iPhone Duo (2026-11-24): the status island sits on a side edge in every
+   pose, so the lockup and the columns take the side inset as a floor. */
+@supports (padding: max(0px)) {
+  .beyond-banner > .beyond-title {
+    padding-left: max(2.667rem, calc(env(safe-area-inset-left) + 0.889rem));
+    padding-right: max(2.667rem, calc(env(safe-area-inset-right) + 0.889rem));
+  }
+  @media (min-width: 640px) {
+    .beyond-banner > .beyond-title {
+      padding-left: max(4.444rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(4.444rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
+  @media (min-width: 1024px) {
+    .beyond-banner > .beyond-title {
+      padding-left: max(8.889rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(8.889rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
+  @media (max-width: 767px) {
+    .beyond-col {
+      margin-left: max(16px, env(safe-area-inset-left));
+      margin-right: max(16px, env(safe-area-inset-right));
+    }
+  }
+}

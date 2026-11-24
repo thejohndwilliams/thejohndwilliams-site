@@ -1005,10 +1005,25 @@ html.lenis body { height: auto; }
    the dark wall. Lockup left, print right; stacked on phones. The print
    carries a hairline and a low shadow, no glass and no frame ornament. */
 .about-hero__grid { display: grid; gap: 2.667rem; align-items: end; }
+/* From 880px, lockup and print sit side by side: the iPhone Duo opened
+   (951 points wide) gets the wall-and-print layout, not a stack. */
+@media (min-width: 880px) {
+  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 20rem; gap: 3.556rem; }
+}
 @media (min-width: 1024px) {
   .about-hero__grid { grid-template-columns: minmax(0, 1fr) 24rem; gap: 4.444rem; }
 }
 .about-print { margin: 0; width: min(24rem, 78vw); }
+@media (min-width: 880px) { .about-print { width: 100%; } }
+/* Short screens (the Duo open is 669 points tall): less wall above the
+   lockup, so the name and the print both land in the first view. */
+@media (max-height: 720px) {
+  .about-hero[data-hero-under] { padding-top: calc(2.667rem + var(--header-h)); }
+  .about-hero__grid { align-items: center; }
+}
+@media (min-width: 880px) and (max-height: 720px) {
+  .about-hero__grid { grid-template-columns: minmax(0, 1fr) 17rem; }
+}
 .about-print__img {
   display: block;
   width: 100%;
@@ -1880,4 +1895,44 @@ footer.glass-footer:hover::after { opacity: 1; }
 /* Hit area grows; the candle underline stays under the glyphs, not the padding edge. */
 .link-draw.tap-44 {
   background-position: 0 calc(50% + 0.42em);
+}
+
+/* ============================================================
+   iPhone Duo (owner order 2026-11-24). The phone has two displays and no
+   fixed shape: closed it is 466 x 678 points (678 x 466 held sideways),
+   open it is 951 x 669 (669 x 951 upright). Two rules follow from that.
+   1. Short heights. A hero's min-height (vh) can be shorter than its
+      lockup, and the hero is pulled up under the header, so the eyebrow
+      and title slid under the header at 466 and 669 points tall. The top
+      padding below keeps the lockup clear. min-height is border-box, so
+      wherever the lockup already fits (every taller screen) nothing moves.
+   2. Side insets. The Duo's status island sits on a SIDE edge on both
+      displays, so env(safe-area-inset-left/right) is non-zero in every
+      pose, not only in landscape. Text that runs edge to edge outside the
+      .container-* classes takes the inset as a floor.
+   ============================================================ */
+[data-hero-under]:not(.about-hero):not(.beyond-banner) {
+  padding-top: calc(var(--header-h) + 1.333rem);
+}
+
+@supports (padding: max(0px)) {
+  [class].hero-lockup,
+  [class].enf-hero__lockup {
+    padding-left: max(2.667rem, calc(env(safe-area-inset-left) + 0.889rem));
+    padding-right: max(2.667rem, calc(env(safe-area-inset-right) + 0.889rem));
+  }
+  @media (min-width: 640px) {
+    [class].hero-lockup,
+    [class].enf-hero__lockup {
+      padding-left: max(4.444rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(4.444rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
+  @media (min-width: 1024px) {
+    [class].hero-lockup,
+    [class].enf-hero__lockup {
+      padding-left: max(8.889rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(8.889rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
 }
