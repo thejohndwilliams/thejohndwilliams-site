@@ -579,9 +579,14 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stripIdx).toBeGreaterThan(heroIdx);
     expect(stripIdx).toBeLessThan(work.indexOf('Precision-Gated Enforcement'));
     expect(work).not.toContain('Consulting in data engineering');
-    expect(work).not.toContain('Resume (PDF)');
-    expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    // Résumé back 2026-11-24 with the owner-approved PDF in the cleared framing.
+    expect(work).toContain('Résumé (PDF)');
+    // New name: browsers cached the 2026-10-25 301 on the old path forever.
+    expect(work).toContain('href="/files/John-D-Williams-Resume.pdf"');
+    expect(fs.existsSync(path.join(distDir, 'files', 'John-D-Williams-Resume.pdf'))).toBe(true);
     expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
+    const redirects = fs.readFileSync(path.join(process.cwd(), 'public/_redirects'), 'utf8');
+    expect(redirects).toMatch(/^\/files\/Williams-John-D-Resume\.pdf\s+\/files\/John-D-Williams-Resume\.pdf\s+301$/m);
     expect(work).toContain('Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done.');
     expect(work).not.toContain('writings and research to come');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
@@ -983,5 +988,17 @@ describe('Contrast holds in every state (2026-11-24)', () => {
     const rule = all.match(/\.xp-ribbon__year\{[^}]*\}/)?.[0] ?? '';
     expect(rule).toContain('color-mix(');
     expect(rule).not.toMatch(/opacity:clamp\(0?\.2/);
+  });
+});
+
+describe('Every photograph has a note (owner 2026-11-24)', () => {
+  it('each photo page prints an observational note, no em dashes', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/data/photography.ts'), 'utf8');
+    const rows = src.match(/\{ file: '[^']+'[^\n]*\}/g) || [];
+    expect(rows.length).toBeGreaterThan(80);
+    for (const r of rows) expect(r, r.slice(0, 40)).toMatch(/note: '/);
+    const page = fs.readFileSync(path.join(distDir, 'photography', '7r52035', 'index.html'), 'utf8');
+    expect(page).toContain('Sparks rise and fall in a white column against a black sky.');
+    expect(src).not.toMatch(/note: '[^']*—/);
   });
 });
