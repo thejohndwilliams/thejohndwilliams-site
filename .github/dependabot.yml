@@ -8,6 +8,13 @@ updates:
     ignore:
       - dependency-name: tailwindcss
         update-types: ["version-update:semver-major"]
+    # One PR a week instead of nine, and the vitest pair always moves
+    # together (alone, each fails install on the other's peer range).
+    groups:
+      vitest:
+        patterns: ["vitest", "@vitest/*"]
+      minor-and-patch:
+        update-types: ["minor", "patch"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
