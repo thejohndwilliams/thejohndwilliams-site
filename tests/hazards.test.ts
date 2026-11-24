@@ -79,6 +79,21 @@ describe('hazard locks: source', () => {
     expect(hits).toEqual([]);
   });
 
+  it('the retired blue stays retired in EVERY stylesheet, not only global.css (2026-11-24)', () => {
+    // The lock above read global.css only, so navy-hour came back through
+    // five per-page stylesheets (case-study figures, the record) between
+    // 2026-11-17 and 2026-11-24 and CI never saw it. A visual judge run
+    // caught it in computed styles. Marks are lit ivory now.
+    const dir = join(SRC, 'styles');
+    const retired = [/#7e9cb8/i, /126,\s*156,\s*184/, /#b8973f/i, /184,\s*151,\s*63/];
+    const offenders: string[] = [];
+    for (const f of readdirSync(dir).filter((n) => n.endsWith('.css'))) {
+      const body = readFileSync(join(dir, f), 'utf8');
+      for (const r of retired) if (r.test(body)) offenders.push(`${f} ${r}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('color-utility alpha modifiers are scale values or bracketed — bare /92 is a silent no-op (transparent-lightbox incident, 2026-07-02)', () => {
     // bg-[#0a0a0a]/92 generated NOTHING (92 is not on Tailwind's default
     // opacity scale) and the lightbox backdrop shipped transparent from

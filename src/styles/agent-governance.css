@@ -398,7 +398,7 @@
 /* ============================================================
    Figures that replace prose (2026-11-24, owner: "graphics and animations
    that help get the point across with less words"). Matte, hairlines, the
-   blue-hour accent only where something is stopped or refused. Motion is
+   lit ivory only where something is stopped or refused. Motion is
    gated by .gov-anim-on (set by agent-governance.ts only when motion is
    allowed); without it every figure reads in its final state.
    ============================================================ */
@@ -418,7 +418,7 @@
 .gov-act__verb { font-family: 'EB Garamond', Georgia, serif; font-size: 1.5rem; color: #f4eade; }
 .gov-act__gate { position: relative; height: 1px; background: rgba(244, 234, 222, 0.14); }
 .gov-act__bar {
-  position: absolute; right: 0; top: -9px; width: 2px; height: 19px; background: #7e9cb8;
+  position: absolute; right: 0; top: -9px; width: 2px; height: 19px; background: #f4eade;
 }
 .gov-act__needs { color: rgba(244, 234, 222, 0.78); font-size: 0.9375rem; line-height: 1.5; }
 @media (max-width: 639px) {
@@ -438,7 +438,7 @@
 .gov-rung:nth-child(1) { width: 100%; border-color: rgba(244, 234, 222, 0.32); }
 .gov-rung:nth-child(2) { width: 94%; }
 .gov-rung:nth-child(3) { width: 88%; }
-.gov-rung:nth-child(4) { width: 82%; border-left: 2px solid #7e9cb8; }
+.gov-rung:nth-child(4) { width: 82%; border-left: 2px solid #f4eade; }
 .gov-rung:nth-child(5) { width: 76%; }
 .gov-rung:nth-child(6) { width: 70%; color: rgba(244, 234, 222, 0.62); }
 .gov-rung__n { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.75rem; color: #a89f8c; min-width: 1.25rem; }
@@ -461,8 +461,8 @@
 .gov-duties .gov-refuses { color: rgba(244, 234, 222, 0.72); }
 .gov-duties .gov-refuses::before {
   content: ''; display: inline-block; width: 0.7rem; height: 0.7rem; margin-right: 0.55rem;
-  border: 1.5px solid #7e9cb8; border-radius: 50%;
-  background: linear-gradient(135deg, transparent 45%, #7e9cb8 45%, #7e9cb8 55%, transparent 55%);
+  border: 1.5px solid #f4eade; border-radius: 50%;
+  background: linear-gradient(135deg, transparent 45%, #f4eade 45%, #f4eade 55%, transparent 55%);
   vertical-align: -0.05rem;
 }
 
@@ -472,7 +472,7 @@
 .gov-inject__mail, .gov-inject__reply { padding: 1.25rem 1.4rem; border: 1px solid rgba(244, 234, 222, 0.12); }
 .gov-inject__k { margin: 0 0 0.75rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a89f8c; }
 .gov-inject__line { margin: 0 0 0.4rem; font-size: 0.9375rem; color: rgba(244, 234, 222, 0.8); }
-.gov-inject__bad { color: #f4eade; text-decoration: underline; text-decoration-color: #7e9cb8; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.gov-inject__bad { color: #f4eade; text-decoration: underline; text-decoration-color: #f4eade; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .gov-inject__arrow { display: block; height: 1px; background: rgba(244, 234, 222, 0.4); position: relative; }
 .gov-inject__arrow::after { content: ''; position: absolute; right: 0; top: -4px; border: 4.5px solid transparent; border-left-color: rgba(244, 234, 222, 0.4); border-right: 0; }
 @media (max-width: 767px) { .gov-inject__arrow { width: 1px; height: 2rem; margin-left: 1.4rem; } .gov-inject__arrow::after { display: none; } }

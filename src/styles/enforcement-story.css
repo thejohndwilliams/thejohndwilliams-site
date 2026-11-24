@@ -101,7 +101,7 @@
 }
 
 .enf-fig.is-scrolly .enf-count {
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 /* While pinned, the numbers sit under the plot so the dots stay next to
@@ -187,11 +187,12 @@
   fill: none;
   stroke: #868686;
   stroke-opacity: 0.75;
+  stroke-width: 1;
 }
 
 .enf-fig.is-scrolly[data-neutral='false']:not([data-harms='all']) .d.s.is-missed {
   fill: #f4eade;
-  fill-opacity: 0.9;
+  fill-opacity: 0.55;
   stroke: none;
 }
 
@@ -203,7 +204,7 @@
 
 .enf-fig.is-scrolly[data-focus='wrong'] .d.is-wrong,
 .enf-fig.is-scrolly[data-focus='missed'] .d.is-missed {
-  stroke: #7e9cb8;
+  stroke: #f4eade;
   stroke-width: 3;
   stroke-opacity: 0.55;
 }
@@ -269,7 +270,7 @@
 }
 
 .enf-run.is-certified [data-run-lb] {
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 .enf-run__grid {

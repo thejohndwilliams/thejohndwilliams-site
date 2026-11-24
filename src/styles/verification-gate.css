@@ -1,6 +1,6 @@
 /* /work/verification-gate/. Rides the case-study grammar in
    enforcement-gates.css; this file holds only the decision console.
-   Same colour law: the blue-hour accent (#7E9CB8) marks a decision that
+   Same colour law: the lit ivory (#F4EADE) marks a decision that
    stops the work, nothing else. Hairlines, no cards, no glass. 2026-11-24. */
 
 .vg-hero__img { object-position: 50% 55%; }
@@ -62,7 +62,7 @@
 
 .vg-opt:focus-visible,
 .vg-check input:focus-visible {
-  outline: 2px solid #7e9cb8;
+  outline: 2px solid #f4eade;
   outline-offset: 3px;
 }
 
@@ -113,7 +113,7 @@
   transition: color 0.3s ease;
 }
 
-[data-decision='blocked'] .vg-out__v { color: #7e9cb8; }
+[data-decision='blocked'] .vg-out__v { color: #f4eade; }
 
 .vg-out__list {
   margin: 0;
@@ -130,7 +130,7 @@
 .vg-cases { margin-top: 0; }
 .vg-cases__cap { caption-side: bottom; text-align: left; padding-top: 0.75rem; }
 .vg-cases__d { color: rgba(244, 234, 222, 0.9); }
-.vg-cases__d.is-blocked { color: #7e9cb8; }
+.vg-cases__d.is-blocked { color: #f4eade; font-weight: 600; }
 
 .vg-fields { margin-top: 1.5rem; }
 
