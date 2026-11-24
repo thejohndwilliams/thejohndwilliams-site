@@ -287,7 +287,11 @@ describe('Generated HTML Content', () => {
 
   describe('Work Page', () => {
     it('contains project information', () => {
-      expect(workHtml).toContain('Job Application Analytics');
+      // 2026-11-24 cohesion pass: three case studies, then coursework.
+      expect(workHtml).toContain('Adversarial Verification for AI Claims');
+      expect(workHtml).toContain('href="/work/verification-gate/"');
+      expect(workHtml).not.toContain('Job Application Analytics');
+      expect(workHtml).not.toContain('Identified actionable patterns');
     });
 
     // Owner order 2026-10-25: the queue-forecast project is erased from the
@@ -309,11 +313,14 @@ describe('Generated HTML Content', () => {
       // 2026-10-25: the two 'Forecasting' hits were the retired queue card.
       expect((workHtml.match(/Forecasting/g) || []).length).toBe(0);
       const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
-      const title = 'Human Oversight for a Multi-Agent System: Approval Gates, Evidence and Separation of Duties';
-      // Search title shortened 2026-11-14; the h1 keeps the full heading.
+      // 2026-11-24: rebuilt in the case-study grammar. Short title in the h1,
+      // the rest of the old colon title in the deck; no glass summary card.
       expect(html).toContain('<title>Human Oversight for a Multi-Agent System | John D. Williams</title>');
       expect(html).toMatch(/<meta name="description" content="How one person stays in control of a group of AI agents[^"]{60,}">/);
-      expect(html).toContain(`<h1>${title}</h1>`);
+      expect(html).toMatch(/<h1[^>]*>Human Oversight for a Multi-Agent System<\/h1>/);
+      expect(html).toContain('Approval gates, evidence and separation of duties: how one person stays in control of a group of AI agents.');
+      expect(html).toContain('class="enf-meta"');
+      expect(html).not.toContain('gov-summary');
       expect(html).not.toContain('\u2014');
       expect(html).not.toContain('Independent personal project');
       expect(html).toContain('Personal project.');
@@ -568,13 +575,15 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
   it('work: the practice strip sits under Selected Work', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
     const heroIdx = work.indexOf('Selected Work');
-    const stripIdx = work.indexOf('Consulting in data engineering');
+    const stripIdx = work.indexOf('Case studies in controls, evidence and automated decisions.');
     expect(stripIdx).toBeGreaterThan(heroIdx);
-    expect(stripIdx).toBeLessThan(work.indexOf('Job Application Analytics'));
+    expect(stripIdx).toBeLessThan(work.indexOf('Precision-Gated Enforcement'));
+    expect(work).not.toContain('Consulting in data engineering');
     expect(work).not.toContain('Resume (PDF)');
     expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
     expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
-    expect(work).toContain('Data, cybersecurity and operations projects by John D. Williams, with writings and research to come.');
+    expect(work).toContain('Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done.');
+    expect(work).not.toContain('writings and research to come');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
     expect(work).toContain('Process Controls');
     expect(work).not.toContain('Incident Command');
@@ -886,5 +895,22 @@ describe('Cohesion pass (owner order 2026-11-24)', () => {
     expect(nf).toContain('/images/photography/hero/dsc-0329.webp');
     expect(nf).toContain('This page does not exist.');
     expect(nf).not.toContain("doesn't");
+  });
+});
+
+describe('Verification gate case study (2026-11-24)', () => {
+  const html = () => fs.readFileSync(path.join(distDir, 'work/verification-gate/index.html'), 'utf8');
+  it('rides the case-study grammar and states its limits', () => {
+    const page = html();
+    expect(page).toMatch(/<h1[^>]*>Adversarial Verification for AI Claims<\/h1>/);
+    expect(page).toContain('class="enf-meta"');
+    expect(page).toContain('It makes no claim about how often the gate has blocked');
+    expect(page).toContain('never rerun until it passes');
+    expect((page.match(/<tr>/g) || []).length).toBeGreaterThanOrEqual(7);
+  });
+  it('voice and OPSEC: no em dash, no employer or product names', () => {
+    const page = html();
+    expect(page).not.toContain('—');
+    for (const banned of ['SpaceX', 'Starlink', 'Sprinklr', 'ITAR', 'gpt-', 'grok-']) expect(page, banned).not.toContain(banned);
   });
 });
