@@ -15,7 +15,8 @@ import '../../styles/verification-gate.css';
 const pageTitle = 'Adversarial Verification for AI Claims';
 const description = 'A gate for work done by AI agents: two models from different vendors are told a claim is wrong, must cite raw evidence to pass it, and block anything they cannot prove.';
 
-const HERO = 'img-1066';
+// dsc-0101, not img-1066: the shelf cloud is the Photography hero.
+const HERO = 'dsc-0101';
 const hero = photoTiers(HERO);
 
 const describe = (r: ReviewerInput) =>
@@ -55,7 +56,7 @@ const jsonLd = {
         src={`/images/photography/hero/${HERO}.webp`}
         width={hero.hero.w}
         height={hero.hero.h}
-        alt="A shelf cloud rolling over an open field"
+        alt="City skyline burning blue at night"
         class="vg-hero__img absolute inset-0 h-full w-full object-cover"
         data-bleed-short
         fetchpriority="high"
