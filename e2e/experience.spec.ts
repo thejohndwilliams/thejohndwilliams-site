@@ -13,7 +13,7 @@ test.describe('Work: the record', () => {
     await expect(page.locator('[data-xp-span="spacex"]')).toHaveClass(/is-lit/);
     await page.keyboard.press('Enter');
     await expect(item.locator('details')).toHaveAttribute('open', '');
-    await expect(item.locator('.xp-entry__line')).toContainText('Operations, risk and controls');
+    await expect(item.locator('.xp-entry__line')).toContainText('Customer intelligence');
     await expect(item.locator('.xp-chip')).toHaveCount(4);
     await page.keyboard.press('Enter');
     await expect(item.locator('details')).not.toHaveAttribute('open', '');

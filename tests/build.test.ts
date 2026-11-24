@@ -550,6 +550,15 @@ describe('Work: the record under the ram (owner order 2026-11-24)', () => {
     }
     expect(page).not.toContain('—');
   });
+
+  it('carries the Pennies to Dollars mark and the customer intelligence line (owner 2026-11-24)', () => {
+    const page = work();
+    const ptd = page.match(/<li class="xp-item" data-xp-item="pennies-to-dollars"[\s\S]*?<\/li>/)?.[0] ?? '';
+    expect(ptd).toContain('xp-mark__svg--ptd');
+    expect(ptd).not.toContain('xp-mark__mono');
+    const spacex = page.match(/<li class="xp-item" data-xp-item="spacex"[\s\S]*?<\/li>/)?.[0] ?? '';
+    expect(spacex).toContain('Customer intelligence');
+  });
 });
 
 describe('The spread (owner order 2026-08-01): the material takes its seats', () => {

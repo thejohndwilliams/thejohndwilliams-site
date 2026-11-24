@@ -293,6 +293,13 @@
   margin-top: -0.15rem;
 }
 
+/* The Pennies to Dollars mark is a tall block glyph: a touch larger so its
+   coins and candlesticks read at tile size. */
+.xp-mark__svg--ptd {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .xp-mark__mono {
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 1.25rem;
