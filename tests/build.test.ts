@@ -145,7 +145,8 @@ describe('Astro Build', () => {
     // surface) does not reliably render WebP unfurls. Top-level pages now use
     // the same 1200×630 JPEG pipeline as photo detail pages.
     const pagesDir = path.join(distDir, 'og', 'pages');
-    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg']) {
+    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg',
+      'enforcement-gates.jpg', 'agent-governance.jpg', 'verification-gate.jpg', 'signal-triage.jpg']) {
       expect(fs.existsSync(path.join(pagesDir, f))).toBe(true);
     }
     const pairs: Array<[string, string]> = [
@@ -153,12 +154,27 @@ describe('Astro Build', () => {
       [path.join('photography', 'index.html'), '/og/pages/photography.jpg'],
       [path.join('work', 'index.html'), '/og/pages/work.jpg'],
       [path.join('about', 'index.html'), '/og/pages/about.jpg'],
+      // 2026-11-25: each case study shares its own preview, not the Work card.
+      [path.join('work', 'enforcement-gates', 'index.html'), '/og/pages/enforcement-gates.jpg'],
+      [path.join('work', 'agent-governance', 'index.html'), '/og/pages/agent-governance.jpg'],
+      [path.join('work', 'verification-gate', 'index.html'), '/og/pages/verification-gate.jpg'],
+      [path.join('work', 'signal-triage', 'index.html'), '/og/pages/signal-triage.jpg'],
     ];
     for (const [rel, og] of pairs) {
       const html = fs.readFileSync(path.join(distDir, rel), 'utf-8');
       expect(html).toContain(og);
       expect(html).toContain('property="og:image:width" content="1200"');
       expect(html).toContain('property="og:image:height" content="630"');
+    }
+  });
+
+  it('each case-study preview carries that page\'s own title (2026-11-25)', () => {
+    const og = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'build-og-images.mjs'), 'utf-8');
+    for (const slug of ['enforcement-gates', 'agent-governance', 'verification-gate', 'signal-triage']) {
+      const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'pages', 'work', `${slug}.astro`), 'utf-8');
+      const title = src.match(/const pageTitle = '([^']+)'/)?.[1];
+      expect(title, slug).toBeTruthy();
+      expect(og).toContain(`slug: '${slug}', hero: 'dscf0331', eyebrow: 'Case study', title: '${title}'`);
     }
   });
 

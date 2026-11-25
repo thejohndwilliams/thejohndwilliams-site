@@ -127,10 +127,11 @@ function wrapTitle(title, maxCharsPerLine = 28, maxLines = 2) {
  * Design:
  *   - Left-side dark gradient scrim so text is legible regardless of
  *     how bright the underlying photo is at that region.
- *   - Blue-hour hairline rule above the eyebrow (same 1px discipline as
- *     site nav). Palette note 2026-07-01: was gold #B8973F from the retired
- *     gold era; corrected to navy-hour #7E9CB8 per the standing register
- *     rule (ink and ivory, no metallic ornament).
+ *   - Hairline rule above the eyebrow (same 1px discipline as site nav).
+ *     Palette: gold went first (2026-07-01), then navy-hour (2026-07-28,
+ *     "Nix it for continuity"). This file kept the navy until 2026-11-25
+ *     because the palette lock only read stylesheets. Rule and eyebrow are
+ *     the site's dim cream now; hierarchy is brightness, never hue.
  *   - Eyebrow: category name, IBM Plex Sans fallback, letterspaced uppercase.
  *   - Title: alt text in EB Garamond fallback (Libre Baskerville is
  *     deprecated), display serif, tight.
@@ -178,12 +179,12 @@ function buildOverlaySvg({ title, categoryName }) {
   <!-- Soft bottom vignette to seat the site mark -->
   <rect x="0" y="${OG_HEIGHT - 180}" width="${OG_WIDTH}" height="180" fill="url(#bottomFade)"/>
 
-  <!-- Blue-hour hairline rule -->
-  <line x1="72" y1="${ruleY}" x2="168" y2="${ruleY}" stroke="#7E9CB8" stroke-width="1.5"/>
+  <!-- Hairline rule, dim cream -->
+  <line x1="72" y1="${ruleY}" x2="168" y2="${ruleY}" stroke="#D8CFBF" stroke-opacity="0.7" stroke-width="1.5"/>
 
   <!-- Category eyebrow (sans, uppercase, letterspaced) -->
   <text x="72" y="${eyebrowY}"
-        fill="#7E9CB8"
+        fill="#D8CFBF"
         font-family="'IBM Plex Sans','Helvetica Neue',Arial,sans-serif"
         font-size="16"
         font-weight="600"
@@ -269,6 +270,13 @@ const PAGES = [
   { slug: 'photography', hero: 'img-1066', eyebrow: 'Noticing', title: 'Photography' },
   { slug: 'work', hero: 'dscf0331', eyebrow: 'Building', title: 'Selected Work' },
   { slug: 'about', hero: 'john-portrait-bw', eyebrow: 'Making visible', title: 'About' },
+  // Case studies (2026-11-25): each shared link names its own work instead
+  // of the generic Work card. Same backdrop as Work, so the set reads as one.
+  // Titles must match each page's pageTitle (locked in build.test).
+  { slug: 'enforcement-gates', hero: 'dscf0331', eyebrow: 'Case study', title: 'Precision-Gated Enforcement' },
+  { slug: 'agent-governance', hero: 'dscf0331', eyebrow: 'Case study', title: 'Human Oversight for a Multi-Agent System' },
+  { slug: 'verification-gate', hero: 'dscf0331', eyebrow: 'Case study', title: 'Adversarial Verification for AI Claims' },
+  { slug: 'signal-triage', hero: 'dscf0331', eyebrow: 'Case study', title: 'Public-Signal Triage and Outage Detection' },
 ];
 
 async function renderPageOg({ slug, hero, eyebrow, title }) {
