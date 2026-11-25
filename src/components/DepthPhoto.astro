@@ -10,8 +10,10 @@ interface Props {
 
 const { file, alt, eager = false } = Astro.props;
 /* Ask for twice the viewport so a 1x screen does not stop on the gallery
-   tier when the figure is a full column. Descriptors stay real widths. */
-const sizes = 'calc((100vw - 2rem) * 2)';
+   tier when the figure is a full column. Descriptors stay real widths.
+   Phones already bring 1.75x to 3x density, so doubling there fetched the
+   2400 px hero for a 380 px slot (2026-11-25 web-perf pass). */
+const sizes = '(max-width: 767px) calc(100vw - 2rem), calc((100vw - 2rem) * 2)';
 const src = `/images/photography/gallery/${file}.webp`;
 const dim = await publicBitmap(src);
 ---

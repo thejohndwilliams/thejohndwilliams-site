@@ -1028,3 +1028,27 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     expect(headers).toContain('/files/*');
   });
 });
+
+describe('Web performance pass (2026-11-25)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every photograph ships a mid tier and srcsets offer it between thumb and gallery', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero) continue;
+      expect(row.mid, stem).toBeTruthy();
+      expect(row.mid!.w, stem).toBeLessThanOrEqual(800);
+      expect(fs.existsSync(path.join(distDir, 'images/photography/mid', `${stem}.avif`)), stem).toBe(true);
+    }
+    expect(read('photography/index.html')).toContain('/images/photography/mid/');
+  });
+  it('Links serves small social thumbnails, Home serves a sized relief card', () => {
+    const links = read('links/index.html');
+    expect(links).toContain('/images/links/linkedin-240.webp');
+    expect(links).not.toContain('/images/linkedin-hero.webp');
+    expect(read('index.html')).toContain('/images/relief/card-800.avif 800w');
+  });
+  it('the appeal stages stay readable before the scroll reaches them', () => {
+    const css = fs.readFileSync(path.join(process.cwd(), 'src/styles/enforcement-story.css'), 'utf8');
+    expect(css).toContain('opacity: calc(0.7 + 0.3 * var(--fp, 1));');
+  });
+});

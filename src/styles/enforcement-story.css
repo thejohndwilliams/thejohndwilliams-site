@@ -349,7 +349,10 @@
 .enf-flow.is-live li {
   position: relative;
   border-top-color: transparent;
-  opacity: calc(0.22 + 0.78 * var(--fp, 1));
+  /* Floor at 0.7, not 0.22: a stage waiting for the scroll stays readable
+     (AA in every state; 0.22 measured 1.4:1, 2026-11-25). The rule drawing
+     in and the count-up still carry the reveal. */
+  opacity: calc(0.7 + 0.3 * var(--fp, 1));
 }
 
 .enf-flow.is-live li::before {
