@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const base = join(root, 'public/images/photography');
-const tiers = ['thumb', 'mid', 'gallery', 'hero', 'portrait'];
+const tiers = ['thumb', 'mid', 'gallery', 'tall', 'hero', 'portrait'];
 
 /** @type {Record<string, Record<string, {w: number, h: number}>>} */
 const table = {};

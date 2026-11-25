@@ -48,7 +48,9 @@ describe('photo dimension manifest', () => {
       expect(srcset).toContain(`${row.hero.w}w`);
       const sizes = plateSizes(file);
       expect(sizes).toContain(`${row.hero.w}px`);
-      expect(sizes).toContain('80svh');
+      // Was 80svh until 2026-11-25: the preload scanner drops svh in
+      // imagesizes, falls back to 100vw, and phones fetched the photo twice.
+      expect(sizes).toContain('80vh');
     }
   });
 });

@@ -1052,3 +1052,24 @@ describe('Web performance pass (2026-11-25)', () => {
     expect(css).toContain('opacity: calc(0.78 + 0.22 * var(--fp, 1));');
   });
 });
+
+describe('Portrait photos on phones (2026-11-25)', () => {
+  it('every portrait photograph ships a 1000 px tall tier, offered in its srcset', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number; h: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero || row.hero.h <= row.hero.w || row.hero.w <= 1050) continue;
+      expect(row.tall?.w, stem).toBe(1000);
+    }
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    expect(page).toContain('/images/photography/tall/dscf0331.avif 1000w');
+  });
+  it('image sizes never use svh: the preload scanner drops it and fetches the photo twice', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/utils/photo-src.ts'), 'utf8');
+    expect(src).not.toMatch(/return `[^`]*svh/);
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    const pre = page.match(/<link rel="preload"[^>]*imagesizes="([^"]*)"/)?.[1] ?? '';
+    const pic = page.match(/<source type="image\/avif"[^>]*sizes="([^"]*)"/)?.[1] ?? '';
+    expect(pre).not.toContain('svh');
+    expect(pre).toBe(pic);
+  });
+});
