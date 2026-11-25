@@ -1049,6 +1049,6 @@ describe('Web performance pass (2026-11-25)', () => {
   });
   it('the appeal stages stay readable before the scroll reaches them', () => {
     const css = fs.readFileSync(path.join(process.cwd(), 'src/styles/enforcement-story.css'), 'utf8');
-    expect(css).toContain('opacity: calc(0.7 + 0.3 * var(--fp, 1));');
+    expect(css).toContain('opacity: calc(0.78 + 0.22 * var(--fp, 1));');
   });
 });
