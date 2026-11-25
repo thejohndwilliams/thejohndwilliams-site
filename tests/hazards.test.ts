@@ -406,3 +406,28 @@ describe('hazard locks: immersive opening and smooth scroll (2026-11-14)', () =>
     expect(header).toContain("setProperty('--header-h'");
   });
 });
+
+describe('hazard locks: scroll smoothness on the enforcement story (2026-11-25)', () => {
+  // Owner: "a slight stutter when scrolling". Measured at 120 Hz: frames to
+  // 158 ms on /work/enforcement-gates/. Causes, each locked here:
+  const css = readFileSync(join(SRC, 'styles', 'enforcement-story.css'), 'utf8');
+  const story = readFileSync(join(SRC, 'scripts', 'enforcement-story.ts'), 'utf8');
+  const scrub = readFileSync(join(SRC, 'scripts', 'scrub.ts'), 'utf8');
+  it('dots dim through fill/stroke opacity (--k), never element opacity (one layer per SVG dot)', () => {
+    const focus = css.match(/\[data-focus='missed'\] \.d:not\(\.is-missed\) \{[^}]*\}/)?.[0] ?? '';
+    expect(focus).toContain('--k:');
+    expect(focus).not.toMatch(/(^|[^-])opacity:/);
+    const dotTransition = css.match(/\.enf-fig\.is-scrolly \.d \{\s*transition:[^}]*\}/)?.[0] ?? '';
+    expect(dotTransition).not.toMatch(/[^-]opacity \d/);
+    expect(css).toMatch(/\[data-dimming='true'\] \.d \{\s*transition: none;/);
+  });
+  it('the story writes only changed values: rounded vars, cached dot transforms', () => {
+    expect(story).toContain('function setVar(');
+    expect(story).not.toMatch(/css\.setProperty\('--show/);
+    expect(story).toMatch(/if \(last\[i\] !== tf\)/);
+  });
+  it('the scrub engine reads every scene before writing, and never reads styles per frame', () => {
+    expect(scrub).toContain('headerCache');
+    expect(scrub).toMatch(/progress\[i\] = progressOf\(scenes\[i\], vh\)/);
+  });
+});
