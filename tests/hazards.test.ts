@@ -94,6 +94,20 @@ describe('hazard locks: source', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('the retired blue and gold stay out of build scripts too (2026-11-25)', () => {
+    // The stylesheet lock never read scripts/, so build-og-images.mjs kept
+    // painting the rule and eyebrow of every shared link preview navy-hour
+    // for four months after the retirement. Generated images are surfaces.
+    const dir = join(SRC, '..', 'scripts');
+    const retired = [/#7e9cb8/i, /126,\s*156,\s*184/, /#b8973f/i, /184,\s*151,\s*63/];
+    const offenders: string[] = [];
+    for (const f of readdirSync(dir).filter((n) => /\.(mjs|js|ts|py)$/.test(n))) {
+      const body = readFileSync(join(dir, f), 'utf8');
+      for (const r of retired) if (r.test(body)) offenders.push(`${f} ${r}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('color-utility alpha modifiers are scale values or bracketed — bare /92 is a silent no-op (transparent-lightbox incident, 2026-07-02)', () => {
     // bg-[#0a0a0a]/92 generated NOTHING (92 is not on Tailwind's default
     // opacity scale) and the lightbox backdrop shipped transparent from
