@@ -1002,3 +1002,29 @@ describe('Every photograph has a note (owner 2026-11-24)', () => {
     expect(src).not.toMatch(/note: '[^']*—/);
   });
 });
+
+describe('Public-Signal Triage case study (2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('ships in the case-study grammar, OPSEC-clean, with no intelligence-community framing', () => {
+    const work = read('work/index.html');
+    expect(work).toContain('href="/work/signal-triage/"');
+    const page = read('work/signal-triage/index.html');
+    expect(page).toMatch(/<h1[^>]*>Public-Signal Triage and Outage Detection<\/h1>/);
+    expect(page).toContain('Moderate confidence');
+    expect(page).toContain('"@type":"TechArticle"');
+    expect(page).not.toContain('—');
+    expect(page).not.toMatch(/<style[\s>]/);
+    expect(page).not.toMatch(/<script type="module">/);
+    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR', 'ICD 203', 'ODNI', 'Intelligence Community', 'tradecraft', 'OSINT', 'SIGINT', 'BGP', 'ASN', 'U.S. Citizen']) {
+      expect(page, banned).not.toContain(banned);
+    }
+    expect(fs.existsSync(path.join(distDir, 'work', 'signal-intelligence'))).toBe(false);
+  });
+  it('security.txt and the résumé cache rule ship', () => {
+    const sec = read('.well-known/security.txt');
+    expect(sec).toContain('Contact: mailto:jndwcreative@gmail.com');
+    expect(sec).toContain('Expires: ');
+    const headers = fs.readFileSync(path.join(process.cwd(), 'public/_headers'), 'utf8');
+    expect(headers).toContain('/files/*');
+  });
+});

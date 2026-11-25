@@ -791,3 +791,12 @@
    while the block's text keeps its 38rem measure. 2026-11-24. */
 .enf-page { container-type: inline-size; }
 .enf-page .enf-wide { width: 100cqi; max-width: none; }
+
+.enf-prov {
+  margin-top: 1.25rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: max(16px, 0.875rem);
+  line-height: 1.6;
+  color: #a89f8c;
+  overflow-wrap: anywhere;
+}

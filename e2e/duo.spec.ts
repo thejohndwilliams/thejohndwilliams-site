@@ -9,7 +9,7 @@ const POSES: Array<[string, number, number]> = [
   ['open', 951, 669],
   ['open, upright', 669, 951],
 ];
-const PAGES = ['/', '/work/', '/work/enforcement-gates/', '/work/verification-gate/', '/work/agent-governance/', '/about/', '/photography/', '/beyond/'];
+const PAGES = ['/', '/work/', '/work/signal-triage/', '/work/enforcement-gates/', '/work/verification-gate/', '/work/agent-governance/', '/about/', '/photography/', '/beyond/'];
 
 for (const [pose, width, height] of POSES) {
   test.describe(`iPhone Duo ${pose} (${width}x${height})`, () => {

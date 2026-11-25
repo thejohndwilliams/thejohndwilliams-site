@@ -1,0 +1,384 @@
+/* /work/signal-triage/. Rides the case-study grammar in
+   enforcement-gates.css (.enf-hero, .enf-page, .enf-block, .enf-meta,
+   .enf-table, .enf-req-list). Ink and ivory; full-bright ivory (and weight) marks a blocked
+   gate, a false alarm or the early-warning trigger, nothing else. */
+
+.sig-hero__img {
+  object-position: 50% 44%;
+}
+
+.sig-page {
+  container-type: inline-size;
+  overflow-x: clip;
+}
+
+.sig-page .enf-step,
+.sig-page .enf-stat__k {
+  font-size: max(14px, 0.778rem);
+}
+
+.sig-page .enf-stat__sub {
+  font-size: max(14px, 0.8125rem);
+}
+
+.sig-console {
+  margin: 2.5rem 0 2.25rem;
+}
+
+.sig-console__live[hidden] {
+  display: none;
+}
+
+.sig-console__live:not([hidden]) {
+  display: grid;
+  gap: 1.75rem;
+  padding: 1.75rem 0 2rem;
+  border-top: 1px solid rgba(244, 234, 222, 0.1);
+  border-bottom: 1px solid rgba(244, 234, 222, 0.1);
+  margin-bottom: 2.5rem;
+}
+
+.sig-k {
+  display: block;
+  margin: 0 0 0.65rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.sig-clauses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.sig-clause {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(244, 234, 222, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(244, 234, 222, 0.72);
+  font-size: 0.875rem;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: color 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+}
+
+.sig-clause:hover {
+  color: #f4eade;
+  border-color: rgba(244, 234, 222, 0.34);
+}
+
+.sig-clause[aria-pressed='true'] {
+  color: #0a0a0a;
+  background: #f4eade;
+  border-color: #f4eade;
+}
+
+.sig-clause--locked {
+  border-style: dashed;
+  color: rgba(244, 234, 222, 0.86);
+  cursor: default;
+}
+
+.sig-clause:focus-visible {
+  outline: 2px solid #f4eade;
+  outline-offset: 3px;
+}
+
+.sig-verdict {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sig-verdict__v {
+  margin: 0;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(1.85rem, 1.5rem + 1.4vw, 2.5rem);
+  line-height: 1.12;
+  color: #f4eade;
+}
+
+[data-sig-state='blocked'] .sig-verdict__v {
+  color: #f4eade;
+  font-weight: 600;
+}
+
+.sig-verdict__reasons {
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+  max-width: 42rem;
+  color: rgba(244, 234, 222, 0.8);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* Specimen stream inspection list */
+.sig-specimens {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(244, 234, 222, 0.1);
+}
+
+.sig-specimen {
+  display: grid;
+  gap: 0.45rem 1.25rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.08);
+}
+
+@media (min-width: 768px) {
+  .sig-specimen {
+    grid-template-columns: 7.5rem minmax(0, 1fr) 8.5rem;
+    align-items: baseline;
+  }
+}
+
+.sig-specimen__meta {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: #a89f8c;
+  font-variant-numeric: tabular-nums;
+}
+
+.sig-specimen__text {
+  margin: 0;
+  color: rgba(244, 234, 222, 0.88);
+  font-size: max(16px, 0.9375rem);
+  line-height: 1.5;
+}
+
+.sig-specimen[data-verdict='filtered'] .sig-specimen__text {
+  color: #868686;
+}
+
+.sig-specimen__tag {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+@media (min-width: 768px) {
+  .sig-specimen__tag {
+    text-align: right;
+  }
+}
+
+.sig-specimen[data-verdict='captured'] .sig-specimen__tag {
+  color: #f4eade;
+}
+
+.sig-specimen[data-verdict='false-alarm'] .sig-specimen__tag,
+.sig-specimen[data-verdict='missed'] .sig-specimen__tag {
+  color: #f4eade;
+  font-weight: 600;
+}
+
+/* Burst timeline SVG */
+.sig-burst {
+  margin: 2rem 0 1.75rem;
+}
+
+.sig-burst__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.sig-burst__grid {
+  stroke: rgba(244, 234, 222, 0.09);
+  stroke-width: 1;
+}
+
+.sig-burst__threshold {
+  stroke: rgba(244, 234, 222, 0.36);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.sig-burst__raw {
+  fill: rgba(244, 234, 222, 0.14);
+}
+
+.sig-burst__gated {
+  fill: #f4eade;
+  fill-opacity: 0.5;
+}
+
+/* Alert windows: full-bright ivory over the dimmer gated bars (no hue;
+   the retired blue was re-keyed 2026-11-24). */
+.sig-burst__gated.is-alert {
+  fill: #f4eade;
+  fill-opacity: 1;
+}
+
+.sig-burst__marker {
+  stroke: rgba(244, 234, 222, 0.45);
+  stroke-width: 1;
+}
+
+.sig-burst__marker--alert {
+  stroke: #f4eade;
+  stroke-width: 1.5;
+}
+
+.sig-burst__label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  fill: #a89f8c;
+}
+
+.sig-burst__label--alert {
+  fill: #f4eade;
+  font-weight: 600;
+}
+
+.sig-burst__tick {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  fill: #868686;
+}
+
+.sig-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.sig-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sig-swatch {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.sig-swatch--raw {
+  background: rgba(244, 234, 222, 0.22);
+}
+
+.sig-swatch--gated {
+  background: rgba(244, 234, 222, 0.5);
+}
+
+.sig-swatch--alert {
+  background: #f4eade;
+}
+
+/* Structured brief: reporting apart from judgment */
+.sig-brief {
+  margin: 2rem 0;
+  padding: 1.5rem 1.25rem;
+  border: 1px solid rgba(244, 234, 222, 0.16);
+  background: rgba(244, 234, 222, 0.02);
+}
+
+@media (min-width: 640px) {
+  .sig-brief {
+    padding: 2rem 2.25rem;
+  }
+}
+
+.sig-brief__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.12);
+}
+
+.sig-brief__stamp {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.sig-brief__grid {
+  display: grid;
+  gap: 1.35rem 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .sig-brief__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.sig-brief__full {
+  grid-column: 1 / -1;
+}
+
+.sig-brief__cell p {
+  margin: 0;
+  max-width: none;
+  color: rgba(244, 234, 222, 0.88);
+  font-size: max(16px, 0.9375rem);
+  line-height: 1.6;
+}
+
+.sig-brief__conf {
+  color: #f4eade !important;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.25rem !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.sig-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sig-stages th,
+.sig-stages td {
+  text-align: left;
+  vertical-align: top;
+}
+
+.sig-stages__blocked {
+  color: #f4eade;
+  font-weight: 600;
+}
+
+.sig-prov {
+  margin-top: 1.25rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: max(16px, 0.875rem);
+  line-height: 1.6;
+  color: #a89f8c;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sig-clause {
+    transition: none;
+  }
+}
