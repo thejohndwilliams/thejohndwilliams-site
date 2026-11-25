@@ -173,12 +173,28 @@
     fill 450ms linear,
     stroke 450ms linear,
     fill-opacity 450ms linear,
-    opacity 260ms linear;
+    stroke-opacity 260ms linear;
 }
+
+/* The scroll drives --dim frame by frame; a transition on top of it would
+   restart on every dot every frame (main-thread SVG animation, 2026-11-25). */
+.enf-fig.is-scrolly[data-dimming='true'] .d {
+  transition: none;
+}
+
+/* Dimming multiplies each dot's own fill/stroke opacity by --k instead of
+   setting `opacity`. Element opacity on SVG forces an offscreen layer per
+   dot: ~1,000 layers composited on every repaint of the pinned figure was
+   the long-frame stutter (2026-11-25). fill/stroke-opacity paint directly. */
+.enf-fig.is-scrolly .d { --k: 1; }
+.enf-fig.is-scrolly .d.s { fill-opacity: calc(0.55 * var(--k)); }
+.enf-fig.is-scrolly .d.h { stroke-opacity: calc(0.75 * var(--k)); }
+.enf-fig.is-scrolly .d.h.is-wrong,
+.enf-fig.is-scrolly .d.s.is-missed { stroke-opacity: var(--k); }
 
 .enf-fig.is-scrolly[data-neutral='true'] .d.d {
   fill: #a89f8c;
-  fill-opacity: 0.7;
+  fill-opacity: calc(0.7 * var(--k));
   stroke: none;
 }
 
@@ -186,20 +202,20 @@
 .enf-fig.is-scrolly[data-neutral='false'][data-harms='none'] .d.h.is-wrong {
   fill: none;
   stroke: #868686;
-  stroke-opacity: 0.75;
+  stroke-opacity: calc(0.75 * var(--k));
   stroke-width: 1;
 }
 
 .enf-fig.is-scrolly[data-neutral='false']:not([data-harms='all']) .d.s.is-missed {
   fill: #f4eade;
-  fill-opacity: 0.55;
+  fill-opacity: calc(0.55 * var(--k));
   stroke: none;
 }
 
 .enf-fig.is-scrolly[data-focus='wrong'] .d:not(.is-wrong),
 .enf-fig.is-scrolly[data-focus='review'] .d:not([data-rb]),
 .enf-fig.is-scrolly[data-focus='missed'] .d:not(.is-missed) {
-  opacity: calc(1 - 0.84 * var(--dim, 0));
+  --k: calc(1 - 0.84 * var(--dim, 0));
 }
 
 .enf-fig.is-scrolly[data-focus='wrong'] .d.is-wrong,

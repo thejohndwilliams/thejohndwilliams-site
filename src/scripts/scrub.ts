@@ -34,10 +34,17 @@ export function motionAllowed(): boolean {
   return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+// Header height, read once and again on resize. Reading getComputedStyle
+// inside every scroll frame forced a synchronous style recalc right after
+// the previous scene's writes (2026-11-25 stutter root cause, with the
+// story's per-frame rewrites below).
+let headerCache = 0;
 function headerH(): number {
+  if (headerCache) return headerCache;
   const v = getComputedStyle(document.documentElement).getPropertyValue('--header-h');
   const n = parseFloat(v);
-  return Number.isFinite(n) && n > 0 ? n : 88;
+  headerCache = Number.isFinite(n) && n > 0 ? n : 88;
+  return headerCache;
 }
 
 function progressOf(s: Scene, vh: number): number {
@@ -60,11 +67,17 @@ export function runScenes(scenes: Scene[], signal: AbortSignal): void {
     return;
   }
   let raf = 0;
+  // Read every scene's geometry first, then write. Interleaving a read
+  // (getBoundingClientRect) after another scene's style writes forced a
+  // layout + style flush per scene per frame (layout thrashing).
+  const progress: number[] = new Array(scenes.length);
   const frame = () => {
     raf = 0;
     const vh = window.innerHeight;
-    for (const s of scenes) {
-      const p = progressOf(s, vh);
+    for (let i = 0; i < scenes.length; i++) progress[i] = progressOf(scenes[i], vh);
+    for (let i = 0; i < scenes.length; i++) {
+      const s = scenes[i];
+      const p = progress[i];
       if (p !== s.last) {
         s.last = p;
         s.render(p);
@@ -76,6 +89,7 @@ export function runScenes(scenes: Scene[], signal: AbortSignal): void {
   };
   window.addEventListener('scroll', kick, { passive: true, signal });
   window.addEventListener('resize', () => {
+    headerCache = 0;
     for (const s of scenes) s.last = undefined;
     kick();
   }, { passive: true, signal });
