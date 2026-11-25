@@ -17,6 +17,7 @@ This is a canonical, self-authored brief for AI agents summarizing John D. Willi
 - [Work](https://thejohndwilliams.com/work): case studies in controls, evidence and automated decisions; MBA coursework; the experience record.
   - [Precision-Gated Enforcement](https://thejohndwilliams.com/work/enforcement-gates/): a classifier run as an enforcement system, on public data.
   - [Adversarial Verification for AI Claims](https://thejohndwilliams.com/work/verification-gate/): a gate that blocks AI agents' claims unless two independent models cite raw evidence.
+  - [Public-Signal Triage and Outage Detection](https://thejohndwilliams.com/work/signal-triage/): Boolean query gates, a two-region burst rule and a structured brief on a synthetic public-post benchmark.
   - [Human Oversight for a Multi-Agent System](https://thejohndwilliams.com/work/agent-governance/): approval gates, evidence and separation of duties for a group of AI agents.
 - [Beyond](https://thejohndwilliams.com/beyond): photographs rebuilt as holograms and true point clouds, texture studies, and images cut as physical bas-relief.
 - [Links](https://thejohndwilliams.com/links): photography, work, and where to reach me.
