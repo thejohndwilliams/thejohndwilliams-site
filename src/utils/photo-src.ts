@@ -10,6 +10,8 @@ export interface PhotoTiers {
   /** Fit inside 800 px (2026-11-25): the phone card / grid cell tier. */
   mid?: PhotoDim;
   gallery: PhotoDim;
+  /** Portrait photos at 1000 px wide (2026-11-25): a phone's full-width slot. */
+  tall?: PhotoDim;
   hero: PhotoDim;
   portrait?: PhotoDim;
 }
@@ -24,13 +26,13 @@ export function photoTiers(file: string): PhotoTiers {
   return row;
 }
 
-export type LocalTier = 'thumb' | 'mid' | 'gallery' | 'hero';
+export type LocalTier = 'thumb' | 'mid' | 'gallery' | 'tall' | 'hero';
 
 /** Width descriptors are the bitmap widths, never the tier cap. */
 export function photoSrcset(
   file: string,
   ext: 'avif' | 'webp',
-  tiers: LocalTier[] = ['thumb', 'mid', 'gallery', 'hero'],
+  tiers: LocalTier[] = ['thumb', 'mid', 'gallery', 'tall', 'hero'],
 ): string {
   const row = photoTiers(file);
   // A tier only enters the srcset when its bitmap exists and adds a width
@@ -61,10 +63,12 @@ export function portraitSizes(file: string): string {
   return `min(100vw, ${portrait.w}px)`;
 }
 
-/** Slot matches the plate: own aspect, never wider than the bitmap, never taller than 80svh. */
+/** Slot matches the plate: own aspect, never wider than the bitmap, never taller than 80vh.
+ *  vh, not svh: the preload scanner drops svh in imagesizes and fell back to
+ *  100vw, so phones fetched the photo twice (2026-11-25, measured). */
 export function plateSizes(file: string): string {
   const { w, h } = photoTiers(file).hero;
-  return `min(100vw, ${w}px, calc(80svh * ${w} / ${h}))`;
+  return `min(100vw, ${w}px, calc(80vh * ${w} / ${h}))`;
 }
 
 /** Full-bleed heroes stay full width up to the bitmap. */
