@@ -184,8 +184,8 @@ const thumbDims = Object.fromEntries(
               aria-pressed={i === 0 ? 'true' : 'false'}
             >
               <picture>
-                <source type="image/avif" srcset={photoSrcset(row.file, 'avif', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
-                <source type="image/webp" srcset={photoSrcset(row.file, 'webp', ['thumb', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
+                <source type="image/avif" srcset={photoSrcset(row.file, 'avif', ['thumb', 'mid', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
+                <source type="image/webp" srcset={photoSrcset(row.file, 'webp', ['thumb', 'mid', 'gallery'])} sizes="(max-width: 700px) 92vw, 520px" />
                 <img src={`/images/photography/thumb/${row.file}.webp`} alt="" width={thumbDims[row.file].width} height={thumbDims[row.file].height} />
               </picture>
               <span>{row.label}</span>

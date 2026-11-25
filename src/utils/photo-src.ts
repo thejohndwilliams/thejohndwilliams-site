@@ -7,6 +7,8 @@ export interface PhotoDim {
 
 export interface PhotoTiers {
   thumb: PhotoDim;
+  /** Fit inside 800 px (2026-11-25): the phone card / grid cell tier. */
+  mid?: PhotoDim;
   gallery: PhotoDim;
   hero: PhotoDim;
   portrait?: PhotoDim;
@@ -22,17 +24,26 @@ export function photoTiers(file: string): PhotoTiers {
   return row;
 }
 
-export type LocalTier = 'thumb' | 'gallery' | 'hero';
+export type LocalTier = 'thumb' | 'mid' | 'gallery' | 'hero';
 
 /** Width descriptors are the bitmap widths, never the tier cap. */
 export function photoSrcset(
   file: string,
   ext: 'avif' | 'webp',
-  tiers: LocalTier[] = ['thumb', 'gallery', 'hero'],
+  tiers: LocalTier[] = ['thumb', 'mid', 'gallery', 'hero'],
 ): string {
   const row = photoTiers(file);
+  // A tier only enters the srcset when its bitmap exists and adds a width
+  // the set does not already carry (some galleries are 800 px themselves).
+  const seen = new Set<number>();
   return tiers
-    .map((tier) => `/images/photography/${tier}/${file}.${ext} ${row[tier].w}w`)
+    .filter((tier) => {
+      const d = row[tier];
+      if (!d || seen.has(d.w)) return false;
+      seen.add(d.w);
+      return true;
+    })
+    .map((tier) => `/images/photography/${tier}/${file}.${ext} ${row[tier]!.w}w`)
     .join(', ');
 }
 

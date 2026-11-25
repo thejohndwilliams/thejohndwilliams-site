@@ -63,8 +63,8 @@ const thumb = (file: string) => photoTiers(file).thumb;
               class="links-row glass-card"
             >
               <picture class="links-row__thumb">
-                <source srcset={item.hero} type="image/webp" />
-                <img src={item.heroFallback} alt="" loading="lazy" decoding="async" />
+                <source srcset={item.thumb ?? item.hero} type="image/webp" />
+                <img src={item.thumbFallback ?? item.heroFallback} alt="" loading="lazy" decoding="async" />
               </picture>
               <span class="links-row__text">
                 <span class="block text-cream">{item.name}</span>

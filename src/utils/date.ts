@@ -51,6 +51,8 @@ export const socialLinks = [
     icon: '/images/previews/linkedin.svg',
     hero: '/images/linkedin-hero.webp',
     heroFallback: '/images/linkedin-hero.jpg',
+    thumb: '/images/links/linkedin-240.webp',
+    thumbFallback: '/images/links/linkedin-240.jpg',
     heroAlt: 'Macro photograph of wet moss with water droplets and golden highlights'
   },
   {
@@ -60,6 +62,8 @@ export const socialLinks = [
     icon: '/images/previews/github.svg',
     hero: '/images/github-hero.webp',
     heroFallback: '/images/github-hero.jpg',
+    thumb: '/images/links/github-240.webp',
+    thumbFallback: '/images/links/github-240.jpg',
     heroAlt: 'Thermal visualization of a floor plan in neon pink and cyan'
   },
   {
@@ -69,6 +73,8 @@ export const socialLinks = [
     icon: '/images/previews/instagram.svg',
     hero: '/images/instagram-hero.webp',
     heroFallback: '/images/instagram-hero.jpg',
+    thumb: '/images/links/instagram-240.webp',
+    thumbFallback: '/images/links/instagram-240.jpg',
     heroAlt: 'Single white cloud against a deep blue night sky'
   },
   {
@@ -78,6 +84,8 @@ export const socialLinks = [
     icon: '/images/previews/behance.svg',
     hero: '/images/behance-hero.webp',
     heroFallback: '/images/behance-hero.jpg',
+    thumb: '/images/links/behance-240.webp',
+    thumbFallback: '/images/links/behance-240.jpg',
     heroAlt: 'Abstract minimalist silhouettes in soft gray and pale green tones'
   }
 ] as const;
