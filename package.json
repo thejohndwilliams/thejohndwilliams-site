@@ -28,7 +28,9 @@
     "preview:status": "node scripts/preview-status.mjs",
     "traffic:report": "node scripts/traffic-report.mjs",
     "visual:baseline": "node scripts/visual-regress.mjs --update",
-    "visual:check": "node scripts/visual-regress.mjs"
+    "visual:check": "node scripts/visual-regress.mjs",
+    "visual:capture": "node scripts/visual-judge/capture.mjs",
+    "visual:judge": "node scripts/visual-judge/capture.mjs && node scripts/visual-judge/judge.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",

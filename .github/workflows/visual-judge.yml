@@ -1,0 +1,114 @@
+name: Visual judge
+
+# Looks at the site the way the owner does, every night, and on demand.
+# Added 2026-11-24. Every visual defect this year was found by the owner's
+# screenshots after deploy; CI never saw one, because tests check policy
+# and behavior, not pixels. This captures each key page at four real
+# viewports with real scrolling, runs the measured checks (sideways
+# scroll, hidden reveals, broken images, retired colors, em dashes, CSP),
+# and, when ANTHROPIC_API_KEY is set, has Claude grade every page against
+# scripts/visual-judge/rubric.md. Findings land in the job summary; the
+# full report with frames is an artifact. A blocker fails the run, and a
+# failed scheduled run emails the owner.
+#
+# Pull requests: add the `visual-judge` label to capture the PR's own build
+# (served locally, since previews sit behind Cloudflare Access) and run the
+# deterministic measured checks. ANTHROPIC_API_KEY is withheld from pull_request
+# runs so unmerged branch code and label-triggered runs never receive the key;
+# model grading runs only on scheduled and manual workflow_dispatch runs.
+#
+# Cost with the model on: roughly 48 page views x up to 6 frames per run.
+# Trim with the routes/viewports inputs on manual runs.
+
+on:
+  schedule:
+    - cron: '17 11 * * *' # 05:17 Central
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'Site to judge'
+        default: 'https://thejohndwilliams.com'
+      routes:
+        description: 'Comma-separated routes (blank = all)'
+        default: ''
+      viewports:
+        description: 'wide,laptop,duo-open,duo-closed,phone or all (blank = nightly set)'
+        default: ''
+  pull_request:
+    types: [labeled, synchronize]
+
+concurrency:
+  group: visual-judge-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  judge:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'visual-judge')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        # Same mirror fix as ci.yml (2026-11-24): the default apt mirror hung
+        # this step 20+ minutes. Do not wrap in `timeout`.
+        timeout-minutes: 18
+        run: |
+          printf 'http://azure.archive.ubuntu.com/ubuntu/\tpriority:1\nhttp://archive.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt > /dev/null
+          echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30";' | sudo tee /etc/apt/apt.conf.d/80-ci-retries > /dev/null
+          npx playwright install --with-deps chromium
+
+      - name: Build and serve this branch (pull requests)
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run build
+          npx astro preview --port 4321 > /tmp/preview.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:4321/ > /dev/null && break; sleep 2; done
+
+      - name: Capture
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && 'http://localhost:4321' || inputs.base || 'https://thejohndwilliams.com' }}
+          ROUTES: ${{ inputs.routes }}
+          VIEWPORTS: ${{ inputs.viewports }}
+        run: |
+          ARGS="--base $BASE"
+          [ -n "$ROUTES" ] && ARGS="$ARGS --routes $ROUTES"
+          [ -n "$VIEWPORTS" ] && ARGS="$ARGS --viewports $VIEWPORTS"
+          node scripts/visual-judge/capture.mjs $ARGS
+
+      - name: Judge (measured checks, pull requests)
+        if: github.event_name == 'pull_request'
+        run: node scripts/visual-judge/judge.mjs
+
+      - name: Judge (measured + model, scheduled and manual)
+        id: judge
+        if: github.event_name != 'pull_request'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/visual-judge/judge.mjs
+
+      - name: Summary
+        if: always()
+        run: |
+          [ -f visual-judge-out/summary.md ] && cat visual-judge-out/summary.md >> "$GITHUB_STEP_SUMMARY" || echo "No summary produced." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-judge-report
+          path: visual-judge-out
+          retention-days: 14
