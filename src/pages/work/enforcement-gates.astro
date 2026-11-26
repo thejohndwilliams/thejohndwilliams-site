@@ -63,6 +63,8 @@ const jsonLd = {
   headline: pageTitle,
   description,
   url: 'https://thejohndwilliams.com/work/enforcement-gates/',
+  datePublished: '2026-11-17',
+  dateModified: '2026-11-24',
   author: { '@type': 'Person', name: 'John D. Williams', url: 'https://thejohndwilliams.com' },
   isBasedOn: 'https://archive.ics.uci.edu/dataset/228/sms+spam+collection',
 };
@@ -71,7 +73,7 @@ const jsonLd = {
 <BaseLayout
   title={pageTitle}
   description={description}
-  ogImage="/og/pages/work.jpg"
+  ogImage="/og/pages/enforcement-gates.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
   lcpImage={HERO}
@@ -180,14 +182,14 @@ const jsonLd = {
 
       <div class="enf-steppers">
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review gate">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review gate"><span aria-hidden="true">−</span></button>
           <span class="enf-stepper__k">Review floor</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review gate">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review gate"><span aria-hidden="true">+</span></button>
         </div>
         <div class="enf-stepper">
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate">−</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate"><span aria-hidden="true">−</span></button>
           <span class="enf-stepper__k">Auto-action</span>
-          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate">+</button>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate"><span aria-hidden="true">+</span></button>
         </div>
       </div>
 
@@ -346,6 +348,7 @@ const jsonLd = {
         </tbody>
       </table>
       <p>The {meta.dataset} ({meta.citation}, {meta.license}) holds {fmt(meta.messages_raw)} labelled text messages. Exact duplicates were removed first, leaving {fmt(meta.messages_unique)}, because copies of the same spam across splits would flatter every number. The rest was split 60 / 20 / 20 into training, calibration and test, stratified by label. The model is {meta.model.toLowerCase()}. Gate scores: auto-action at {gates.auto.toFixed(3)}, review floor at {gates.review.toFixed(3)}.</p>
+      <p class="enf-prov">Artifact: src/data/enforcement-sample.json · seed {meta.seed} · sha256 4a2f6a88e31e2af7966d0d7818f1a61441e4cc279c859452fcb19e210ea9535d</p>
       <p class="enf-code"><a href="https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/scripts/enforcement/train.py" class="link-draw" rel="noopener noreferrer" target="_blank">Training and measurement script</a></p>
       <p class="enf-return"><a href="/work/">Back to the work</a></p>
     </section>

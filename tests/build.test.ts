@@ -145,7 +145,8 @@ describe('Astro Build', () => {
     // surface) does not reliably render WebP unfurls. Top-level pages now use
     // the same 1200×630 JPEG pipeline as photo detail pages.
     const pagesDir = path.join(distDir, 'og', 'pages');
-    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg']) {
+    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg',
+      'enforcement-gates.jpg', 'agent-governance.jpg', 'verification-gate.jpg', 'signal-triage.jpg']) {
       expect(fs.existsSync(path.join(pagesDir, f))).toBe(true);
     }
     const pairs: Array<[string, string]> = [
@@ -153,12 +154,27 @@ describe('Astro Build', () => {
       [path.join('photography', 'index.html'), '/og/pages/photography.jpg'],
       [path.join('work', 'index.html'), '/og/pages/work.jpg'],
       [path.join('about', 'index.html'), '/og/pages/about.jpg'],
+      // 2026-11-25: each case study shares its own preview, not the Work card.
+      [path.join('work', 'enforcement-gates', 'index.html'), '/og/pages/enforcement-gates.jpg'],
+      [path.join('work', 'agent-governance', 'index.html'), '/og/pages/agent-governance.jpg'],
+      [path.join('work', 'verification-gate', 'index.html'), '/og/pages/verification-gate.jpg'],
+      [path.join('work', 'signal-triage', 'index.html'), '/og/pages/signal-triage.jpg'],
     ];
     for (const [rel, og] of pairs) {
       const html = fs.readFileSync(path.join(distDir, rel), 'utf-8');
       expect(html).toContain(og);
       expect(html).toContain('property="og:image:width" content="1200"');
       expect(html).toContain('property="og:image:height" content="630"');
+    }
+  });
+
+  it('each case-study preview carries that page\'s own title (2026-11-25)', () => {
+    const og = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'build-og-images.mjs'), 'utf-8');
+    for (const slug of ['enforcement-gates', 'agent-governance', 'verification-gate', 'signal-triage']) {
+      const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'pages', 'work', `${slug}.astro`), 'utf-8');
+      const title = src.match(/const pageTitle = '([^']+)'/)?.[1];
+      expect(title, slug).toBeTruthy();
+      expect(og).toContain(`slug: '${slug}', hero: 'dscf0331', eyebrow: 'Case study', title: '${title}'`);
     }
   });
 
@@ -579,9 +595,14 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stripIdx).toBeGreaterThan(heroIdx);
     expect(stripIdx).toBeLessThan(work.indexOf('Precision-Gated Enforcement'));
     expect(work).not.toContain('Consulting in data engineering');
-    expect(work).not.toContain('Resume (PDF)');
-    expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    // Résumé back 2026-11-24 with the owner-approved PDF in the cleared framing.
+    expect(work).toContain('Résumé (PDF)');
+    // New name: browsers cached the 2026-10-25 301 on the old path forever.
+    expect(work).toContain('href="/files/John-D-Williams-Resume.pdf"');
+    expect(fs.existsSync(path.join(distDir, 'files', 'John-D-Williams-Resume.pdf'))).toBe(true);
     expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
+    const redirects = fs.readFileSync(path.join(process.cwd(), 'public/_redirects'), 'utf8');
+    expect(redirects).toMatch(/^\/files\/Williams-John-D-Resume\.pdf\s+\/files\/John-D-Williams-Resume\.pdf\s+301$/m);
     expect(work).toContain('Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done.');
     expect(work).not.toContain('writings and research to come');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
@@ -957,5 +978,114 @@ describe('Case studies say it with figures (owner order 2026-11-24)', () => {
     expect(about).toContain('object-[center_12%]');
     expect(about).toMatch(/>More<|More<span/);
     expect(about).toContain('Light · neon traced across the night');
+  });
+});
+
+describe('Work serves a hiring conversation (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every skill names where to see it', () => {
+    const page = read('work/index.html');
+    expect(page).toContain('id="evidence"');
+    expect((page.match(/class="work-evidence__row"/g) || []).length).toBeGreaterThanOrEqual(6);
+    expect(page).toContain('id="record"');
+  });
+  it('Work prints as words on white, with the record open', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    expect(all).toMatch(/@media print\{@page\{size:letter/);
+    expect(all).toContain('.xp-entry::details-content');
+  });
+});
+
+describe('Contrast holds in every state (2026-11-24)', () => {
+  it('Work timeline years brighten as the line passes; they never fade below AA', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    const rule = all.match(/\.xp-ribbon__year\{[^}]*\}/)?.[0] ?? '';
+    expect(rule).toContain('color-mix(');
+    expect(rule).not.toMatch(/opacity:clamp\(0?\.2/);
+  });
+});
+
+describe('Every photograph has a note (owner 2026-11-24)', () => {
+  it('each photo page prints an observational note, no em dashes', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/data/photography.ts'), 'utf8');
+    const rows = src.match(/\{ file: '[^']+'[^\n]*\}/g) || [];
+    expect(rows.length).toBeGreaterThan(80);
+    for (const r of rows) expect(r, r.slice(0, 40)).toMatch(/note: '/);
+    const page = fs.readFileSync(path.join(distDir, 'photography', '7r52035', 'index.html'), 'utf8');
+    expect(page).toContain('Sparks rise and fall in a white column against a black sky.');
+    expect(src).not.toMatch(/note: '[^']*—/);
+  });
+});
+
+describe('Public-Signal Triage case study (2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('ships in the case-study grammar, OPSEC-clean, with no intelligence-community framing', () => {
+    const work = read('work/index.html');
+    expect(work).toContain('href="/work/signal-triage/"');
+    const page = read('work/signal-triage/index.html');
+    expect(page).toMatch(/<h1[^>]*>Public-Signal Triage and Outage Detection<\/h1>/);
+    expect(page).toContain('Moderate confidence');
+    expect(page).toContain('"@type":"TechArticle"');
+    expect(page).not.toContain('—');
+    expect(page).not.toMatch(/<style[\s>]/);
+    expect(page).not.toMatch(/<script type="module">/);
+    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR', 'ICD 203', 'ODNI', 'Intelligence Community', 'tradecraft', 'OSINT', 'SIGINT', 'BGP', 'ASN', 'U.S. Citizen']) {
+      expect(page, banned).not.toContain(banned);
+    }
+    expect(fs.existsSync(path.join(distDir, 'work', 'signal-intelligence'))).toBe(false);
+  });
+  it('security.txt and the résumé cache rule ship', () => {
+    const sec = read('.well-known/security.txt');
+    expect(sec).toContain('Contact: mailto:jndwcreative@gmail.com');
+    expect(sec).toContain('Expires: ');
+    const headers = fs.readFileSync(path.join(process.cwd(), 'public/_headers'), 'utf8');
+    expect(headers).toContain('/files/*');
+  });
+});
+
+describe('Web performance pass (2026-11-25)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every photograph ships a mid tier and srcsets offer it between thumb and gallery', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero) continue;
+      expect(row.mid, stem).toBeTruthy();
+      expect(row.mid!.w, stem).toBeLessThanOrEqual(800);
+      expect(fs.existsSync(path.join(distDir, 'images/photography/mid', `${stem}.avif`)), stem).toBe(true);
+    }
+    expect(read('photography/index.html')).toContain('/images/photography/mid/');
+  });
+  it('Links serves small social thumbnails, Home serves a sized relief card', () => {
+    const links = read('links/index.html');
+    expect(links).toContain('/images/links/linkedin-240.webp');
+    expect(links).not.toContain('/images/linkedin-hero.webp');
+    expect(read('index.html')).toContain('/images/relief/card-800.avif 800w');
+  });
+  it('the appeal stages stay readable before the scroll reaches them', () => {
+    const css = fs.readFileSync(path.join(process.cwd(), 'src/styles/enforcement-story.css'), 'utf8');
+    expect(css).toContain('opacity: calc(0.78 + 0.22 * var(--fp, 1));');
+  });
+});
+
+describe('Portrait photos on phones (2026-11-25)', () => {
+  it('every portrait photograph ships a 1000 px tall tier, offered in its srcset', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number; h: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero || row.hero.h <= row.hero.w || row.hero.w <= 1050) continue;
+      expect(row.tall?.w, stem).toBe(1000);
+    }
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    expect(page).toContain('/images/photography/tall/dscf0331.avif 1000w');
+  });
+  it('image sizes never use svh: the preload scanner drops it and fetches the photo twice', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/utils/photo-src.ts'), 'utf8');
+    expect(src).not.toMatch(/return `[^`]*svh/);
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    const pre = page.match(/<link rel="preload"[^>]*imagesizes="([^"]*)"/)?.[1] ?? '';
+    const pic = page.match(/<source type="image\/avif"[^>]*sizes="([^"]*)"/)?.[1] ?? '';
+    expect(pre).not.toContain('svh');
+    expect(pre).toBe(pic);
   });
 });

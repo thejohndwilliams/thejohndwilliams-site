@@ -1,0 +1,93 @@
+/* Work: the skills-and-evidence list, and the printed page.
+   2026-11-24 (owner: make the site usable in a hiring conversation). */
+
+.work-evidence {
+  margin: 0;
+  border-top: 1px solid rgba(244, 234, 222, 0.1);
+}
+.work-evidence__row {
+  display: grid;
+  gap: 0.35rem 2rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(244, 234, 222, 0.1);
+}
+@media (min-width: 768px) {
+  .work-evidence__row { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: baseline; }
+}
+.work-evidence dt { color: #f4eade; font-size: 1rem; }
+.work-evidence dd { margin: 0; color: rgba(244, 234, 222, 0.78); font-size: 0.9375rem; }
+.work-evidence a {
+  /* A tap target, not just a word: 44px tall, the row's padding trims to match. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: rgba(244, 234, 222, 0.85);
+}
+.work-evidence a:hover { color: #f4eade; }
+.work-evidence__sep { color: #868686; }
+
+/* ============================================================
+   PRINT. A reviewer who prints Work gets words on white: the case
+   studies, the coursework, skills and evidence, and every role with its
+   line. Photographs, glass, motion and chrome stay on screen.
+   ============================================================ */
+@media print {
+  @page { size: letter; margin: 0.5in 0.55in; }
+  html, body { background: #fff !important; color: #000 !important; }
+  body::before, body::after { display: none !important; }
+  *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+  .reveal, .stagger-children > * { opacity: 1 !important; transform: none !important; }
+
+  #site-header, footer, #back-to-top, .skip-link,
+  main > section:first-of-type picture, main > section:first-of-type .hero-scrim-left,
+  .hero-bleed, picture, .overlay-scrim-work, .glass-tag,
+  .xp-ribbon, .xp-mark, .xp-entry__toggle { display: none !important; }
+
+  main > section:first-of-type { min-height: 0 !important; margin: 0 !important; padding: 0 !important; display: block !important; }
+  main > section:first-of-type .hero-lockup { padding: 0 !important; }
+  main > section:first-of-type .eyebrow { display: none !important; }
+  h1, h2, h3, p, dt, dd, li, summary, span, a { color: #000 !important; }
+  h1 { font-size: 20pt !important; margin: 0 0 4pt !important; }
+  section { padding: 0 !important; background: #fff !important; }
+  .container-wide { max-width: none !important; padding: 0 !important; }
+
+  /* Cards print as a list of entries. */
+  .glass-luminous { min-height: 0 !important; display: block !important; border: 0 !important; border-bottom: 0.5pt solid #999 !important; border-radius: 0 !important; background: none !important; padding: 0 !important; break-inside: avoid; }
+  .glass-luminous > div { padding: 3pt 0 !important; gap: 0 !important; }
+  .glass-luminous h2 { font-size: 11pt !important; margin: 0 0 1pt !important; }
+  .glass-luminous p { font-size: 9pt !important; line-height: 1.3 !important; margin: 0 0 1pt !important; }
+  .glass-luminous .mt-auto, .glass-luminous [class*="mt-"] { margin-top: 1pt !important; }
+  .grid { display: block !important; }
+  a[href^="/work/"]::after { content: " thejohndwilliams.com" attr(href); font-size: 8.5pt; }
+  a[href^="https://github.com"]::after { content: " " attr(href); font-size: 8.5pt; word-break: break-all; }
+  .mt-14, .sm\:mt-20 { margin-top: 10pt !important; }
+  .mb-8, .sm\:mb-12, .mb-6, .sm\:mb-8 { margin-bottom: 4pt !important; }
+  p.text-sm { font-size: 8.5pt !important; letter-spacing: 0.12em; }
+
+  .work-evidence, .work-evidence__row { border-color: #bbb !important; }
+  .work-evidence__row { display: grid !important; grid-template-columns: 1.4fr 1fr !important; padding: 3pt 0 !important; break-inside: avoid; }
+  .work-evidence dt, .work-evidence dd { font-size: 9pt !important; }
+  .work-evidence a::after { content: none !important; }
+  .work-evidence a { display: inline !important; min-height: 0 !important; }
+
+  /* The record: every entry open, its line and chips in plain type. */
+  .xp { padding-top: 10pt !important; }
+  .xp-entry::details-content { content-visibility: visible; height: auto; }
+  .xp-entry__body { display: block !important; height: auto !important; opacity: 1 !important; }
+  .xp-item { break-inside: avoid; border-color: #bbb !important; }
+  .xp-entry__head { display: flex !important; align-items: baseline !important; gap: 8pt !important; padding: 3pt 0 !important; grid-template-columns: none !important; }
+  .xp-entry__who { display: flex !important; align-items: baseline !important; gap: 6pt !important; flex: 1 1 auto; }
+  .xp-entry__role { font-size: 10.5pt !important; white-space: nowrap; }
+  .xp-entry__org, .xp-entry__years { font-size: 8pt !important; white-space: nowrap; }
+  .xp-entry__body { padding: 0 0 4pt !important; margin: 0 !important; }
+  .xp__title { font-size: 13pt !important; margin: 0 0 4pt !important; }
+  .xp-list, .xp-list > li { margin: 0 !important; }
+  .work-print-hide { display: none !important; }
+  .xp-entry__line, .xp-chip, .xp-tools { font-size: 9pt !important; }
+  .xp-entry__body > *, .xp-entry__body p { margin-top: 0 !important; margin-bottom: 1pt !important; }
+  .xp-chip { border: 0 !important; padding: 0 4pt 0 0 !important; background: none !important; }
+  .xp-chips, ul.xp-chips { margin: 0 !important; gap: 2pt 6pt !important; }
+  .xp-entry__head { min-height: 0 !important; }
+  .xp-tools { margin-top: 4pt !important; }
+  #evidence { break-inside: avoid; }
+}

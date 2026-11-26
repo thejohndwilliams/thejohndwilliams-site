@@ -1,5 +1,5 @@
 /* /work/enforcement-gates/. Ink, ivory and one accent.
-   The blue-hour accent (#7E9CB8) means a harm or a decision, nothing else:
+   The lit ivory (#F4EADE, the brightest cream step) means a harm or a decision, nothing else:
    a legitimate message wrongly removed, spam that got through, the handles
    that set those outcomes. No red, no green, no cards with shadows.
    Measure 38rem for text, 64rem for figures. 2026-11-17. */
@@ -99,7 +99,7 @@
 
 .enf-num {
   font-variant-numeric: lining-nums tabular-nums;
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 /* Hero figure */
@@ -163,7 +163,7 @@
 .enf-band-label[data-band='auto'] { --lf: 72%; }
 
 .enf-band-label[data-band='auto'] {
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 .enf-fig.is-narrow-review .enf-band-label[data-band='review'],
@@ -239,7 +239,7 @@
 
 /* Bands */
 .enf-band--auto {
-  fill: rgba(126, 156, 184, 0.07);
+  fill: rgba(244, 234, 222, 0.07);
 }
 
 .enf-band--review {
@@ -268,10 +268,13 @@
   stroke-width: 1;
 }
 
-/* Dots. Position is the primary cue, fill the backup. */
+/* Dots. Position is the primary cue, shape the backup. A harm (a message
+   wrongly removed, spam let through) is a full-bright ivory RING; ordinary
+   spam is a dimmer ivory fill; legitimate mail a thin grey ring. No hue:
+   the blue that used to carry this retired 2026-07-28 (re-keyed 2026-11-24). */
 .d.s {
   fill: #f4eade;
-  fill-opacity: 0.9;
+  fill-opacity: 0.55;
 }
 
 .d.h {
@@ -282,18 +285,19 @@
 }
 
 .d.h.is-wrong {
-  fill: #7e9cb8;
-  stroke: #7e9cb8;
+  fill: none;
+  stroke: #f4eade;
   stroke-opacity: 1;
+  stroke-width: 2;
 }
 
 .d.s.is-missed {
   fill: none;
-  stroke: #7e9cb8;
-  stroke-width: 1.5;
+  stroke: #f4eade;
+  stroke-width: 2;
 }
 
-/* Handles: a 1px rule the plot's full height, a blue knob, a 44px hit area. */
+/* Handles: a 1px rule the plot's full height, an ivory knob, a 44px hit area. */
 .enf-handle {
   position: absolute;
   top: 0;
@@ -329,7 +333,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #7e9cb8;
+  background: #f4eade;
   box-shadow: 0 0 0 2px #0a0a0a;
   transition: transform 160ms cubic-bezier(0.2, 0, 0, 1);
 }
@@ -340,16 +344,16 @@
 }
 
 .enf-handle:focus-visible .enf-handle__knob {
-  box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #7e9cb8;
+  box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #f4eade;
 }
 
 .enf-handle[data-handle='review'] .enf-handle__knob {
   background: #0a0a0a;
-  box-shadow: inset 0 0 0 2px #7e9cb8, 0 0 0 2px #0a0a0a;
+  box-shadow: inset 0 0 0 2px #f4eade, 0 0 0 2px #0a0a0a;
 }
 
 .enf-handle[data-handle='review']:focus-visible .enf-handle__knob {
-  box-shadow: inset 0 0 0 2px #7e9cb8, 0 0 0 2px #0a0a0a, 0 0 0 4px #7e9cb8;
+  box-shadow: inset 0 0 0 2px #f4eade, 0 0 0 2px #0a0a0a, 0 0 0 4px #f4eade;
 }
 
 .enf-cap {
@@ -387,7 +391,7 @@
 }
 
 .enf-action:focus-visible {
-  outline: 1px solid #7e9cb8;
+  outline: 1px solid #f4eade;
   outline-offset: 3px;
 }
 
@@ -412,9 +416,9 @@
   border-radius: 50%;
 }
 
-.enf-swatch--spam { background: #f4eade; }
+.enf-swatch--spam { background: rgba(244, 234, 222, 0.55); }
 .enf-swatch--ham { box-shadow: inset 0 0 0 1px #868686; }
-.enf-swatch--wrong { background: #7e9cb8; }
+.enf-swatch--wrong { box-shadow: inset 0 0 0 2px #f4eade; }
 
 /* Sections */
 .enf-block {
@@ -425,7 +429,7 @@
 
 .enf-step {
   margin: 0 0 0.75rem !important;
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 .enf-block h2 {
@@ -460,7 +464,7 @@
 }
 
 .enf-ci__target {
-  stroke: #7e9cb8;
+  stroke: #f4eade;
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
@@ -473,7 +477,7 @@
 }
 
 .enf-ci__tick--target {
-  fill: #7e9cb8;
+  fill: #f4eade;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -523,7 +527,7 @@
 
 .enf-qa__cell.is-wrong {
   border-radius: 50%;
-  background: #7e9cb8;
+  background: #f4eade;
 }
 
 .enf-qa__cell.is-wrong::after {
@@ -592,7 +596,7 @@
 }
 
 .enf-stepper__btn:focus-visible {
-  outline: 1px solid #7e9cb8;
+  outline: 1px solid #f4eade;
   outline-offset: 3px;
 }
 
@@ -655,7 +659,7 @@
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 2.25rem;
   line-height: 1;
-  color: #7e9cb8;
+  color: #f4eade;
   font-variant-numeric: lining-nums;
 }
 
@@ -766,7 +770,7 @@
   font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a89f8c;
 }
 .enf-rule__v { margin: 0 0 1rem; font-family: 'EB Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.35; color: #f4eade; }
-.enf-rule__n { margin: 0; font-variant-numeric: tabular-nums lining-nums; color: #7e9cb8; font-size: 0.9375rem; }
+.enf-rule__n { margin: 0; font-variant-numeric: tabular-nums lining-nums; color: #f4eade; font-size: 0.9375rem; }
 .enf-rule--quiet .enf-rule__v { color: rgba(244, 234, 222, 0.6); }
 
 .enf-appeal { margin: 2rem 0 2.25rem; display: grid; gap: 1.25rem; }
@@ -780,9 +784,10 @@
   width: 10px; height: 10px; display: inline-block;
   background: rgba(244, 234, 222, 0.16);
 }
-.enf-appeal__cell.is-wrong { background: rgba(126, 156, 184, 0.35); }
-.enf-appeal__cell.is-appeal { background: #f4eade; }
-.enf-appeal__cell.is-wrong.is-appeal { background: #7e9cb8; }
+.enf-appeal__cell.is-wrong { background: rgba(244, 234, 222, 0.35); }
+/* Wins = solid ivory; loses = an ivory outline over the ground. */
+.enf-appeal__cell.is-appeal { background: transparent; box-shadow: inset 0 0 0 1.5px #f4eade; }
+.enf-appeal__cell.is-wrong.is-appeal { background: #f4eade; box-shadow: none; }
 .enf-appeal__legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; color: rgba(244, 234, 222, 0.8); font-size: 0.875rem; }
 .enf-appeal__legend li { display: inline-flex; align-items: center; gap: 0.6rem; }
 
@@ -791,3 +796,12 @@
    while the block's text keeps its 38rem measure. 2026-11-24. */
 .enf-page { container-type: inline-size; }
 .enf-page .enf-wide { width: 100cqi; max-width: none; }
+
+.enf-prov {
+  margin-top: 1.25rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: max(16px, 0.875rem);
+  line-height: 1.6;
+  color: #a89f8c;
+  overflow-wrap: anywhere;
+}

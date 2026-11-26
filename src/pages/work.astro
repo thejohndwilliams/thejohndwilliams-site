@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ExperienceRecord from '../components/ExperienceRecord.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
+import '../styles/work-print.css';
 import { bleedSizes, heroCapClass, photoSrcset, photoTiers, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
@@ -53,6 +55,16 @@ const caseStudies: ProjectCard[] = [
     alt: 'Temple gate against blue sky',
     span: 12,
   },
+  {
+    title: 'Public-Signal Triage and Outage Detection',
+    description: 'Boolean query gates and a two-region burst rule turn noisy public posts into an early outage warning, with a brief that keeps reporting apart from judgment.',
+    tags: ['Query gates', 'Burst detection', 'Briefing'],
+    meta: 'Personal project · Synthetic data',
+    page: '/work/signal-triage/',
+    image: 'gv-1fd48bd9',
+    alt: 'Glass tower rising into the night',
+    span: 12,
+  },
 ];
 
 const coursework: ProjectCard[] = [
@@ -76,6 +88,20 @@ const coursework: ProjectCard[] = [
     alt: 'A narrow alley lit by one lamp',
     span: 6,
   },
+];
+
+// Skills and evidence (2026-11-24, owner: make the site usable in a hiring
+// conversation). Each skill points at the artifact that shows it; the
+// record below holds the roles. Federal panels call this specialized
+// experience; private screens read it the same way.
+const evidence: Array<{ skill: string; shown: Array<{ label: string; href: string }> }> = [
+  { skill: 'Enforcement thresholds, review bands and appeals', shown: [{ label: 'Precision-Gated Enforcement', href: '/work/enforcement-gates/' }] },
+  { skill: 'Quality sampling sized to the claim', shown: [{ label: 'Precision-Gated Enforcement', href: '/work/enforcement-gates/' }] },
+  { skill: 'Verifying AI-generated work against raw evidence', shown: [{ label: 'Adversarial Verification', href: '/work/verification-gate/' }] },
+  { skill: 'Human oversight and approval controls for AI agents', shown: [{ label: 'Agent Governance', href: '/work/agent-governance/' }] },
+  { skill: 'Risk assessment against NIST frameworks', shown: [{ label: 'Breach Assessment', href: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment' }, { label: 'Healthcare Strategy', href: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha' }] },
+  { skill: 'Customer-signal intelligence: sentiment, outages, defects', shown: [{ label: 'Public-Signal Triage', href: '/work/signal-triage/' }, { label: 'The record', href: '#record' }] },
+  { skill: 'Python and SQL for measurement', shown: [{ label: 'Training script', href: 'https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/scripts/enforcement/train.py' }, { label: 'Decision rule, tested', href: 'https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/src/utils/verification-gate.ts' }] },
 ];
 
 const groups = [
@@ -143,9 +169,14 @@ function projectPicture(file: string, wideCase: boolean) {
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Proving</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-        <p class="text-base leading-relaxed max-w-xl">
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
           Case studies in controls, evidence and automated decisions.
         </p>
+        <!-- Résumé restored 2026-11-24 (owner ruling 2026-10-25: back only
+             with a new PDF in the cleared framing; owner approved the draft). -->
+        <div class="reveal reveal-delay-2 work-print-hide flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+          <GlassPillGL label="Résumé (PDF)" href="/files/John-D-Williams-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
+        </div>
       </div>
     </div>
   </section>
@@ -211,10 +242,31 @@ function projectPicture(file: string, wideCase: boolean) {
           </div>
         </div>
       ))}
+      <div class="mt-14 sm:mt-20" id="evidence">
+        <div class="reveal max-w-2xl mb-6 sm:mb-8">
+          <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Skills and evidence</p>
+          <p class="text-base text-mute">Each skill, and where to see it.</p>
+        </div>
+        <dl class="work-evidence">
+          {evidence.map((row) => (
+            <div class="work-evidence__row">
+              <dt>{row.skill}</dt>
+              <dd>
+                {row.shown.map((s, i) => (
+                  <>
+                    {i > 0 && <span class="work-evidence__sep" aria-hidden="true"> · </span>}
+                    <a href={s.href} class="link-draw" target={s.href.startsWith('http') ? '_blank' : undefined} rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}>{s.label}</a>
+                  </>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
       {/* 2026-11-24 (owner): the expertise chip cloud read as filler. Its
           terms moved into the record below the ram, as chips on the roles
           they came from and a Tools line. */}
-      <p class="reveal mt-8 sm:mt-12 text-base text-mute">
+      <p class="reveal work-print-hide mt-8 sm:mt-12 text-base text-mute">
         The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>
     </div>

@@ -1,5 +1,5 @@
 /* The record on /work (src/components/ExperienceRecord.astro).
-   Ink and ivory; the blue-hour accent marks only the open entry and the
+   Ink and ivory; the lit ivory marks only the open entry and the
    present. Spans draw in on scroll behind .is-live (script only), so the
    static page shows every span at full length. 2026-11-24. */
 
@@ -84,7 +84,7 @@
 }
 
 .xp-ribbon__span.is-current {
-  background: linear-gradient(90deg, rgba(244, 234, 222, 0.42), rgba(126, 156, 184, 0.9));
+  background: linear-gradient(90deg, rgba(244, 234, 222, 0.42), rgba(244, 234, 222, 0.9));
 }
 
 .xp-ribbon__span.is-current::after {
@@ -96,8 +96,8 @@
   height: 8px;
   margin-top: -4px;
   border-radius: 50%;
-  background: #7e9cb8;
-  box-shadow: 0 0 0 3px rgba(126, 156, 184, 0.18);
+  background: #f4eade;
+  box-shadow: 0 0 0 3px rgba(244, 234, 222, 0.18);
   opacity: clamp(0, (var(--play, 1) - var(--x1)) * 80 + 1, 1);
 }
 
@@ -108,7 +108,7 @@
 }
 
 .xp-ribbon__span.is-current.is-lit {
-  background: linear-gradient(90deg, #f4eade, #7e9cb8);
+  background: linear-gradient(90deg, #f4eade, #f4eade);
 }
 
 /* A hairline of the section ground between spans that touch or overlap. */
@@ -193,8 +193,10 @@
   transform: translateX(-50%);
   font-size: 0.625rem;
   letter-spacing: 0.06em;
+  /* The line passing a year brightens it. Unplayed years stay at #868686
+     (5:1 on the page), never faded out: small type keeps AA in every state. */
   color: #868686;
-  opacity: clamp(0.2, (var(--play, 1) - var(--x0)) * 40 + 1, 1);
+  color: color-mix(in srgb, #d8cfbf calc(clamp(0, (var(--play, 1) - var(--x0)) * 40 + 1, 1) * 100%), #868686);
 }
 
 .xp-ribbon__year::before {
@@ -213,7 +215,10 @@
   }
 
   .xp-ribbon__year.is-minor {
-    color: transparent;
+    visibility: hidden;
+  }
+  .xp-ribbon__year.is-minor::before {
+    visibility: visible;
   }
 }
 
@@ -261,7 +266,7 @@
 }
 
 .xp-entry__head:focus-visible {
-  outline: 1px solid #7e9cb8;
+  outline: 1px solid #f4eade;
   outline-offset: 4px;
 }
 
@@ -367,7 +372,7 @@
 }
 
 .xp-entry[open] .xp-entry__years {
-  color: #7e9cb8;
+  color: #f4eade;
 }
 
 .xp-entry__body {

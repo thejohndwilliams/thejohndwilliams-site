@@ -16,7 +16,7 @@ addresses agents directly.
 
 ## Stack
 
-- Astro 4.16, static output. Tailwind 3.4. vitest, incl. `tests/hazards.test.ts`
+- Astro 7.4, static output. Tailwind 3.4. vitest, incl. `tests/hazards.test.ts`
   prose-rule locks (green is the gate; the count grows). Playwright e2e in
   `e2e/` runs chromium + webkit + iphone. Node pinned to 24 (`.nvmrc`;
   node 25 breaks suite imports SILENTLY — `scripts/check-node.mjs` guards). Build page count lives in tests/build.test.ts (the doc copy of the number is always stale); the exact counts

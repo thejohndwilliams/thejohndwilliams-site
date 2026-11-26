@@ -63,6 +63,7 @@ type Cache = {
   d01: Float32Array;
   d12: Float32Array;
   dirty: Uint8Array;
+  last: string[];
 };
 
 function buildCache(svg: SVGSVGElement): Cache | null {
@@ -122,7 +123,7 @@ function buildCache(svg: SVGSVGElement): Cache | null {
     k1y[i] = base + (rnd() - 0.5) * 5;
     d12[i] = (cx[i] - minX) / Math.max(1, maxX - minX);
   }
-  return { els, cx, cy, k0x, k0y, k1y, d01, d12, dirty: new Uint8Array(n) };
+  return { els, cx, cy, k0x, k0y, k1y, d01, d12, dirty: new Uint8Array(n), last: new Array<string>(n).fill('') };
 }
 
 const SPREAD = 0.45;
@@ -159,13 +160,14 @@ function initStory(root: HTMLElement, signal: AbortSignal): Scene | null {
 
   function placeDots(k: number, tp: number): void {
     if (!cache) return;
-    const { els, cx, cy, k0x, k0y, k1y, d01, d12, dirty } = cache;
+    const { els, cx, cy, k0x, k0y, k1y, d01, d12, dirty, last } = cache;
     if (k >= 3) {
       if (settled) return;
       for (let i = 0; i < els.length; i++) {
         if (dirty[i]) {
           els[i].removeAttribute('transform');
           dirty[i] = 0;
+          last[i] = '';
         }
       }
       settled = true;
@@ -193,9 +195,17 @@ function initStory(root: HTMLElement, signal: AbortSignal): Scene | null {
         if (dirty[i]) {
           els[i].removeAttribute('transform');
           dirty[i] = 0;
+          last[i] = '';
         }
       } else {
-        els[i].setAttribute('transform', `translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
+        // Write only a changed position. Rewriting an identical transform
+        // still invalidates the dot's style, and scene 0 rewrote all 1,032
+        // stationary dots on every frame (2026-11-25 stutter root cause).
+        const tf = `translate(${dx.toFixed(1)} ${dy.toFixed(1)})`;
+        if (last[i] !== tf) {
+          els[i].setAttribute('transform', tf);
+          last[i] = tf;
+        }
         dirty[i] = 1;
       }
     }
@@ -212,6 +222,17 @@ function initStory(root: HTMLElement, signal: AbortSignal): Scene | null {
     });
   }
 
+  const written = new Map<string, string>();
+  function setVar(name: string, v: number): void {
+    const str = v.toFixed(3);
+    if (written.get(name) === str) return;
+    written.set(name, str);
+    root.style.setProperty(name, str);
+  }
+  function setData(key: string, v: string): void {
+    if (root.dataset[key] !== v) root.dataset[key] = v;
+  }
+
   function render(p: number): void {
     lastP = p;
     const f = Math.min(STEPS - 1e-6, p * STEPS);
@@ -221,25 +242,32 @@ function initStory(root: HTMLElement, signal: AbortSignal): Scene | null {
 
     placeDots(k, tp);
 
+    // Write only what changed, rounded. These custom properties inherit
+    // down to all 1,032 dots, so an unchanged-but-rewritten value (or an
+    // unrounded float that differs every frame) recalculated the whole
+    // figure's style on every scroll frame (2026-11-25 stutter root cause).
     const show = (from: number) => (k > from ? 1 : k < from ? 0 : tp);
-    const css = root.style;
-    css.setProperty('--show-axis', String(show(1)));
-    css.setProperty('--show-auto', String(show(3)));
-    css.setProperty('--show-readout', String(show(3)));
-    css.setProperty('--show-review', String(show(5)));
-    css.setProperty('--show-allow', String(show(6)));
-    css.setProperty('--sweep-auto', String(show(3)));
-    css.setProperty('--sweep-review', String(show(5)));
+    setVar('--show-axis', show(1));
+    setVar('--show-auto', show(3));
+    setVar('--show-readout', show(3));
+    setVar('--show-review', show(5));
+    setVar('--show-allow', show(6));
+    setVar('--sweep-auto', show(3));
+    setVar('--sweep-review', show(5));
     // Dim rises as step 4 arrives and lifts as step 7 arrives.
     const dim = k < 4 ? 0 : k === 4 ? tp : k < 7 ? 1 : 1 - tp;
-    css.setProperty('--dim', dim.toFixed(3));
+    setVar('--dim', dim);
+    // While the scroll itself drives the dimming, the dots' opacity
+    // transition must be off: restarting a 260ms transition on ~1,000 SVG
+    // dots every frame ran main-thread animations through the whole figure.
+    setData('dimming', dim > 0 && dim < 1 ? 'true' : 'false');
 
-    root.dataset.scene = String(k);
-    root.dataset.neutral = k < 2 || (k === 2 && tp < 0.5) ? 'true' : 'false';
-    root.dataset.harms = k < 4 ? 'none' : k < 6 ? 'wrong' : 'all';
+    setData('scene', String(k));
+    setData('neutral', k < 2 || (k === 2 && tp < 0.5) ? 'true' : 'false');
+    setData('harms', k < 4 ? 'none' : k < 6 ? 'wrong' : 'all');
     const focus = k === 4 ? 'wrong' : k === 5 ? 'review' : k === 6 ? 'missed' : k === 7 && tp < 1 ? root.dataset.focus ?? '' : '';
     if (focus === 'review' && root.dataset.focus !== 'review') tagReview();
-    root.dataset.focus = focus;
+    setData('focus', focus);
 
     steps.forEach((step, s) => step.classList.toggle('is-active', s === k));
     rail.forEach((tick, s) => tick.classList.toggle('is-on', s <= k));
