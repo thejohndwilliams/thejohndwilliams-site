@@ -259,6 +259,11 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         syncBackToTop();
         btn.addEventListener('click', () => {
           const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const lenis = (window as any).__lenis;
+          if (!reduce && lenis?.scrollTo) {
+            lenis.scrollTo(0);
+            return;
+          }
           window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
         }, { signal });
       }
@@ -382,11 +387,15 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       function getPagePosition(path: string): number {
         const clean = path.replace(/\/$/, '') || '/';
         if (clean === '/') return 0;
-        if (clean.startsWith('/photography')) return 1;
+        if (clean === '/photography') return 1;
+        if (clean.startsWith('/photography/')) return 1.1;
         if (clean === '/work') return 2;
+        if (clean.startsWith('/work/')) return 2.1;
         if (clean.startsWith('/beyond') || clean.startsWith('/labs') || clean === '/relief') return 3;
         if (clean === '/about') return 4;
+        if (clean === '/links') return 4.5;
         if (clean === '/privacy') return 5;
+        if (clean === '/use-and-credit') return 5.1;
         return 99;
       }
 
@@ -570,6 +579,60 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
       }
       addBtnWake();
       document.addEventListener('astro:after-swap', addBtnWake);
+    </script>
+    {/* Touch press-start prefetch + post-LCP idle room warm (2026-11-26).
+         ClientRouter defaults to hover prefetch, which never fires before a
+         tap on phones. Pointerdown gives taps a ~120-180ms head start on
+         internal pages (skipping lightbox tiles, hashes, and PDFs), and an
+         idle pass well after load warms the five primary rooms on fast
+         connections without competing with LCP. */}
+    <script>
+      // @ts-ignore - shares ClientRouter's prefetchedUrls set without requiring prefetch config
+      import { prefetch } from 'astro/virtual-modules/prefetch.js';
+
+      const w = window as any;
+      if (!w.__roomPrefetchBoot) {
+        w.__roomPrefetchBoot = true;
+        const canWarm = () => {
+          const conn = (navigator as any).connection;
+          if (conn?.saveData) return false;
+          if (conn?.effectiveType && /^(slow-2g|2g|3g)$/i.test(conn.effectiveType)) return false;
+          return true;
+        };
+
+        document.addEventListener('pointerdown', (e) => {
+          if (!canWarm()) return;
+          const a = (e.target as Element | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+          if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+          if (a.dataset.astroPrefetch === 'false' || a.classList.contains('gallery-item')) return;
+          const raw = a.getAttribute('href') || '';
+          if (!raw.startsWith('/') || raw.startsWith('//') || raw.startsWith('/files/')) return;
+          try {
+            const url = new URL(a.href, window.location.origin);
+            if (url.origin !== window.location.origin || url.pathname === window.location.pathname) return;
+            prefetch(url.href);
+          } catch {}
+        }, { passive: true });
+
+        const warmPrimaryRooms = () => {
+          if (!canWarm()) return;
+          const rooms = ['/', '/photography/', '/work/', '/beyond/', '/about/'];
+          for (const room of rooms) {
+            if (room === window.location.pathname) continue;
+            try { prefetch(new URL(room, window.location.origin).href); } catch {}
+          }
+        };
+
+        const scheduleWarm = () => {
+          window.setTimeout(() => {
+            const ric = (window as any).requestIdleCallback;
+            if (typeof ric === 'function') ric(warmPrimaryRooms, { timeout: 3000 });
+            else warmPrimaryRooms();
+          }, 1800);
+        };
+        if (document.readyState === 'complete') scheduleWarm();
+        else window.addEventListener('load', scheduleWarm, { once: true });
+      }
     </script>
   </body>
 </html>

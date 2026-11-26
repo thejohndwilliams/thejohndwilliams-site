@@ -109,7 +109,7 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
     await assertComposed(page);
   });
 
-  test('arrow navigation swaps frames cleanly and bursts stay bounded', async ({ page }) => {
+  test('arrow navigation swaps frames cleanly, serves AVIF, and bursts stay bounded', async ({ page, browserName }) => {
     // 2026-07-08 field report: the old swap slid the SAME <img> back in
     // before its new source decoded (the previous photo visibly rode across
     // the screen), and uncancelled swap timers stacked under rapid input
@@ -125,6 +125,9 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
       });
     const before = await settled();
     expect(before).not.toBe('');
+    if (browserName === 'chromium') {
+      expect(before).toMatch(/\.avif$/);
+    }
     await page.keyboard.press('ArrowRight');
     await expect.poll(settled, { timeout: 8000 }).not.toBe('');
     const after = await settled();
