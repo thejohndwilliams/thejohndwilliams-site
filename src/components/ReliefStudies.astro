@@ -1,16 +1,12 @@
 ---
-/* ReliefStudies: the surface findings on /beyond.
- * /relief 301s here. The sweep still loads only when it is on screen. */
-
-const DEPTHS = [
-  { mm: 1, alt: 'The tower rendered as a relief panel one millimetre deep, barely raised from the surface' },
-  { mm: 2, alt: 'The same panel at two millimetres, the facade beginning to catch the light' },
-  { mm: 3, alt: 'The same panel at three millimetres' },
-  { mm: 4, alt: 'The same panel at four millimetres, the depth used for the sweep above' },
-  { mm: 6, alt: 'The same panel at six millimetres, edges throwing visible shadow' },
-  { mm: 9, alt: 'The same panel at nine millimetres, shadows lengthening across the surface' },
-  { mm: 14, alt: 'The same panel at fourteen millimetres, a deep carving casting long shadows' },
-];
+/* ReliefStudies: the surface act on /beyond.
+ * /relief 301s here. The sweep still loads only when it is on screen.
+ *
+ * Rebuilt 2026-10-28 (owner order: one grammar for the whole page). One act
+ * header, then three figures in the page's figure grammar (media, then tag,
+ * caption, controls, notes beside or below it). The seven static depth
+ * thumbnails became one scrubbed figure, DepthScrub. */
+import DepthScrub from './DepthScrub.astro';
 
 // Widths are in inches and drive the layout directly, so the three panels sit
 // at true relative physical scale. The renders themselves are made at a
@@ -29,9 +25,9 @@ const EDITIONS = [
 <section id="relief" class="beyond-section beyond-anchor">
   <div class="beyond-flow">
     <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Object studies</p>
-        <h2>A photograph you could hold</h2>
+      <div class="beyond-text beyond-head">
+        <p class="eyebrow">Surface</p>
+        <h2 class="t-sub font-serif">A photograph you could hold</h2>
         <p class="beyond-copy">
           A print is light recorded on a plane. These studies ask what survives
           when the ink is taken away and only the surface is left. The
@@ -43,135 +39,96 @@ const EDITIONS = [
     </div>
 
     <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Structure · Shanghai Tower</p>
-        <h2>The light does the work</h2>
-        <p class="beyond-copy">
-          Nothing on this panel is printed. The entire image is carried in a
-          surface four millimetres deep, lit from eleven degrees above the
-          plane. One full turn of the light takes six seconds.
-        </p>
-        <p class="beyond-copy">
-          Watch the facade. Its ribs light and go dark in sequence as the
-          source swings behind them, which is the one thing a printed
-          photograph can never do.
-        </p>
-      </div>
-
-      <figure class="sweep">
-        <div class="sweep__stage" data-sweep>
-          <picture class="sweep__still">
-            <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
-            <source srcset="/images/relief/sweep-still.webp" type="image/webp" />
-            <img
-              src="/images/relief/sweep-still.webp"
-              alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
-              width="1040"
-              height="1300"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          <video
-            class="sweep__video"
-            data-src="/video/relief-sweep.mp4"
-            width="832"
-            height="1040"
-            muted
-            loop
-            playsinline
-            preload="none"
-            aria-hidden="true"
-          ></video>
+      <figure class="sweep bfig bfig--portrait">
+        <div class="bfig__media">
+          <div class="sweep__stage bfig__stage" data-sweep>
+            <picture class="sweep__still">
+              <source srcset="/images/relief/sweep-still.avif" type="image/avif" />
+              <source srcset="/images/relief/sweep-still.webp" type="image/webp" />
+              <img
+                src="/images/relief/sweep-still.webp"
+                alt="A bas-relief panel of the Shanghai Tower seen from below, lit from one side so the facade reads as raised surface rather than ink"
+                width="1040"
+                height="1300"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <video
+              class="sweep__video"
+              data-src="/video/relief-sweep.mp4"
+              width="832"
+              height="1040"
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-hidden="true"
+            ></video>
+          </div>
         </div>
-        <figcaption class="sweep__cap">
-          4 mm relief · light at 11° · one turn, six seconds
+        <figcaption class="bfig__side">
+          <p class="bfig__tag">Structure · Shanghai Tower</p>
+          <p class="bfig__cap">The light does the work.</p>
+          <div class="bfig__notes">
+            <p class="beyond-copy">
+              Nothing on this panel is printed. The entire image is carried in a
+              surface four millimetres deep, lit from eleven degrees above the
+              plane. One full turn of the light takes six seconds.
+            </p>
+            <p class="beyond-copy">
+              Watch the facade. Its ribs light and go dark in sequence as the
+              source swings behind them, which is the one thing a printed
+              photograph can never do.
+            </p>
+          </div>
         </figcaption>
       </figure>
     </div>
 
     <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Seven depths</p>
-        <h2>How deep should a photograph be?</h2>
-        <p class="beyond-copy">
-          One frame, one light, seven candidate reliefs. At one millimetre the
-          image is a rumour. At fourteen it is a carving that throws its own
-          shadow across the panel and starts to look like something other than
-          a photograph.
-        </p>
-      </div>
-
-      <ul class="depth-grid">
-        {DEPTHS.map((d) => (
-          <li class="depth">
-            <picture>
-              <source srcset={`/images/relief/depth-${d.mm}mm.avif`} type="image/avif" />
-              <source srcset={`/images/relief/depth-${d.mm}mm.webp`} type="image/webp" />
-              <img
-                src={`/images/relief/depth-${d.mm}mm.webp`}
-                alt={d.alt}
-                width="620"
-                height="775"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <p class="depth__label">{d.mm} mm</p>
-          </li>
-        ))}
-      </ul>
-      <p class="beyond-copy beyond-follow">
-        There is no formula here. The three relief ratios in the
-        literature each describe their own author's test piece, and none
-        is offered as guidance. This one gets chosen by looking at a
-        printed sample.
-      </p>
+      <DepthScrub />
     </div>
 
     <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Scale study</p>
-        <h2>One depth, three sizes</h2>
-        <p class="beyond-copy">
-          Sixteen by twenty, twenty by twenty four, and twenty four by thirty
-          six inches, portrait. The relief is cut to the same absolute depth on
-          all three, so it reads deepest on the smallest panel and quietest on
-          the largest. Shown here at true relative scale.
-        </p>
-      </div>
-
-      <div class="edition-rail">
-        {EDITIONS.map((e) => (
-          <figure class={`edition edition--${e.slug}`}>
-            <picture class="edition__img">
-              <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
-              <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
-              <img
-                src={`/images/relief/edition-${e.slug}.webp`}
-                alt={e.alt}
-                width={e.px[0]}
-                height={e.px[1]}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <figcaption class="edition__cap">
-              <span class="edition__size">{e.label}</span>
-              <span class="edition__read">relief reads {e.reads}</span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-
-    <div class="beyond-col">
-      <div class="beyond-text">
-        <p class="eyebrow">Open questions</p>
-        <p class="beyond-copy">
-          Which relief depth survives ordinary room light?
-        </p>
-      </div>
+      <figure class="bfig bfig--rail">
+        <div class="bfig__media">
+          <div class="edition-rail">
+            {EDITIONS.map((e) => (
+              <div class={`edition edition--${e.slug}`}>
+                <picture class="edition__img">
+                  <source srcset={`/images/relief/edition-${e.slug}.avif`} type="image/avif" />
+                  <source srcset={`/images/relief/edition-${e.slug}.webp`} type="image/webp" />
+                  <img
+                    src={`/images/relief/edition-${e.slug}.webp`}
+                    alt={e.alt}
+                    width={e.px[0]}
+                    height={e.px[1]}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+                <p class="edition__cap">
+                  <span class="edition__size">{e.label}</span>
+                  <span class="edition__read">relief reads {e.reads}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <figcaption class="bfig__side">
+          <p class="bfig__tag">Scale study</p>
+          <p class="bfig__cap">One depth, three sizes.</p>
+          <div class="bfig__notes">
+            <p class="beyond-copy">
+              Sixteen by twenty, twenty by twenty four, and twenty four by thirty
+              six inches, portrait. The relief is cut to the same absolute depth on
+              all three, so it reads deepest on the smallest panel and quietest on
+              the largest. Shown here at true relative scale.
+            </p>
+          </div>
+        </figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -231,10 +188,9 @@ const EDITIONS = [
 </script>
 
 <style>
-  .sweep {
-    max-width: min(26rem, 80svh);
-    margin: 2rem 0 0;
-  }
+  /* The sweep is a 4:5 portrait panel. Its stage follows the page's
+     portrait figure rule (beyond.css .bfig--portrait); only the layers
+     inside the stage are styled here. */
   .sweep__stage {
     position: relative;
     aspect-ratio: 4 / 5;
@@ -262,45 +218,10 @@ const EDITIONS = [
     transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .sweep__stage.is-playing .sweep__video { opacity: 1; }
-  .sweep__cap {
-    margin-top: 0.85rem;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.6875rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(244, 234, 222, 0.62);
-  }
 
-  .beyond-follow {
-    margin-top: 1.25rem;
-  }
-
-  .depth-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    list-style: none;
-    padding: 0;
-    margin: 2rem 0 0;
-  }
-  @media (min-width: 1024px) {
-    .depth-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.85rem; }
-  }
-  .depth img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 2px;
-  }
-  .depth__label {
-    margin-top: 0.55rem;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    font-variant-numeric: tabular-nums;
-    color: rgba(244, 234, 222, 0.7);
-  }
-
+  /* The rail is the one figure that is not bound to the column width: the
+     three panels sit at literal relative scale (16 : 20 : 24 inches), so
+     the composition takes its own footprint, constrained by the viewport. */
   .edition-rail {
     --u: min(1.15vw, 16px);
     display: grid;
@@ -308,7 +229,6 @@ const EDITIONS = [
     grid-template-rows: auto auto;
     justify-content: start;
     column-gap: calc(var(--u) * 1.3);
-    margin-top: 2rem;
   }
   .edition { display: contents; }
   .edition--16x20 { --w: 16; --c: 1; }
@@ -331,6 +251,7 @@ const EDITIONS = [
     grid-row: 2;
     grid-column: var(--c);
     width: calc(var(--u) * var(--w));
+    margin: 0;
     padding-top: 0.7rem;
     display: flex;
     flex-direction: column;

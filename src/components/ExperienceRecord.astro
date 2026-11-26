@@ -1,0 +1,106 @@
+---
+// The record on /work. A two-lane ribbon (work above, study below) drawn on
+// one time axis, and one row per entry that opens to a line and chips.
+// Rows are native <details>: they open with or without script. The script
+// (src/scripts/experience.ts) only links a row to its span on the ribbon and
+// draws the spans in as the section arrives. Marks: SpaceX and Apple from
+// Simple Icons (CC0 paths); Pennies to Dollars from its own logo file; all
+// monochrome. Baylor is a Garamond monogram in the same tile.
+import { RECORD, TOOLS, RIBBON_START, monthIndex, yearsLabel } from '../data/experience';
+import '../styles/experience.css';
+
+const now = new Date();
+const nowIdx = (now.getUTCFullYear() - RIBBON_START) * 12 + now.getUTCMonth();
+const span = nowIdx + 4; // a little air after today
+const frac = (m: number) => Math.max(0, Math.min(1, m / span)).toFixed(4);
+const years = Array.from({ length: now.getUTCFullYear() - RIBBON_START + 1 }, (_, i) => RIBBON_START + i);
+
+const PATHS: Record<string, string> = {
+  // Pennies to Dollars: the company's own mark, traced from ptd_logo.ai
+  // (iCloud 03_Finance/Investments_PtD/PtDLogosBanners), fitted to 24x24.
+  ptd: 'M10.037 7.914L2.641 7.914C2.042 7.914 1.557 8.399 1.557 8.998L1.557 11.506L1.557 14.818L1.557 18.193C1.557 18.791 2.042 19.276 2.641 19.276L3.465 19.276C3.535 19.760 3.950 20.131 4.453 20.131C5.005 20.131 5.453 19.684 5.453 19.132L5.478 16.450C5.478 16.147 5.724 15.902 6.026 15.902L10.037 15.902C10.636 15.902 11.121 15.417 11.121 14.818L11.121 8.998C11.121 8.399 10.636 7.914 10.037 7.914M2.557 21.538C3.109 21.538 3.556 21.091 3.556 20.538C3.556 19.986 3.109 19.539 2.557 19.539C2.005 19.539 1.557 19.986 1.557 20.538C1.557 21.091 2.005 21.538 2.557 21.538M4.453 20.801C3.901 20.801 3.453 21.249 3.453 21.801C3.453 22.353 3.901 22.801 4.453 22.801C5.005 22.801 5.453 22.353 5.453 21.801C5.453 21.249 5.005 20.801 4.453 20.801M2.557 22.001C2.005 22.001 1.557 22.448 1.557 23.000C1.557 23.552 2.005 24.000 2.557 24.000C3.109 24.000 3.556 23.552 3.556 23.000C3.556 22.448 3.109 22.001 2.557 22.001M22.433 6.646L22.433 3.621L20.801 3.621L20.801 5.699L20.154 5.699L20.154 4.929L18.522 4.929L18.522 7.551C18.521 7.853 18.276 8.098 17.974 8.098L13.963 8.098C13.364 8.098 12.879 8.584 12.879 9.182L12.879 15.002C12.879 15.601 13.364 16.086 13.963 16.086L21.359 16.086C21.958 16.086 22.443 15.601 22.443 15.002L22.443 12.494L22.443 9.182L22.443 6.783C22.443 6.736 22.439 6.691 22.433 6.646M18.522 1.328L20.154 1.328L20.154 4.490L18.522 4.490ZM20.801 0.000L22.433 0.000L22.433 3.162L20.801 3.162Z',
+  spacex: 'M24 7.417C8.882 8.287 1.89 14.75.321 16.28L0 16.583h2.797C10.356 9.005 21.222 7.663 24 7.417zm-17.046 6.35c-.472.321-.945.68-1.398 1.02l2.457 1.796h2.778zM2.948 10.8H.189l3.25 2.381c.473-.321 1.02-.661 1.512-.945Z',
+  apple: 'M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701',
+};
+
+const entries = RECORD.map((e) => ({
+  ...e,
+  x0: frac(monthIndex(e.from)),
+  x1: frac(e.to ? monthIndex(e.to) + 1 : nowIdx + 1),
+  years: yearsLabel(e),
+}));
+---
+
+<section class="xp section-light" id="record" data-xp aria-labelledby="xp-title">
+  <div class="container-wide">
+    <div class="reveal max-w-2xl">
+      <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Experience</p>
+      <h2 id="xp-title" class="xp__title font-serif">Film, then business, then operations.</h2>
+    </div>
+
+    <figure class="xp-ribbon" data-xp-ribbon aria-hidden="true">
+      {(['work', 'study'] as const).map((lane) => (
+        <div class="xp-ribbon__lane" data-lane={lane}>
+          <span class="xp-ribbon__name">{lane === 'work' ? 'Work' : 'Study'}</span>
+          <div class="xp-ribbon__track">
+            {entries.filter((e) => e.lane === lane).map((e) => (
+              <span
+                class:list={['xp-ribbon__span', { 'is-current': !e.to, 'is-right': Number(e.x0) > 0.7 }]}
+                data-xp-span={e.id}
+                style={`--x0:${e.x0};--x1:${e.x1}`}
+              >
+                <span class="xp-flag">
+                  {e.mark === 'monogram' ? (
+                    <span class="xp-flag__mono">{e.monogram}</span>
+                  ) : (
+                    <svg viewBox="0 0 24 24" class:list={['xp-flag__svg', `xp-flag__svg--${e.mark}`]} focusable="false"><path d={PATHS[e.mark]} /></svg>
+                  )}
+                  <span class="xp-flag__text">{e.org} · {e.years}</span>
+                </span>
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div class="xp-ribbon__axis">
+        {years.map((y) => (
+          <span class:list={['xp-ribbon__year', { 'is-minor': (y - RIBBON_START) % 2 === 1 }]} style={`--x0:${frac((y - RIBBON_START) * 12)}`}>{y}</span>
+        ))}
+      </div>
+    </figure>
+
+    <ol class="xp-list stagger-children" aria-label="Roles and degrees, newest first">
+      {entries.map((e) => (
+        <li class="xp-item" data-xp-item={e.id}>
+          <details class="xp-entry">
+            <summary class="xp-entry__head">
+              <span class="xp-mark" aria-hidden="true">
+                {e.mark === 'monogram' ? (
+                  <span class="xp-mark__mono">{e.monogram}</span>
+                ) : (
+                  <svg viewBox="0 0 24 24" class:list={['xp-mark__svg', `xp-mark__svg--${e.mark}`]} focusable="false"><path d={PATHS[e.mark]} /></svg>
+                )}
+              </span>
+              <span class="xp-entry__who">
+                <span class="xp-entry__role">{e.role}</span>
+                <span class="xp-entry__org">{e.org}</span>
+              </span>
+              <span class="xp-entry__years">{e.years}</span>
+              <span class="xp-entry__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="xp-entry__body">
+              <p class="xp-entry__line">{e.line}</p>
+              <ul class="xp-chips" aria-label="Areas">
+                {e.chips.map((c) => <li class="xp-chip">{c}</li>)}
+              </ul>
+            </div>
+          </details>
+        </li>
+      ))}
+    </ol>
+
+    <p class="xp-tools reveal"><span class="xp-tools__k">Tools</span>{TOOLS.join(' · ')}</p>
+  </div>
+</section>
+
+<script src="../scripts/experience.ts"></script>

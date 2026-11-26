@@ -79,6 +79,35 @@ describe('hazard locks: source', () => {
     expect(hits).toEqual([]);
   });
 
+  it('the retired blue stays retired in EVERY stylesheet, not only global.css (2026-11-24)', () => {
+    // The lock above read global.css only, so navy-hour came back through
+    // five per-page stylesheets (case-study figures, the record) between
+    // 2026-11-17 and 2026-11-24 and CI never saw it. A visual judge run
+    // caught it in computed styles. Marks are lit ivory now.
+    const dir = join(SRC, 'styles');
+    const retired = [/#7e9cb8/i, /126,\s*156,\s*184/, /#b8973f/i, /184,\s*151,\s*63/];
+    const offenders: string[] = [];
+    for (const f of readdirSync(dir).filter((n) => n.endsWith('.css'))) {
+      const body = readFileSync(join(dir, f), 'utf8');
+      for (const r of retired) if (r.test(body)) offenders.push(`${f} ${r}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('the retired blue and gold stay out of build scripts too (2026-11-25)', () => {
+    // The stylesheet lock never read scripts/, so build-og-images.mjs kept
+    // painting the rule and eyebrow of every shared link preview navy-hour
+    // for four months after the retirement. Generated images are surfaces.
+    const dir = join(SRC, '..', 'scripts');
+    const retired = [/#7e9cb8/i, /126,\s*156,\s*184/, /#b8973f/i, /184,\s*151,\s*63/];
+    const offenders: string[] = [];
+    for (const f of readdirSync(dir).filter((n) => /\.(mjs|js|ts|py)$/.test(n))) {
+      const body = readFileSync(join(dir, f), 'utf8');
+      for (const r of retired) if (r.test(body)) offenders.push(`${f} ${r}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('color-utility alpha modifiers are scale values or bracketed — bare /92 is a silent no-op (transparent-lightbox incident, 2026-07-02)', () => {
     // bg-[#0a0a0a]/92 generated NOTHING (92 is not on Tailwind's default
     // opacity scale) and the lightbox backdrop shipped transparent from
@@ -362,5 +391,57 @@ describe('hazard locks: CSP style-src (2026-08-22)', () => {
       expect(html.includes('<script type="module">'), `${rel} inline module`).toBe(false);
       expect(html.includes('<script>'), `${rel} bare script`).toBe(false);
     }
+  });
+});
+
+describe('hazard locks: immersive opening and smooth scroll (2026-11-14)', () => {
+  const css = readFileSync(join(SRC, 'styles/global.css'), 'utf8');
+  const layout = readFileSync(join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
+  const header = readFileSync(join(SRC, 'components/Header.astro'), 'utf8');
+
+  it('Lenis zeroes its clock when the idle loop wakes (the first-frame jump)', () => {
+    // Without this, the first frame of a gesture after the idle stop saw the
+    // whole idle gap as one frame and the 1.4s tween finished instantly:
+    // measured on production as 100% of a wheel step in a single frame.
+    const start = layout.slice(layout.indexOf('function startLoop()'));
+    expect(start.slice(0, 900)).toContain('if (!loopOn) lenis.time = 0;');
+  });
+
+  it('heroes are full-bleed: the hero caps no longer cap', () => {
+    expect(css).toMatch(/\.hero-cap-2048,\s*\.hero-cap-2400 \{ max-width: none; \}/);
+    expect(css).not.toContain('.hero-cap-2048 { max-width: 2048px; }');
+  });
+
+  it('the opening photograph slides under a shade header that cannot draw a hairline', () => {
+    expect(css).toContain('[data-hero-under] { margin-top: calc(-1 * var(--header-h)); }');
+    const rest = css.slice(css.indexOf('#site-header:not(.scrolled) {'));
+    expect(rest.slice(0, 600)).toContain('background-origin: border-box;');
+    expect(rest.slice(0, 600)).toContain('backdrop-filter: none;');
+    expect(header).toContain("setProperty('--header-h'");
+  });
+});
+
+describe('hazard locks: scroll smoothness on the enforcement story (2026-11-25)', () => {
+  // Owner: "a slight stutter when scrolling". Measured at 120 Hz: frames to
+  // 158 ms on /work/enforcement-gates/. Causes, each locked here:
+  const css = readFileSync(join(SRC, 'styles', 'enforcement-story.css'), 'utf8');
+  const story = readFileSync(join(SRC, 'scripts', 'enforcement-story.ts'), 'utf8');
+  const scrub = readFileSync(join(SRC, 'scripts', 'scrub.ts'), 'utf8');
+  it('dots dim through fill/stroke opacity (--k), never element opacity (one layer per SVG dot)', () => {
+    const focus = css.match(/\[data-focus='missed'\] \.d:not\(\.is-missed\) \{[^}]*\}/)?.[0] ?? '';
+    expect(focus).toContain('--k:');
+    expect(focus).not.toMatch(/(^|[^-])opacity:/);
+    const dotTransition = css.match(/\.enf-fig\.is-scrolly \.d \{\s*transition:[^}]*\}/)?.[0] ?? '';
+    expect(dotTransition).not.toMatch(/[^-]opacity \d/);
+    expect(css).toMatch(/\[data-dimming='true'\] \.d \{\s*transition: none;/);
+  });
+  it('the story writes only changed values: rounded vars, cached dot transforms', () => {
+    expect(story).toContain('function setVar(');
+    expect(story).not.toMatch(/css\.setProperty\('--show/);
+    expect(story).toMatch(/if \(last\[i\] !== tf\)/);
+  });
+  it('the scrub engine reads every scene before writing, and never reads styles per frame', () => {
+    expect(scrub).toContain('headerCache');
+    expect(scrub).toMatch(/progress\[i\] = progressOf\(scenes\[i\], vh\)/);
   });
 });

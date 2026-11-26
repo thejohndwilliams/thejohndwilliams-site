@@ -7,11 +7,18 @@ import Photo from '../components/Photo.astro';
 import { getPhotoBySlug } from '../data/photography';
 import { bleedSizes, heroCapClass, photoSrcset, portraitSizes, portraitSrcset } from '../utils/photo-src';
 
+// 2026-11-24 second pass (owner: "some things have been messed up").
+// Restored: the full-bleed portrait hero with the glass More pill bending
+// it (his 2026-08-01 design), and the page's elemental sequence, one
+// element per section: Earth (the moving plate), Light, Water. The first
+// cohesion pass had hung the portrait as a small print and swapped Light
+// for a second water picture; both are undone.
 const lightStill = getPhotoBySlug('dsc-0378');
 const waterStill = getPhotoBySlug('7r50680-enhanced-sr');
 if (!lightStill || !waterStill) {
   throw new Error('About stills are missing from photography.ts');
 }
+const caption = (element: string, alt: string) => `${element} · ${alt.charAt(0).toLowerCase()}${alt.slice(1)}`;
 ---
 
 <BaseLayout
@@ -24,10 +31,8 @@ if (!lightStill || !waterStill) {
   lcpImagePortrait="john-portrait-bw"
   lcpImageSizes={bleedSizes('john-portrait-bw')}
 >
-  <!-- Scroll progress indicator -->
-
   <!-- HERO - Portrait with full-bleed image. Width stops at the bitmap. -->
-  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench>
+  <section class:list={['hero-bleed', heroCapClass('john-portrait-bw'), 'about-hero relative py-10 sm:py-16 md:py-24 overflow-hidden']} data-glass-bench data-hero-under>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('john-portrait-bw', 'avif')} sizes={portraitSizes('john-portrait-bw')} />
       <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('john-portrait-bw', 'webp')} sizes={portraitSizes('john-portrait-bw')} />
@@ -45,6 +50,7 @@ if (!lightStill || !waterStill) {
         src="/images/photography/hero/john-portrait-bw.webp"
         alt="John D. Williams, black and white portrait"
         class="absolute inset-0 w-full h-full object-cover object-[center_12%]"
+        data-bleed-short
         fetchpriority="high"
       />
     </picture>
@@ -52,11 +58,17 @@ if (!lightStill || !waterStill) {
       class="absolute inset-0"
       style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"
     ></div>
+    {/* Phones: the portrait crop puts the white ground behind the name and
+        the More pill, where the side scrim cannot reach. A second scrim,
+        phone only, darkens the top and fades to nothing (attenuation law:
+        no opacity on the image, no solid start). */}
+    <div class="absolute inset-0 sm:hidden" style="background-image: linear-gradient(to bottom, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.18) 75%, rgba(10,10,10,0) 100%);"></div>
     <!-- (removed) duplicate hero grain: global body::before already supplies film grain across the whole site -->
     <div class="relative z-10 container-narrow">
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Rising</p>
-        <h1 class="mb-5 sm:mb-8">John D. Williams</h1>
+        <h1 class="mb-4 sm:mb-5">John D. Williams</h1>
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">Film, then business, then operations.</p>
       </div>
       {/* More stays under the name. The page-level pill is gone:
           the footer Contact is on this page. */}
@@ -66,16 +78,16 @@ if (!lightStill || !waterStill) {
     </div>
   </section>
 
-  <!-- BACKGROUND - single merged section, no accordion -->
+  <!-- BACKGROUND · EARTH -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-wide">
-      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+      <div class="about-row">
         <div class="reveal prose max-w-2xl lg:flex-1">
           <h2>Background</h2>
           <p>
-            BA in Film and Digital Media from Baylor, 2015. That degree taught me
-            composition, narrative structure, and visual communication: skills I use
-            daily. An MBA in Cybersecurity from Baylor followed in 2024.
+            A BA in Film and Digital Media from Baylor in 2015, then an MBA in
+            Cybersecurity from Baylor in 2024. Film taught composition,
+            narrative structure and visual communication. I use all three daily.
           </p>
           <p>
             I work in operations, risk and controls: process design, escalation
@@ -83,77 +95,73 @@ if (!lightStill || !waterStill) {
             discipline is the point.
           </p>
           <p>
-            Film takes raw material and organizes it so
-            someone else can see what you see. Data engineering is the same problem
-            with different inputs. Security makes the invisible visible before it
-            causes damage. Photography notices what is already there.
+            Film takes raw material and organizes it so someone else can see
+            what you see. Data engineering is the same problem with different
+            inputs. Security makes the invisible visible before it causes damage.
+            Photography notices what is already there.
           </p>
         </div>
-        <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
+        <aside class="reveal about-figure lg:order-2">
           <KineticPlate3D category="earth" />
           <KineticPlate category="earth" class="plate-fallback" />
-          <p class="mt-3 text-sm tracking-[0.22em] uppercase text-mute">Earth · rain-wet leaf</p>
+          <p class="about-caption">Earth · rain-wet leaf</p>
         </aside>
       </div>
     </div>
   </section>
 
-  <!-- WHAT I AM BUILDING -->
+  <!-- NOTICING · LIGHT -->
   <section class="py-10 sm:py-16 md:py-24">
     <div class="container-wide">
-      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+      <div class="about-row">
         <div class="reveal prose max-w-2xl lg:flex-1 lg:order-2">
-          <h2>What I Am Building</h2>
+          <h2>Noticing</h2>
           <p>
             Outside of work I run Noticing: technology consulting, a photography
             practice in landscape and nature work, and a faith-based content
-            project. Prints by inquiry.
+            project.
           </p>
           <p>
-            The name comes from a conviction: most of what matters is already in front
-            of us. The work is learning to see it.
+            The name comes from a conviction: most of what matters is already in
+            front of us. The work is learning to see it.
           </p>
         </div>
-        <aside class="reveal shrink-0 lg:order-1 lg:w-[560px] lg:pt-2">
+        <aside class="reveal about-figure lg:order-1">
           <Photo
             image={lightStill.image}
             sizes="(min-width: 1024px) 560px, 100vw"
             class="block w-full h-auto"
             fallbackTier="gallery"
           />
-          <p class="mt-3 text-sm tracking-[0.22em] uppercase text-mute">{lightStill.image.alt}</p>
+          <p class="about-caption">{caption('Light', lightStill.image.alt)}</p>
         </aside>
       </div>
     </div>
   </section>
 
-  <!-- CREDENTIALS + OUTSIDE WORK - merged, tight -->
+  <!-- PRACTICE · WATER -->
   <section class="section-light py-10 sm:py-16 md:py-24">
     <div class="container-wide">
-      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
+      <div class="about-row">
         <div class="reveal prose max-w-2xl lg:flex-1">
-          <h2>Credentials &amp; Practice</h2>
+          <h2>Practice</h2>
           <p>
-            BA in Film and Digital Media, Baylor University (2015). MBA in Cybersecurity,
-            Baylor University (2024). Eagle Scout.
-          </p>
-          <p>
-            I am a nature photographer. I am a person of faith.
-            I believe in service, in showing up when it is hard, and in
-            doing the work in front of you without waiting for applause.
+            I am an Eagle Scout, a nature photographer and a person of faith.
+            I believe in service, in showing up when it is hard, and in doing
+            the work in front of you without waiting for applause.
           </p>
           <p>
             Made things, made visible, in service. That is the whole of it.
           </p>
         </div>
-        <aside class="reveal shrink-0 lg:order-2 lg:w-[560px] lg:pt-2">
+        <aside class="reveal about-figure lg:order-2">
           <Photo
             image={waterStill.image}
             sizes="(min-width: 1024px) 560px, 100vw"
             class="block w-full h-auto"
             fallbackTier="gallery"
           />
-          <p class="mt-3 text-sm tracking-[0.22em] uppercase text-mute">{waterStill.image.alt}</p>
+          <p class="about-caption">{caption('Water', waterStill.image.alt)}</p>
         </aside>
       </div>
     </div>

@@ -235,8 +235,13 @@ html[data-theme="black"] {
     width: 100%;
     margin-inline: auto;
   }
-  .hero-cap-2048 { max-width: 2048px; }
-  .hero-cap-2400 { max-width: 2400px; }
+  /* 2026-11-14 (owner: "doesn't take up the breadth... squared off"):
+     heroes are full-bleed at every width, like Work and Beyond. A master
+     narrower than the screen fills it under the data-bleed-short exemption
+     (e2e/image-resolution.spec.ts). The classes stay because the home
+     time-of-day script swaps them; they no longer cap anything. */
+  .hero-cap-2048,
+  .hero-cap-2400 { max-width: none; }
 
   /* Left-to-right lockup scrim. Was an inline gradient on the heroes.
      A class keeps style-src at 'self'. */
@@ -260,6 +265,20 @@ html[data-theme="black"] {
 
   /* Work project cards. The scrim that used to be an inline gradient, kept
      as a class so style-src stays 'self'. Text sits on the 0.95 stop. */
+  /* Home "The Work" cards (2026-11-14 review): the old black/80 -> via
+     black/25 gradient left captions unreadable on bright frames (the About
+     card's chandelier). Weight sits in the lower half where the text is;
+     the top of the photograph stays clear (hero attenuation rule). */
+  .overlay-scrim-card {
+    background-image: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.9) 0%,
+      rgba(10, 10, 10, 0.74) 26%,
+      rgba(10, 10, 10, 0.34) 52%,
+      rgba(10, 10, 10, 0) 78%
+    );
+  }
+
   .overlay-scrim-work {
     background-image: linear-gradient(
       to top,
@@ -951,8 +970,11 @@ html.lenis body { height: auto; }
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 46%);
   transition: opacity 160ms linear;
 }
+/* Solid once scrolled (2026-11-14 review): at 0.90-0.94 the nav row sat over
+   legible page text (the Photography category rail, About body copy). The
+   shelf is opaque now; the top-of-page glass state is unchanged. */
 #site-header.scrolled {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+  background: var(--bg-base);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
@@ -961,6 +983,57 @@ html.lenis body { height: auto; }
   opacity: 1;
 }
 
+
+/* IMMERSIVE OPENING (2026-11-14, owner: "the experience lacks
+   immersion"). At the top of a page the header is a soft shade, not a
+   frosted shelf: the opening photograph runs up underneath it
+   ([data-hero-under] pulls the hero up by the header height) and the
+   header goes solid once scrolled. Dropping the 44px backdrop blur at rest
+   also removes a full-width blur repaint from every scroll frame.
+   --header-h is measured by Header.astro; these are the measured
+   fallbacks (phone 88, tablet 103, desktop 107). */
+:root { --header-h: 88px; }
+@media (min-width: 640px) { :root { --header-h: 103px; } }
+@media (min-width: 768px) { :root { --header-h: 107px; } }
+[data-hero-under] { margin-top: calc(-1 * var(--header-h)); }
+/* About centres its lockup with padding, so it gives back the header
+   height on top (py-10 / sm:py-16 / md:py-24 on the 8pt scale). */
+.about-hero[data-hero-under] { padding-top: calc(4.444rem + var(--header-h)); }
+@media (min-width: 640px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
+@media (min-width: 768px) { .about-hero[data-hero-under] { padding-top: calc(7.111rem + var(--header-h)); } }
+/* About rows, 2026-11-24 second pass: one grammar for the three
+   sections. Text and figure share a row from 1024px, centred on each other
+   so neither leaves a void; the figure column is 560px; captions read
+   Element · subject in the plate's register. */
+.about-row { display: flex; flex-direction: column; gap: 2.667rem; }
+@media (min-width: 1024px) {
+  .about-row { flex-direction: row; align-items: center; gap: 4.444rem; }
+}
+.about-figure { flex-shrink: 0; width: 100%; }
+@media (min-width: 1024px) { .about-figure { width: 560px; } }
+.about-caption {
+  margin-top: 0.75rem;
+  font-size: max(14px, 0.778rem); /* the touch-targets type floor; the root is fluid on phones */
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #868686;
+}
+/* Short screens (the Duo open is 669 points tall): less wall above the name. */
+@media (max-height: 720px) {
+  .about-hero[data-hero-under] { padding-top: calc(4.444rem + var(--header-h)); }
+}
+#site-header:not(.scrolled) {
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.62), rgba(10, 10, 10, 0));
+  /* The gradient is sized to the padding box and would tile one row into
+     the 1px transparent border, drawing a dark hairline. Size it to the
+     border box. */
+  background-origin: border-box;
+  background-repeat: no-repeat;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
 
 /* Touch sheen - only where there is no pointer; calm periods, low alpha. */
 
@@ -1087,7 +1160,7 @@ html.lenis body { height: auto; }
     box-shadow: none;
   }
   #site-header.scrolled {
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.90) 100%);
+    background: var(--bg-base);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -1814,4 +1887,44 @@ footer.glass-footer:hover::after { opacity: 1; }
 /* Hit area grows; the candle underline stays under the glyphs, not the padding edge. */
 .link-draw.tap-44 {
   background-position: 0 calc(50% + 0.42em);
+}
+
+/* ============================================================
+   iPhone Duo (owner order 2026-11-24). The phone has two displays and no
+   fixed shape: closed it is 466 x 678 points (678 x 466 held sideways),
+   open it is 951 x 669 (669 x 951 upright). Two rules follow from that.
+   1. Short heights. A hero's min-height (vh) can be shorter than its
+      lockup, and the hero is pulled up under the header, so the eyebrow
+      and title slid under the header at 466 and 669 points tall. The top
+      padding below keeps the lockup clear. min-height is border-box, so
+      wherever the lockup already fits (every taller screen) nothing moves.
+   2. Side insets. The Duo's status island sits on a SIDE edge on both
+      displays, so env(safe-area-inset-left/right) is non-zero in every
+      pose, not only in landscape. Text that runs edge to edge outside the
+      .container-* classes takes the inset as a floor.
+   ============================================================ */
+[data-hero-under]:not(.about-hero):not(.beyond-banner) {
+  padding-top: calc(var(--header-h) + 1.333rem);
+}
+
+@supports (padding: max(0px)) {
+  [class].hero-lockup,
+  [class].enf-hero__lockup {
+    padding-left: max(2.667rem, calc(env(safe-area-inset-left) + 0.889rem));
+    padding-right: max(2.667rem, calc(env(safe-area-inset-right) + 0.889rem));
+  }
+  @media (min-width: 640px) {
+    [class].hero-lockup,
+    [class].enf-hero__lockup {
+      padding-left: max(4.444rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(4.444rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
+  @media (min-width: 1024px) {
+    [class].hero-lockup,
+    [class].enf-hero__lockup {
+      padding-left: max(8.889rem, calc(env(safe-area-inset-left) + 0.889rem));
+      padding-right: max(8.889rem, calc(env(safe-area-inset-right) + 0.889rem));
+    }
+  }
 }

@@ -1,6 +1,15 @@
 ---
 import '../styles/depth-stack.css';
 
+interface Props {
+  /** High priority when this figure is the page's first image. */
+  priority?: boolean;
+  /** When false, the photograph stays assembled until the visitor scrubs or presses Replay. */
+  autoplay?: boolean;
+}
+
+const { priority = true, autoplay = true } = Astro.props;
+
 /* Source layers are 1600px wide. 800 and 1200 are downscales.
    No wider candidate is offered. */
 const SIZES = '(max-width: 740px) 72vw, (min-resolution: 3dppx) 533px, (min-resolution: 2dppx) 800px, 1600px';
@@ -16,7 +25,7 @@ const UPPER = [
 const LABELS = ['LAYER 1 FAR', 'LAYER 2', 'LAYER 3', 'LAYER 4', 'LAYER 5 NEAR'] as const;
 ---
 
-<figure class="depth-stack" id="depth-stack">
+<figure class="depth-stack" id="depth-stack" data-autoplay={autoplay ? undefined : '0'}>
   <div class="depth-stack__view">
     <div class="depth-stack__fit">
       <div class="depth-stack__stage">
@@ -29,7 +38,8 @@ const LABELS = ['LAYER 1 FAR', 'LAYER 2', 'LAYER 3', 'LAYER 4', 'LAYER 5 NEAR'] 
             width="1600"
             height="1062"
             alt={ALT}
-            fetchpriority="high"
+            fetchpriority={priority ? 'high' : undefined}
+            loading={priority ? undefined : 'lazy'}
             decoding="async"
             draggable="false"
           />

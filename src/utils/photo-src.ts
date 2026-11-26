@@ -7,7 +7,11 @@ export interface PhotoDim {
 
 export interface PhotoTiers {
   thumb: PhotoDim;
+  /** Fit inside 800 px (2026-11-25): the phone card / grid cell tier. */
+  mid?: PhotoDim;
   gallery: PhotoDim;
+  /** Portrait photos at 1000 px wide (2026-11-25): a phone's full-width slot. */
+  tall?: PhotoDim;
   hero: PhotoDim;
   portrait?: PhotoDim;
 }
@@ -22,17 +26,26 @@ export function photoTiers(file: string): PhotoTiers {
   return row;
 }
 
-export type LocalTier = 'thumb' | 'gallery' | 'hero';
+export type LocalTier = 'thumb' | 'mid' | 'gallery' | 'tall' | 'hero';
 
 /** Width descriptors are the bitmap widths, never the tier cap. */
 export function photoSrcset(
   file: string,
   ext: 'avif' | 'webp',
-  tiers: LocalTier[] = ['thumb', 'gallery', 'hero'],
+  tiers: LocalTier[] = ['thumb', 'mid', 'gallery', 'tall', 'hero'],
 ): string {
   const row = photoTiers(file);
+  // A tier only enters the srcset when its bitmap exists and adds a width
+  // the set does not already carry (some galleries are 800 px themselves).
+  const seen = new Set<number>();
   return tiers
-    .map((tier) => `/images/photography/${tier}/${file}.${ext} ${row[tier].w}w`)
+    .filter((tier) => {
+      const d = row[tier];
+      if (!d || seen.has(d.w)) return false;
+      seen.add(d.w);
+      return true;
+    })
+    .map((tier) => `/images/photography/${tier}/${file}.${ext} ${row[tier]!.w}w`)
     .join(', ');
 }
 
@@ -50,10 +63,12 @@ export function portraitSizes(file: string): string {
   return `min(100vw, ${portrait.w}px)`;
 }
 
-/** Slot matches the plate: own aspect, never wider than the bitmap, never taller than 80svh. */
+/** Slot matches the plate: own aspect, never wider than the bitmap, never taller than 80vh.
+ *  vh, not svh: the preload scanner drops svh in imagesizes and fell back to
+ *  100vw, so phones fetched the photo twice (2026-11-25, measured). */
 export function plateSizes(file: string): string {
   const { w, h } = photoTiers(file).hero;
-  return `min(100vw, ${w}px, calc(80svh * ${w} / ${h}))`;
+  return `min(100vw, ${w}px, calc(80vh * ${w} / ${h}))`;
 }
 
 /** Full-bleed heroes stay full width up to the bitmap. */
@@ -83,6 +98,7 @@ export const CHARITY_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';
 export const WORK_TILE_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
 export const WORK_TILE_NARROW_SIZES = '(max-width: 767px) 100vw, 42vw';
 
-/** Work page project bento. Wide cells are full width below md. */
+/** Work page project bento. One column below sm (2026-11-14: two cards at
+ * 390px wrapped titles and tags to three lines); wide cells full width below md. */
 export const PROJECT_WIDE_SIZES = '(max-width: 767px) 100vw, 58vw';
-export const PROJECT_NARROW_SIZES = '(max-width: 767px) 50vw, 42vw';
+export const PROJECT_NARROW_SIZES = '(max-width: 639px) 100vw, (max-width: 767px) 50vw, 42vw';

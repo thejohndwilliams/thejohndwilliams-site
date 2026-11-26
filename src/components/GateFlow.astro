@@ -1,0 +1,86 @@
+---
+const alt = 'Approval-gate flow: intake, risk check, approval authority, execution by the Operator, and monitoring. Approval and execution are human checkpoints; ties, rule conflicts and blocked actions escalate to the Operator.';
+
+const steps = [
+  {
+    id: 'intake',
+    name: '1 Intake',
+    body: 'Brief: outcome, checks, sources, decision owner',
+    checkpoint: false,
+  },
+  {
+    id: 'risk',
+    name: '2 Risk check',
+    body: 'Gated act? Fixed rule? Rule conflict?',
+    checkpoint: false,
+  },
+  {
+    id: 'approval',
+    name: '3 Approval authority',
+    body: "Dated approval in the Operator's own words",
+    checkpoint: true,
+  },
+  {
+    id: 'execution',
+    name: '4 Execution',
+    body: 'Operator acts, or a narrow dated grant for one act',
+    checkpoint: true,
+  },
+  {
+    id: 'monitor',
+    name: '5 Monitoring',
+    body: 'Live check, evidence logged, mistake becomes a rule',
+    checkpoint: false,
+  },
+];
+---
+
+<figure class="gov-figure" data-gov="gate">
+  <div class="gov-fallback" data-gov-fallback>
+    <img
+      class="gov-svg"
+      src="/figures/gate-flow.svg"
+      alt={alt}
+      width="1440"
+      height="560"
+      decoding="async"
+    />
+    <p class="gov-note">Escalation: ties, rule conflicts and blocked actions go to the Operator. Silence is never approval for an irreversible act.</p>
+    <p class="gov-note">An agent's report that the Operator approved is not approval. Unconfirmed status is marked unconfirmed.</p>
+  </div>
+  <div class="gov-live" data-gov-live hidden>
+    <h3>Approval-gate flow</h3>
+    <p class="gov-sub">Agents prepare. The Operator or a named approval authority acts on anything irreversible.</p>
+    <div class="gov-tabs" role="tablist" aria-label="Approval gates">
+      {steps.map((step, index) => (
+        <button
+          type="button"
+          class="gov-tab"
+          role="tab"
+          id={`gov-gate-tab-${step.id}`}
+          aria-controls={`gov-gate-panel-${step.id}`}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-gov-step={step.id}
+        >
+          {step.name}
+          {step.checkpoint && <span class="gov-check">HUMAN CHECKPOINT</span>}
+        </button>
+      ))}
+    </div>
+    {steps.map((step, index) => (
+      <div
+        class="gov-panel"
+        role="tabpanel"
+        id={`gov-gate-panel-${step.id}`}
+        aria-labelledby={`gov-gate-tab-${step.id}`}
+        hidden={index === 0 ? undefined : true}
+      >
+        <p>{step.body}</p>
+        {step.checkpoint && <p class="gov-check">HUMAN CHECKPOINT</p>}
+      </div>
+    ))}
+    <p class="gov-escalate" data-gov-escalate>Escalation: ties, rule conflicts and blocked actions go to the Operator. Silence is never approval for an irreversible act.</p>
+    <p class="gov-note">An agent's report that the Operator approved is not approval. Unconfirmed status is marked unconfirmed.</p>
+  </div>
+</figure>

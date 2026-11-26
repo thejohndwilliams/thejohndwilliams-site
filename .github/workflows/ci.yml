@@ -1,9 +1,12 @@
 name: CI
 
-# Full gate on pull requests into main, and on pushes to main.
-# A branch push does not start this workflow. The pull request run
-# is the check for that change. A push to main runs on its own.
-# Lighthouse stays in lighthouse.yml.
+# Added 2026-06-11: before this, NOTHING enforced vitest or Playwright on
+# GitHub -- gates ran only in whichever local environment happened to work.
+# Widened from main-only pushes on 2026-07-03 when preview branches shipped
+# without PRs; narrowed to pull_request + main pushes on 2026-11-25 (owner
+# ruling, #92) now that changes ship through PRs gated by Claude review, so
+# each PR commit runs the gate once instead of twice.
+# Lighthouse runs separately in lighthouse.yml.
 #
 # One concurrency group per ref. An in-progress run is cancelled
 # only for pull_request, so a new commit replaces the open PR run.
@@ -28,10 +31,13 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned 2026-11-14: ubuntu-latest moved to 26.04 and Playwright 1.57
+    # cannot install chromium there ("does not support chromium on
+    # ubuntu26.04-x64"). Unpin when Playwright is upgraded past that.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: 'npm'
@@ -46,18 +52,21 @@ jobs:
         run: npx vitest run
 
       - name: Upload dist for e2e
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
           path: dist
           retention-days: 1
 
   e2e:
-    runs-on: ubuntu-latest
+    # Pinned 2026-11-14: ubuntu-latest moved to 26.04 and Playwright 1.57
+    # cannot install chromium there ("does not support chromium on
+    # ubuntu26.04-x64"). Unpin when Playwright is upgraded past that.
+    runs-on: ubuntu-24.04
     needs: test
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
           cache: 'npm'
@@ -66,19 +75,30 @@ jobs:
         run: npm ci
 
       - name: Download built site
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: dist
           path: dist
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        # 2026-11-24: the runner's default apt mirror (us-east-2 ec2 archive)
+        # crawled for two days, hanging this step 20+ minutes on most runs.
+        # The runner reads its mirror list from /etc/apt/apt-mirrors.txt
+        # (mirror+file: source), so list reliable mirrors first; apt falls
+        # through the list on failure, times out stalled fetches and
+        # retries them. Do not wrap the install in `timeout`: killing it
+        # leaves its root apt-get holding the dpkg lock (seen in this run).
+        timeout-minutes: 18
+        run: |
+          printf 'http://azure.archive.ubuntu.com/ubuntu/\tpriority:1\nhttp://archive.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt > /dev/null
+          echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30";' | sudo tee /etc/apt/apt.conf.d/80-ci-retries > /dev/null
+          npx playwright install --with-deps chromium webkit
 
       - name: e2e (chromium + webkit + iphone)
         run: npx playwright test
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: playwright-report

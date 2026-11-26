@@ -43,10 +43,10 @@ function audit(html: string): string[] {
   const controls = Array.from(doc.querySelectorAll(SEL));
 
   for (const el of controls) {
-    // aria-hidden removes the control from the accessibility tree. The
-    // back-to-top button ships hidden (tabindex -1, aria-hidden) until
-    // scroll reveals it, so it has no name to compute while hidden.
-    if ((el as Element).closest('[aria-hidden="true"]')) continue;
+    // aria-hidden and [hidden] remove the control from the accessibility tree.
+    // The back-to-top button ships aria-hidden until scroll reveals it, and
+    // enforcement-gates' Reset button ships [hidden] until a handle moves.
+    if ((el as Element).closest('[aria-hidden="true"], [hidden]')) continue;
     const name = norm(computeAccessibleName(el as any));
     const vis = visibleText(el);
     // label-content-name-mismatch: visible text must be contained in the name.
@@ -77,7 +77,7 @@ function audit(html: string): string[] {
   return issues;
 }
 
-const PAGES = ['index.html', 'about/index.html', 'work/index.html', 'photography/index.html', 'beyond/index.html', 'depth/index.html'];
+const PAGES = ['index.html', 'about/index.html', 'work/index.html', 'work/signal-triage/index.html', 'work/enforcement-gates/index.html', 'work/agent-governance/index.html', 'work/verification-gate/index.html', 'photography/index.html', 'beyond/index.html', 'depth/index.html'];
 
 describe('Accessibility — DOM/ARIA smoke test (dom-accessibility-api)', () => {
   beforeAll(async () => {

@@ -43,6 +43,28 @@ test.describe('Work page', () => {
     await page.goto('/work');
     await expect(page.locator('h1')).toContainText('Selected Work');
   });
+
+  test('links the agent governance case study', async ({ page, browserName }) => {
+    await page.goto('/work/');
+    // The case-study card comes first; Skills and evidence links it again below.
+    const link = page.locator('a[href="/work/agent-governance/"]').first();
+    await expect(link).toBeVisible();
+    if (browserName === 'webkit') {
+      // 2026-11-17 (PR #112): CI WebKit stops producing animation frames
+      // once /work is scrolled mid-page. Measured in CI: 125 frames in 2s
+      // at the top, 0 to 2 mid-page, on PRODUCTION as well as the branch.
+      // Click stability and the view transition both wait on frames, so a
+      // click there never completes. macOS Safari runs the same page at
+      // 60fps. Chromium below still proves the click; here, prove the
+      // link and its destination.
+      await expect(link).toHaveAttribute('href', '/work/agent-governance/');
+      await page.goto('/work/agent-governance/');
+    } else {
+      await link.click();
+    }
+    await expect(page).toHaveURL(/\/work\/agent-governance\/?$/);
+    await expect(page.locator('h1')).toContainText('Human Oversight for a Multi-Agent System');
+  });
 });
 
 test.describe('Photography gallery + lightbox', () => {

@@ -16,6 +16,7 @@ type Drag = {
 const EASE = unitBezier(0.16, 1, 0.3, 1);
 
 let abort: AbortController | null = null;
+let mountedFig: HTMLElement | null = null;
 
 function clamp01(n: number): number {
   if (Number.isNaN(n)) return 0;
@@ -80,12 +81,20 @@ function unitBezier(x1: number, y1: number, x2: number, y2: number): (x: number)
 }
 
 function initDepthStack(): void {
+  const fig = document.getElementById('depth-stack');
+  // A plate swap on /beyond dispatches astro:after-swap for the study.
+  // The same figure is still on the page, so leave its still state alone.
+  if (fig instanceof HTMLElement && fig === mountedFig && fig.isConnected) return;
   abort?.abort();
   abort = null;
-  const fig = document.getElementById('depth-stack');
+  mountedFig = null;
   if (!(fig instanceof HTMLElement)) return;
   abort = new AbortController();
+  mountedFig = fig;
   const signal = abort.signal;
+  signal.addEventListener('abort', () => {
+    if (mountedFig === fig) mountedFig = null;
+  });
   try {
     mount(fig, signal);
   } catch {
@@ -386,20 +395,27 @@ function mount(fig: HTMLElement, signal: AbortSignal): void {
   const io = new IntersectionObserver((entries) => {
     if (!entries.some((entry) => entry.isIntersecting)) return;
     io.disconnect();
-    ensureImages();
     if (fig.dataset.played === '1') return;
     fig.dataset.played = '1';
     if (reduced() || still === 'open') {
+      ensureImages();
       shown = { sep: 1, tilt: 1, lab: 1 };
       target = { sep: 1, tilt: 1, lab: 1 };
       apply();
       requestAnimationFrame(place);
       return;
     }
-    if (still === 'flat') {
+    if (still === 'flat' || fig.dataset.autoplay === '0') {
+      // Resting figures (/beyond sets autoplay=false) stay flat at sep=0 and
+      // show only layer1.webp until the visitor hovers, focuses, scrubs or
+      // clicks Replay. Deferring the five hidden RGBA layer decodes keeps the
+      // first scroll past the figure free of texture-upload stalls.
+      view.addEventListener('pointerenter', ensureImages, { once: true, signal });
+      fig.addEventListener('focusin', ensureImages, { once: true, signal });
       apply();
       return;
     }
+    ensureImages();
     play();
   }, { threshold: 0.5 });
   io.observe(view);

@@ -65,7 +65,7 @@ const jsonLd = {
   <div id="atmos-overlay" class="fixed inset-0 pointer-events-none z-0 transition-[background-color] duration-1000 ease-out" aria-hidden="true"></div>
 
   {/* HERO - Featured image full-bleed */}
-  <section class:list={['hero-bleed', heroCapClass('img-1066'), 'relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden']}>
+  <section class:list={['hero-bleed', heroCapClass('img-1066'), 'relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] flex items-end overflow-hidden']} data-hero-under>
     <picture>
       <source media="(max-width: 640px)" type="image/avif" srcset={portraitSrcset('img-1066', 'avif')} sizes={portraitSizes('img-1066')} />
       <source media="(max-width: 640px)" type="image/webp" srcset={portraitSrcset('img-1066', 'webp')} sizes={portraitSizes('img-1066')} />
@@ -81,7 +81,8 @@ const jsonLd = {
       />
       <img
         src="/images/photography/hero/img-1066.webp"
-        alt="A single tree beneath a darkening storm"
+        data-bleed-short
+        alt="A shelf cloud rolling over an open field"
         class="absolute inset-0 w-full h-full object-cover"
         fetchpriority="high"
       />
@@ -243,14 +244,11 @@ const jsonLd = {
           <p class="text-base text-mute leading-relaxed mb-6 sm:mb-8">
             A thunderhead and a rain-wet leaf carry the same weight. Scale is not the subject; attention is. I photograph the threshold between the vast and the intimate, where looking up and looking close become the same act.
           </p>
-          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-3 sm:mb-4">Collecting</p>
+          {/* Archive (was "Collecting"). The print offer (archival prints by
+              inquiry, giclée on Hahnemühle) was removed 2026-11-14: prints are
+              not for sale yet (owner). */}
+          <p class="text-sm tracking-[0.2em] uppercase text-mute mb-3 sm:mb-4">Archive</p>
           <p class="text-sm tracking-[0.12em] uppercase text-mute mb-3 sm:mb-4">{totalImages} selected from an archive of 3,000+</p>
-          <p class="text-base text-mute leading-relaxed mb-2">
-            Archival prints, <a href="mailto:jndwcreative@gmail.com" class="link-draw text-cream/85 hover:text-cream">by inquiry</a>.
-          </p>
-          <p class="text-base text-mute leading-relaxed">
-            Giclée on Hahnemühle Photo Rag.
-          </p>
           {/* A2.1 (owner ruling 2026-07-31): the floating pill is retired
               from this colophon - "tasteful with text." The sentence carries
               the inquiry; the nav's ivory key remains the page's flame. */}

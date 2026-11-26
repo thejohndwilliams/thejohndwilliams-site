@@ -13,6 +13,7 @@
  */
 import palettesData from '../data/plate-palettes.json';
 import { publicBitmap } from '../utils/bitmap';
+import { photoSrcset } from '../utils/photo-src';
 
 export interface Props {
   src: string;
@@ -41,8 +42,8 @@ const hero = tier('hero', 'webp');
       </filter>
     </svg>
     <picture>
-      <source type="image/avif" srcset={`${tier('thumb','avif')} 400w, ${tier('gallery','avif')} 1200w, ${tier('hero','avif')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
-      <source type="image/webp" srcset={`${tier('thumb','webp')} 400w, ${tier('gallery','webp')} 1200w, ${tier('hero','webp')} 2400w`} sizes="(max-width: 1023px) 100vw, 520px" />
+      <source type="image/avif" srcset={photoSrcset(src, 'avif')} sizes="(max-width: 1023px) 100vw, 520px" />
+      <source type="image/webp" srcset={photoSrcset(src, 'webp')} sizes="(max-width: 1023px) 100vw, 520px" />
       <img class="liquid-plate__img" src={plateSrc} alt={alt} width={plateDim.width} height={plateDim.height} loading="lazy" decoding="async" data-fid={fid} />
     </picture>
     <span class="liquid-plate__sheen" aria-hidden="true"></span>
@@ -206,6 +207,34 @@ const hero = tier('hero', 'webp');
     .lp-sw { width: 44px; height: 44px; }
     .lp-sw::after { content: none; }
     .lp-ctl, .lp-fit, .lp-dev { min-height: 44px; min-width: 44px; padding: 8px 12px; }
+  }
+
+  /* One control material on /beyond (2026-11-14 review, pass 4): the
+     atelier keys take the page's bordered Mono box (beyond.css
+     .bfig__action) instead of their own beige glass. Same markup, same
+     behaviour; the touch rule above still gives 44px on coarse pointers. */
+  .lp-grp__k { font-size: 0.6875rem; }
+  .lp-ctl, .lp-dev, .lp-fit {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.14em;
+    color: rgba(244, 234, 222, 0.62);
+    background: transparent; box-shadow: none; border-radius: 0;
+    min-height: 32px; min-width: 32px;
+  }
+  .lp-ctl, .lp-dev { border: 1px solid rgba(244, 234, 222, 0.32); }
+  .lp-fitgroup { border: 1px solid rgba(244, 234, 222, 0.32); border-radius: 0; }
+  .lp-fit + .lp-fit { border-left: 1px solid rgba(244, 234, 222, 0.32); }
+  .lp-ctl:hover, .lp-dev:hover, .lp-fit:hover { color: #f4eade; border-color: #f4eade; }
+  .lp-fit.on { color: #f4eade; background: rgba(244, 234, 222, 0.08); box-shadow: inset 0 0 0 1px #f4eade; }
+  .lp-ctl:active, .lp-dev:active, .lp-fit:active { transform: none; }
+  .lp-ctl:focus-visible, .lp-dev:focus-visible, .lp-fit:focus-visible, .lp-sw:focus-visible {
+    outline: 1px solid #f4eade; outline-offset: 3px;
+  }
+  .lp-sw { width: 32px; height: 28px; border-radius: 0; }
+  .lp-msg { font-size: 0.6875rem; }
+  @media (pointer: coarse) {
+    .lp-sw { width: 44px; height: 44px; }
+    .lp-ctl, .lp-fit, .lp-dev { min-height: 44px; min-width: 44px; }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -17,3 +17,34 @@ https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
 
 # Humans and some tools still request /sitemap.xml.
 /sitemap.xml /sitemap-index.xml 301
+
+# Résumé: the old path (301'd to / from 2026-10-25) now points at the new file.
+/files/Williams-John-D-Resume.pdf /files/John-D-Williams-Resume.pdf 301
+
+# Sky curation (owner, 2026-11-24): frames that left the gallery.
+/photography/dscf0088 /photography/ 301
+/photography/dscf0088/ /photography/ 301
+/photography/dscf0056 /photography/ 301
+/photography/dscf0056/ /photography/ 301
+/photography/dscf0060 /photography/ 301
+/photography/dscf0060/ /photography/ 301
+/photography/dscf1275 /photography/ 301
+/photography/dscf1275/ /photography/ 301
+/photography/dscf0090 /photography/ 301
+/photography/dscf0090/ /photography/ 301
+/photography/dscf0091 /photography/ 301
+/photography/dscf0091/ /photography/ 301
+/photography/dscf0082 /photography/ 301
+/photography/dscf0082/ /photography/ 301
+/photography/dscf0086 /photography/ 301
+/photography/dscf0086/ /photography/ 301
+/photography/dscf0069 /photography/ 301
+/photography/dscf0069/ /photography/ 301
+/photography/img-7029-hdr-enhanced /photography/ 301
+/photography/img-7029-hdr-enhanced/ /photography/ 301
+/photography/dscf0936 /photography/ 301
+/photography/dscf0936/ /photography/ 301
+/photography/7r52355 /photography/ 301
+/photography/7r52355/ /photography/ 301
+/photography/7r52352 /photography/ 301
+/photography/7r52352/ /photography/ 301

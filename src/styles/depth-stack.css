@@ -15,7 +15,7 @@
   box-sizing: border-box;
 }
 
-body:has(#depth-stack) main {
+body:has(.depth-page) main {
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -23,16 +23,16 @@ body:has(#depth-stack) main {
 
 /* This page only. The site header and footer paddings are sized for
    long pages and would push a short viewport into scroll. */
-body:has(#depth-stack) #site-header {
+body:has(.depth-page) #site-header {
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
 }
 
-body:has(#depth-stack) footer.glass-footer {
+body:has(.depth-page) footer.glass-footer {
   padding-bottom: 0;
 }
 
-body:has(#depth-stack) footer .container-narrow {
+body:has(.depth-page) footer .container-narrow {
   padding-top: 0;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -41,13 +41,13 @@ body:has(#depth-stack) footer .container-narrow {
    footer the copyright row stacks, and that gap is what used to absorb
    the extra height. The boxes stay 44px. */
 @media (max-width: 639px) {
-  body:has(#depth-stack) footer .gap-2 { gap: 0; }
+  body:has(.depth-page) footer .gap-2 { gap: 0; }
 }
 
-body:has(#depth-stack) footer .gap-8 { gap: 0.3rem; }
-body:has(#depth-stack) footer .mt-10 { margin-top: 0.25rem; }
-body:has(#depth-stack) footer .pt-6 { padding-top: 0.25rem; }
-body:has(#depth-stack) footer a[href="/llms.txt"] { min-height: 1.5rem; }
+body:has(.depth-page) footer .gap-8 { gap: 0.3rem; }
+body:has(.depth-page) footer .mt-10 { margin-top: 0.25rem; }
+body:has(.depth-page) footer .pt-6 { padding-top: 0.25rem; }
+body:has(.depth-page) footer a[href="/llms.txt"] { min-height: 1.5rem; }
 
 .depth-stack {
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -350,7 +350,7 @@ img.depth-stack__plate:not([src]) {
 }
 
 @media (pointer: coarse) {
-  body:has(#depth-stack) footer a[href="/llms.txt"] { min-height: 44px; }
+  body:has(.depth-page) footer a[href="/llms.txt"] { min-height: 44px; }
   .depth-stack__range input { height: 44px; }
   .depth-stack__range input::-webkit-slider-thumb {
     width: 22px;

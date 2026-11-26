@@ -1,14 +1,37 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassPillGL from '../components/GlassPillGL.astro';
+import { bleedSizes, photoSrcset } from '../utils/photo-src';
+
+// 2026-11-24 cohesion pass: the 404 was the one page with no photograph.
+// It stands in an empty hall now, the same hero grammar as every other room.
+const FILE = 'dsc-0329';
 ---
 
 <BaseLayout title="Not Found" noindex={true} description="This page does not exist.">
-  <section class="min-h-[60vh] flex items-center py-16 md:py-24">
-    <div class="container-narrow text-center">
-      <h1 class="t-display font-serif mb-6">404</h1>
-      <p class="text-xl opacity-70 mb-8">This page doesn't exist.</p>
-      <GlassPillGL label="Return home" href="/" variant="c" />
+  <section class="relative min-h-[70vh] sm:min-h-[75vh] flex items-end overflow-hidden" data-glass-bench data-hero-under>
+    <picture>
+      <source type="image/avif" srcset={photoSrcset(FILE, 'avif')} sizes={bleedSizes(FILE)} />
+      <source type="image/webp" srcset={photoSrcset(FILE, 'webp')} sizes={bleedSizes(FILE)} />
+      <img
+        src={`/images/photography/hero/${FILE}.webp`}
+        alt="Light through a derelict hall"
+        class="absolute inset-0 w-full h-full object-cover"
+        data-bleed-short
+        decoding="async"
+      />
+    </picture>
+    <div
+      class="absolute inset-0"
+      style="background-image: linear-gradient(to right, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.78) 22%, rgba(10,10,10,0.56) 44%, rgba(10,10,10,0.28) 68%, rgba(10,10,10,0) 100%);"
+    ></div>
+    <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">404</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Nothing here</h1>
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">This page does not exist.</p>
+        <GlassPillGL label="Return home" href="/" variant="c" />
+      </div>
     </div>
   </section>
 </BaseLayout>

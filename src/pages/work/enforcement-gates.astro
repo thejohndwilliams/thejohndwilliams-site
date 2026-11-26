@@ -1,0 +1,359 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import data from '../../data/enforcement-sample.json';
+import { wilson, runToCertify } from '../../utils/wilson';
+import { countsFromPoints, indexAtLeast, sliderText } from '../../utils/enforcement-counts';
+import { plotGeometry } from '../../utils/enforcement-layout';
+import { photoSrcset, photoTiers } from '../../utils/photo-src';
+import '../../styles/enforcement-gates.css';
+import '../../styles/enforcement-story.css';
+
+// Case study: a classifier used as an enforcement system with three bands.
+// Public data only (UCI SMS Spam Collection, CC BY 4.0). Every number on
+// this page is computed from src/data/enforcement-sample.json, which
+// scripts/enforcement/train.py writes. Nothing here is from an employer.
+const pageTitle = 'Precision-Gated Enforcement';
+const description = 'A classifier run as an enforcement system: where it may act alone, where a person decides, and what a sample of decisions can actually certify.';
+
+const { meta, gates, calibration: cal } = data;
+const plotted = data.points as [number, number][];
+// Counts come from the plotted points (integers), not from a second
+// rounding of the scores. Gate scores are rounded only where they are shown.
+const test = countsFromPoints(plotted, gates.auto, gates.review);
+const plotFrame = plotGeometry(plotted, 640);
+const published = sliderText(plotted, indexAtLeast(plotted, gates.auto), indexAtLeast(plotted, gates.review));
+const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
+const fmt = (v: number) => v.toLocaleString('en-US');
+
+const calN = cal.auto_tp + cal.auto_fp;
+const testN = test.auto_tp + test.auto_fp;
+const calP = cal.auto_tp / calN;
+const testP = test.auto_tp / testN;
+const calCI = wilson(cal.auto_tp, calN);
+const testCI = wilson(test.auto_tp, testN);
+const certify99 = runToCertify(0.99);
+const spam = meta.test_spam;
+const caught = test.auto_tp + test.review_spam;
+
+// Interval figure geometry (static SVG). Precision axis 0.85 to 1.00.
+const IV = { w: 640, h: 168, l: 132, r: 24, lo: 0.85, hi: 1 };
+const ix = (v: number) => IV.l + ((v - IV.lo) / (IV.hi - IV.lo)) * (IV.w - IV.l - IV.r);
+const ivTicks = [0.85, 0.9, 0.95, 0.99];
+
+// QA unit chart: one square per automatic removal on the test split, in
+// score order from the gate upward, so the mistakes sit where they fell.
+const qaCells = plotted
+  .filter(([s]) => s >= gates.auto)
+  .map(([, label]) => ({ wrong: label === 0 }));
+
+// Appeals, simulated at the published gates. Assumptions are stated on the page.
+const APPEAL_WRONG = 0.6;
+const APPEAL_RIGHT = 0.02;
+const appealsWrong = test.auto_fp * APPEAL_WRONG;
+const appealsRight = test.auto_tp * APPEAL_RIGHT;
+const appealsTotal = appealsWrong + appealsRight;
+const reversalRate = appealsWrong / appealsTotal;
+
+const HERO = 'dsc-0131';
+const hero = photoTiers(HERO);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: pageTitle,
+  description,
+  url: 'https://thejohndwilliams.com/work/enforcement-gates/',
+  datePublished: '2026-11-17',
+  dateModified: '2026-11-24',
+  author: { '@type': 'Person', name: 'John D. Williams', url: 'https://thejohndwilliams.com' },
+  isBasedOn: 'https://archive.ics.uci.edu/dataset/228/sms+spam+collection',
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={description}
+  ogImage="/og/pages/enforcement-gates.jpg"
+  ogImageWidth={1200}
+  ogImageHeight={630}
+  lcpImage={HERO}
+  lcpImageSizes="100vw"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+  <!-- Opening: the site's hero pattern (full-bleed, under the header). -->
+  <section class="enf-hero relative flex items-end overflow-hidden" data-hero-under>
+    <picture>
+      <source type="image/avif" srcset={photoSrcset(HERO, 'avif')} sizes="100vw" />
+      <source type="image/webp" srcset={photoSrcset(HERO, 'webp')} sizes="100vw" />
+      <img
+        src={`/images/photography/hero/${HERO}.webp`}
+        width={hero.hero.w}
+        height={hero.hero.h}
+        alt="Storm front massing over rooftops"
+        class="enf-hero__img absolute inset-0 h-full w-full object-cover"
+        data-bleed-short
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+    <div class="hero-scrim-left absolute inset-0"></div>
+    <div class="enf-hero__lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-3 sm:mb-4">Case study · Trust and safety</p>
+        <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">{pageTitle}</h1>
+        <p class="enf-deck">Where a classifier may act alone, where a person decides, and what a sample of decisions can certify.</p>
+      </div>
+    </div>
+  </section>
+
+  <article class="enf-page" data-enf-page>
+    <dl class="enf-meta">
+      <div><dt>Data</dt><dd>{meta.dataset}</dd></div>
+      <div><dt>Messages</dt><dd>{fmt(meta.messages_unique)} unique</dd></div>
+      <div><dt>Model</dt><dd>Logistic regression</dd></div>
+      <div><dt>Scope</dt><dd>Personal project, public data</dd></div>
+    </dl>
+
+    <p class="enf-lede" data-enf-lede>
+      At the published gates, the model removes{' '}<span class="enf-num" data-bind="auto">{test.auto_tp}</span>{' '}of {spam} spam messages on its own, sends{' '}<span class="enf-num" data-bind="review">{test.review_spam + test.review_ham}</span>{' '}to a person, and lets{' '}<span class="enf-num" data-bind="missed">{test.allow_spam}</span>{' '}through.
+    </p>
+
+    <!-- HERO FIGURE. Hydrated by src/scripts/enforcement-gates.ts. Without
+         JS the readout and the table below still carry every number. -->
+    <figure class="enf-fig" data-enf-figure>
+      <!-- SCROLL STORY. src/scripts/enforcement-story.ts pins the stage and
+           walks the dots through the steps below as the reader scrolls.
+           Without it (no script, reduced motion, a short viewport) the
+           steps read as an ordered list and the figure is interactive. -->
+      <div class="enf-scrolly" data-enf-scrolly>
+      <div class="enf-stage" data-enf-stage>
+      <div class="enf-story-rail" aria-hidden="true">
+        {Array.from({ length: 8 }, () => <span class="enf-story-rail__tick" data-story-tick></span>)}
+      </div>
+      <ol class="enf-story" aria-label="How the system decides, step by step">
+        <li data-story-step><span class="enf-count" data-count={meta.split.test}>{fmt(meta.split.test)}</span> messages arrive. Nobody can read them all.</li>
+        <li data-story-step>A model reads each one and gives it a score. Low means probably fine. High means probably spam.</li>
+        <li data-story-step>Now the answer key. Spam rises above the line, legitimate messages fall below it. The piles overlap in the middle, and the overlap is the whole problem.</li>
+        <li data-story-step>Draw one line. Everything to its right is removed with no person involved: <span class="enf-count" data-count={testN}>{testN}</span> messages.</li>
+        <li data-story-step><span class="enf-count" data-count={test.auto_fp}>{test.auto_fp}</span> of them were legitimate. Precision {pct(testP)}, short of the 99% the line was set to hold.</li>
+        <li data-story-step>A second line opens a band where a person decides. <span class="enf-count" data-count={test.review_spam + test.review_ham}>{test.review_spam + test.review_ham}</span> messages land there. That is the reviewer's workload.</li>
+        <li data-story-step>Below the floor, nothing happens. <span class="enf-count" data-count={test.allow_spam}>{test.allow_spam}</span> spam messages scored too low and got through.</li>
+        <li data-story-step>Two lines, three outcomes, a cost on every side. Now move the lines yourself.</li>
+      </ol>
+      <div class="enf-readout" aria-hidden="false">
+        <div class="enf-stat">
+          <p class="enf-stat__k">Precision</p>
+          <p class="enf-stat__v" data-bind="precision">{pct(testP)}</p>
+          <p class="enf-stat__sub" data-bind="precisionCI">{pct(testCI[0])} to {pct(testCI[1])}</p>
+        </div>
+        <div class="enf-stat">
+          <p class="enf-stat__k">In review</p>
+          <p class="enf-stat__v" data-bind="review">{test.review_spam + test.review_ham}</p>
+          <p class="enf-stat__sub" data-bind="reviewMix">{test.review_spam} spam, {test.review_ham} legitimate</p>
+        </div>
+        <div class="enf-stat">
+          <p class="enf-stat__k">Missed</p>
+          <p class="enf-stat__v" data-bind="missed">{test.allow_spam}</p>
+          <p class="enf-stat__sub" data-bind="caught">{pct(caught / spam)} caught overall</p>
+        </div>
+        <div class="enf-stat">
+          <p class="enf-stat__k">Wrongly removed</p>
+          <p class="enf-stat__v" data-bind="wrong">{test.auto_fp}</p>
+          <p class="enf-stat__sub">legitimate messages</p>
+        </div>
+      </div>
+
+      <div class="enf-bands" aria-hidden="true">
+        <span class="enf-band-label" data-band="allow">Allow</span>
+        <span class="enf-band-label" data-band="review">Review</span>
+        <span class="enf-band-label" data-band="auto">Auto-action</span>
+      </div>
+
+      <div class="enf-plot-frame">
+      <div class="enf-plot" data-enf-plot>
+        <svg class="enf-svg" data-enf-svg viewBox={`0 0 ${plotFrame.W} ${plotFrame.H}`} width={plotFrame.W} height={plotFrame.H} role="img" aria-label={`Each of the ${fmt(meta.split.test)} test messages as a dot, placed by model score. Spam rises above the line, legitimate messages fall below it.`}></svg>
+        <div class="enf-handle" data-handle="review" role="slider" tabindex="0" aria-label="Review floor" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.reviewNow} aria-valuetext={published.reviewText}><span class="enf-handle__knob"></span></div>
+        <div class="enf-handle" data-handle="auto" role="slider" tabindex="0" aria-label="Auto-action gate" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={plotted.length} aria-valuenow={published.autoNow} aria-valuetext={published.autoText}><span class="enf-handle__knob"></span></div>
+      </div>
+      </div>
+      </div>
+      </div>
+
+      <div class="enf-steppers">
+        <div class="enf-stepper">
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="-1" aria-label="Lower review gate"><span aria-hidden="true">−</span></button>
+          <span class="enf-stepper__k">Review floor</span>
+          <button type="button" class="enf-stepper__btn" data-nudge="review" data-dir="1" aria-label="Raise review gate"><span aria-hidden="true">+</span></button>
+        </div>
+        <div class="enf-stepper">
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="-1" aria-label="Lower auto-action gate"><span aria-hidden="true">−</span></button>
+          <span class="enf-stepper__k">Auto-action</span>
+          <button type="button" class="enf-stepper__btn" data-nudge="auto" data-dir="1" aria-label="Raise auto-action gate"><span aria-hidden="true">+</span></button>
+        </div>
+      </div>
+
+      <figcaption class="enf-cap">
+        <span>Every dot is one message.</span>
+        <button type="button" class="enf-action enf-reset" data-enf-reset hidden>Reset gates</button>
+      </figcaption>
+      <p class="enf-key" aria-hidden="true">
+        <span class="enf-key__item"><i class="enf-swatch enf-swatch--spam"></i>Spam, above the line</span>
+        <span class="enf-key__item"><i class="enf-swatch enf-swatch--ham"></i>Legitimate, below it</span>
+        <span class="enf-key__item"><i class="enf-swatch enf-swatch--wrong"></i>A harm: wrongly removed or missed</span>
+      </p>
+      <p class="sr-only" aria-live="polite" data-enf-live></p>
+    </figure>
+
+    <section class="enf-block">
+      <p class="enf-step">01</p>
+      <h2>Three bands, two lines</h2>
+      <p>The score decides nothing. Two lines decide what it is allowed to do, and both were set on one split and checked on another the model never saw.</p>
+      <div class="enf-rules enf-wide" data-enf-rules>
+        <div class="enf-rule">
+          <p class="enf-rule__k">Gate · act alone</p>
+          <p class="enf-rule__v">The lowest score where calibration precision reached 99%</p>
+          <p class="enf-rule__n">Score {gates.auto.toFixed(3)}</p>
+        </div>
+        <div class="enf-rule">
+          <p class="enf-rule__k">Floor · a person decides</p>
+          <p class="enf-rule__v">Keep at least 98% of spam inside the two acting bands</p>
+          <p class="enf-rule__n">Score {gates.review.toFixed(3)}</p>
+        </div>
+        <div class="enf-rule enf-rule--quiet">
+          <p class="enf-rule__k">Below · nothing happens</p>
+          <p class="enf-rule__v">Allowed through, unread</p>
+          <p class="enf-rule__n">{test.allow_spam} spam missed</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">02</p>
+      <h2>The gate held where it was set</h2>
+      <p>On calibration, {cal.auto_tp} of {calN} automatic removals were spam: {pct(calP)}. On the test split, {test.auto_tp} of {testN} were: {pct(testP)}. The rule was met where it was written and missed where it was checked, and the intervals say why.</p>
+      <figure class="enf-ci" data-enf-ci>
+        <svg viewBox={`0 0 ${IV.w} ${IV.h}`} class="enf-ci__svg" role="img" aria-label={`Precision with 95 percent intervals. Calibration ${pct(calP)}, interval ${pct(calCI[0])} to ${pct(calCI[1])}. Test ${pct(testP)}, interval ${pct(testCI[0])} to ${pct(testCI[1])}. Target 99 percent.`}>
+          {ivTicks.map((t) => (
+            <g>
+              <line x1={ix(t)} x2={ix(t)} y1="20" y2={IV.h - 30} class={t === 0.99 ? 'enf-ci__target' : 'enf-ci__grid'} />
+              <text x={ix(t)} y={IV.h - 10} text-anchor="middle" class="enf-ci__tick">{pct(t, 0)}</text>
+            </g>
+          ))}
+          <text x={ix(0.99)} y="12" text-anchor="middle" class="enf-ci__tick enf-ci__tick--target">Target</text>
+          {[
+            { y: 56, label: 'Calibration', p: calP, ci: calCI, n: calN },
+            { y: 104, label: 'Test', p: testP, ci: testCI, n: testN },
+          ].map((row) => (
+            <g data-ci-row>
+              <text x="0" y={row.y + 4} class="enf-ci__label">{row.label}</text>
+              <line x1={ix(Math.max(IV.lo, row.ci[0]))} x2={ix(row.ci[1])} y1={row.y} y2={row.y} class="enf-ci__range" />
+              <circle cx={ix(row.p)} cy={row.y} r="5" class="enf-ci__point" />
+              <text x={ix(Math.max(IV.lo, row.ci[0])) } y={row.y - 12} class="enf-ci__n">n = {row.n}</text>
+            </g>
+          ))}
+        </svg>
+        <figcaption class="enf-cap"><span>Precision, with 95% Wilson intervals.</span></figcaption>
+      </figure>
+      <p>{calN} decisions cannot certify 99%. Even with none wrong, the lower bound only clears 99% after {certify99} consecutive correct removals.</p>
+      <figure class="enf-run" data-enf-run>
+        <div class="enf-run__head">
+          <p class="enf-run__stat"><span class="enf-run__k">Correct in a row</span><span class="enf-run__v" data-run-n>{certify99}</span></p>
+          <p class="enf-run__stat"><span class="enf-run__k">Proves at least</span><span class="enf-run__v" data-run-lb>{pct(wilson(certify99, certify99)[0])}</span></p>
+        </div>
+        <div class="enf-run__grid" role="img" aria-label={`${certify99} squares, one per correct removal. The first ${calN} are what calibration had. A 99 percent lower bound needs all ${certify99}.`}>
+          {Array.from({ length: certify99 }, (_, i) => <span class:list={['enf-run__cell', { 'is-cal': i < calN }]}></span>)}
+        </div>
+        <ul class="enf-run__legend">
+          <li><span class="enf-run__cell is-cal is-on" aria-hidden="true"></span><span>The {calN} calibration had</span></li>
+          <li><span class="enf-run__cell is-on" aria-hidden="true"></span><span>The rest a 99% claim needs</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>Wilson lower bound at 95%, with every decision correct.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">03</p>
+      <h2>What a reviewer would find</h2>
+      <p>Every automatic removal on the test split, one square each. These are the {test.auto_fp} a reviewer would overturn.</p>
+      <figure class="enf-qa">
+        <div class="enf-qa__grid" role="img" aria-label={`${testN} automatic removals, ${test.auto_fp} of them legitimate messages.`}>
+          {qaCells.map((c) => <span class:list={['enf-qa__cell', { 'is-wrong': c.wrong }]}></span>)}
+        </div>
+        <ul class="enf-qa__legend">
+          <li><span class="enf-qa__cell" aria-hidden="true"></span><span>Spam removed</span></li>
+          <li><span class="enf-qa__cell is-wrong" aria-hidden="true"></span><span>Wrongly removed</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>{qaCells.length} removals, lowest score first.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">04</p>
+      <h2>The appeal path</h2>
+      <p>Every automatic action needs a way back. This part is simulated, with the assumptions stated: {pct(APPEAL_WRONG, 0)} of wrongly removed senders appeal, {pct(APPEAL_RIGHT, 0)} of rightly removed ones do, and review reverses every wrongful removal it sees.</p>
+      <figure class="enf-appeal reveal" data-enf-appeal>
+        <div class="enf-appeal__row">
+          <p class="enf-appeal__k">Wrongly removed · {test.auto_fp}</p>
+          <div class="enf-appeal__cells" role="img" aria-label={`${test.auto_fp} wrongly removed senders; about ${Math.round(appealsWrong)} appeal and are reinstated.`}>
+            {Array.from({ length: test.auto_fp }, (_, i) => <span class:list={['enf-appeal__cell', 'is-wrong', { 'is-appeal': i < Math.round(appealsWrong) }]}></span>)}
+          </div>
+        </div>
+        <div class="enf-appeal__row">
+          <p class="enf-appeal__k">Rightly removed · {test.auto_tp}</p>
+          <div class="enf-appeal__cells" role="img" aria-label={`${test.auto_tp} rightly removed senders; about ${Math.round(appealsRight)} appeal and lose.`}>
+            {Array.from({ length: test.auto_tp }, (_, i) => <span class:list={['enf-appeal__cell', { 'is-appeal': i < Math.round(appealsRight) }]}></span>)}
+          </div>
+        </div>
+        <ul class="enf-appeal__legend">
+          <li><span class="enf-appeal__cell is-wrong is-appeal" aria-hidden="true"></span><span>Appeals and wins</span></li>
+          <li><span class="enf-appeal__cell is-appeal" aria-hidden="true"></span><span>Appeals and loses</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>Expected appeals at the published gates, rounded to whole people.</span></figcaption>
+      </figure>
+      <ol class="enf-flow" aria-label="Appeal path at the published gates">
+        <li><span class="enf-flow__v">{testN}</span><span class="enf-flow__k">Removed automatically</span></li>
+        <li><span class="enf-flow__v">{appealsTotal.toFixed(1)}</span><span class="enf-flow__k">Appeals expected</span></li>
+        <li><span class="enf-flow__v">{appealsWrong.toFixed(1)}</span><span class="enf-flow__k">Reversed</span></li>
+        <li><span class="enf-flow__v">{pct(reversalRate, 0)}</span><span class="enf-flow__k">Of appeals succeed</span></li>
+      </ol>
+      <p>When most appeals win, the gate is too low or the policy is unclear. The appeal queue shows it first.</p>
+    </section>
+
+    <section class="enf-block enf-reqs">
+      <p class="enf-step">05</p>
+      <h2>Requirements I would set</h2>
+      <ol class="enf-req-list">
+        <li><span class="enf-req__n">1</span><p><strong>Certify the gate on a sample sized to the claim.</strong> A 99% precision gate needs at least {certify99} audited actions per review cycle, drawn at random from the auto-action band.</p></li>
+        <li><span class="enf-req__n">2</span><p><strong>Set gates on one split, report on another.</strong> No threshold is published from the data it was tuned on.</p></li>
+        <li><span class="enf-req__n">3</span><p><strong>Make every automatic action reversible.</strong> Appeals route to a person, and the overturn rate is reported beside precision every week.</p></li>
+        <li><span class="enf-req__n">4</span><p><strong>Treat the floor as a staffing decision.</strong> Each step down in the review floor is priced in reviewer hours before it ships.</p></li>
+        <li><span class="enf-req__n">5</span><p><strong>Watch the boundary, not the average.</strong> Drift is measured on messages near the gate, where a small shift changes the most decisions.</p></li>
+      </ol>
+    </section>
+
+    <section class="enf-block enf-method">
+      <p class="enf-step">06</p>
+      <h2>Method and data</h2>
+      <table class="enf-table">
+        <caption class="sr-only">Results by band at the published gates</caption>
+        <thead>
+          <tr><td></td><th scope="colgroup" colspan="2">Calibration</th><th scope="colgroup" colspan="2">Test</th></tr>
+          <tr><th scope="col">Band</th><th scope="col">Spam</th><th scope="col">Legit.</th><th scope="col">Spam</th><th scope="col">Legit.</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Auto-action</th><td>{cal.auto_tp}</td><td>{cal.auto_fp}</td><td>{test.auto_tp}</td><td>{test.auto_fp}</td></tr>
+          <tr><th scope="row">Review</th><td>{cal.review_spam}</td><td>{cal.review_ham}</td><td>{test.review_spam}</td><td>{test.review_ham}</td></tr>
+          <tr><th scope="row">Allow</th><td>{cal.allow_spam}</td><td>{cal.allow_ham}</td><td>{test.allow_spam}</td><td>{test.allow_ham}</td></tr>
+        </tbody>
+      </table>
+      <p>The {meta.dataset} ({meta.citation}, {meta.license}) holds {fmt(meta.messages_raw)} labelled text messages. Exact duplicates were removed first, leaving {fmt(meta.messages_unique)}, because copies of the same spam across splits would flatter every number. The rest was split 60 / 20 / 20 into training, calibration and test, stratified by label. The model is {meta.model.toLowerCase()}. Gate scores: auto-action at {gates.auto.toFixed(3)}, review floor at {gates.review.toFixed(3)}.</p>
+      <p class="enf-prov">Artifact: src/data/enforcement-sample.json · seed {meta.seed} · sha256 4a2f6a88e31e2af7966d0d7818f1a61441e4cc279c859452fcb19e210ea9535d</p>
+      <p class="enf-code"><a href="https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/scripts/enforcement/train.py" class="link-draw" rel="noopener noreferrer" target="_blank">Training and measurement script</a></p>
+      <p class="enf-return"><a href="/work/">Back to the work</a></p>
+    </section>
+  </article>
+
+  <script src="../../scripts/enforcement-gates.ts"></script>
+  <script src="../../scripts/enforcement-story.ts"></script>
+</BaseLayout>

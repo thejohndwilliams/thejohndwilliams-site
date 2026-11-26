@@ -10,7 +10,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
 ---
 
-<header id="site-header" class="py-4 sm:py-6 md:py-8 sticky top-0 z-40" transition:persist>
+<header id="site-header" class="py-3 sticky top-0 z-40" transition:persist>
   <div class="nav-shell">
     <nav class="flex items-center justify-between" aria-label="Primary">
       {/* The monogram stays the mark. aria-hidden keeps those two letters out of
@@ -111,6 +111,7 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
   // navigation (N listeners each scheduling their own rAF). Bind once at
   // module scope; re-runs only refresh the initial scrolled state.
   let glassHeaderBound = false;
+  let headerSizeBound = false;
   function initGlassHeader() {
     const header = document.getElementById('site-header');
     if (!header) return;
@@ -134,6 +135,17 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
     }
 
     if (window.scrollY > 40) header.classList.add('scrolled');
+
+    // Publish the real header height so [data-hero-under] heroes slide
+    // exactly under it (global.css keeps measured fallbacks). One observer
+    // for the persisted header, bound once like the scroll listener.
+    if (!headerSizeBound && 'ResizeObserver' in window) {
+      headerSizeBound = true;
+      new ResizeObserver(() => {
+        const h = Math.round(header.getBoundingClientRect().height);
+        if (h > 0) document.documentElement.style.setProperty('--header-h', `${h}px`);
+      }).observe(header);
+    }
   }
 
   // Dim / true-black toggle. Pre-paint script in BaseLayout applied the saved

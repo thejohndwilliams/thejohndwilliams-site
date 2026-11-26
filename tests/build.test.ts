@@ -70,8 +70,8 @@ describe('Astro Build', () => {
     const relief = path.join(distDir, 'images', 'relief');
     expect(fs.existsSync(relief)).toBe(true);
     for (const mm of [1, 2, 3, 4, 6, 9, 14]) {
-      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.avif`))).toBe(true);
-      expect(fs.existsSync(path.join(relief, `depth-${mm}mm.webp`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm-w1240.avif`))).toBe(true);
+      expect(fs.existsSync(path.join(relief, `depth-${mm}mm-w1240.webp`))).toBe(true);
     }
     for (const size of ['16x20', '20x24', '24x36']) {
       expect(fs.existsSync(path.join(relief, `edition-${size}.avif`))).toBe(true);
@@ -145,7 +145,8 @@ describe('Astro Build', () => {
     // surface) does not reliably render WebP unfurls. Top-level pages now use
     // the same 1200×630 JPEG pipeline as photo detail pages.
     const pagesDir = path.join(distDir, 'og', 'pages');
-    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg']) {
+    for (const f of ['home.jpg', 'photography.jpg', 'work.jpg', 'about.jpg',
+      'enforcement-gates.jpg', 'agent-governance.jpg', 'verification-gate.jpg', 'signal-triage.jpg']) {
       expect(fs.existsSync(path.join(pagesDir, f))).toBe(true);
     }
     const pairs: Array<[string, string]> = [
@@ -153,12 +154,27 @@ describe('Astro Build', () => {
       [path.join('photography', 'index.html'), '/og/pages/photography.jpg'],
       [path.join('work', 'index.html'), '/og/pages/work.jpg'],
       [path.join('about', 'index.html'), '/og/pages/about.jpg'],
+      // 2026-11-25: each case study shares its own preview, not the Work card.
+      [path.join('work', 'enforcement-gates', 'index.html'), '/og/pages/enforcement-gates.jpg'],
+      [path.join('work', 'agent-governance', 'index.html'), '/og/pages/agent-governance.jpg'],
+      [path.join('work', 'verification-gate', 'index.html'), '/og/pages/verification-gate.jpg'],
+      [path.join('work', 'signal-triage', 'index.html'), '/og/pages/signal-triage.jpg'],
     ];
     for (const [rel, og] of pairs) {
       const html = fs.readFileSync(path.join(distDir, rel), 'utf-8');
       expect(html).toContain(og);
       expect(html).toContain('property="og:image:width" content="1200"');
       expect(html).toContain('property="og:image:height" content="630"');
+    }
+  });
+
+  it('each case-study preview carries that page\'s own title (2026-11-25)', () => {
+    const og = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'build-og-images.mjs'), 'utf-8');
+    for (const slug of ['enforcement-gates', 'agent-governance', 'verification-gate', 'signal-triage']) {
+      const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'pages', 'work', `${slug}.astro`), 'utf-8');
+      const title = src.match(/const pageTitle = '([^']+)'/)?.[1];
+      expect(title, slug).toBeTruthy();
+      expect(og).toContain(`slug: '${slug}', hero: 'dscf0331', eyebrow: 'Case study', title: '${title}'`);
     }
   });
 
@@ -271,11 +287,12 @@ describe('Generated HTML Content', () => {
     });
 
     it('uses the multi-stop dither-resistant hero gradient', () => {
-      // Gradient starts with a semi-transparent scrim (not solid black) so
-      // the portrait reads through on the left, then fades to fully
-      // transparent on the right to let the photograph breathe.
+      // 2026-11-24 second pass (owner): the full-bleed portrait hero is
+      // restored. Gradient starts semi-transparent (not solid black) and
+      // fades to fully transparent so the photograph breathes.
       expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
       expect(aboutHtml).toContain('rgba(10,10,10,0)');
+      expect(aboutHtml).not.toContain('about-print');
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
@@ -286,11 +303,83 @@ describe('Generated HTML Content', () => {
 
   describe('Work Page', () => {
     it('contains project information', () => {
-      expect(workHtml).toContain('Queue Forecast Dashboard');
+      // 2026-11-24 cohesion pass: three case studies, then coursework.
+      expect(workHtml).toContain('Adversarial Verification for AI Claims');
+      expect(workHtml).toContain('href="/work/verification-gate/"');
+      expect(workHtml).not.toContain('Job Application Analytics');
+      expect(workHtml).not.toContain('Identified actionable patterns');
+    });
+
+    // Owner order 2026-10-25: the queue-forecast project is erased from the
+    // public site and its repository retired. This lock keeps it gone - the
+    // card named employer customer verticals and a production claim.
+    it('work: the retired queue-forecast project never returns', () => {
+      expect(workHtml).not.toContain('Queue Forecast');
+      expect(workHtml).not.toContain('queue-forecast-dashboard');
+      expect(workHtml).not.toContain('Holt-Winters');
+      expect(workHtml).not.toContain('workforce planning');
     });
 
     it('contains technology tags', () => {
       expect(workHtml).toContain('Python');
+    });
+
+    it('links and locks the agent governance case study', () => {
+      expect(workHtml).toContain('href="/work/agent-governance/"');
+      // 2026-10-25: the two 'Forecasting' hits were the retired queue card.
+      expect((workHtml.match(/Forecasting/g) || []).length).toBe(0);
+      const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
+      // 2026-11-24: rebuilt in the case-study grammar. Short title in the h1,
+      // the rest of the old colon title in the deck; no glass summary card.
+      expect(html).toContain('<title>Human Oversight for a Multi-Agent System | John D. Williams</title>');
+      expect(html).toMatch(/<meta name="description" content="How one person stays in control of a group of AI agents[^"]{60,}">/);
+      expect(html).toMatch(/<h1[^>]*>Human Oversight for a Multi-Agent System<\/h1>/);
+      expect(html).toContain('Approval gates, evidence and separation of duties: how one person stays in control of a group of AI agents.');
+      expect(html).toContain('class="enf-meta"');
+      expect(html).not.toContain('gov-summary');
+      expect(html).not.toContain('\u2014');
+      expect(html).not.toContain('Independent personal project');
+      expect(html).toContain('Personal project.');
+      expect(html).toContain('An independent challenger');
+      expect(html).toContain('and to the management-system approach of ISO/IEC 42001');
+      expect(html).not.toContain('and with the management-system approach of ISO/IEC 42001');
+      expect(html).toContain('treated as data and never as instructions.');
+      expect(html).not.toContain('treated as data and never as instruction.');
+      expect(html).toContain('key-like strings, and terms from a separate configurable list. The scan must pass before anything is shared.');
+      expect(html).toContain('The design question was this:');
+      expect(html).not.toContain('The design question was simple:');
+      expect(html).toContain('NIST (the Manage function)');
+      expect(html).not.toContain('NIST (Manage)');
+      expect(html).toContain('The approval workflow is a fixed list, not a judgment call:');
+      expect(html).not.toContain('fixed table, not a judgment call');
+      expect(html).toContain('One rule sits under the whole list:');
+      expect(html).not.toContain('under the whole table:');
+      expect(html).toContain('routing table');
+      expect(html).toContain('Not endorsed by or affiliated with NIST or ISO.');
+      expect(html).toContain('Mapped by theme, not certified');
+      expect(html).toContain('/figures/gate-flow.svg');
+      expect(html).toContain('/figures/audit-trail.svg');
+      expect(html).toContain('/figures/controls-mapping.svg');
+      expect(html).toContain('ILLUSTRATIVE');
+      expect(html).toContain('SYNTHETIC');
+      expect(html).not.toMatch(/<style[\s\S]*?<\/style>/);
+      expect(html).not.toMatch(/\sstyle="/);
+      expect(html).not.toContain('#7E9CB8');
+      expect(html).not.toContain('#7e9cb8');
+      const gate = html.indexOf('/figures/gate-flow.svg');
+      const audit = html.indexOf('/figures/audit-trail.svg');
+      const map = html.indexOf('/figures/controls-mapping.svg');
+      const worked = html.indexOf('A worked example');
+      const shows = html.indexOf('What this shows');
+      const disclaimer = html.lastIndexOf('Not endorsed by or affiliated with NIST or ISO.');
+      expect(gate).toBeGreaterThan(html.indexOf('non-waivable rules'));
+      expect(gate).toBeLessThan(html.indexOf('Rules are ranked'));
+      expect(audit).toBeGreaterThan(worked);
+      expect(map).toBeGreaterThan(shows);
+      expect(map).toBeLessThan(disclaimer);
+      const sitemap = fs.readFileSync(path.join(distDir, 'sitemap-0.xml'), 'utf8');
+      expect(sitemap).toContain('/work/agent-governance/');
+      expect(sitemap).not.toContain('\u2014');
     });
   });
 
@@ -333,7 +422,9 @@ describe('SEO and Meta Tags', () => {
   });
 
   it('contains the updated default meta description', () => {
-    expect(indexHtml).toContain('Photography, cybersecurity, and data');
+    // 2026-11-24 cohesion pass: one positioning line across hero, meta and links.
+    expect(indexHtml).toContain('Operations, risk and controls; fine-art photography.');
+    expect(indexHtml).not.toContain('threats on a network');
   });
 
   it('contains JSON-LD Person schema', () => {
@@ -460,24 +551,67 @@ describe('Glass Build B promotion: hero complications are refractive C', () => {
   });
 });
 
+describe('Work: the record under the ram (owner order 2026-11-24)', () => {
+  const work = () => fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+
+  it('sits after the Isaiah 6:8 divider and replaces the chip cloud', () => {
+    const page = work();
+    const ram = page.indexOf('Isaiah 6:8');
+    const record = page.indexOf('data-xp ');
+    expect(ram).toBeGreaterThan(-1);
+    expect(record).toBeGreaterThan(ram);
+    expect(page).toContain('Film, then business, then operations.');
+    // Six entries, each a native disclosure that opens without script.
+    expect(page.match(/data-xp-item=/g)?.length).toBe(6);
+    expect(page.match(/<details class="xp-entry"/g)?.length).toBe(6);
+    expect(page.match(/data-xp-span=/g)?.length).toBe(6);
+  });
+
+  it('names SpaceX with title and years only (OPSEC ruling)', () => {
+    const page = work();
+    expect(page).toContain('Process Specialist');
+    expect(page).toContain('SpaceX');
+    for (const term of ['Starlink', 'Customer Support Associate', 'Enterprise Associate', 'Enterprise Support', 'ITAR', 'Incident', 'Bastrop', 'Sprinklr', 'P1', 'GPA', 'Juris', 'Law']) {
+      expect(page, term).not.toContain(term);
+    }
+    expect(page).not.toContain('—');
+  });
+
+  it('carries the Pennies to Dollars mark and the customer intelligence line (owner 2026-11-24)', () => {
+    const page = work();
+    const ptd = page.match(/<li class="xp-item" data-xp-item="pennies-to-dollars"[\s\S]*?<\/li>/)?.[0] ?? '';
+    expect(ptd).toContain('xp-mark__svg--ptd');
+    expect(ptd).not.toContain('xp-mark__mono');
+    const spacex = page.match(/<li class="xp-item" data-xp-item="spacex"[\s\S]*?<\/li>/)?.[0] ?? '';
+    expect(spacex).toContain('Customer intelligence');
+  });
+});
+
 describe('The spread (owner order 2026-08-01): the material takes its seats', () => {
   it('work: the practice strip sits under Selected Work', () => {
     const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
     const heroIdx = work.indexOf('Selected Work');
-    const stripIdx = work.indexOf('Consulting in data engineering');
+    const stripIdx = work.indexOf('Case studies in controls, evidence and automated decisions.');
     expect(stripIdx).toBeGreaterThan(heroIdx);
-    expect(stripIdx).toBeLessThan(work.indexOf('Queue Forecast'));
-    expect(work).not.toContain('Resume (PDF)');
-    expect(work).not.toContain('/files/Williams-John-D-Resume.pdf');
+    expect(stripIdx).toBeLessThan(work.indexOf('Precision-Gated Enforcement'));
+    expect(work).not.toContain('Consulting in data engineering');
+    // Résumé back 2026-11-24 with the owner-approved PDF in the cleared framing.
+    expect(work).toContain('Résumé (PDF)');
+    // New name: browsers cached the 2026-10-25 301 on the old path forever.
+    expect(work).toContain('href="/files/John-D-Williams-Resume.pdf"');
+    expect(fs.existsSync(path.join(distDir, 'files', 'John-D-Williams-Resume.pdf'))).toBe(true);
     expect(fs.existsSync(path.join(distDir, 'files', 'Williams-John-D-Resume.pdf'))).toBe(false);
-    expect(work).toContain('Data, cybersecurity and operations projects by John D. Williams, with writings and research to come.');
+    const redirects = fs.readFileSync(path.join(process.cwd(), 'public/_redirects'), 'utf8');
+    expect(redirects).toMatch(/^\/files\/Williams-John-D-Resume\.pdf\s+\/files\/John-D-Williams-Resume\.pdf\s+301$/m);
+    expect(work).toContain('Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done.');
+    expect(work).not.toContain('writings and research to come');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
     expect(work).toContain('Process Controls');
     expect(work).not.toContain('Incident Command');
-    expect(work).toContain('Forecasting tool for enterprise support operations');
-    expect((work.match(/Forecasting/g) || []).length).toBe(2);
+    expect(work).not.toContain('Forecasting tool for enterprise support operations');
+    expect((work.match(/Forecasting/g) || []).length).toBe(0);
   });
-  it('about: the consulting card is retired; More stands under the name', () => {
+  it('about: the consulting card is retired; one pill under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
     expect(about).not.toContain('I take on select consulting work');
     expect(about).not.toContain('Resume (PDF)');
@@ -488,8 +622,13 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(about).toContain('/data/kinetic/earth.json');
     expect(about).not.toContain('/data/kinetic/structure.json');
     expect(about).not.toContain('/data/kinetic/sky.json');
-    expect(about).toContain('Neon traced across the night');
-    expect(about).toContain('Turquoise sea against rock formations');
+    // Elemental sequence (2026-11-24 second pass): Earth, Light, Water.
+    expect(about).toContain('Earth · rain-wet leaf');
+    expect(about).toContain('Light · neon traced across the night');
+    expect(about).toContain('Water · turquoise sea against rock formations');
+    expect(about.indexOf('Light · ')).toBeLessThan(about.indexOf('Water · '));
+    expect(about).not.toContain('Credentials &amp; Practice');
+    expect(about).not.toContain('<h2>Outside of work</h2>');
   });
   it('beyond: photograph at rest, plates stay in templates until a mode is chosen', async () => {
     const beyond = fs.readFileSync(path.join(distDir, 'beyond/index.html'), 'utf8');
@@ -508,9 +647,41 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(beyond).toContain('Hologram · stacked planes');
     expect(beyond).toContain('Point cloud · true depth');
     expect(beyond).toContain('data-depth-layers');
+    expect(beyond).toContain('id="depth-layers"');
+    expect(beyond).not.toMatch(/id="depth-layers"[^>]*\shidden/);
+    expect(beyond).toContain('class="beyond-banner"');
+    expect(beyond).toContain('Lone tree against a smoldering horizon');
+    expect((beyond.match(/id="depth-stack"/g) || []).length).toBe(1);
+    expect((beyond.match(/id="depth-separation"/g) || []).length).toBe(1);
+    expect(beyond).toContain('The photograph separated into five depth layers, far to near.');
+    expect(beyond).toContain('data-autoplay="0"');
+    const banner = beyond.match(/<img\b[^>]*beyond-banner__img[^>]*>/i)?.[0];
+    expect(banner, 'banner img').toBeTruthy();
+    expect(banner).toContain('fetchpriority="high"');
+    expect(banner).toContain('width="1200"');
+    expect(banner).toContain('height="901"');
+    expect(banner).not.toContain('style=');
+    const bannerPicture = beyond.slice(beyond.indexOf('class="beyond-banner"'), beyond.indexOf('id="beyond"'));
+    for (const tag of bannerPicture.match(/<(?:img|source)\b[^>]*>/gi) || []) {
+      const srcset = tag.match(/\bsrcset="([^"]+)"/)?.[1];
+      expect(srcset, tag).toBeTruthy();
+      for (const part of srcset!.split(',')) {
+        const candidate = part.trim().match(/^(\S+)\s+(\d+)w$/);
+        expect(candidate, part).toBeTruthy();
+        const file = await sharp(path.join(process.cwd(), 'public', candidate![1])).metadata();
+        expect(file.width, candidate![1]).toBe(Number(candidate![2]));
+      }
+    }
+    const stackBase = beyond.match(/<img\b[^>]*depth-stack__base[^>]*>/i)?.[0];
+    expect(stackBase, 'depth stack base').toBeTruthy();
+    expect(stackBase).toContain('loading="lazy"');
+    expect(stackBase).not.toContain('fetchpriority');
+    expect((beyond.match(/fetchpriority="high"/g) || []).length).toBe(2);
     expect(beyond).not.toContain('The same frame, as space');
     expect(beyond).not.toContain('Beyond%20Photography');
-    expect(beyond).toContain('The envelope');
+    // 2026-11-24 cohesion pass: the calibration paragraph left the page.
+    expect(beyond).toContain('What only a print can answer');
+    expect(beyond).not.toContain('calibrated bounds');
     expect(beyond).toContain('img-2528');
     expect(beyond).toContain('dsc-0014');
     expect(beyond).toContain('dscf1022');
@@ -525,17 +696,27 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(main).not.toContain('Hahnemühle');
     expect(main).not.toContain('cut to order');
     expect(main).not.toContain('—');
-    expect(main).toContain('Studies in texture.');
+    expect(main).toContain('Studies in texture, each one built from a single photograph.');
     expect(main).toContain('Scale study');
     expect(main).toContain('One depth, three sizes');
     expect(main).toContain('Open questions');
     expect(main).toContain('Which relief depth survives ordinary room light?');
-    expect(main).toContain('a Gaussian convolution, the closed-form');
+    expect(main).not.toContain('heat equation');
     expect(main).toContain('Back to the photographs');
+    // 2026-10-28 rebuild: the hero is full-bleed under the bleed-short
+    // exemption, the seven relief thumbnails are one scrubbed figure, and
+    // the page's controls share the layer figure's box (no glass chip rail).
+    expect(banner).toContain('data-bleed-short');
+    expect(main).toContain('Seven depths, one photograph.');
+    expect((main.match(/class="depth-scrub__frame/g) || []).length).toBe(2);
+    expect(main).toMatch(/<input[^>]*type="range"[^>]*max="6"[^>]*aria-valuetext="4 mm"[^>]*data-scrub-range/);
+    expect(main).not.toContain('glass-chip-rail');
+    expect(main).not.toContain('depth-grid');
+    expect(main).not.toContain('The depth studies');
     const imgs = beyond.match(/<img\b[^>]*>/gi) || [];
     expect(imgs.length).toBeGreaterThan(0);
     for (const tag of imgs) {
-      const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+      const src = tag.match(/\bsrc="([^"]+)"/)?.[1] ?? tag.match(/\bdata-src="([^"]+)"/)?.[1];
       const width = tag.match(/\bwidth="(\d+)"/)?.[1];
       const height = tag.match(/\bheight="(\d+)"/)?.[1];
       expect(src, tag).toBeTruthy();
@@ -561,6 +742,8 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(html).not.toMatch(/<style[\s\S]*?<\/style>/);
     expect(html).not.toMatch(/\sstyle="/);
     expect(html).not.toContain('KineticPlate');
+    expect(html).toContain('fetchpriority="high"');
+    expect(html).not.toContain('data-autoplay="0"');
     expect(html).toContain('/images/depth/w800/layer1.webp 800w');
     expect(html).not.toContain('2400w');
     const lower = html.toLowerCase();
@@ -583,5 +766,326 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     const footIdx = beyond.indexOf('John 15:13');
     expect(footIdx).toBeGreaterThan(-1);
     expect(beyond.slice(footIdx - 2000).includes('data-gpill')).toBe(true);
+  });
+});
+
+
+// Owner ruling 2026-11-14: prints are not for sale ("I do not have the infra
+// to make that happen"). Lives in this file so it runs after the build above
+// (a separate file raced the rebuild in CI and read an empty dist).
+const BANNED = [
+  /by inquiry/i,
+  /limited edition/i,
+  /edition of \d+/i,
+  /archival print/i,
+  /Inquire about this print/i,
+  /Browse all prints/i,
+  /Hahnem(ü|&uuml;|u)hle/i,
+  /gicl(é|&eacute;|e)e/i,
+  /prints are sold/i,
+];
+
+function htmlFiles(dir: string): string[] {
+  const out: string[] = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...htmlFiles(full));
+    else if (entry.name.endsWith('.html')) out.push(full);
+  }
+  return out;
+}
+
+describe('no print-sale offer while prints are not for sale', () => {
+  it('no built page or llms.txt offers prints', () => {
+    const files = [...htmlFiles(distDir), path.join(distDir, 'llms.txt')];
+    expect(files.length).toBeGreaterThan(50);
+    const hits: string[] = [];
+    for (const file of files) {
+      const rel = path.relative(distDir, file);
+      // Draft labs stay out of scope; they are gated and noindex.
+      if (/^(glass-lab|about-lab)\//.test(rel)) continue;
+      const body = fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+      for (const re of BANNED) if (re.test(body)) hits.push(`${rel}: ${re}`);
+    }
+    expect(hits, hits.slice(0, 10).join('\n')).toEqual([]);
+  });
+});
+
+// Enforcement-gates case study (2026-11-17). Public data only; the page's
+// numbers come from src/data/enforcement-sample.json written by
+// scripts/enforcement/train.py. These locks keep the page honest: the
+// published counts must match the data file, and no employer, platform or
+// internal term may appear on it.
+describe('enforcement-gates case study', () => {
+  const html = () => fs.readFileSync(path.join(distDir, 'work', 'enforcement-gates', 'index.html'), 'utf8');
+  const sample = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src', 'data', 'enforcement-sample.json'), 'utf8'));
+
+  it('is linked from Work and built from the data file', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work', 'index.html'), 'utf8');
+    expect(work).toContain('href="/work/enforcement-gates/"');
+    const page = html();
+    const t = sample.test;
+    expect(page).toContain(`${t.auto_tp} of ${t.auto_tp + t.auto_fp} were`);
+    expect(sample.points.length).toBe(sample.meta.split.test);
+    expect(sample.meta.messages_unique).toBeLessThan(sample.meta.messages_raw);
+    expect(page).toContain('viewBox="0 0 640 205"');
+    expect(page).toContain('data-nudge="auto"');
+    expect(page).toContain('Wrongly removed');
+    expect(page).not.toMatch(/\sstyle="/);
+  });
+
+  it('serves the wide case-study card below the hero tier', () => {
+    const work = fs.readFileSync(path.join(distDir, 'work/index.html'), 'utf8');
+    const card = work.match(/<picture\b[^>]*>(?:(?!<\/picture>)[\s\S])*?img-7395-enhanced-sr(?:(?!<\/picture>)[\s\S])*?<\/picture>/)?.[0];
+    expect(card, 'case study picture').toBeTruthy();
+    expect(card).toContain('/images/photography/card/img-7395-enhanced-sr.avif 1280w');
+    expect(card).toContain('/images/photography/gallery/img-7395-enhanced-sr.avif 1200w');
+    expect(card).toContain('/images/photography/thumb/img-7395-enhanced-sr.avif 400w');
+    expect(card).not.toContain('/images/photography/hero/img-7395-enhanced-sr');
+    expect(card).toContain('width="1280"');
+    expect(card).toContain('height="720"');
+    expect(card).toContain('loading="lazy"');
+    expect(card).toContain('decoding="async"');
+    expect(card).toContain('fetchpriority="low"');
+    expect(card).toContain('sizes="(max-width: 767px) 100vw, 1224px"');
+  });
+
+  it('tells the scroll story from the data, with a static fallback', () => {
+    const page = html();
+    // Eight steps, each a real list item, so the story reads without script.
+    expect(page.match(/data-story-step/g)?.length).toBe(8);
+    expect(page.match(/data-story-tick/g)?.length).toBe(8);
+    expect(page).toContain('data-enf-scrolly');
+    expect(page).toContain('data-enf-stage');
+    // Story numbers come from the sample, not from copy.
+    const t = sample.points.filter(([s]: [number, number]) => s >= sample.gates.auto);
+    const autoN = t.length;
+    const autoFp = t.filter(([, l]: [number, number]) => l === 0).length;
+    expect(page).toContain(`data-count="${sample.meta.split.test}"`);
+    expect(page).toContain(`data-count="${autoN}"`);
+    expect(page).toContain(`data-count="${autoFp}"`);
+    // Certification run: one square per decision a 99% claim needs.
+    const run = page.match(/<figure class="enf-run"[\s\S]*?<\/figure>/)?.[0] ?? '';
+    expect(run.match(/class="enf-run__cell[^"]*"/g)?.length).toBe(381 + 2);
+    expect(run).toContain('data-run-n>381<');
+    // The story and the gates ship as external modules (CSP: no inline).
+    expect(page).not.toMatch(/<script type="module">/);
+    expect(page).not.toMatch(/<style[\s>]/);
+  });
+
+  it('carries no employer, platform or internal terms and no em dash', () => {
+    const page = html();
+    for (const term of ['Starlink', 'SpaceX', 'Sprinklr', 'xAI', 'Grok', 'Starshield', 'ITAR']) {
+      expect(page, term).not.toContain(term);
+    }
+    expect(page).not.toContain('—');
+    expect(page).not.toMatch(/<style[\s>]/);
+    expect(page).not.toMatch(/<script type="module">/);
+  });
+});
+
+describe('Cohesion pass (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('home: identity, the rooms, then service, then connect', () => {
+    const home = read('index.html');
+    const inside = home.indexOf('>Inside<');
+    const service = home.indexOf('>In Service<');
+    const connect = home.indexOf('>Connect<');
+    expect(inside).toBeGreaterThan(0);
+    expect(service).toBeGreaterThan(inside);
+    expect(connect).toBeGreaterThan(service);
+    expect(home).not.toContain('>The Work<');
+  });
+  it('sky: the midday-blue frames left the gallery and their URLs 301', () => {
+    const gallery = read('photography/index.html');
+    const gone = ['dscf0088', 'dscf0056', 'dscf0060', 'dscf1275', 'dscf0090', 'dscf0091', 'dscf0082', 'dscf0086', 'dscf0069', 'dscf0936', '7r52355', '7r52352', 'img-7029-hdr-enhanced'];
+    const redirects = fs.readFileSync(path.join(process.cwd(), 'public/_redirects'), 'utf8');
+    for (const f of gone) {
+      expect(gallery, f).not.toContain(`/photography/${f}/`);
+      expect(fs.existsSync(path.join(distDir, 'photography', f)), f).toBe(false);
+      expect(redirects, f).toContain(`/photography/${f}/ /photography/ 301`);
+    }
+  });
+  it('photo pages: settings print once, under names a person would say', () => {
+    const page = read('photography/7r52326/index.html');
+    expect(page).not.toContain('ILCE-7RM5');
+    expect(page).toContain('Sony α7R V');
+    expect(page).toContain('Sigma 24-70mm F2.8 DG DN Art');
+    expect(page).not.toContain('| Art 019');
+  });
+  it('404: stands in a photograph like every other room', () => {
+    const nf = read('404.html');
+    expect(nf).toContain('/images/photography/hero/dsc-0329.webp');
+    expect(nf).toContain('This page does not exist.');
+    expect(nf).not.toContain("doesn't");
+  });
+});
+
+describe('Verification gate case study (2026-11-24)', () => {
+  const html = () => fs.readFileSync(path.join(distDir, 'work/verification-gate/index.html'), 'utf8');
+  it('rides the case-study grammar and states its limits', () => {
+    const page = html();
+    expect(page).toMatch(/<h1[^>]*>Adversarial Verification for AI Claims<\/h1>/);
+    expect(page).toContain('class="enf-meta"');
+    expect(page).toContain('It makes no claim about how often the gate has blocked');
+    expect(page).toContain('never rerun until it passes');
+    expect((page.match(/<tr>/g) || []).length).toBeGreaterThanOrEqual(7);
+  });
+  it('voice and OPSEC: no em dash, no employer or product names', () => {
+    const page = html();
+    expect(page).not.toContain('—');
+    for (const banned of ['SpaceX', 'Starlink', 'Sprinklr', 'ITAR', 'gpt-', 'grok-']) expect(page, banned).not.toContain(banned);
+  });
+});
+
+describe('iPhone Duo (2026-11-24)', () => {
+  const css = () => {
+    const dir = path.join(distDir, '_assets');
+    return fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+  };
+  it('heroes keep their lockup clear of the header on short screens', () => {
+    expect(css()).toMatch(/\[data-hero-under\]:not\(\.about-hero\):not\(\.beyond-banner\)\{padding-top:calc\(var\(--header-h\) \+ 1\.333rem\)\}/);
+  });
+  it('lockups take the side safe-area inset as a floor', () => {
+    const all = css();
+    expect(all).toContain('[class].hero-lockup');
+    expect(all).toContain('env(safe-area-inset-left)');
+  });
+});
+
+describe('Case studies say it with figures (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('governance: five gated acts, six ranked rules, the loop, the injection catch', () => {
+    const page = read('work/agent-governance/index.html');
+    expect((page.match(/class="gov-act"/g) || []).length).toBe(5);
+    expect((page.match(/class="gov-rung"/g) || []).length).toBe(6);
+    expect(page).toContain('class="gov-loop enf-wide"');
+    expect(page).toContain('class="gov-inject enf-wide"');
+    expect((page.match(/data-gov-anim/g) || []).length).toBe(5);
+    // The disclaimer prints once, as the colophon.
+    expect((page.match(/Not endorsed by or affiliated with NIST or ISO\./g) || []).length).toBe(1);
+    expect(page).not.toContain('Other mechanics, briefly');
+  });
+  it('enforcement: the rules as cards, the appeal as a picture of who appeals', () => {
+    const page = read('work/enforcement-gates/index.html');
+    expect((page.match(/class="enf-rule[ "]/g) || []).length).toBe(3);
+    expect(page).toContain('data-enf-appeal');
+    expect(page).toContain('rounded to whole people');
+    expect(page).not.toContain('A reversal rate that high is a signal, not a nuisance.');
+  });
+  it('about: the full-bleed portrait and the elemental sequence are back', () => {
+    const about = read('about/index.html');
+    expect(about).toContain('object-[center_12%]');
+    expect(about).toMatch(/>More<|More<span/);
+    expect(about).toContain('Light · neon traced across the night');
+  });
+});
+
+describe('Work serves a hiring conversation (owner order 2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every skill names where to see it', () => {
+    const page = read('work/index.html');
+    expect(page).toContain('id="evidence"');
+    expect((page.match(/class="work-evidence__row"/g) || []).length).toBeGreaterThanOrEqual(6);
+    expect(page).toContain('id="record"');
+  });
+  it('Work prints as words on white, with the record open', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    expect(all).toMatch(/@media print\{@page\{size:letter/);
+    expect(all).toContain('.xp-entry::details-content');
+  });
+});
+
+describe('Contrast holds in every state (2026-11-24)', () => {
+  it('Work timeline years brighten as the line passes; they never fade below AA', () => {
+    const dir = path.join(distDir, '_assets');
+    const all = fs.readdirSync(dir).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join('\n');
+    const rule = all.match(/\.xp-ribbon__year\{[^}]*\}/)?.[0] ?? '';
+    expect(rule).toContain('color-mix(');
+    expect(rule).not.toMatch(/opacity:clamp\(0?\.2/);
+  });
+});
+
+describe('Every photograph has a note (owner 2026-11-24)', () => {
+  it('each photo page prints an observational note, no em dashes', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/data/photography.ts'), 'utf8');
+    const rows = src.match(/\{ file: '[^']+'[^\n]*\}/g) || [];
+    expect(rows.length).toBeGreaterThan(80);
+    for (const r of rows) expect(r, r.slice(0, 40)).toMatch(/note: '/);
+    const page = fs.readFileSync(path.join(distDir, 'photography', '7r52035', 'index.html'), 'utf8');
+    expect(page).toContain('Sparks rise and fall in a white column against a black sky.');
+    expect(src).not.toMatch(/note: '[^']*—/);
+  });
+});
+
+describe('Public-Signal Triage case study (2026-11-24)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('ships in the case-study grammar, OPSEC-clean, with no intelligence-community framing', () => {
+    const work = read('work/index.html');
+    expect(work).toContain('href="/work/signal-triage/"');
+    const page = read('work/signal-triage/index.html');
+    expect(page).toMatch(/<h1[^>]*>Public-Signal Triage and Outage Detection<\/h1>/);
+    expect(page).toContain('Moderate confidence');
+    expect(page).toContain('"@type":"TechArticle"');
+    expect(page).not.toContain('—');
+    expect(page).not.toMatch(/<style[\s>]/);
+    expect(page).not.toMatch(/<script type="module">/);
+    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR', 'ICD 203', 'ODNI', 'Intelligence Community', 'tradecraft', 'OSINT', 'SIGINT', 'BGP', 'ASN', 'U.S. Citizen']) {
+      expect(page, banned).not.toContain(banned);
+    }
+    expect(fs.existsSync(path.join(distDir, 'work', 'signal-intelligence'))).toBe(false);
+  });
+  it('security.txt and the résumé cache rule ship', () => {
+    const sec = read('.well-known/security.txt');
+    expect(sec).toContain('Contact: mailto:jndwcreative@gmail.com');
+    expect(sec).toContain('Expires: ');
+    const headers = fs.readFileSync(path.join(process.cwd(), 'public/_headers'), 'utf8');
+    expect(headers).toContain('/files/*');
+  });
+});
+
+describe('Web performance pass (2026-11-25)', () => {
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  it('every photograph ships a mid tier and srcsets offer it between thumb and gallery', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero) continue;
+      expect(row.mid, stem).toBeTruthy();
+      expect(row.mid!.w, stem).toBeLessThanOrEqual(800);
+      expect(fs.existsSync(path.join(distDir, 'images/photography/mid', `${stem}.avif`)), stem).toBe(true);
+    }
+    expect(read('photography/index.html')).toContain('/images/photography/mid/');
+  });
+  it('Links serves small social thumbnails, Home serves a sized relief card', () => {
+    const links = read('links/index.html');
+    expect(links).toContain('/images/links/linkedin-240.webp');
+    expect(links).not.toContain('/images/linkedin-hero.webp');
+    expect(read('index.html')).toContain('/images/relief/card-800.avif 800w');
+  });
+  it('the appeal stages stay readable before the scroll reaches them', () => {
+    const css = fs.readFileSync(path.join(process.cwd(), 'src/styles/enforcement-story.css'), 'utf8');
+    expect(css).toContain('opacity: calc(0.78 + 0.22 * var(--fp, 1));');
+  });
+});
+
+describe('Portrait photos on phones (2026-11-25)', () => {
+  it('every portrait photograph ships a 1000 px tall tier, offered in its srcset', () => {
+    const dims = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/photo-dimensions.json'), 'utf8')) as Record<string, Record<string, { w: number; h: number }>>;
+    for (const [stem, row] of Object.entries(dims)) {
+      if (!row.hero || row.hero.h <= row.hero.w || row.hero.w <= 1050) continue;
+      expect(row.tall?.w, stem).toBe(1000);
+    }
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    expect(page).toContain('/images/photography/tall/dscf0331.avif 1000w');
+  });
+  it('image sizes never use svh: the preload scanner drops it and fetches the photo twice', () => {
+    const src = fs.readFileSync(path.join(process.cwd(), 'src/utils/photo-src.ts'), 'utf8');
+    expect(src).not.toMatch(/return `[^`]*svh/);
+    const page = fs.readFileSync(path.join(distDir, 'photography/dscf0331/index.html'), 'utf8');
+    const pre = page.match(/<link rel="preload"[^>]*imagesizes="([^"]*)"/)?.[1] ?? '';
+    const pic = page.match(/<source type="image\/avif"[^>]*sizes="([^"]*)"/)?.[1] ?? '';
+    expect(pre).not.toContain('svh');
+    expect(pre).toBe(pic);
   });
 });

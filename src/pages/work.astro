@@ -1,56 +1,148 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { bleedSizes, heroCapClass, photoSrcset, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
+import ExperienceRecord from '../components/ExperienceRecord.astro';
+import GlassPillGL from '../components/GlassPillGL.astro';
+import '../styles/work-print.css';
+import { bleedSizes, heroCapClass, photoSrcset, photoTiers, PROJECT_NARROW_SIZES, PROJECT_WIDE_SIZES } from '../utils/photo-src';
 
 
-const projects = [
+type ProjectCard = {
+  title: string;
+  description: string;
+  tags: string[];
+  /** One line: what kind of work and where it came from. */
+  meta: string;
+  github?: string;
+  page?: string;
+  image: string;
+  alt: string;
+  /** Grid span at md and up, out of 12. 12 is a full row. */
+  span: 5 | 6 | 7 | 12;
+};
+
+// 2026-11-24 cohesion pass (owner): every card carries a standfirst, a
+// provenance line and a link to the artifact; no resume outcome lines.
+// Case studies first; the MBA work below, named as coursework. Job
+// Application Analytics left the page (its repository stays public).
+const caseStudies: ProjectCard[] = [
   {
-    title: 'Queue Forecast Dashboard',
-    description: 'Forecasting tool for enterprise support operations. Holt-Winters exponential smoothing predicts queue demand across time windows. Sanitized and open-sourced with proportions-only output to respect operational security.',
-    tags: ['Python', 'Forecasting', 'Holt-Winters', 'Operations'],
-    outcome: 'Used in production for workforce planning',
-    github: 'https://github.com/thejohndwilliams/queue-forecast-dashboard',
+    title: 'Precision-Gated Enforcement',
+    description: 'A classifier run as an enforcement system: an auto-action gate, a review band, an appeal path, and the sample size it takes to prove a 99% gate.',
+    tags: ['Classifiers', 'Thresholds', 'Appeals'],
+    meta: 'Personal project · Public data',
+    page: '/work/enforcement-gates/',
+    image: 'dsc-0131',
+    alt: 'Storm front massing over rooftops',
+    span: 7,
+  },
+  {
+    title: 'Adversarial Verification for AI Claims',
+    description: 'Two models from different vendors are told a claim is wrong. They pass it only by citing raw evidence, and the gate blocks the rest.',
+    tags: ['AI assurance', 'Evidence', 'Decision rules'],
+    meta: 'Personal project · Python',
+    page: '/work/verification-gate/',
+    image: 'dsc-0101',
+    alt: 'City skyline burning blue at night',
+    span: 5,
+  },
+  {
+    title: 'Human Oversight for a Multi-Agent System',
+    description: 'Approval gates, role boundaries and an evidence trail that let one person govern a group of AI agents.',
+    tags: ['Approval gates', 'Evidence', 'Duties'],
+    meta: 'Personal project · Mapped to NIST AI RMF',
+    page: '/work/agent-governance/',
+    image: 'img-7395-enhanced-sr',
+    alt: 'Temple gate against blue sky',
+    span: 12,
+  },
+  {
+    title: 'Public-Signal Triage and Outage Detection',
+    description: 'Boolean query gates and a two-region burst rule turn noisy public posts into an early outage warning, with a brief that keeps reporting apart from judgment.',
+    tags: ['Query gates', 'Burst detection', 'Briefing'],
+    meta: 'Personal project · Synthetic data',
+    page: '/work/signal-triage/',
     image: 'gv-1fd48bd9',
-    alt: 'Glass tower rising into the night'
+    alt: 'Glass tower rising into the night',
+    span: 12,
   },
+];
+
+const coursework: ProjectCard[] = [
   {
-    title: 'Job Application Analytics',
-    description: 'Analysis of 580+ job applications over two years. Predictive models for rejection patterns, anomaly detection on response rates, isolation of which variables actually move hiring outcomes. Python, full statistical methodology.',
-    tags: ['Python', 'Machine Learning', 'Data Analysis', 'Statistics'],
-    outcome: 'Identified actionable patterns across 580+ applications',
-    github: 'https://github.com/thejohndwilliams/jobappanalysis',
-    image: 'dscf1059',
-    alt: 'A spire against a bruised twilight'
-  },
-  {
-    title: 'Government Cybersecurity Assessment',
-    description: 'NIST-framework risk assessment for government sector organizations. Threat analysis, control mapping, and remediation planning against NIST CSF and 800-53 Rev 5.',
-    tags: ['NIST CSF', 'NIST 800-53', 'Risk Assessment', 'Cybersecurity'],
-    outcome: 'Full threat model with prioritized remediation roadmap',
+    title: 'Government Sector Breach Assessment',
+    description: 'Three public breach cases read against NIST SP 800-30, from Privacy Rights Clearinghouse records, 2009 to 2018. Most turned on process failures, not technical sophistication.',
+    tags: ['NIST SP 800-30', 'Breach data', 'Risk'],
+    meta: 'Baylor MBA coursework',
     github: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment',
     image: 'dsc-0329',
-    alt: 'Light through a derelict hall'
+    alt: 'Light through a derelict hall',
+    span: 6,
   },
   {
     title: 'Healthcare Security Strategy',
-    description: 'MBA capstone at Baylor. Security framework for a healthcare organization: NIST CSF and 800-53 Rev 5 controls, risk assessment methodology, compliance mapping, implementation roadmap.',
-    tags: ['NIST CSF', 'NIST 800-53', 'Capstone', 'Compliance'],
-    outcome: 'Baylor University MBA Cybersecurity Capstone',
+    description: 'A security policy suite for a fictional medical technology company, aligned to the NIST CSF, then raised to NIST SP 800-53 Rev. 5 High for a government-funded data center.',
+    tags: ['NIST CSF', 'NIST 800-53', 'RMF'],
+    meta: 'Baylor MBA capstone, 2024',
     github: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha',
     image: 'dscf0423',
-    alt: 'Japanese alleyway at night'
-  }
+    alt: 'A narrow alley lit by one lamp',
+    span: 6,
+  },
 ];
 
-const expertise = [
-  'Data Engineering', 'Cybersecurity', 'Process Controls', 'Python',
-  'Power BI', 'SQL', 'Operations Analytics', 'Photography'
+// Skills and evidence (2026-11-24, owner: make the site usable in a hiring
+// conversation). Each skill points at the artifact that shows it; the
+// record below holds the roles. Federal panels call this specialized
+// experience; private screens read it the same way.
+const evidence: Array<{ skill: string; shown: Array<{ label: string; href: string }> }> = [
+  { skill: 'Enforcement thresholds, review bands and appeals', shown: [{ label: 'Precision-Gated Enforcement', href: '/work/enforcement-gates/' }] },
+  { skill: 'Quality sampling sized to the claim', shown: [{ label: 'Precision-Gated Enforcement', href: '/work/enforcement-gates/' }] },
+  { skill: 'Verifying AI-generated work against raw evidence', shown: [{ label: 'Adversarial Verification', href: '/work/verification-gate/' }] },
+  { skill: 'Human oversight and approval controls for AI agents', shown: [{ label: 'Agent Governance', href: '/work/agent-governance/' }] },
+  { skill: 'Risk assessment against NIST frameworks', shown: [{ label: 'Breach Assessment', href: 'https://github.com/thejohndwilliams/Government-Sector-Cybersecurity-Assessment' }, { label: 'Healthcare Strategy', href: 'https://github.com/thejohndwilliams/Healthcare-Security-Strategy-ZetaAlpha' }] },
+  { skill: 'Customer-signal intelligence: sentiment, outages, defects', shown: [{ label: 'Public-Signal Triage', href: '/work/signal-triage/' }, { label: 'The record', href: '#record' }] },
+  { skill: 'Python and SQL for measurement', shown: [{ label: 'Training script', href: 'https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/scripts/enforcement/train.py' }, { label: 'Decision rule, tested', href: 'https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/src/utils/verification-gate.ts' }] },
 ];
+
+const groups = [
+  { id: 'case-studies', label: 'Case studies', line: 'Built on public data and on my own systems. The discipline, not the details.', cards: caseStudies },
+  { id: 'coursework', label: 'Coursework', line: 'Baylor University, MBA in Cybersecurity.', cards: coursework },
+];
+
+// Literal class names so Tailwind's scanner emits them.
+const SPAN = { 5: 'md:col-span-5', 6: 'md:col-span-6', 7: 'md:col-span-7', 12: 'md:col-span-12' } as const;
+
+const CARD_W = 1280;
+const CARD_H = 720;
+
+/** Wide case-study card. A 1224px slot is just past the 1200 gallery file,
+ *  so a full srcset was selecting the 2400 hero (about 3x the pixels).
+ *  Thumb, gallery, and a 1280 card file cover the slot without that decode. */
+function projectPicture(file: string, wideCase: boolean) {
+  const row = photoTiers(file);
+  if (wideCase) {
+    return {
+      avif: `/images/photography/thumb/${file}.avif ${row.thumb.w}w, /images/photography/gallery/${file}.avif ${row.gallery.w}w, /images/photography/card/${file}.avif ${CARD_W}w`,
+      webp: `/images/photography/thumb/${file}.webp ${row.thumb.w}w, /images/photography/gallery/${file}.webp ${row.gallery.w}w, /images/photography/card/${file}.webp ${CARD_W}w`,
+      src: `/images/photography/card/${file}.webp`,
+      w: CARD_W,
+      h: CARD_H,
+    };
+  }
+  return {
+    avif: photoSrcset(file, 'avif'),
+    webp: photoSrcset(file, 'webp'),
+    src: `/images/photography/hero/${file}.webp`,
+    w: row.hero.w,
+    h: row.hero.h,
+  };
+}
+
 ---
 
 <BaseLayout
   title="Work"
-  description="Data, cybersecurity and operations projects by John D. Williams, with writings and research to come."
+  description="Case studies in controls, evidence and automated decisions by John D. Williams, with the record of where the work was done."
   ogImage="/og/pages/work.jpg"
   ogImageWidth={1200}
   ogImageHeight={630}
@@ -59,7 +151,7 @@ const expertise = [
 >
   <!-- HERO. Full-bleed lockup. dscf0331 is a 1349px portrait; the position
        class keeps the lanterns and the car in the wide crop. -->
-  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench>
+  <section class="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden" data-glass-bench data-hero-under>
     <picture>
       <source type="image/avif" srcset={photoSrcset('dscf0331', 'avif')} sizes="100vw" />
       <source type="image/webp" srcset={photoSrcset('dscf0331', 'webp')} sizes="100vw" />
@@ -75,71 +167,108 @@ const expertise = [
     <div class="hero-scrim-left absolute inset-0"></div>
     <div class="hero-lockup relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-12 sm:pb-16 md:pb-24">
       <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-3 sm:mb-4">Building</p>
+        <p class="eyebrow mb-3 sm:mb-4">Proving</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Selected Work</h1>
-        <p class="text-base leading-relaxed max-w-xl">
-          Consulting in data engineering, cybersecurity, and operational
-          analytics.
+        <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">
+          Case studies in controls, evidence and automated decisions.
         </p>
+        <!-- Résumé restored 2026-11-24 (owner ruling 2026-10-25: back only
+             with a new PDF in the cleared framing; owner approved the draft). -->
+        <div class="reveal reveal-delay-2 work-print-hide flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
+          <GlassPillGL label="Résumé (PDF)" href="/files/John-D-Williams-Resume.pdf" variant="c" class="w-full sm:w-auto justify-center" />
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ACT I - THE WORK · image-backed bento -->
+  <!-- ACT I - THE WORK. Case studies, then coursework, each card a
+       standfirst, a provenance line and the link to its artifact. -->
   <section class="section-light py-12 sm:py-16 md:py-24">
     <div class="container-wide">
-      <div class="reveal max-w-2xl mb-8 sm:mb-12">
-        <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Selected work</p>
-        <p class="text-base text-mute">
-          Data, security, and operations. The discipline, not the details.
-        </p>
-      </div>
-      <div class="stagger-children grid grid-cols-2 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
-        {projects.map((project, i) => {
-          const isWide = i === 0 || i === 3;
-          const span = isWide ? 'col-span-2 md:col-span-7' : 'col-span-1 md:col-span-5';
-          return (
-            <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[280px] sm:min-h-[340px] flex ${span}`}>
-              <picture>
-                <source type="image/avif" srcset={photoSrcset(project.image, 'avif')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
-                <source type="image/webp" srcset={photoSrcset(project.image, 'webp')} sizes={isWide ? PROJECT_WIDE_SIZES : PROJECT_NARROW_SIZES} />
-                <img src={`/images/photography/hero/${project.image}.webp`} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" />
-              </picture>
-              <div class="overlay-scrim-work absolute inset-0"></div>
-              <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
-                <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
-                <div class="flex flex-wrap gap-1.5 mb-3">
-                  {project.tags.slice(0, 3).map((tag: string) => (
-                    <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
-                  ))}
-                </div>
-                <p class={`text-base mb-3 sm:mb-4 leading-relaxed ${isWide ? '' : 'hidden sm:block'}`}>{project.description}</p>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-                  <p class="text-base text-stone-light">{project.outcome}</p>
-                  {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center">
-                      View on GitHub →
+      {groups.map((group, g) => (
+        <div class:list={[{ 'mt-14 sm:mt-20': g > 0 }]} id={group.id}>
+          <div class="reveal max-w-2xl mb-8 sm:mb-12">
+            <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">{group.label}</p>
+            <p class="text-base text-mute">{group.line}</p>
+          </div>
+          <div class="stagger-children grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-5">
+            {group.cards.map((project) => {
+              const full = project.span === 12;
+              const span = SPAN[project.span];
+              // Full row. Content box caps at 1224px: container-wide is 72rem at the
+              // 18px root, minus 2rem of padding on each side. A rem length in
+              // sizes uses the 16px initial size, so 72rem there is 1152px and
+              // the 1200 file is chosen for this wider card.
+              // Half-row cards (span 6) are half the container, wider than
+              // the 42vw narrow slot: say so, or a 2.5x screen picks a file
+              // smaller than it draws (e2e image-resolution, 2026-11-24).
+              const sizes = full
+                ? '(max-width: 767px) 100vw, 1224px'
+                : project.span >= 7
+                  ? PROJECT_WIDE_SIZES
+                  : project.span === 6
+                    ? '(max-width: 767px) 100vw, min(50vw, 612px)'
+                    : PROJECT_NARROW_SIZES;
+              const picture = projectPicture(project.image, full && Boolean(project.page));
+              return (
+                <div class={`glass-luminous group relative rounded-card overflow-hidden ring-1 ring-white/5 hover:ring-cream/20 focus-within:ring-cream/20 transition-[box-shadow] duration-500 ease-smooth min-h-[300px] sm:min-h-[360px] flex ${span}`}>
+                  <picture>
+                    <source type="image/avif" srcset={picture.avif} sizes={sizes} />
+                    <source type="image/webp" srcset={picture.webp} sizes={sizes} />
+                    <img src={picture.src} width={picture.w} height={picture.h} alt={project.alt} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105 group-focus-within:scale-105" loading="lazy" decoding="async" fetchpriority="low" />
+                  </picture>
+                  <div class="overlay-scrim-work absolute inset-0"></div>
+                  <div class="relative z-10 w-full flex flex-col justify-end p-4 sm:p-6 md:p-7">
+                    <p class="text-sm tracking-[0.12em] uppercase text-stone-light mb-2">{project.meta}</p>
+                    <h2 class="t-sub font-serif mb-2 text-cream">{project.title}</h2>
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                      {project.tags.slice(0, 3).map((tag: string) => (
+                        <span class="glass-tag text-sm px-2 sm:px-3 py-1 rounded-md sm:rounded-lg text-cream/90">{tag}</span>
+                      ))}
+                    </div>
+                    <p class="text-base mb-3 sm:mb-4 leading-relaxed max-w-2xl">{project.description}</p>
+                    <a
+                      href={project.page || project.github}
+                      target={project.page ? undefined : '_blank'}
+                      rel={project.page ? undefined : 'noopener noreferrer'}
+                      class="text-sm text-cream/80 hover:text-cream transition-[color,outline,outline-offset] duration-300 ease-smooth min-h-[44px] min-w-[44px] flex items-center self-start"
+                    >
+                      {project.page ? 'Read the case study →' : 'View the work on GitHub →'}<span class="sr-only">{` : ${project.title}`}</span>
                     </a>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div class="reveal mt-8 sm:mt-12">
-        <div class="flex flex-wrap gap-2">
-          {expertise.map((skill) => (
-            <span class="glass-tag px-3 py-1.5 sm:px-4 sm:py-2 text-sm text-mute rounded-md sm:rounded-lg">{skill}</span>
-          ))}
+              );
+            })}
+          </div>
         </div>
+      ))}
+      <div class="mt-14 sm:mt-20" id="evidence">
+        <div class="reveal max-w-2xl mb-6 sm:mb-8">
+          <p class="text-sm tracking-[0.18em] uppercase text-stone-light mb-2">Skills and evidence</p>
+          <p class="text-base text-mute">Each skill, and where to see it.</p>
+        </div>
+        <dl class="work-evidence">
+          {evidence.map((row) => (
+            <div class="work-evidence__row">
+              <dt>{row.skill}</dt>
+              <dd>
+                {row.shown.map((s, i) => (
+                  <>
+                    {i > 0 && <span class="work-evidence__sep" aria-hidden="true"> · </span>}
+                    <a href={s.href} class="link-draw" target={s.href.startsWith('http') ? '_blank' : undefined} rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}>{s.label}</a>
+                  </>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
-      <p class="reveal mt-8 sm:mt-10 text-base text-mute">
+      {/* 2026-11-24 (owner): the expertise chip cloud read as filler. Its
+          terms moved into the record below the ram, as chips on the roles
+          they came from and a Tools line. */}
+      <p class="reveal work-print-hide mt-8 sm:mt-12 text-base text-mute">
         The photography experiments, from depth studies to a photograph cut as a surface, live in <a href="/beyond/" class="link-draw text-cream/85 hover:text-cream">Beyond</a>.
       </p>
-      {/* A2.1 (owner ruling 2026-07-31): two floating pills made this band
-          loud. One flame, one whisper: the resume becomes a drawn-underline
-          text link; the inquiry keeps the ivory, compact. */}
     </div>
   </section>
 
@@ -153,6 +282,7 @@ const expertise = [
         sizes={bleedSizes('dsc-0014')}
         alt="A ram skull, stark against shadow"
         class="w-full h-full object-cover"
+        data-bleed-short
         loading="lazy"
         decoding="async"
       />
@@ -168,6 +298,9 @@ const expertise = [
       </div>
     </div>
   </section>
+
+  <!-- THE RECORD. "Here am I. Send me." opens onto where he was sent. -->
+  <ExperienceRecord />
 
   
 </BaseLayout>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 630" width="1440" height="630" role="img" aria-labelledby="t d">
+<title id="t">Illustrative, synthetic audit trail for one change: brief opened, draft prepared without merge, read-only screenshot check, a relayed approval rejected, dated Operator approval, merge by the Operator, and a live check.</title><desc id="d">Illustrative, synthetic audit trail for one change: brief opened, draft prepared without merge, read-only screenshot check, a relayed approval rejected, dated Operator approval, merge by the Operator, and a live check.</desc>
+<rect width="1440" height="630" fill="#0a0a0a"/>
+<text x="60" y="70" font-family="'EB Garamond', Georgia, serif" font-size="34" font-weight="400" fill="#F4EADE" text-anchor="start">Audit trail sample</text>
+<text x="1380" y="70" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#F4EADE" text-anchor="end">ILLUSTRATIVE  ·  SYNTHETIC DATA</text>
+<text x="60" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">TIME</text>
+<text x="250" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">ACTOR</text>
+<text x="450" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">EVENT</text>
+<text x="680" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">GATE / OUTCOME</text>
+<text x="1130" y="128" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#B8AEA2" text-anchor="start">EVIDENCE</text>
+<line x1="60" y1="142" x2="1380" y2="142" stroke="#3a3632"/>
+<text x="60" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 09:14</text>
+<text x="250" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Researcher</text>
+<text x="450" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Brief opened</text>
+<text x="680" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Outcome and checks recorded</text>
+<text x="1130" y="180" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Brief file</text>
+<line x1="60" y1="202" x2="1380" y2="202" stroke="#3a3632"/>
+<text x="60" y="240" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 10:05</text>
+<text x="250" y="240" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Developer</text>
+<text x="450" y="240" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Draft change prepared</text>
+<text x="680" y="240" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">No merge: gate requires dated approval</text>
+<text x="1130" y="240" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Draft change ID</text>
+<line x1="60" y1="262" x2="1380" y2="262" stroke="#3a3632"/>
+<text x="60" y="300" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 10:40</text>
+<text x="250" y="300" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Preview reviewer</text>
+<text x="450" y="300" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Read-only check</text>
+<text x="680" y="300" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Screenshots at four widths</text>
+<text x="1130" y="300" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Screenshot paths</text>
+<line x1="60" y1="322" x2="1380" y2="322" stroke="#3a3632"/>
+<text x="60" y="360" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 11:02</text>
+<text x="250" y="360" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Agent (relayed)</text>
+<text x="450" y="360" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Claimed approval</text>
+<text x="680" y="360" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Rejected: relayed approval is not approval</text>
+<text x="1130" y="360" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Log entry</text>
+<line x1="60" y1="382" x2="1380" y2="382" stroke="#3a3632"/>
+<text x="60" y="420" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 11:30</text>
+<text x="250" y="420" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Operator</text>
+<text x="450" y="420" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Dated approval</text>
+<text x="680" y="420" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Exact change approved</text>
+<text x="1130" y="420" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Operator message ID</text>
+<line x1="60" y1="442" x2="1380" y2="442" stroke="#3a3632"/>
+<text x="60" y="480" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 11:31</text>
+<text x="250" y="480" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Operator</text>
+<text x="450" y="480" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Executed merge</text>
+<text x="680" y="480" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Done by the Operator</text>
+<text x="1130" y="480" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Commit reference</text>
+<line x1="60" y1="502" x2="1380" y2="502" stroke="#3a3632"/>
+<text x="60" y="540" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">2026-03-02 11:45</text>
+<text x="250" y="540" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Auditor</text>
+<text x="450" y="540" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Live check</text>
+<text x="680" y="540" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Confirmed live, with time and identifier</text>
+<text x="1130" y="540" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#F4EADE" text-anchor="start">Check record</text>
+<line x1="60" y1="562" x2="1380" y2="562" stroke="#3a3632"/>
+<text x="60" y="600" font-family="'IBM Plex Sans', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#B8AEA2" text-anchor="start">Illustrative only. Entries are invented to show the record format, not taken from any real log.</text>
+</svg>
