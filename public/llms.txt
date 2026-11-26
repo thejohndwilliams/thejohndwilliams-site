@@ -23,6 +23,7 @@ This is a canonical, self-authored brief for AI agents summarizing John D. Willi
 - [Links](https://thejohndwilliams.com/links): photography, work, and where to reach me.
 - [About](https://thejohndwilliams.com/about): background and approach.
 - [Privacy](https://thejohndwilliams.com/privacy): privacy posture (minimal data collection).
+- [Use and credit](https://thejohndwilliams.com/use-and-credit/): photographs all rights reserved (no copying or AI training without permission); writing, case studies and figures CC BY 4.0, credit "John D. Williams, thejohndwilliams.com"; site code MIT.
 
 ## Contact
 - Inquiries: jndwcreative@gmail.com

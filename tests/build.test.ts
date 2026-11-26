@@ -1038,6 +1038,47 @@ describe('Every photograph has a note (owner 2026-11-24)', () => {
   });
 });
 
+describe('Use and credit (2026-11-26, owner ruling)', () => {
+  // John: photographs all rights reserved; writing, case studies and figures
+  // CC BY 4.0; site code MIT. Change only on his word.
+  const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
+  const CC = 'https://creativecommons.org/licenses/by/4.0/';
+  it('publishes the three terms and links them from every footer', () => {
+    const page = read('use-and-credit/index.html');
+    expect(page).toContain('id="photographs"');
+    expect(page).toContain('all rights reserved');
+    expect(page).toContain('id="writing"');
+    expect(page).toContain(CC);
+    expect(page).toContain('John D. Williams, thejohndwilliams.com');
+    expect(page).toContain('id="code"');
+    expect(page).toContain('MIT');
+    expect(page).not.toContain('\u2014');
+    for (const p of ['index.html', 'work/index.html', 'photography/index.html', 'about/index.html']) {
+      expect(read(p), p).toContain('href="/use-and-credit/"');
+    }
+  });
+  it('case studies carry CC BY in the page and in their structured data', () => {
+    for (const slug of ['enforcement-gates', 'agent-governance', 'verification-gate', 'signal-triage']) {
+      const page = read(`work/${slug}/index.html`);
+      expect(page, slug).toContain('class="enf-license"');
+      expect(page, slug).toContain(`"license":"${CC}"`);
+    }
+  });
+  it('photographs point search engines at the licensing page, not the gallery', () => {
+    const photo = read('photography/dscf0331/index.html');
+    expect(photo).toContain('"license":"https://thejohndwilliams.com/use-and-credit/#photographs"');
+    expect(photo).toContain('"acquireLicensePage":"https://thejohndwilliams.com/use-and-credit/#photographs"');
+  });
+  it('the repository code is MIT; LICENSE-CONTENT scopes it to code only', () => {
+    // LICENSE stays the bare MIT text so GitHub recognizes it.
+    const lic = fs.readFileSync(path.join(distDir, '..', 'LICENSE'), 'utf8');
+    expect(lic).toMatch(/^MIT License\n\nCopyright \(c\) 2026 John D\. Williams/);
+    const content = fs.readFileSync(path.join(distDir, '..', 'LICENSE-CONTENT.md'), 'utf8');
+    expect(content).toContain('all rights reserved');
+    expect(content).toContain(CC);
+  });
+});
+
 describe('Public-Signal Triage case study (2026-11-24)', () => {
   const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
   it('ships in the case-study grammar, OPSEC-clean, with no intelligence-community framing', () => {

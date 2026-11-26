@@ -737,6 +737,14 @@
   color: #f4eade;
 }
 
+/* Use-and-credit line on every case study (2026-11-26). Body size: phones keep 16px. */
+.enf-license {
+  margin-top: 2rem;
+  color: #a89f8c;
+  font-size: max(16px, 0.9375rem);
+  line-height: 1.6;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .enf-handle__knob,
   .enf-action,
