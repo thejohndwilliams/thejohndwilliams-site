@@ -286,13 +286,30 @@ describe('Generated HTML Content', () => {
       expect(aboutHtml).toContain('data');
     });
 
-    it('uses the multi-stop dither-resistant hero gradient', () => {
+    it('uses the shared multi-stop hero-scrim-left rule with no inline left-to-right gradient', () => {
       // 2026-11-24 second pass (owner): the full-bleed portrait hero is
-      // restored. Gradient starts semi-transparent (not solid black) and
-      // fades to fully transparent so the photograph breathes.
-      expect(aboutHtml).toContain('linear-gradient(to right, rgba(10,10,10,0.92) 0%');
-      expect(aboutHtml).toContain('rgba(10,10,10,0)');
+      // restored. 2026-11-25 ruling: Home, About, Work and 404 share one
+      // .hero-scrim-left CSS rule (no extra grain over the photographs).
+      // Gradient starts semi-transparent (0.92, not solid black) and fades
+      // to fully transparent so the photograph breathes.
+      const notFoundHtml = fs.readFileSync(path.join(distDir, '404.html'), 'utf-8');
+      for (const html of [aboutHtml, indexHtml, workHtml, notFoundHtml]) {
+        expect(html).toContain('hero-scrim-left');
+        expect(html).not.toContain('linear-gradient(to right');
+      }
       expect(aboutHtml).not.toContain('about-print');
+      const assetsDir = path.join(distDir, '_assets');
+      const css = fs.readdirSync(assetsDir)
+        .filter((f) => f.endsWith('.css'))
+        .map((f) => fs.readFileSync(path.join(assetsDir, f), 'utf-8'))
+        .join('\n');
+      const rule = css.match(/\.hero-scrim-left\{[^}]*\}/);
+      expect(rule, '.hero-scrim-left rule missing from shipped CSS').toBeTruthy();
+      const body = (rule as RegExpMatchArray)[0];
+      expect(body).toMatch(/#0a0a0aeb|rgba\(10,\s*10,\s*10,\s*\.?92\)/);
+      expect(body).toMatch(/#0a0a0a00|rgba\(10,\s*10,\s*10,\s*0\)/);
+      const stops = body.match(/#0a0a0a[0-9a-f]{2}|rgba\(/gi) || [];
+      expect(stops.length).toBeGreaterThanOrEqual(5);
     });
 
     it('uses <picture> with AVIF for the portrait hero', () => {
@@ -582,6 +599,8 @@ describe('Work: the record under the ram (owner order 2026-11-24)', () => {
     const ptd = page.match(/<li class="xp-item" data-xp-item="pennies-to-dollars"[\s\S]*?<\/li>/)?.[0] ?? '';
     expect(ptd).toContain('xp-mark__svg--ptd');
     expect(ptd).not.toContain('xp-mark__mono');
+    expect(ptd).toContain('Co-Founder, COO');
+    expect(ptd).not.toContain('Technology Operations');
     const spacex = page.match(/<li class="xp-item" data-xp-item="spacex"[\s\S]*?<\/li>/)?.[0] ?? '';
     expect(spacex).toContain('Customer intelligence');
   });

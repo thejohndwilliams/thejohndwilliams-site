@@ -27,7 +27,7 @@ test.describe('Work: the record', () => {
       'Process Specialist',
       'MBA, Cybersecurity',
       'SMB Account Manager',
-      'Co-Founder, Technology Operations',
+      'Co-Founder, COO',
       'Technical Support Expert',
       'BA, Film and Digital Media',
     ]);
