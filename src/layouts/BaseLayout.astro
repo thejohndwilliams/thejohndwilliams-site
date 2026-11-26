@@ -615,7 +615,8 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         }, { passive: true });
 
         const warmPrimaryRooms = () => {
-          if (!canWarm()) return;
+          if (!canWarm() || navigator.webdriver) return;
+          if (document.querySelector('meta[name="robots"][content*="noindex"]')) return;
           const rooms = ['/', '/photography/', '/work/', '/beyond/', '/about/'];
           for (const room of rooms) {
             if (room === window.location.pathname) continue;
@@ -623,15 +624,24 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
           }
         };
 
+        // Only warm sibling rooms after a real visitor engages (pointer or touch)
+        // and load has completed, keeping idle/bounce visits, noindex lab pages,
+        // and automated harnesses completely free of background HTML fetches.
+        let armedWarm = false;
         const scheduleWarm = () => {
-          window.setTimeout(() => {
+          if (armedWarm || !canWarm() || navigator.webdriver) return;
+          if (document.querySelector('meta[name="robots"][content*="noindex"]')) return;
+          armedWarm = true;
+          const runIdle = () => {
             const ric = (window as any).requestIdleCallback;
             if (typeof ric === 'function') ric(warmPrimaryRooms, { timeout: 3000 });
-            else warmPrimaryRooms();
-          }, 1800);
+            else window.setTimeout(warmPrimaryRooms, 600);
+          };
+          if (document.readyState === 'complete') runIdle();
+          else window.addEventListener('load', runIdle, { once: true });
         };
-        if (document.readyState === 'complete') scheduleWarm();
-        else window.addEventListener('load', scheduleWarm, { once: true });
+        window.addEventListener('pointermove', scheduleWarm, { once: true, passive: true });
+        window.addEventListener('touchstart', scheduleWarm, { once: true, passive: true });
       }
     </script>
   </body>
