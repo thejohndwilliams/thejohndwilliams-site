@@ -117,7 +117,7 @@ const jsonLd = {
       <p class="enf-step">01</p>
       <h2>Query gates before a rule ships</h2>
       <p>Monitoring public posts fails in the opposite direction of a lab classifier: an analyst writes a broad keyword rule to avoid missing an event, and the feed drowns in casual idioms, scheduled maintenance notices, commentary reshares and copy-pasted spam. Once an alert channel cries wolf twice in a shift, people mute it.</p>
-      <p>Every collection query here is treated as code with a release gate. Before a query enters production alerting, it must clear {pct(meta.precision_gate, 0)} precision and {pct(meta.recall_gate, 0)} recall on a labelled evaluation stream, with zero pre-fault false pages.</p>
+      <p>Every collection query here is treated as code with a release gate. On this benchmark a candidate must clear {pct(meta.precision_gate, 0)} precision and {pct(meta.recall_gate, 0)} recall on a labelled stream, with zero pre-fault false pages. Clearing the gate is not shipping: a person approves each change, and the live query is a dated version.</p>
 
       <figure class="sig-console enf-wide" data-sig-console data-sig-state="ships">
         <div class="sig-console__live" data-sig-live hidden>
@@ -125,7 +125,7 @@ const jsonLd = {
             <span class="sig-k">Collection clauses (toggle to test the release gate)</span>
             <div class="sig-clauses" role="group" aria-label="Query filter clauses">
               <span class="sig-clause sig-clause--locked">Anchor terms (locked)</span>
-              <button type="button" class="sig-clause" data-clause="prox" aria-pressed="true">Proximity NEAR/6</button>
+              <button type="button" class="sig-clause" data-clause="prox" aria-pressed="true">Proximity (simulated NEAR/6)</button>
               <button type="button" class="sig-clause" data-clause="excl" aria-pressed="true">Negative exclusions</button>
               <button type="button" class="sig-clause" data-clause="corr" aria-pressed="true">First-hand corroboration</button>
               <button type="button" class="sig-clause" data-clause="dedup" aria-pressed="true">Shingle deduplication</button>
@@ -157,7 +157,7 @@ const jsonLd = {
 
           <div class="sig-verdict" aria-live="polite">
             <span class="sig-k">Release gate verdict</span>
-            <p class="sig-verdict__v" data-sig-decision>Query ships</p>
+            <p class="sig-verdict__v" data-sig-decision>Clears the gate</p>
             <ul class="sig-verdict__reasons" data-sig-reasons>
               {gated.reasons.map((r) => <li>{r}</li>)}
             </ul>
@@ -199,12 +199,13 @@ const jsonLd = {
                   <td>{pct(s.precision)} ({pct(s.wilson[0])} to {pct(s.wilson[1])})</td>
                   <td>{pct(s.recall)}</td>
                   <td>{s.fp} ({s.pre_fault_alarms} false {s.pre_fault_alarms === 1 ? 'page' : 'pages'})</td>
-                  <td class:list={[{ 'sig-stages__blocked': !s.ships }]}>{s.ships ? 'Ships' : 'Blocked'}</td>
+                  <td class:list={[{ 'sig-stages__blocked': !s.ships }]}>{s.ships ? 'Clears' : 'Blocked'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <figcaption class="enf-cap sig-near-note" data-sig-near-note><span>NEAR/6 (two terms within six words) is an operator commercial listening platforms offer, simulated here. A public post-search API offers phrases, AND, OR and NOT but no word distance; a live build approximates it with a quoted phrase plus required co-occurring terms, then checks relevance after the pull.</span></figcaption>
       </figure>
       <p>Lexical precision alone is still vulnerable to coordinated copy-paste bursts: fifteen identical credit-spam posts carrying realistic symptom words pass proximity, exclusion and corroboration rules at 02:00 UTC, firing a false alarm fifteen minutes before any fault exists. Text-shingle deduplication collapses the burst to one uncorroborated cluster and restores the gate.</p>
     </section>
@@ -212,7 +213,7 @@ const jsonLd = {
     <section class="enf-block">
       <p class="enf-step">02</p>
       <h2>Indications and warning before status confirmation</h2>
-      <p>Volume alone is a brittle trigger. The burst rule requires at least {meta.burst_min_count} distinct corroborated reports in each of two consecutive {meta.window_minutes}-minute windows across at least {meta.burst_min_regions} regions. In the benchmark, a regional outage starts at {meta.fault_utc} UTC, crosses the multi-region burst gate at {gated.detectTime} UTC, and precedes the simulated status-page update at {meta.status_ack_utc} UTC by {gated.leadMinutes} minutes.</p>
+      <p>Volume alone is a brittle trigger. This benchmark's burst rule, the design under test rather than any live threshold, requires at least {meta.burst_min_count} distinct corroborated reports in each of two consecutive {meta.window_minutes}-minute windows across at least {meta.burst_min_regions} regions. In the benchmark, a regional outage starts at {meta.fault_utc} UTC, crosses the multi-region burst gate at {gated.detectTime} UTC, and precedes the simulated status-page update at {meta.status_ack_utc} UTC by {gated.leadMinutes} minutes.</p>
 
       <figure class="sig-burst enf-wide">
         <svg
@@ -308,7 +309,7 @@ const jsonLd = {
       <p class="enf-step">04</p>
       <h2>Requirements I would set</h2>
       <ol class="enf-req-list">
-        <li><span class="enf-req__n">1</span><p><strong>Gate every query on precision and recall before it alerts.</strong> A collection query is production logic; no Boolean rule ships without clearing held-out thresholds and Wilson lower-bound checks.</p></li>
+        <li><span class="enf-req__n">1</span><p><strong>Gate every query on precision and recall, then let a person approve it.</strong> A collection query is production logic: no rule alerts before it clears held-out thresholds, and nothing rewrites a live query without a person approving a dated version.</p></li>
         <li><span class="enf-req__n">2</span><p><strong>Deduplicate before counting volume.</strong> One actor pasting fifteen copies is one observation, never a fifteen-sigma event.</p></li>
         <li><span class="enf-req__n">3</span><p><strong>Require multi-window, cross-region corroboration to page a human.</strong> Requiring persistence across two windows filters transient blips while preserving twenty-plus minutes of warning lead.</p></li>
         <li><span class="enf-req__n">4</span><p><strong>Separate probability from analytic confidence in every brief.</strong> High likelihood on thin reporting is still low or moderate confidence, and decision-makers need both numbers.</p></li>

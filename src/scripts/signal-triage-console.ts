@@ -51,7 +51,7 @@ function init(): void {
     const res = evaluateStream(rows, meta, state);
 
     root.dataset.sigState = res.ships ? 'ships' : 'blocked';
-    decisionEl.textContent = res.ships ? 'Query ships' : 'Blocked at gate';
+    decisionEl.textContent = res.ships ? 'Clears the gate' : 'Blocked at gate';
 
     reasonsEl.replaceChildren();
     for (const r of res.reasons) {

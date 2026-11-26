@@ -1055,6 +1055,21 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     }
     expect(fs.existsSync(path.join(distDir, 'work', 'signal-intelligence'))).toBe(false);
   });
+
+  it('states what a live build does, not what the benchmark simulates (2026-11-25 accuracy fixes)', () => {
+    // The research program's review: (1) NEAR/6 read as a shippable clause, but a
+    // public post-search API has no word-distance operator; (2) the gate read as
+    // auto-shipping, but a person approves every live query change; (3) the burst
+    // rule read as a production threshold. All three stay as the synthetic design.
+    const page = read('work/signal-triage/index.html');
+    expect(page).toContain('data-sig-near-note');
+    expect(page).toContain('simulated NEAR/6');
+    expect(page).toContain('no word distance');
+    expect(page).toContain('Clearing the gate is not shipping');
+    expect(page).toContain('a person approving a dated version');
+    expect(page).toContain('the design under test rather than any live threshold');
+    expect(page).not.toContain('Query ships');
+  });
   it('security.txt and the résumé cache rule ship', () => {
     const sec = read('.well-known/security.txt');
     expect(sec).toContain('Contact: mailto:jndwcreative@gmail.com');
