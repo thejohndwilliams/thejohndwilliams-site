@@ -395,10 +395,10 @@ function mount(fig: HTMLElement, signal: AbortSignal): void {
   const io = new IntersectionObserver((entries) => {
     if (!entries.some((entry) => entry.isIntersecting)) return;
     io.disconnect();
-    ensureImages();
     if (fig.dataset.played === '1') return;
     fig.dataset.played = '1';
     if (reduced() || still === 'open') {
+      ensureImages();
       shown = { sep: 1, tilt: 1, lab: 1 };
       target = { sep: 1, tilt: 1, lab: 1 };
       apply();
@@ -406,9 +406,16 @@ function mount(fig: HTMLElement, signal: AbortSignal): void {
       return;
     }
     if (still === 'flat' || fig.dataset.autoplay === '0') {
+      // Resting figures (/beyond sets autoplay=false) stay flat at sep=0 and
+      // show only layer1.webp until the visitor hovers, focuses, scrubs or
+      // clicks Replay. Deferring the five hidden RGBA layer decodes keeps the
+      // first scroll past the figure free of texture-upload stalls.
+      view.addEventListener('pointerenter', ensureImages, { once: true, signal });
+      fig.addEventListener('focusin', ensureImages, { once: true, signal });
       apply();
       return;
     }
+    ensureImages();
     play();
   }, { threshold: 0.5 });
   io.observe(view);
