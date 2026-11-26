@@ -1,9 +1,10 @@
 // The record on /work: roles and degrees, newest first.
-// Owner rulings 2026-11-24: SpaceX by name with title and years only (no
-// product, team, segments, numbers or programs; the site's OPSEC law);
-// one SpaceX entry, Process Specialist; Apple both roles, the fintech
-// co-founder role, and both Baylor degrees. Each entry opens to one plain
-// line and a few chips. Source: 01_Career/MASTER_CAREER_INDEX.md.
+// Owner rulings 2026-11-24 / 2026-11-25: SpaceX by name with title and years
+// only (no product, team, segments, numbers or programs; the site's OPSEC law);
+// one SpaceX entry on /work, Process Specialist (the two offer-letter titles
+// live on the résumé PDF only); Apple both roles, Pennies to Dollars as
+// Co-Founder, COO (matching the résumé PDF), and both Baylor degrees. Each
+// entry opens to one plain line and a few chips. Source: 01_Career/MASTER_CAREER_INDEX.md.
 // Voice: no GPA, no unfinished credentials, no metrics, no em dashes.
 
 export type Lane = 'work' | 'study';
@@ -65,7 +66,7 @@ export const RECORD: RecordEntry[] = [
     id: 'pennies-to-dollars',
     org: 'Pennies to Dollars',
     mark: 'ptd',
-    role: 'Co-Founder, Technology Operations',
+    role: 'Co-Founder, COO',
     lane: 'work',
     from: '2020-07',
     to: '2022-11',
