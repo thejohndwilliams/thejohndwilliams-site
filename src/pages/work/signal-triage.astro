@@ -10,6 +10,8 @@ import {
   type StreamMeta,
   type StreamRow,
 } from '../../utils/signal-triage';
+import { tokenize, passes, tally, type Mode } from '../../utils/signal-proximity';
+import { CHECKS, SCENARIOS } from '../../data/signal-presend';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 import '../../styles/signal-triage.css';
@@ -51,6 +53,18 @@ const xCenter = (w: number) => TL.l + w * stepX + barW / 2;
 const tickWindows = [0, 6, 12, 18, 24, 30, 35];
 const yTicks = [0, 5, 15, 25].filter((v) => v <= maxCount);
 
+// Proximity without NEAR: every mark below computes from signal-proximity.ts.
+const MODES: { id: Mode; label: string }[] = [
+  { id: 'near', label: 'NEAR/6 (platform)' },
+  { id: 'groups', label: 'Required groups (API)' },
+  { id: 'relevance', label: 'Groups + relevance pass' },
+];
+const tallyText = (m: Mode) => {
+  const t = tally(specimens, m);
+  return `Keeps ${t.signalKept} of ${t.signalTotal} witness reports and ${t.noiseKept} of ${t.noiseTotal} noise posts.`;
+};
+const cleanScenario = SCENARIOS[0];
+
 const BENCHMARK_SHA256 = '07d9d448addf4f301a8ffd022d93c72fbe1dfb6a2018afd72851588cff80402b';
 
 const jsonLd = {
@@ -59,7 +73,7 @@ const jsonLd = {
   headline: pageTitle,
   description,
   datePublished: '2026-11-24',
-  dateModified: '2026-11-24',
+  dateModified: '2026-11-25',
   url: 'https://thejohndwilliams.com/work/signal-triage/',
   author: { '@type': 'Person', name: 'John D. Williams', url: 'https://thejohndwilliams.com' },
 };
@@ -96,7 +110,7 @@ const jsonLd = {
       <div class="reveal max-w-2xl">
         <p class="eyebrow mb-3 sm:mb-4">Case study · Public signals</p>
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">{pageTitle}</h1>
-        <p class="enf-deck">Boolean query gates, burst detection and a structured brief: turning noisy public posts into an early outage warning.</p>
+        <p class="enf-deck">Boolean gates without a NEAR operator, a person approving every change, and a brief that checks its own citations: turning noisy public posts into an early outage warning.</p>
       </div>
     </div>
   </section>
@@ -212,6 +226,71 @@ const jsonLd = {
 
     <section class="enf-block">
       <p class="enf-step">02</p>
+      <h2>Proximity without a NEAR operator</h2>
+      <p>Without word distance, the tightening comes from requiring three kinds of word in the same post: the product, a first-person word and a symptom. The first-person group does the work proximity did, and keeps the customer's own voice. It is necessary, not sufficient: an offer can say "my" too, so a relevance pass after the pull still removes what passes every word test.</p>
+
+      <figure class="sig-prox enf-wide" data-sig-prox data-mode="relevance">
+        <div class="sig-prox__live" data-sig-prox-live hidden>
+          <span class="sig-k">Query form</span>
+          <div class="sig-clauses" role="group" aria-label="Query form">
+            {MODES.map((m) => (
+              <button type="button" class="sig-clause" data-prox-mode={m.id} data-tally={tallyText(m.id)} aria-pressed={String(m.id === 'relevance')}>{m.label}</button>
+            ))}
+          </div>
+          <p class="sig-prox__tally" aria-live="polite" data-sig-prox-tally>{tallyText('relevance')}</p>
+        </div>
+        <div class="sig-prox__head" aria-hidden="true">
+          <span>Post</span>
+          <span class="sig-prox__marks">{MODES.map((m) => <span class="sig-prox__mark" data-mark={m.id}>{m.id === 'near' ? 'NEAR/6' : m.id === 'groups' ? 'Groups' : '+ Relevance'}</span>)}</span>
+        </div>
+        <ul class="sig-prox__posts">
+          {specimens.map((sp) => (
+            <li class="sig-prox__post" data-post={sp.id} data-near={String(passes(sp.text, 'near'))} data-groups={String(passes(sp.text, 'groups'))} data-relevance={String(passes(sp.text, 'relevance'))} data-kept={String(passes(sp.text, 'relevance'))}>
+              <span class="sig-prox__note">{sp.note}</span>
+              <p class="sig-prox__text">{tokenize(sp.text).map((t) => (t.group ? <span class={`sig-w sig-w--${t.group}`}>{t.text}</span> : t.text))}</p>
+              <span class="sig-prox__marks">
+                {MODES.map((m) => (
+                  <span class="sig-prox__mark" data-mark={m.id} data-pass={String(passes(sp.text, m.id))}><span class="sr-only">{m.label}: </span>{passes(sp.text, m.id) ? 'Kept' : 'Dropped'}</span>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <ul class="sig-legend" aria-hidden="true">
+          <li class="sig-legend__item"><span class="sig-w sig-w--product">Product</span></li>
+          <li class="sig-legend__item"><span class="sig-w sig-w--person">First person</span></li>
+          <li class="sig-legend__item"><span class="sig-w sig-w--symptom">Symptom</span></li>
+        </ul>
+        <figcaption class="enf-cap"><span>The six specimen posts above, scored in the browser for each query form; columns read NEAR/6, required groups, groups plus relevance pass. Word lists are illustrative, not a live query.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">03</p>
+      <h2>A person approves every change</h2>
+      <p>Wording drifts and promotions borrow symptom words, so a query that cleared the gate goes stale. The answer is a loop, not a rewrite. Nothing edits the live query on its own.</p>
+
+      <figure class="sig-loop enf-wide">
+        <ol class="sig-loop__steps">
+          <li class="sig-loop__step"><span class="sig-loop__n">1</span><strong>Measure</strong><span>Each run counts yield and noise, plus a wider sample used only for measurement, never cited.</span></li>
+          <li class="sig-loop__step"><span class="sig-loop__n">2</span><strong>Propose</strong><span>Candidate terms ranked by distinct authors and first-hand share. Terms that find nothing or flood the feed are skipped.</span></li>
+          <li class="sig-loop__step sig-loop__step--person"><span class="sig-loop__n">3</span><strong>Approve</strong><span>A person accepts or rejects each one. Suggestions from a tool or a vendor assistant follow the same rule.</span></li>
+          <li class="sig-loop__step"><span class="sig-loop__n">4</span><strong>Version</strong><span>An approved change becomes a dated version. The old one stays on record.</span></li>
+          <li class="sig-loop__step"><span class="sig-loop__n">5</span><strong>Check</strong><span>A regular check confirms the query actually running matches the current version.</span></li>
+        </ol>
+        <span class="sig-loop__return" aria-hidden="true">Back to 1</span>
+        <span class="sig-k">Illustrative version record, newest first</span>
+        <dl class="sig-care sig-registry">
+          <div><dt>v3</dt><dd>Add the phrase "payments time out"</dd><dd class="sig-registry__d">Approved</dd></div>
+          <div class="sig-registry__rejected"><dt>Candidate</dt><dd>Add "outage credit"</dd><dd class="sig-registry__d">Rejected: a copy-paste offer</dd></div>
+          <div><dt>v2</dt><dd>Require a first-person word</dd><dd class="sig-registry__d">Approved</dd></div>
+          <div><dt>v1</dt><dd>Product and symptom words</dd><dd class="sig-registry__d">Approved</dd></div>
+        </dl>
+      </figure>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">04</p>
       <h2>Indications and warning before status confirmation</h2>
       <p>Volume alone is a brittle trigger. This benchmark's burst rule, the design under test rather than any live threshold, requires at least {meta.burst_min_count} distinct corroborated reports in each of two consecutive {meta.window_minutes}-minute windows across at least {meta.burst_min_regions} regions. In the benchmark, a regional outage starts at {meta.fault_utc} UTC, crosses the multi-region burst gate at {gated.detectTime} UTC, and precedes the simulated status-page update at {meta.status_ack_utc} UTC by {gated.leadMinutes} minutes.</p>
 
@@ -270,7 +349,43 @@ const jsonLd = {
     </section>
 
     <section class="enf-block">
-      <p class="enf-step">03</p>
+      <p class="enf-step">05</p>
+      <h2>Before the brief goes out</h2>
+      <p>Public posts get edited and deleted after collection. A brief is only as good as the citations it still has, so every send passes a check, and a failure is logged rather than papered over.</p>
+
+      <figure class="sig-gate enf-wide" data-sig-gate data-scenario="clean">
+        <div class="sig-gate__live" data-sig-gate-live hidden>
+          <span class="sig-k">Try a failure</span>
+          <div class="sig-clauses" role="group" aria-label="Pre-send scenario">
+            {SCENARIOS.map((sc) => (
+              <button type="button" class="sig-clause" data-scenario-id={sc.id} aria-pressed={String(sc.id === 'clean')}>{sc.button}</button>
+            ))}
+          </div>
+        </div>
+        <div class="sig-gate__body">
+          <ol class="sig-gate__checks">
+            {CHECKS.map((c) => {
+              const st = cleanScenario.states[c.id];
+              return (
+                <li class="sig-gate__check" data-check={c.id} data-fail="false">
+                  <span class="sig-gate__name">{c.label}</span>
+                  <span class="sig-gate__state" data-check-state>{st ? st.text : 'Pass'}</span>
+                </li>
+              );
+            })}
+          </ol>
+          <div class="sig-gate__out" aria-live="polite">
+            <span class="sig-k">Outcome</span>
+            <p class="sig-verdict__v" data-sig-gate-outcome>{cleanScenario.outcome}</p>
+            <p class="sig-gate__detail" data-sig-gate-detail>{cleanScenario.detail}</p>
+          </div>
+        </div>
+        <figcaption class="enf-cap"><span>Illustrative scenarios. Every cited item keeps its link, and a quote, if used at all, is short and comes only from the post it cites.</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="enf-block">
+      <p class="enf-step">06</p>
       <h2>Separating reporting from judgment</h2>
       <p>Detection is half the job; the other half is briefing decision-makers without overstating noisy public reporting. The alert roll-up separates what people reported from the assessment, pairs likelihood with an explicit confidence level, and names the collection gaps that could overturn the call.</p>
 
@@ -305,8 +420,20 @@ const jsonLd = {
       </figure>
     </section>
 
+    <section class="enf-block">
+      <p class="enf-step">07</p>
+      <h2>First-person reports of distress</h2>
+      <p>A search for first-person posts will also find people describing a personal crisis. Those posts are collected so a person can help, never to be shown.</p>
+      <dl class="sig-care enf-wide">
+        <div><dt>Route</dt><dd>First-person language only, sent to a person, kept apart from outage counts.</dd></div>
+        <div><dt>Never show</dt><dd>No quotes, account names, ids or links, on a page or in a brief.</dd></div>
+        <div><dt>Log</dt><dd>A one-way hash at most.</dd></div>
+        <div><dt>Alerts</dt><dd>A volume spike on the word "crisis" is a count, not a care rule.</dd></div>
+      </dl>
+    </section>
+
     <section class="enf-block enf-reqs">
-      <p class="enf-step">04</p>
+      <p class="enf-step">08</p>
       <h2>Requirements I would set</h2>
       <ol class="enf-req-list">
         <li><span class="enf-req__n">1</span><p><strong>Gate every query on precision and recall, then let a person approve it.</strong> A collection query is production logic: no rule alerts before it clears held-out thresholds, and nothing rewrites a live query without a person approving a dated version.</p></li>
@@ -314,13 +441,17 @@ const jsonLd = {
         <li><span class="enf-req__n">3</span><p><strong>Require multi-window, cross-region corroboration to page a human.</strong> Requiring persistence across two windows filters transient blips while preserving twenty-plus minutes of warning lead.</p></li>
         <li><span class="enf-req__n">4</span><p><strong>Separate probability from analytic confidence in every brief.</strong> High likelihood on thin reporting is still low or moderate confidence, and decision-makers need both numbers.</p></li>
         <li><span class="enf-req__n">5</span><p><strong>State what would falsify the assessment.</strong> Naming the indicator that disproves the call prevents early hypotheses from hardening into confirmation bias during a live event.</p></li>
+        <li><span class="enf-req__n">6</span><p><strong>Re-check what a brief cites before it sends.</strong> A deleted post, a lost link or a map that disagrees with its counts holds the send.</p></li>
+        <li><span class="enf-req__n">7</span><p><strong>Name what failed, and label every figure.</strong> A failed pull goes in the brief, and each figure says whether it is computed, documented or illustrative.</p></li>
+        <li><span class="enf-req__n">8</span><p><strong>Keep people in distress off every page and brief.</strong> No quotes, names, ids or links, and no live query or threshold on a public page.</p></li>
       </ol>
     </section>
 
     <section class="enf-block enf-method">
-      <p class="enf-step">05</p>
+      <p class="enf-step">09</p>
       <h2>Method and provenance</h2>
       <p>The benchmark stream holds {fmt(meta.posts_total)} synthetic posts ({meta.signal_total} true disruption reports and {fmt(meta.posts_total - meta.signal_total)} background idioms, planned-maintenance notices, commentary echoes and coordinated copy-paste bursts) generated deterministically in Python at seed {meta.seed}. Every figure and table on this page computes directly from that JSON file; no employer, customer or third-party platform records are used.</p>
+      <p>Computed from that file or its specimen posts: the stream, the gates, the chart and the proximity marks. Illustrative: the version record, the pre-send scenarios and the brief. No live query, threshold or source list appears on this page.</p>
       <p class="sig-prov">Artifact: src/data/signal-triage.json · seed {meta.seed} · sha256 {BENCHMARK_SHA256}</p>
       <p class="enf-code"><a href="https://github.com/thejohndwilliams/thejohndwilliams-site/blob/main/scripts/signals/evaluate.py" class="link-draw" rel="noopener noreferrer" target="_blank">Benchmark generator and gate evaluator</a></p>
       <p class="enf-return"><a href="/work/">Back to the work</a></p>

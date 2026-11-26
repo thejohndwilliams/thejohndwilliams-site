@@ -20,6 +20,25 @@ test.describe('Signal triage case study', () => {
     await expect(decision).toHaveText('Clears the gate');
   });
 
+  test('proximity figure recounts per query form and the pre-send gate holds on a map mismatch', async ({ page }) => {
+    await page.goto('/work/signal-triage/');
+    const prox = page.locator('[data-sig-prox]');
+    const tally = prox.locator('[data-sig-prox-tally]');
+    await expect(tally).toHaveText('Keeps 2 of 2 witness reports and 0 of 4 noise posts.');
+    const near = prox.locator('[data-prox-mode="near"]');
+    await near.focus();
+    await page.keyboard.press('Enter');
+    await expect(near).toHaveAttribute('aria-pressed', 'true');
+    await expect(tally).toHaveText('Keeps 2 of 2 witness reports and 3 of 4 noise posts.');
+
+    const gate = page.locator('[data-sig-gate]');
+    const map = gate.locator('[data-scenario-id="map"]');
+    await map.focus();
+    await page.keyboard.press('Enter');
+    await expect(gate.locator('[data-sig-gate-outcome]')).toHaveText('Held');
+    await expect(gate.locator('[data-check="map"]')).toHaveAttribute('data-fail', 'true');
+  });
+
   test('cumulative stage table renders without script', async ({ browser }) => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
     const page = await ctx.newPage();

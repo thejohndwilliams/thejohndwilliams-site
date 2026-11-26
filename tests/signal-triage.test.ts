@@ -71,3 +71,25 @@ describe('signal triage evaluation engine', () => {
     expect(sigPage).not.toContain('\u2014');
   });
 });
+
+describe('proximity without a NEAR operator (2026-11-25)', async () => {
+  const { passes, tally } = await import('../src/utils/signal-proximity');
+  const specimens = benchmark.specimens as SpecimenPost[];
+
+  it('scores the six specimen posts exactly as the page claims', () => {
+    expect(tally(specimens, 'near')).toEqual({ signalKept: 2, signalTotal: 2, noiseKept: 3, noiseTotal: 4 });
+    expect(tally(specimens, 'groups')).toEqual({ signalKept: 2, signalTotal: 2, noiseKept: 1, noiseTotal: 4 });
+    expect(tally(specimens, 'relevance')).toEqual({ signalKept: 2, signalTotal: 2, noiseKept: 0, noiseTotal: 4 });
+  });
+
+  it('the first-person group, not word distance, is what drops planned work and reshares', () => {
+    const byId = Object.fromEntries(specimens.map((s) => [s.id, s.text]));
+    expect(passes(byId.s1, 'near')).toBe(true);
+    expect(passes(byId.s1, 'groups')).toBe(false);
+    expect(passes(byId.s6, 'near')).toBe(true);
+    expect(passes(byId.s6, 'groups')).toBe(false);
+    // An offer can say "me" too: only the relevance pass removes it.
+    expect(passes(byId.s3, 'groups')).toBe(true);
+    expect(passes(byId.s3, 'relevance')).toBe(false);
+  });
+});
