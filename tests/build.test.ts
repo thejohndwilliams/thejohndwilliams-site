@@ -1071,7 +1071,7 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     expect(page).not.toContain('Query ships');
   });
 
-  it('the expansion keeps its figures honest and its sources generic (2026-11-25, held for Counsel)', () => {
+  it('the expansion keeps its figures honest and its sources generic (2026-11-25, owner approved to publish)', () => {
     const page = read('work/signal-triage/index.html');
     for (const h of ['Proximity without a NEAR operator', 'A person approves every change', 'Before the brief goes out', 'First-person reports of distress']) {
       expect(page, h).toContain(h);
