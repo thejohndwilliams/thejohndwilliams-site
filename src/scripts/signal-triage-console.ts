@@ -10,6 +10,7 @@ import {
   type StreamMeta,
   type StreamRow,
 } from '../utils/signal-triage';
+import { CHECKS, SCENARIOS } from '../data/signal-presend';
 
 let abort: AbortController | null = null;
 
@@ -113,4 +114,59 @@ function init(): void {
   render();
 }
 
-document.addEventListener('astro:page-load', init);
+// Proximity figure: the marks are computed at build; script only chooses which
+// query form leads and dims the posts that form would drop.
+function initProx(signal: AbortSignal): void {
+  const fig = document.querySelector<HTMLElement>('[data-sig-prox]');
+  const live = fig?.querySelector<HTMLElement>('[data-sig-prox-live]');
+  const tallyEl = fig?.querySelector<HTMLElement>('[data-sig-prox-tally]');
+  if (!fig || !live || !tallyEl) return;
+  live.hidden = false;
+  fig.classList.add('is-live');
+  const buttons = fig.querySelectorAll<HTMLButtonElement>('[data-prox-mode]');
+  const choose = (mode: string): void => {
+    fig.dataset.mode = mode;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.proxMode === mode)));
+    const active = fig.querySelector<HTMLButtonElement>(`[data-prox-mode="${mode}"]`);
+    if (active?.dataset.tally) tallyEl.textContent = active.dataset.tally;
+    fig.querySelectorAll<HTMLElement>('.sig-prox__post').forEach((post) => {
+      post.dataset.kept = post.dataset[mode] ?? 'false';
+    });
+  };
+  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.proxMode ?? 'relevance'), { signal }));
+}
+
+// Pre-send gate: scenarios come from src/data/signal-presend.ts.
+function initGate(signal: AbortSignal): void {
+  const fig = document.querySelector<HTMLElement>('[data-sig-gate]');
+  const live = fig?.querySelector<HTMLElement>('[data-sig-gate-live]');
+  const outcome = fig?.querySelector<HTMLElement>('[data-sig-gate-outcome]');
+  const detail = fig?.querySelector<HTMLElement>('[data-sig-gate-detail]');
+  if (!fig || !live || !outcome || !detail) return;
+  live.hidden = false;
+  const buttons = fig.querySelectorAll<HTMLButtonElement>('[data-scenario-id]');
+  const choose = (id: string): void => {
+    const sc = SCENARIOS.find((x) => x.id === id) ?? SCENARIOS[0];
+    fig.dataset.scenario = sc.id;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scenarioId === sc.id)));
+    for (const c of CHECKS) {
+      const row = fig.querySelector<HTMLElement>(`[data-check="${c.id}"]`);
+      const st = sc.states[c.id];
+      if (!row) continue;
+      row.dataset.fail = String(Boolean(st?.fail));
+      const stateEl = row.querySelector<HTMLElement>('[data-check-state]');
+      if (stateEl) stateEl.textContent = st ? st.text : 'Pass';
+    }
+    outcome.textContent = sc.outcome;
+    detail.textContent = sc.detail;
+  };
+  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.scenarioId ?? 'clean'), { signal }));
+}
+
+document.addEventListener('astro:page-load', () => {
+  init();
+  if (abort) {
+    initProx(abort.signal);
+    initGate(abort.signal);
+  }
+});

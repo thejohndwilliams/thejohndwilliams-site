@@ -1070,6 +1070,21 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     expect(page).toContain('the design under test rather than any live threshold');
     expect(page).not.toContain('Query ships');
   });
+
+  it('the expansion keeps its figures honest and its sources generic (2026-11-25, held for Counsel)', () => {
+    const page = read('work/signal-triage/index.html');
+    for (const h of ['Proximity without a NEAR operator', 'A person approves every change', 'Before the brief goes out', 'First-person reports of distress']) {
+      expect(page, h).toContain(h);
+    }
+    expect(page).toContain('Keeps 2 of 2 witness reports and 0 of 4 noise posts.');
+    expect(page).toContain('Illustrative version record');
+    expect(page).toContain('Illustrative scenarios');
+    // No vendor, no platform, no live query surface on a public page.
+    for (const banned of ['Sprinklr', 'Brandwatch', 'ONEAR', 'docs.x.com', 'Twitter', 'AI Topics', 'Smart Alerts']) {
+      expect(page, banned).not.toContain(banned);
+    }
+    expect(page.match(/<li class="enf-req[^"]*"|<span class="enf-req__n">/g)?.length).toBe(8);
+  });
   it('security.txt and the résumé cache rule ship', () => {
     const sec = read('.well-known/security.txt');
     expect(sec).toContain('Contact: mailto:jndwcreative@gmail.com');
