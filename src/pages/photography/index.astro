@@ -151,8 +151,11 @@ const jsonLd = {
             return (
               <a
                 href={`/photography/${img.file}/`}
+                data-astro-prefetch="false"
                 class={`gallery-item photo-frame pf-${img.file} photo-protect press-feedback glass-luminous group relative overflow-hidden block w-full break-inside-avoid mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-card ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 focus-visible:ring-2 focus-visible:ring-cream/70 focus-visible:outline-none transition-[box-shadow,transform,outline,outline-offset] duration-500 ease-smooth cursor-pointer`}
                 data-src={`/images/photography/hero/${img.file}.webp`}
+                data-lb-avif={photoSrcset(img.file, 'avif', ['mid', 'gallery', 'tall', 'hero'])}
+                data-lb-webp={photoSrcset(img.file, 'webp', ['mid', 'gallery', 'tall', 'hero'])}
                 data-alt={img.alt}
                 data-file={img.file}
                 data-gallery-w={tier.gallery.w}
@@ -221,7 +224,10 @@ const jsonLd = {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
       </svg>
     </button>
-    <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
+    <picture class="contents">
+      <source id="lightbox-source-avif" type="image/avif" srcset="" sizes="92vw" />
+      <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
+    </picture>
     <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
       <p id="lightbox-caption" class="text-base text-cream whitespace-nowrap truncate"></p>
       <p id="lightbox-meta" class="text-sm text-mute tracking-[0.1em] mt-1 truncate"></p>

@@ -35,6 +35,7 @@
     const { signal } = galleryAbort;
 
     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const lightboxAvif = document.getElementById('lightbox-source-avif') as HTMLSourceElement | null;
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
     const items = document.querySelectorAll('.gallery-item');
@@ -127,16 +128,32 @@
     }
 
     // Width descriptors are the real bitmap widths from the gallery anchor.
-    // The gallery tier is the default decode; the hero tier is offered when
-    // the slot is wider than that file.
+    // AVIF is primary so the viewer reuses the grid's cached AVIF on phones
+    // and downloads ~40% smaller hero/gallery files on desktop; WebP stays
+    // as the <img> fallback.
     function setLightboxImage(item: HTMLElement) {
       const file = item.dataset.file || '';
       const alt = item.dataset.alt || '';
       const galleryW = Number(item.dataset.galleryW || 0);
       const heroW = Number(item.dataset.heroW || 0);
-      if (file && galleryW > 0 && heroW > 0) {
-        lightboxImg.srcset = `/images/photography/gallery/${file}.webp ${galleryW}w, /images/photography/hero/${file}.webp ${heroW}w`;
-        lightboxImg.sizes = `min(92vw, ${heroW}px)`;
+      const lbSizes = heroW > 0 ? `min(92vw, ${heroW}px)` : '92vw';
+      const avifSet = item.dataset.lbAvif || (file && galleryW > 0 && heroW > 0
+        ? `/images/photography/gallery/${file}.avif ${galleryW}w, /images/photography/hero/${file}.avif ${heroW}w`
+        : '');
+      const webpSet = item.dataset.lbWebp || (file && galleryW > 0 && heroW > 0
+        ? `/images/photography/gallery/${file}.webp ${galleryW}w, /images/photography/hero/${file}.webp ${heroW}w`
+        : '');
+      if (lightboxAvif) {
+        if (avifSet) {
+          lightboxAvif.srcset = avifSet;
+          lightboxAvif.sizes = lbSizes;
+        } else {
+          lightboxAvif.removeAttribute('srcset');
+        }
+      }
+      if (webpSet && file) {
+        lightboxImg.srcset = webpSet;
+        lightboxImg.sizes = lbSizes;
         lightboxImg.src = `/images/photography/gallery/${file}.webp`;
       } else {
         lightboxImg.removeAttribute('srcset');
@@ -149,18 +166,35 @@
     }
 
     // Neighbor warmer with a bounded set so swipe bursts cannot re-spawn
-    // Image() objects for files already requested this visit.
+    // Image() objects for files already requested this visit. Warms the
+    // active format (AVIF on evergreen browsers) and responsive tier off
+    // the main thread.
     const prefetched = new Set<string>();
+    const warmImgs: HTMLImageElement[] = [];
     function prefetchNeighbors() {
       if (!visibleItems.length) return;
+      const chosen = lightboxImg.currentSrc || '';
+      const useAvif = chosen.endsWith('.avif') || (!chosen.endsWith('.webp') && !!lightboxAvif);
       for (const d of [-1, 1]) {
         const n = (currentIndex + d + visibleItems.length) % visibleItems.length;
-        const f = (visibleItems[n] as HTMLElement)?.dataset.file;
+        const neighbor = visibleItems[n] as HTMLElement | undefined;
+        const f = neighbor?.dataset.file;
         if (f && !prefetched.has(f)) {
-          if (prefetched.size > 24) prefetched.clear();
+          if (prefetched.size > 24) {
+            prefetched.clear();
+            warmImgs.length = 0;
+          }
           prefetched.add(f);
+          const heroW = Number(neighbor?.dataset.heroW || 0);
+          const lbSizes = heroW > 0 ? `min(92vw, ${heroW}px)` : '92vw';
           const im = new Image();
-          im.src = `/images/photography/gallery/${f}.webp`;
+          im.decoding = 'async';
+          im.sizes = lbSizes;
+          const set = useAvif ? neighbor?.dataset.lbAvif : neighbor?.dataset.lbWebp;
+          if (set) im.srcset = set;
+          im.src = `/images/photography/gallery/${f}.${useAvif ? 'avif' : 'webp'}`;
+          im.decode?.().catch(() => {});
+          warmImgs.push(im);
         }
       }
     }
@@ -244,7 +278,7 @@
     let navToken = 0;
     // P2 fix, 2026-07-19: the AbortController strips listeners but does not
     // clear timeouts; a pending swap must die with the page session too.
-    signal.addEventListener('abort', () => { navToken++; window.clearTimeout(swapTimer); });
+    signal.addEventListener('abort', () => { navToken++; window.clearTimeout(swapTimer); warmImgs.length = 0; });
     const slideMs = () => (reduceMo.matches ? 0 : 170);
     function snapComplete() {
       // jump-cut: finish any running slide instantly so rapid input stays

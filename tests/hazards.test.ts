@@ -445,3 +445,36 @@ describe('hazard locks: scroll smoothness on the enforcement story (2026-11-25)'
     expect(scrub).toMatch(/progress\[i\] = progressOf\(scenes\[i\], vh\)/);
   });
 });
+
+describe('hazard locks: wave 1 fluidity and zero-waste viewer (2026-11-26)', () => {
+  const liquid = readFileSync(join(SRC, 'components', 'LiquidPlate.astro'), 'utf8');
+  const galleryPage = readFileSync(join(SRC, 'pages', 'photography', 'index.astro'), 'utf8');
+  const galleryScript = readFileSync(join(SRC, 'scripts', 'photography-gallery.ts'), 'utf8');
+  const base = readFileSync(join(SRC, 'layouts', 'BaseLayout.astro'), 'utf8');
+
+  it('LiquidPlate attaches its SVG displacement filter only while warping and composites scanlines via transform', () => {
+    // Even with constant scale, an attached feTurbulence + feDisplacementMap
+    // filter on /beyond dropped scroll through #texture to 20-30 fps (33-50ms
+    // frames on warm scroll). Attaching .is-warping only on hover/decay holds
+    // 0 frames > 25ms (max 16.8ms) and 0 idle rAF ticks.
+    expect(liquid).toContain('.liquid-plate.is-fine.is-warping .liquid-plate__img');
+    expect(liquid).not.toMatch(/\.liquid-plate\.is-fine\s+\.liquid-plate__img\[/);
+    expect(liquid).toContain("fig.classList.remove('is-warping')");
+    expect(liquid).toContain('translateY(102%)');
+    expect(liquid).not.toContain('100% { top: 102%');
+  });
+
+  it('photography lightbox serves AVIF primary and suppresses unused slug HTML hover-prefetch on tiles', () => {
+    expect(galleryPage).toContain('id="lightbox-source-avif"');
+    expect(galleryPage).toContain('data-astro-prefetch="false"');
+    expect(galleryPage).toContain('data-lb-avif=');
+    expect(galleryScript).toContain("document.getElementById('lightbox-source-avif')");
+    expect(galleryScript).toContain("im.decoding = 'async'");
+  });
+
+  it('back-to-top routes through Lenis when active and case studies sit between /work and /beyond on the spatial strip', () => {
+    expect(base).toContain('lenis.scrollTo(0)');
+    expect(base).toContain("clean.startsWith('/work/')");
+    expect(base).toContain("from 'astro/virtual-modules/prefetch.js'");
+  });
+});

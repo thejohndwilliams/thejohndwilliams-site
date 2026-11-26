@@ -63,6 +63,14 @@ test.describe('directional page drift', () => {
     await expect.poll(async () => driftNames(page), { timeout: 3000 }).toContain('page-drift-out-right');
   });
 
+  test('navigating from a /work case study to /beyond drifts forward, not backward', async ({ page }) => {
+    await page.goto('/work/signal-triage/');
+    await armDriftSampler(page);
+    await page.locator('header a[href="/beyond/"]:visible').first().click();
+    await expect(page).toHaveURL(/\/beyond\/?$/);
+    await expect.poll(async () => driftNames(page), { timeout: 3000 }).toContain('page-drift-out-left');
+  });
+
   test.describe('reduced motion', () => {
     test.use({ reducedMotion: 'reduce' });
 
