@@ -11,10 +11,13 @@ name: Visual judge
 # full report with frames is an artifact. A blocker fails the run, and a
 # failed scheduled run emails the owner.
 #
-# Pull requests: add the `visual-judge` label to judge the PR's own build
-# (served locally, since previews sit behind Cloudflare Access).
+# Pull requests: add the `visual-judge` label to capture the PR's own build
+# (served locally, since previews sit behind Cloudflare Access) and run the
+# deterministic measured checks. ANTHROPIC_API_KEY is withheld from pull_request
+# runs so unmerged branch code and label-triggered runs never receive the key;
+# model grading runs only on scheduled and manual workflow_dispatch runs.
 #
-# Cost with the model on: roughly 44 page views x up to 6 frames per run.
+# Cost with the model on: roughly 48 page views x up to 6 frames per run.
 # Trim with the routes/viewports inputs on manual runs.
 
 on:
@@ -86,8 +89,13 @@ jobs:
           [ -n "$VIEWPORTS" ] && ARGS="$ARGS --viewports $VIEWPORTS"
           node scripts/visual-judge/capture.mjs $ARGS
 
-      - name: Judge
+      - name: Judge (measured checks, pull requests)
+        if: github.event_name == 'pull_request'
+        run: node scripts/visual-judge/judge.mjs
+
+      - name: Judge (measured + model, scheduled and manual)
         id: judge
+        if: github.event_name != 'pull_request'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/visual-judge/judge.mjs

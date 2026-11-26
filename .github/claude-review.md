@@ -41,8 +41,14 @@ checklist of how the law gets broken.
 5. **OPSEC.** Any public string (pages, data files, alt text, JSON-LD,
    sitemap, llms.txt, OG text, PDFs) that names an employer or product in
    prose, a customer segment, operational volumes, or program and
-   export-control references. The owner's blocklist is private; when in
-   doubt, flag the string for human OPSEC review instead of guessing.
+   export-control references. **Owner-approved exception (2026-11-24):** the
+   Work page's experience record (`src/data/experience.ts`, rendered at
+   `/work/#record`) and the linked résumé (`public/files/John-D-Williams-Resume.pdf`)
+   may name employers/organizations, role titles, dates, marks and cleared
+   high-level summaries, and still never products, customer segments,
+   operational volumes, or program/export-control terms. The owner's
+   blocklist is private; when in doubt, flag the string for human OPSEC
+   review instead of guessing.
 6. **Retired palette.** Gold (#B8973F, 184,151,63) or navy-hour (#7E9CB8,
    126,156,184) in any stylesheet or component, not only global.css.
 7. **Cache law.** A changed file under `public/images`, `public/fonts` or

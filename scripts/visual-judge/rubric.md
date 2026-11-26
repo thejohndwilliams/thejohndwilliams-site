@@ -75,11 +75,12 @@ Minor: polish.
 - Name the frame number and describe where on the screen (top, middle,
   bottom; left, right) so a person can find it.
 - OPSEC: this site never names an employer, a product, a customer segment
-  or operational volumes in its prose. The About page's work-history record
-  (role titles, organizations, years, logos) is owner-approved: do not flag
-  organization names there. Anywhere else, if you see a company or product
-  name in body copy, flag it as major with the words "OPSEC review" so a
-  human checks it. Do not speculate beyond that.
+  or operational volumes in its prose. The Work page's experience record
+  (`/work/` `#record`: role titles, organizations, years, marks) and its
+  linked résumé PDF (`/files/John-D-Williams-Resume.pdf`) are owner-approved:
+  do not flag organization names there. Anywhere else, if you see a company
+  or product name in body copy, flag it as major with the words "OPSEC
+  review" so a human checks it. Do not speculate beyond that.
 
 ## Output
 

@@ -23,7 +23,8 @@ addresses agents directly.
   asserted in `tests/build.test.ts` are the source of truth, not this file.
 - Fonts, self-hosted: IBM Plex Sans (UI), EB Garamond (display serif voice),
   JetBrains Mono (code). Source Sans 3 and Libre Baskerville are RETIRED.
-- Images: AVIF + WebP via `<picture>`. Tiers: thumb/ 400w, gallery/ 1200w,
+- Images: AVIF + WebP via `<picture>`. Tiers: thumb/ 400w, mid/ 800w,
+  tall/ 1000w (portraits), gallery/ 1200w, card/ 1280w (wide work cards),
   hero/ 2400w, portrait/ (art-directed mobile crops). Placeholders via
   `npm run build:placeholders`.
 - Security headers in `public/_headers` (Cloudflare native). Hashed assets in
@@ -47,13 +48,13 @@ npm run test:e2e             # Playwright
   foreground family (steps 100-700); there is no separate `ivory` token, and
   #FDFCFA survives only as raw literals in the kinetic dot color. The cream
   family replaced gold everywhere, including the JW mark.
-- `navy-hour` (blue-hour) #7E9CB8: accent for active states and fine lines.
 - `stone` #A89F8C secondary. `mute` #868686 muted prose (AA on midnight and on #141414).
   `charcoal` #1A1A1A separators.
 - GOLD IS RETIRED. #B8973F and its light/dark variants must not return.
-- NAVY-HOUR IS RETIRED (2026-07-28). #7E9CB8 followed gold out; there is no
-  hue accent. Hierarchy is brightness in the cream family: lit = active,
-  the candle is the only light. Test-locked in hazards.test.ts.
+- NAVY-HOUR IS RETIRED (2026-07-28; figures re-keyed in ivory 2026-11-24).
+  #7E9CB8 followed gold out; there is no hue accent. Hierarchy is brightness
+  in the cream family: lit = active, the candle is the only light. Test-locked
+  across stylesheets and build scripts in hazards.test.ts.
 - Contrast floor WCAG AA. Never opacity-40 or lower on prose; use text-mute.
 
 ## Style laws (standing rules)
@@ -110,11 +111,14 @@ npm run test:e2e             # Playwright
 
 This file is public. The OPSEC blocklist is therefore NOT reproduced here; it
 lives in John's private opsec-review skill and vault. The shape of the rule:
-no employer or product names, no customer segments, no operational volume
-metrics, no export-control or program references, anywhere in public strings.
-Reuse the generic framings already present on /work and /about ("operations,
-risk and controls"). Run the
-opsec-review skill on every changed public-facing string before pushing.
+no employer or product names in prose, no customer segments, no operational
+volume metrics, no export-control or program references, anywhere in public
+strings. Owner-approved exception (2026-11-24): the Work page's experience
+record (`src/data/experience.ts`, `/work/#record`) and linked résumé PDF
+(`public/files/John-D-Williams-Resume.pdf`) carry organization names, role
+titles, dates, marks and cleared high-level lines only. Reuse the generic
+framings already present on /work and /about ("operations, risk and controls").
+Run the opsec-review skill on every changed public-facing string before pushing.
 If you cannot run that skill, do not push public copy changes.
 
 ## Deploy

@@ -24,6 +24,7 @@ export const ROUTES = [
   '/work/enforcement-gates/',
   '/work/verification-gate/',
   '/work/agent-governance/',
+  '/work/signal-triage/',
   '/about/',
   '/photography/',
   '/photography/7r50580-enhanced-sr/',

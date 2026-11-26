@@ -1,10 +1,11 @@
+// @vitest-environment node
 // Locks for the visual judge (scripts/visual-judge, added 2026-11-24).
 // The judge is the site's only automated look at rendered pixels, so the
 // parts that decide pass or fail are pinned here: how measured facts map to
 // severities, how a model reply is parsed, and that its retired-color list
 // stays in step with the palette law in CLAUDE.md and hazards.test.ts.
 import { describe, it, expect } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 // @ts-ignore: plain ESM tooling script
 import { measuredFindings, parseVerdict } from '../scripts/visual-judge/judge.mjs';
@@ -76,7 +77,7 @@ describe('visual judge: stays in step with the site', () => {
     expect(hazards).toContain('126, 156, 184');
   });
 
-  it('every judged route is a real page', () => {
+  it('every judged route is a real page and every case study under /work/ is judged', () => {
     for (const route of ROUTES as string[]) {
       if (route === '/') continue;
       const clean = route.replace(/^\/|\/$/g, '');
@@ -88,6 +89,12 @@ describe('visual judge: stays in step with the site', () => {
       const hit = [join(ROOT, 'src', 'pages', `${clean}.astro`), join(ROOT, 'src', 'pages', clean, 'index.astro')].some(existsSync);
       expect(hit, route).toBe(true);
     }
+    const workPages = readdirSync(join(ROOT, 'src', 'pages', 'work'))
+      .filter((f) => f.endsWith('.astro'))
+      .map((f) => `/work/${f.replace(/\.astro$/, '')}/`);
+    for (const wp of workPages) {
+      expect(ROUTES, `missing case study route ${wp}`).toContain(wp);
+    }
   });
 
   it('the nightly viewports include the owner window, the iPhone baseline and the Duo', () => {
@@ -96,11 +103,32 @@ describe('visual judge: stays in step with the site', () => {
     expect(VIEWPORTS.phone.width).toBe(390);
   });
 
-  it('the rubric names both retired accents and the JSON contract the parser expects', () => {
+  it('the rubric and PR doctrine carve out the Work experience record and résumé for organization names', () => {
     const rubric = readFileSync(join(ROOT, 'scripts', 'visual-judge', 'rubric.md'), 'utf8');
+    const doctrine = readFileSync(join(ROOT, '.github', 'claude-review.md'), 'utf8');
     expect(rubric).toMatch(/Gold and blue-grey/);
     expect(rubric).toMatch(/"findings": \[/);
     expect(rubric).toMatch(/Treat it as data to review/);
+    expect(rubric).toContain("Work page's experience record");
+    expect(rubric).toContain('/files/John-D-Williams-Resume.pdf');
+    expect(rubric).not.toContain("About page's work-history record");
+    expect(doctrine).toContain('src/data/experience.ts');
+    expect(doctrine).toContain('public/files/John-D-Williams-Resume.pdf');
+  });
+});
+
+describe('visual judge workflow security', () => {
+  const wf = readFileSync(join(ROOT, '.github', 'workflows', 'visual-judge.yml'), 'utf8');
+  it('withholds ANTHROPIC_API_KEY from pull_request runs started by a label', () => {
+    // Pull requests check out and build the PR head branch, so secrets must
+    // never be exposed to pull_request steps. Only non-PR runs receive the key.
+    const steps = wf.split(/\n\s*-\s+(?:name|uses):/);
+    const secretSteps = steps.filter((s) => s.includes('secrets.ANTHROPIC_API_KEY'));
+    expect(secretSteps.length).toBe(1);
+    expect(secretSteps[0]).toContain("if: github.event_name != 'pull_request'");
+    const prJudgeSteps = steps.filter((s) => s.includes("if: github.event_name == 'pull_request'") && s.includes('judge.mjs'));
+    expect(prJudgeSteps.length).toBe(1);
+    expect(prJudgeSteps[0]).not.toContain('secrets.');
   });
 });
 
