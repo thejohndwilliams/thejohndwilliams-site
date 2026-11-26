@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate } from '../utils/date';
+
+// Use and credit (2026-11-26, owner ruling): photographs all rights reserved;
+// writing, case studies and figures CC BY 4.0; site code MIT. Locked in
+// tests/build.test.ts. Change only on John's word.
+const lastUpdated = '2026-11-26';
+const CC_BY = 'https://creativecommons.org/licenses/by/4.0/';
+const REPO = 'https://github.com/thejohndwilliams/thejohndwilliams-site';
+---
+
+<BaseLayout
+  title="Use and credit"
+  description="How you may use the work on thejohndwilliams.com: photographs all rights reserved, writing and figures under CC BY 4.0, site code under MIT."
+>
+  <section class="py-12 sm:py-16 md:py-24">
+    <div class="container-narrow max-w-2xl">
+      <p class="eyebrow mb-3 sm:mb-4">Fine Print</p>
+      <h1 class="mb-6 sm:mb-8">Use and credit</h1>
+      <p class="text-sm text-mute mb-8 sm:mb-12">Last updated: {formatDate(lastUpdated)}</p>
+
+      <div class="prose max-w-none space-y-6 text-base sm:text-lg opacity-90 leading-relaxed">
+        <p>
+          Everything on this site is &copy; John D. Williams. What you may do with it
+          depends on what it is.
+        </p>
+
+        <h2 id="photographs" class="t-section font-serif pt-4">Photographs: all rights reserved</h2>
+        <p>
+          The photographs, and every image made from them (crops, previews, depth renders
+          and link-preview cards), may not be copied, published, sold or used to train
+          AI models without my written permission. To license a photograph, write to{' '}<a href="mailto:jndwcreative@gmail.com" class="link-draw">jndwcreative@gmail.com</a>{' '}with the image and how you would like to use it.
+        </p>
+
+        <h2 id="writing" class="t-section font-serif pt-4">Writing, case studies and figures: CC BY 4.0</h2>
+        <p>
+          The text, charts, figures and synthetic benchmark data on this site are licensed under{' '}<a href={CC_BY} class="link-draw" rel="license noopener noreferrer" target="_blank">Creative Commons Attribution 4.0</a>.
+          You may quote, share and adapt them, commercially or not, as long as you credit me,
+          link to the page you used and to the license, and say if you changed anything.
+        </p>
+        <p>Credit line: <strong>John D. Williams, thejohndwilliams.com</strong></p>
+        <p>
+          Photographs shown on those pages stay under the rule above.
+        </p>
+
+        <h2 id="code" class="t-section font-serif pt-4">Code: MIT</h2>
+        <p>
+          The source code for this site is on{' '}<a href={REPO} class="link-draw" rel="noopener noreferrer" target="_blank">GitHub</a>{' '}under the MIT license. Reuse it freely; keep the copyright and license notice in your copy.
+        </p>
+
+        <h2 id="others" class="t-section font-serif pt-4">What these terms do not cover</h2>
+        <p>
+          Material from others keeps its own terms: the SMS spam dataset behind the enforcement
+          case study (UCI Machine Learning Repository, CC BY 4.0) and the typefaces, each under
+          its own license. Company and school names and marks in the work record belong to their
+          owners and appear only to show where I worked or studied.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

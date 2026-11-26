@@ -130,6 +130,10 @@ Then add the post metadata to the array in `src/pages/writing.astro`.
 
 ## License
 
-© John D. Williams. All rights reserved.
+Three terms, by kind of work (full text at https://thejohndwilliams.com/use-and-credit/):
+
+- **Code:** MIT. See `LICENSE` (scope in `LICENSE-CONTENT.md`).
+- **Photographs** and every image made from them (`public/images/**`, generated Open Graph cards): © John D. Williams, all rights reserved.
+- **Writing, case studies, figures and the synthetic benchmark data:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Credit: John D. Williams, thejohndwilliams.com.
 
 Mobile hero art-direction crops are committed assets: regenerate with `npm run build:portraits` when a hero photograph changes.
