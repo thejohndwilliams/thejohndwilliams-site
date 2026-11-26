@@ -123,6 +123,7 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
         const i = document.getElementById('lightbox-img') as HTMLImageElement;
         return i.complete && getComputedStyle(i).opacity === '1' && i.style.transform === '' ? i.currentSrc : '';
       });
+    await expect.poll(settled, { timeout: 8000 }).not.toBe('');
     const before = await settled();
     expect(before).not.toBe('');
     if (browserName === 'chromium') {
@@ -152,5 +153,21 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
         { timeout: 8000 }
       )
       .toBeGreaterThan(0);
+  });
+
+  test('Notes action in the placard meets 44px target and opens the photograph room cleanly', async ({ page }) => {
+    await page.goto('/photography/');
+    await openViewer(page);
+    const detail = page.locator('#lightbox-detail');
+    const href1 = await detail.getAttribute('href');
+    expect(href1).toMatch(/^\/photography\/[^/]+\/$/);
+    const box = await detail.boundingBox();
+    expect(Math.round(box?.width ?? 0)).toBeGreaterThanOrEqual(44);
+    expect(Math.round(box?.height ?? 0)).toBeGreaterThanOrEqual(44);
+
+    await detail.click();
+    await expect(page).toHaveURL(new RegExp(`${href1!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
+    await expect(page.locator('html')).not.toHaveClass(/lb-open/);
+    await expect(page.locator('.photo-note')).toBeVisible();
   });
 });

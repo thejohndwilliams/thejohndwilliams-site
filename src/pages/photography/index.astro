@@ -228,9 +228,18 @@ const jsonLd = {
       <source id="lightbox-source-avif" type="image/avif" srcset="" sizes="92vw" />
       <img id="lightbox-img" src="" srcset="" sizes="92vw" alt="" class="photo-protect max-w-[96vw] sm:max-w-[92vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none" draggable="false" />
     </picture>
-    <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-center max-w-[92vw]">
-      <p id="lightbox-caption" class="text-base text-cream whitespace-nowrap truncate"></p>
-      <p id="lightbox-meta" class="text-sm text-mute tracking-[0.1em] mt-1 truncate"></p>
+    <div class="glass-plate-lb absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 sm:gap-4 max-w-[92vw]">
+      <div class="min-w-0 text-left">
+        <p id="lightbox-caption" class="text-base text-cream whitespace-nowrap truncate"></p>
+        <p id="lightbox-meta" class="text-sm text-mute tracking-[0.1em] mt-0.5 truncate"></p>
+      </div>
+      <a
+        id="lightbox-detail"
+        href="/photography/"
+        class="shrink-0 inline-flex items-center justify-center gap-1.5 min-h-[44px] min-w-[44px] pl-3 sm:pl-4 border-l border-white/10 text-xs tracking-[0.16em] uppercase text-stone-light hover:text-cream focus-visible:outline focus-visible:outline-1 focus-visible:outline-cream focus-visible:outline-offset-2 transition-colors duration-300 whitespace-nowrap"
+      >
+        Notes<span aria-hidden="true"> →</span>
+      </a>
     </div>
   </div>
 

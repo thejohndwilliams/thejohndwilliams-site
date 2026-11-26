@@ -37,12 +37,79 @@ export function initExperience(): void {
     spanFor(id)?.classList.toggle('is-lit', lit);
   };
 
+  const nativeKeywordSize =
+    typeof CSS !== 'undefined' &&
+    typeof CSS.supports === 'function' &&
+    CSS.supports('interpolate-size', 'allow-keywords');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   for (const item of items) {
     item.addEventListener('pointerenter', () => light(item, true), { signal });
     item.addEventListener('pointerleave', () => light(item, false), { signal });
     item.addEventListener('focusin', () => light(item, true), { signal });
     item.addEventListener('focusout', () => light(item, false), { signal });
-    item.querySelector('details')?.addEventListener('toggle', () => light(item, item.matches(':hover')), { signal });
+    const details = item.querySelector<HTMLDetailsElement>('details');
+    const summary = details?.querySelector<HTMLElement>('summary');
+    const body = details?.querySelector<HTMLElement>('.xp-entry__body');
+    details?.addEventListener('toggle', () => light(item, item.matches(':hover')), { signal });
+
+    // Progressive WAAPI disclosure for engines without ::details-content
+    // keyword interpolation (Safari / WebKit), matching the 360ms damped curve.
+    if (details && summary && body && !nativeKeywordSize) {
+      let anim: Animation | null = null;
+      const clearInline = () => {
+        body.style.height = '';
+        body.style.opacity = '';
+        body.style.overflow = '';
+      };
+      summary.addEventListener('click', (e) => {
+        if (reduceMotion.matches) return;
+        anim?.cancel();
+        anim = null;
+        if (details.open) {
+          e.preventDefault();
+          const startH = body.offsetHeight;
+          body.style.overflow = 'hidden';
+          anim = body.animate(
+            [
+              { height: `${startH}px`, opacity: 1 },
+              { height: '0px', opacity: 0 },
+            ],
+            { duration: 260, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+          );
+          anim.onfinish = () => {
+            anim = null;
+            details.open = false;
+            clearInline();
+            light(item, item.matches(':hover'));
+          };
+          anim.oncancel = () => {
+            clearInline();
+          };
+        } else {
+          e.preventDefault();
+          details.open = true;
+          light(item, true);
+          const endH = body.offsetHeight;
+          body.style.overflow = 'hidden';
+          anim = body.animate(
+            [
+              { height: '0px', opacity: 0 },
+              { height: `${endH}px`, opacity: 1 },
+            ],
+            { duration: 340, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+          );
+          anim.onfinish = () => {
+            anim = null;
+            clearInline();
+          };
+          anim.oncancel = () => {
+            clearInline();
+          };
+        }
+      }, { signal });
+    }
+
     // Pointing at a span on the ribbon lights its row too.
     const s = spanFor(item.dataset.xpItem!);
     s?.addEventListener('pointerenter', () => light(item, true), { signal });

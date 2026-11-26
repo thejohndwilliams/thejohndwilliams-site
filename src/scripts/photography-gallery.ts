@@ -38,6 +38,7 @@
     const lightboxAvif = document.getElementById('lightbox-source-avif') as HTMLSourceElement | null;
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxMeta = document.getElementById('lightbox-meta');
+    const lightboxDetail = document.getElementById('lightbox-detail') as HTMLAnchorElement | null;
     const items = document.querySelectorAll('.gallery-item');
 
     // Light-reveal tracker (experiment, 2026-07-03): writes --mx/--my on the
@@ -76,7 +77,7 @@
     const closeBtn = document.getElementById('lightbox-close');
     const prevBtn = document.getElementById('lightbox-prev');
     const nextBtn = document.getElementById('lightbox-next');
-    const chromeBtns = [closeBtn, prevBtn, nextBtn].filter(Boolean) as HTMLElement[];
+    const chromeBtns = [closeBtn, prevBtn, nextBtn, lightboxDetail].filter(Boolean) as HTMLElement[];
     let currentIndex = 0;
     let visibleItems: Element[] = [];
     let lastFocused: HTMLElement | null = null;
@@ -163,6 +164,7 @@
       lightboxImg.alt = alt;
       if (lightboxCaption) lightboxCaption.textContent = alt;
       if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
+      if (lightboxDetail) lightboxDetail.href = file ? `/photography/${file}/` : '/photography/';
     }
 
     // Neighbor warmer with a bounded set so swipe bursts cannot re-spawn
@@ -340,6 +342,19 @@
     closeBtn?.addEventListener('click', closeLightbox, { signal });
     prevBtn?.addEventListener('click', () => navigate(-1), { signal });
     nextBtn?.addEventListener('click', () => navigate(1), { signal });
+    lightboxDetail?.addEventListener('click', (e) => {
+      const me = e as MouseEvent;
+      if (me.ctrlKey || me.metaKey || me.shiftKey || me.button !== 0) return;
+      navToken++;
+      window.clearTimeout(swapTimer);
+      document.documentElement.classList.remove('lb-open');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      lenis()?.start?.();
+    }, { signal });
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); }, { signal });
 
     // Develop-from-black: dim not-yet-loaded gallery photos, restore on load.
@@ -359,7 +374,7 @@
       if (e.key === 'ArrowLeft') navigate(-1);
       if (e.key === 'ArrowRight') navigate(1);
       if (e.key === 'Tab') {
-        const f = (Array.from(lightbox.querySelectorAll('button')) as HTMLElement[])
+        const f = (Array.from(lightbox.querySelectorAll('button, a[href]')) as HTMLElement[])
           .filter((b) => b.offsetParent !== null && !b.hasAttribute('inert') && b.tabIndex !== -1);
         if (f.length) {
           const first = f[0], last = f[f.length - 1];
