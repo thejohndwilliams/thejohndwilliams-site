@@ -24,15 +24,16 @@ const related = getRelatedImages(image.file, 4);
 
 const SITE = 'https://thejohndwilliams.com';
 
-// ─── Ambient Color Bleed: category-driven palette ───
-// Each category maps to a subtle color that bleeds into the page background.
-// These are intentional, not extracted - the semantics drive the atmosphere.
+// ─── Ambient Color Bleed: warm candle whisper (2026-11-26) ───
+// Aligned with photography-atmos.ts (2026-07-28 blue retirement): photo rooms
+// no longer wash the frame in blue, amber, or teal category hues. One warm
+// candle neutral everywhere; the photograph supplies the color.
 const categoryColors: Record<string, { glow: string; accent: string }> = {
-  sky:        { glow: 'rgba(70, 100, 160, 0.08)',  accent: 'rgba(70, 100, 160, 0.04)' },
-  earth:      { glow: 'rgba(160, 120, 60, 0.08)',  accent: 'rgba(160, 120, 60, 0.04)' },
-  water:      { glow: 'rgba(50, 130, 140, 0.08)',  accent: 'rgba(50, 130, 140, 0.04)' },
-  structure:  { glow: 'rgba(120, 110, 100, 0.06)', accent: 'rgba(216, 196, 168, 0.03)' },
-  light:      { glow: 'rgba(244, 234, 222, 0.042)',  accent: 'rgba(244, 234, 222, 0.021)' },
+  sky:        { glow: 'rgba(216, 196, 168, 0.036)', accent: 'rgba(216, 196, 168, 0.018)' },
+  earth:      { glow: 'rgba(216, 196, 168, 0.036)', accent: 'rgba(216, 196, 168, 0.018)' },
+  water:      { glow: 'rgba(216, 196, 168, 0.036)', accent: 'rgba(216, 196, 168, 0.018)' },
+  structure:  { glow: 'rgba(216, 196, 168, 0.036)', accent: 'rgba(216, 196, 168, 0.018)' },
+  light:      { glow: 'rgba(244, 234, 222, 0.042)', accent: 'rgba(244, 234, 222, 0.021)' },
 };
 const bleed = categoryColors[category.id] || categoryColors.structure;
 
@@ -139,11 +140,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
         height={heroDim.h}
       />
     </picture>
-
-    {/* Print preview frame - ghost overlay, visible when CTA is hovered */}
-    <div id="print-frame" class="absolute inset-[8%] sm:inset-[10%] md:inset-[12%] z-[5] pointer-events-none opacity-0 transition-opacity duration-500" aria-hidden="true">
-      <div class="w-full h-full border-[6px] sm:border-[8px] border-white/[0.07] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_60px_rgba(0,0,0,0.3)]"></div>
-    </div>
 
     {/* Keyboard nav arrows (desktop only, visible on hover) */}
     {prevSlug && (
@@ -345,42 +341,6 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
 
     initKeyboardNav();
     document.addEventListener('astro:after-swap', initKeyboardNav);
-  </script>
-
-  {/* Print preview on hover - desktop only, CSS-driven */}
-  <style>
-    @media (hover: hover) {
-      .print-cta-hover:hover ~ #print-frame,
-      .print-cta-hover:focus-visible ~ #print-frame {
-        opacity: 1;
-      }
-    }
-  </style>
-  <script>
-    function initPrintPreview() {
-      const btn = document.querySelector('.btn.btn-primary[href^="mailto:"]');
-      const frame = document.getElementById('print-frame');
-      if (!btn || !frame) return;
-
-      // Only on desktop with hover capability
-      if (!window.matchMedia('(hover: hover)').matches) return;
-
-      btn.addEventListener('mouseenter', () => {
-        frame.style.opacity = '1';
-      });
-      btn.addEventListener('mouseleave', () => {
-        frame.style.opacity = '0';
-      });
-      btn.addEventListener('focus', () => {
-        frame.style.opacity = '1';
-      });
-      btn.addEventListener('blur', () => {
-        frame.style.opacity = '0';
-      });
-    }
-
-    initPrintPreview();
-    document.addEventListener('astro:after-swap', initPrintPreview);
   </script>
 
 </BaseLayout>

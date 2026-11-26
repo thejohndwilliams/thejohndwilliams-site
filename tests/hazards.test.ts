@@ -478,3 +478,34 @@ describe('hazard locks: wave 1 fluidity and zero-waste viewer (2026-11-26)', () 
     expect(base).toContain("from 'astro/virtual-modules/prefetch.js'");
   });
 });
+
+describe('hazard locks: phase 2 photo-room cohesion, lightbox room link & damped disclosure (2026-11-26)', () => {
+  const galleryPage = readFileSync(join(SRC, 'pages', 'photography', 'index.astro'), 'utf8');
+  const galleryStyles = readFileSync(join(SRC, 'components', 'PhotographyGalleryStyles.astro'), 'utf8');
+  const galleryScript = readFileSync(join(SRC, 'scripts', 'photography-gallery.ts'), 'utf8');
+  const slugPage = readFileSync(join(SRC, 'pages', 'photography', '[slug].astro'), 'utf8');
+  const xpScript = readFileSync(join(SRC, 'scripts', 'experience.ts'), 'utf8');
+  const resumeBytes = readFileSync(join(ROOT, 'public', 'files', 'John-D-Williams-Resume.pdf'));
+
+  it('lightbox placard links to the active /photography/<slug>/ room and dissolves cleanly on idle', () => {
+    expect(galleryPage).toContain('id="lightbox-detail"');
+    expect(galleryScript).toContain("document.getElementById('lightbox-detail')");
+    expect(galleryStyles).toContain(':global(#lightbox.idle .glass-plate-lb)');
+  });
+
+  it('photo rooms use warm candle atmosphere and carry no orphaned print-frame code', () => {
+    expect(slugPage).not.toContain('70, 100, 160');
+    expect(slugPage).not.toContain('160, 120, 60');
+    expect(slugPage).not.toContain('50, 130, 140');
+    expect(slugPage).toContain('rgba(216, 196, 168');
+    expect(slugPage).not.toContain('id="print-frame"');
+    expect(slugPage).not.toContain('initPrintPreview');
+  });
+
+  it('experience record ships WAAPI disclosure fallback for non-interpolate-size engines and resume links all four case studies', () => {
+    expect(xpScript).toContain("CSS.supports('interpolate-size', 'allow-keywords')");
+    expect(xpScript).toContain('body.animate(');
+    const pdfLatin1 = resumeBytes.toString('latin1');
+    expect(pdfLatin1).toContain('thejohndwilliams.com/work/signal-triage');
+  });
+});

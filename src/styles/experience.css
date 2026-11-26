@@ -240,14 +240,17 @@
 
 .xp-entry::details-content {
   height: 0;
+  opacity: 0;
   overflow: clip;
   transition:
     height 360ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 260ms linear,
     content-visibility 360ms allow-discrete;
 }
 
 .xp-entry[open]::details-content {
   height: auto;
+  opacity: 1;
 }
 
 .xp-entry__head {
