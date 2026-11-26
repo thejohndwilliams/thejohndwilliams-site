@@ -45,6 +45,8 @@ describe('relief depth scrub (the seven depths as one figure)', () => {
     expect(figure).toContain('loading="lazy"');
     expect(figure).not.toContain('fetchpriority');
     expect(script).toContain('prefetchAll()');
+    expect(script).toContain('activeImg?.currentSrc');
+    expect(script).toContain("i.decoding = 'async'");
     expect(script).toContain('IntersectionObserver');
     expect(script).toContain("PREFETCH_MARGIN = '600px 0px'");
     expect(css).toContain('.depth-scrub__frame.is-active');

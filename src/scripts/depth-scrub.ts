@@ -21,6 +21,7 @@ let scrubAbort: AbortController | null = null;
 let scrubObserver: IntersectionObserver | null = null;
 let timers: number[] = [];
 let prefetched = false;
+let warmPool: HTMLElement[] = [];
 // Module-level so the depth study's synthetic astro:after-swap (fired when a
 // plate mounts, see depth-study.ts) re-inits this figure without replaying
 // it. A real navigation fires astro:before-swap first and resets it.
@@ -46,6 +47,8 @@ function teardown(): void {
 function onBeforeSwap(): void {
   teardown();
   playedOnce = false;
+  prefetched = false;
+  warmPool = [];
 }
 
 export function initDepthScrub(): void {
@@ -131,9 +134,34 @@ export function initDepthScrub(): void {
   function prefetchAll(): void {
     if (prefetched) return;
     prefetched = true;
+    const activeImg = frames[active]?.querySelector<HTMLImageElement>('img');
+    const chosen = activeImg?.currentSrc || '';
+    const known: 'avif' | 'webp' | null = chosen.endsWith('.avif')
+      ? 'avif'
+      : chosen.endsWith('.webp')
+        ? 'webp'
+        : null;
+    // Prefetch the format the <picture> actually selected so AVIF browsers do
+    // not download 1.35 MB of unused WebP files first and then decode AVIF
+    // cold during the scroll play. If the resting frame has not resolved yet,
+    // an off-DOM <picture> lets the browser pick the right source once.
     for (const mm of DEPTHS_MM) {
+      if (known && mm === DEPTHS_MM[current]) continue;
       const i = new Image();
-      i.src = frameSrc(mm, 'webp');
+      i.decoding = 'async';
+      if (known) {
+        i.src = frameSrc(mm, known);
+        warmPool.push(i);
+      } else {
+        const pic = document.createElement('picture');
+        const src = document.createElement('source');
+        src.type = 'image/avif';
+        src.srcset = frameSrc(mm, 'avif');
+        i.src = frameSrc(mm, 'webp');
+        pic.append(src, i);
+        warmPool.push(pic);
+      }
+      i.decode?.().catch(() => {});
     }
   }
 
