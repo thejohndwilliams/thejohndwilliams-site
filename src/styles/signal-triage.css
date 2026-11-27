@@ -502,14 +502,29 @@
   color: #f4eade;
 }
 
-/* With script, one form is chosen: its mark leads, the others recede. */
+/* With script, one form is chosen: its mark leads, the others recede via
+   opaque AA-safe tones (#7a7a7a = 4.74:1 on #0a0a0a; opacity: 0.45 fell to 2.35:1). */
 [data-sig-prox].is-live .sig-prox__mark {
-  opacity: 0.45;
+  color: #7a7a7a;
 }
-[data-sig-prox].is-live[data-mode='near'] .sig-prox__mark[data-mark='near'],
-[data-sig-prox].is-live[data-mode='groups'] .sig-prox__mark[data-mark='groups'],
-[data-sig-prox].is-live[data-mode='relevance'] .sig-prox__mark[data-mark='relevance'] {
-  opacity: 1;
+[data-sig-prox].is-live .sig-prox__mark[data-pass='true'] {
+  color: #a89f8c;
+}
+[data-sig-prox].is-live[data-mode='near'] .sig-prox__head .sig-prox__mark[data-mark='near'],
+[data-sig-prox].is-live[data-mode='groups'] .sig-prox__head .sig-prox__mark[data-mark='groups'],
+[data-sig-prox].is-live[data-mode='relevance'] .sig-prox__head .sig-prox__mark[data-mark='relevance'] {
+  color: #f4eade;
+}
+[data-sig-prox].is-live[data-mode='near'] .sig-prox__post .sig-prox__mark[data-mark='near'],
+[data-sig-prox].is-live[data-mode='groups'] .sig-prox__post .sig-prox__mark[data-mark='groups'],
+[data-sig-prox].is-live[data-mode='relevance'] .sig-prox__post .sig-prox__mark[data-mark='relevance'] {
+  color: #a89f8c;
+}
+[data-sig-prox].is-live[data-mode='near'] .sig-prox__post .sig-prox__mark[data-mark='near'][data-pass='true'],
+[data-sig-prox].is-live[data-mode='groups'] .sig-prox__post .sig-prox__mark[data-mark='groups'][data-pass='true'],
+[data-sig-prox].is-live[data-mode='relevance'] .sig-prox__post .sig-prox__mark[data-mark='relevance'][data-pass='true'] {
+  color: #f4eade;
+  font-weight: 600;
 }
 [data-sig-prox].is-live .sig-prox__post[data-kept='false'] .sig-prox__text {
   color: #868686;

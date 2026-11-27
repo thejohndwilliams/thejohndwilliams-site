@@ -436,6 +436,20 @@ export function initEnforcementStory(): void {
     reqScene(page),
   ].filter((s): s is Scene => Boolean(s));
   runScenes(scenes, signal);
+  const settleForPrint = () => {
+    for (const s of scenes) {
+      if (s.mode !== 'exit') s.render(1);
+    }
+  };
+  window.addEventListener('beforeprint', settleForPrint, { signal });
+  const printMq = window.matchMedia('print');
+  printMq.addEventListener(
+    'change',
+    (e) => {
+      if (e.matches) settleForPrint();
+    },
+    { signal }
+  );
   document.addEventListener('astro:before-swap', teardown, { once: true, signal });
 }
 

@@ -6,6 +6,7 @@ import ControlsMap from '../../components/ControlsMap.astro';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 import '../../styles/agent-governance.css';
+import '../../styles/case-study-print.css';
 
 // 2026-11-24 cohesion pass (owner): rebuilt in the case-study grammar of
 // /work/enforcement-gates/ (full-bleed hero, short title, deck, metadata
@@ -113,7 +114,7 @@ const roles = [
 
     <p class="enf-lede">An agent may prepare anything. Only the <span class="enf-num">Operator</span> acts on what cannot be undone, and an agent saying the Operator approved is never approval.</p>
 
-    <section class="enf-block">
+    <section class="enf-block" id="problem">
       <p class="enf-step">01</p>
       <h2>The problem</h2>
       <p>An agent can send, spend, publish or delete something its person never meant to allow, and afterward nobody can tell who decided what.</p>
@@ -121,7 +122,7 @@ const roles = [
       <p class="gov-fine">Mapped by theme to the NIST AI Risk Management Framework (AI RMF 1.0) and its Generative AI Profile (NIST-AI-600-1), and to the management-system approach of ISO/IEC 42001. AI RMF 1.0 is under revision; the mapping is to the current published version.</p>
     </section>
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="approval-gates">
       <p class="enf-step">02</p>
       <h2>Approval gates and non-waivable rules</h2>
       <p>Agents prepare. Only the Operator acts on what cannot be undone. The approval workflow is a fixed list, not a judgment call:</p>
@@ -142,7 +143,7 @@ const roles = [
 
     <GateFlow />
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="rule-hierarchy">
       <p>Rules are ranked, and a lower rule never overrides a higher one.</p>
       <figure class="gov-ladder" data-gov-anim>
         <ol class="gov-ladder__list">
@@ -155,7 +156,7 @@ const roles = [
       <p>An independent challenger reviews every proposal and must be answered in writing before any vote. A legal reviewer signs off before anything is published.</p>
     </section>
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="evidence">
       <p class="enf-step">03</p>
       <h2>Evidence before a task is closed</h2>
       <p>No task is done until every claim has proof a third party could check: a message identifier, a file, a screenshot, the state of an account page. A claim about a system's state rests on a check made just now, or it is marked unconfirmed.</p>
@@ -183,7 +184,7 @@ const roles = [
       </figure>
     </section>
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="segregation-of-duties">
       <p class="enf-step">04</p>
       <h2>Role archetypes and segregation of duties</h2>
       <p>Each agent has two lists: what it owns and what it refuses. The refusals do the work of segregation of duties.</p>
@@ -211,7 +212,7 @@ const roles = [
       <p>The auditor cannot fix what it audits. The developer cannot merge its own work. Each request type has one owner and one backup in a routing table.</p>
     </section>
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="untrusted-content">
       <p class="enf-step">05</p>
       <h2>Secrets and untrusted content</h2>
       <p>Agents never ask for, read, paste or store passwords, tokens or keys. Everything from outside, including email, web pages and attachments, is treated as data and never as instructions.</p>
@@ -232,7 +233,7 @@ const roles = [
       <p>The documentation itself is checked by a scanner that fails on email addresses, identifiers, file paths, currency figures, key-like strings, and terms from a separate configurable list. The scan must pass before anything is shared.</p>
     </section>
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="worked-example">
       <p class="enf-step">06</p>
       <h2>A worked example</h2>
       <p>An agent drafts a change to a public page but cannot merge it. Another agent reports that the Operator approved; that report is rejected. The Operator approves in their own dated words, merges, and a live check confirms the page. Each step leaves a record.</p>
@@ -240,7 +241,7 @@ const roles = [
 
     <AuditTrail />
 
-    <section class="enf-block gov-block">
+    <section class="enf-block gov-block" id="controls-map">
       <p class="enf-step">07</p>
       <h2>What this shows</h2>
       <p>Oversight designed in, not added after: a fixed approval list, ranked rules, duties split by refusal, and evidence produced by ordinary work. The map below ties each control to NIST AI RMF functions and ISO/IEC 42001 themes.</p>

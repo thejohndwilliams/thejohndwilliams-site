@@ -427,6 +427,10 @@
   margin-top: 6.5rem;
 }
 
+.enf-block[id] {
+  scroll-margin-top: calc(var(--header-h, 88px) + 1.5rem);
+}
+
 .enf-step {
   margin: 0 0 0.75rem !important;
   color: #f4eade;

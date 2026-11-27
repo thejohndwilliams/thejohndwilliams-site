@@ -15,6 +15,7 @@ import { CHECKS, SCENARIOS } from '../../data/signal-presend';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 import '../../styles/signal-triage.css';
+import '../../styles/case-study-print.css';
 
 // Case study: public-post signal triage and outage detection on a synthetic
 // public-chatter benchmark. All posts and timestamps come from
@@ -130,7 +131,7 @@ const jsonLd = {
       On the benchmark stream, the gated query holds{' '}<span class="enf-num" data-sig-bind="precision">{pct(gated.precision)}</span>{' '}precision, cuts false alarms from{' '}<span class="enf-num">{ungated.fp}</span>{' '}to{' '}<span class="enf-num" data-sig-bind="fp">{gated.fp}</span>, and raises an early warning{' '}<span class="enf-num" data-sig-bind="lead">{gated.leadMinutes} min</span>{' '}before a status page updates.
     </p>
 
-    <section class="enf-block">
+    <section class="enf-block" id="query-gates">
       <p class="enf-step">01</p>
       <h2>Query gates before a rule ships</h2>
       <p>Monitoring public posts fails in the opposite direction of a lab classifier: an analyst writes a broad keyword rule to avoid missing an event, and the feed drowns in casual idioms, scheduled maintenance notices, commentary reshares and copy-pasted spam. Once an alert channel cries wolf twice in a shift, people mute it.</p>
@@ -227,7 +228,7 @@ const jsonLd = {
       <p>Lexical precision alone is still vulnerable to coordinated copy-paste bursts: fifteen identical credit-spam posts carrying realistic symptom words pass proximity, exclusion and corroboration rules at 02:00 UTC, firing a false alarm fifteen minutes before any fault exists. Text-shingle deduplication collapses the burst to one uncorroborated cluster and restores the gate.</p>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="proximity">
       <p class="enf-step">02</p>
       <h2>Proximity without a NEAR operator</h2>
       <p>Without word distance, the tightening comes from requiring three kinds of word in the same post: the product, a first-person word and a symptom. The first-person group does the work proximity did, and keeps the customer's own voice. It is necessary, not sufficient: an offer can say "my" too, so a relevance pass after the pull still removes what passes every word test.</p>
@@ -268,7 +269,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="approval-loop">
       <p class="enf-step">03</p>
       <h2>A person approves every change</h2>
       <p>Wording drifts and promotions borrow symptom words, so a query that cleared the gate goes stale. The answer is a loop, not a rewrite. Nothing edits the live query on its own.</p>
@@ -292,7 +293,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="burst-detection">
       <p class="enf-step">04</p>
       <h2>Indications and warning before status confirmation</h2>
       <p>Volume alone is a brittle trigger. This benchmark's burst rule, the design under test rather than any live threshold, requires at least {meta.burst_min_count} distinct corroborated reports in each of two consecutive {meta.window_minutes}-minute windows across at least {meta.burst_min_regions} regions. In the benchmark, a regional outage starts at {meta.fault_utc} UTC, crosses the multi-region burst gate at {gated.detectTime} UTC, and precedes the simulated status-page update at {meta.status_ack_utc} UTC by {gated.leadMinutes} minutes.</p>
@@ -351,7 +352,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="pre-send-gate">
       <p class="enf-step">05</p>
       <h2>Before the brief goes out</h2>
       <p>Public posts get edited and deleted after collection. A brief is only as good as the citations it still has, so every send passes a check, and a failure is logged rather than papered over.</p>
@@ -387,7 +388,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="analytic-brief">
       <p class="enf-step">06</p>
       <h2>Separating reporting from judgment</h2>
       <p>Detection is half the job; the other half is briefing decision-makers without overstating noisy public reporting. The alert roll-up separates what people reported from the assessment, pairs likelihood with an explicit confidence level, and names the collection gaps that could overturn the call.</p>
@@ -423,7 +424,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="distress-routing">
       <p class="enf-step">07</p>
       <h2>First-person reports of distress</h2>
       <p>A search for first-person posts will also find people describing a personal crisis. Those posts are collected so a person can help, never to be shown.</p>
@@ -435,7 +436,7 @@ const jsonLd = {
       </dl>
     </section>
 
-    <section class="enf-block enf-reqs">
+    <section class="enf-block enf-reqs" id="requirements">
       <p class="enf-step">08</p>
       <h2>Requirements I would set</h2>
       <ol class="enf-req-list">
@@ -450,7 +451,7 @@ const jsonLd = {
       </ol>
     </section>
 
-    <section class="enf-block enf-method">
+    <section class="enf-block enf-method" id="method">
       <p class="enf-step">09</p>
       <h2>Method and provenance</h2>
       <p>The benchmark stream holds {fmt(meta.posts_total)} synthetic posts ({meta.signal_total} true disruption reports and {fmt(meta.posts_total - meta.signal_total)} background idioms, planned-maintenance notices, commentary echoes and coordinated copy-paste bursts) generated deterministically in Python at seed {meta.seed}. Every figure and table on this page computes directly from that JSON file; no employer, customer or third-party platform records are used.</p>

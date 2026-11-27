@@ -7,6 +7,7 @@ import { plotGeometry } from '../../utils/enforcement-layout';
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 import '../../styles/enforcement-story.css';
+import '../../styles/case-study-print.css';
 
 // Case study: a classifier used as an enforcement system with three bands.
 // Public data only (UCI SMS Spam Collection, CC BY 4.0). Every number on
@@ -208,7 +209,7 @@ const jsonLd = {
       <p class="sr-only" aria-live="polite" data-enf-live></p>
     </figure>
 
-    <section class="enf-block">
+    <section class="enf-block" id="bands">
       <p class="enf-step">01</p>
       <h2>Three bands, two lines</h2>
       <p>The score decides nothing. Two lines decide what it is allowed to do, and both were set on one split and checked on another the model never saw.</p>
@@ -231,7 +232,7 @@ const jsonLd = {
       </div>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="intervals">
       <p class="enf-step">02</p>
       <h2>The gate held where it was set</h2>
       <p>On calibration, {cal.auto_tp} of {calN} automatic removals were spam: {pct(calP)}. On the test split, {test.auto_tp} of {testN} were: {pct(testP)}. The rule was met where it was written and missed where it was checked, and the intervals say why.</p>
@@ -275,7 +276,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="qa">
       <p class="enf-step">03</p>
       <h2>What a reviewer would find</h2>
       <p>Every automatic removal on the test split, one square each. These are the {test.auto_fp} a reviewer would overturn.</p>
@@ -291,7 +292,7 @@ const jsonLd = {
       </figure>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="appeals">
       <p class="enf-step">04</p>
       <h2>The appeal path</h2>
       <p>Every automatic action needs a way back. This part is simulated, with the assumptions stated: {pct(APPEAL_WRONG, 0)} of wrongly removed senders appeal, {pct(APPEAL_RIGHT, 0)} of rightly removed ones do, and review reverses every wrongful removal it sees.</p>
@@ -323,7 +324,7 @@ const jsonLd = {
       <p>When most appeals win, the gate is too low or the policy is unclear. The appeal queue shows it first.</p>
     </section>
 
-    <section class="enf-block enf-reqs">
+    <section class="enf-block enf-reqs" id="requirements">
       <p class="enf-step">05</p>
       <h2>Requirements I would set</h2>
       <ol class="enf-req-list">
@@ -335,7 +336,7 @@ const jsonLd = {
       </ol>
     </section>
 
-    <section class="enf-block enf-method">
+    <section class="enf-block enf-method" id="method">
       <p class="enf-step">06</p>
       <h2>Method and data</h2>
       <table class="enf-table">

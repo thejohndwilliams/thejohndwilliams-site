@@ -34,15 +34,17 @@ const thumb = (file: string) => photoTiers(file).thumb;
             <li>
               <a href={item.href} class="links-row glass-card text-cream">
                 {photo && t && (
-                  <img
-                    class="links-row__thumb"
-                    src={`/images/photography/thumb/${photo.file}.webp`}
-                    alt={photo.alt}
-                    width={t.w}
-                    height={t.h}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <picture class="links-row__thumb">
+                    <source type="image/avif" srcset={`/images/photography/thumb/${photo.file}.avif`} />
+                    <img
+                      src={`/images/photography/thumb/${photo.file}.webp`}
+                      alt={photo.alt}
+                      width={t.w}
+                      height={t.h}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </picture>
                 )}
                 <span class="links-row__text">
                   <span class="block">{item.name}</span>
@@ -63,8 +65,16 @@ const thumb = (file: string) => photoTiers(file).thumb;
               class="links-row glass-card"
             >
               <picture class="links-row__thumb">
+                <source srcset={item.thumbAvif} type="image/avif" />
                 <source srcset={item.thumb ?? item.hero} type="image/webp" />
-                <img src={item.thumbFallback ?? item.heroFallback} alt="" loading="lazy" decoding="async" />
+                <img
+                  src={item.thumbFallback ?? item.heroFallback}
+                  alt=""
+                  width={item.thumbW}
+                  height={item.thumbH}
+                  loading="lazy"
+                  decoding="async"
+                />
               </picture>
               <span class="links-row__text">
                 <span class="block text-cream">{item.name}</span>

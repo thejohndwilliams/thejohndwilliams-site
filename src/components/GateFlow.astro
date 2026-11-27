@@ -74,6 +74,7 @@ const steps = [
         role="tabpanel"
         id={`gov-gate-panel-${step.id}`}
         aria-labelledby={`gov-gate-tab-${step.id}`}
+        data-step-name={step.name}
         hidden={index === 0 ? undefined : true}
       >
         <p>{step.body}</p>
