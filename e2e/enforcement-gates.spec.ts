@@ -107,4 +107,16 @@ test.describe('Enforcement gates figure', () => {
     expect(box!.height).toBeLessThan(box!.width);
     await context.close();
   });
+
+  test('URL query params hydrate non-default gates and Reset restores canonical URL', async ({ page }) => {
+    await page.setViewportSize({ width: 820, height: 900 });
+    await page.goto('/work/enforcement-gates/?auto=0.900&review=0.500');
+    const fig = page.locator('[data-enf-figure]');
+    await expect(fig).toHaveAttribute('data-ready', '');
+    const reset = fig.locator('[data-enf-reset]');
+    await expect(reset).toBeVisible();
+    await reset.click();
+    await expect(reset).toBeHidden();
+    expect(new URL(page.url()).search).toBe('');
+  });
 });

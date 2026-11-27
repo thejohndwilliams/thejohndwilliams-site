@@ -509,3 +509,53 @@ describe('hazard locks: phase 2 photo-room cohesion, lightbox room link & damped
     expect(pdfLatin1).toContain('thejohndwilliams.com/work/signal-triage');
   });
 });
+
+describe('hazard locks: phase 3 continuity rail, gallery return memory, Connect AVIF & console permalinks (2026-11-26)', () => {
+  const header = readFileSync(join(SRC, 'components', 'Header.astro'), 'utf8');
+  const home = readFileSync(join(SRC, 'pages', 'index.astro'), 'utf8');
+  const slugPage = readFileSync(join(SRC, 'pages', 'photography', '[slug].astro'), 'utf8');
+  const galleryScript = readFileSync(join(SRC, 'scripts', 'photography-gallery.ts'), 'utf8');
+  const enfScript = readFileSync(join(SRC, 'scripts', 'enforcement-gates.ts'), 'utf8');
+  const sigScript = readFileSync(join(SRC, 'scripts', 'signal-triage-console.ts'), 'utf8');
+  const redirects = readFileSync(join(ROOT, 'public', '_redirects'), 'utf8');
+
+  it('all four case studies carry the Next case study continuity cycle and Header lights parent rooms on subroutes', () => {
+    const cycle: Array<[string, string]> = [
+      ['enforcement-gates.astro', 'href="/work/verification-gate/"'],
+      ['verification-gate.astro', 'href="/work/agent-governance/"'],
+      ['agent-governance.astro', 'href="/work/signal-triage/"'],
+      ['signal-triage.astro', 'href="/work/enforcement-gates/"'],
+    ];
+    for (const [file, target] of cycle) {
+      const body = readFileSync(join(SRC, 'pages', 'work', file), 'utf8');
+      expect(body, file).toContain('class="enf-next"');
+      expect(body, file).toContain(target);
+    }
+    expect(header).toContain("currentPath.startsWith(`${baseHref}/`)");
+    expect(header).toContain("aria-current={isExact ? 'page' : undefined}");
+  });
+
+  it('photo rooms record return slug and gallery restores tile position on return', () => {
+    expect(slugPage).toContain('data-photo-return={image.file}');
+    expect(slugPage).toContain("sessionStorage.setItem('jw-return-photo'");
+    expect(galleryScript).toContain("sessionStorage.getItem('jw-return-photo')");
+  });
+
+  it('Home Connect bento serves responsive AVIF + WebP tiers and time-of-day hero includes mid tier', () => {
+    expect(home).toContain('srcset={link.connectAvif}');
+    expect(home).toContain('/images/photography/mid/${stem}.${ext}');
+    for (const name of ['linkedin', 'github', 'instagram', 'behance']) {
+      for (const w of [400, 800, 1200, 1600]) {
+        expect(existsSync(join(ROOT, 'public', 'images', 'connect', `${name}-${w}.avif`)), `${name}-${w}.avif`).toBe(true);
+        expect(existsSync(join(ROOT, 'public', 'images', 'connect', `${name}-${w}.webp`)), `${name}-${w}.webp`).toBe(true);
+      }
+    }
+  });
+
+  it('interactive consoles sync non-default state via replaceState and redirects cover /resume and /security.txt', () => {
+    expect(enfScript).toContain('window.history.replaceState');
+    expect(sigScript).toContain('window.history.replaceState');
+    expect(redirects).toMatch(/^\/resume\s+\/files\/John-D-Williams-Resume\.pdf\s+301$/m);
+    expect(redirects).toMatch(/^\/security\.txt\s+\/\.well-known\/security\.txt\s+301$/m);
+  });
+});

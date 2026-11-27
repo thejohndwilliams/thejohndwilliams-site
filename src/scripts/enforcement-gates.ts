@@ -77,6 +77,21 @@ export function initEnforcementGates(): void {
   };
   const PUBLISHED = { auto: firstAtLeast(data.gates.auto), review: firstAtLeast(data.gates.review) };
   const st = { ...PUBLISHED };
+  {
+    const params = new URLSearchParams(window.location.search);
+    const rawAuto = params.get('auto');
+    const rawRev = params.get('review');
+    if (rawAuto !== null) {
+      const v = Number(rawAuto);
+      if (Number.isFinite(v) && v >= 0 && v <= 1) st.auto = firstAtLeast(v);
+    }
+    if (rawRev !== null) {
+      const v = Number(rawRev);
+      if (Number.isFinite(v) && v >= 0 && v <= 1) st.review = firstAtLeast(v);
+    }
+    st.review = Math.max(0, Math.min(n, st.review));
+    st.auto = Math.max(st.review, Math.min(n, st.auto));
+  }
   let lastHandle: HTMLElement = hAuto;
 
   let bandAuto: SVGRectElement | undefined;
@@ -267,11 +282,29 @@ export function initEnforcementGates(): void {
     }, 400);
   }
 
-  function setIdx(which: 'auto' | 'review', idx: number): void {
+  function syncUrl(): void {
+    try {
+      const url = new URL(window.location.href);
+      const moved = st.auto !== PUBLISHED.auto || st.review !== PUBLISHED.review;
+      if (moved) {
+        url.searchParams.set('auto', scoreAt(st.auto));
+        url.searchParams.set('review', scoreAt(st.review));
+      } else {
+        url.searchParams.delete('auto');
+        url.searchParams.delete('review');
+      }
+      const next = url.pathname + url.search + url.hash;
+      const cur = window.location.pathname + window.location.search + window.location.hash;
+      if (next !== cur) window.history.replaceState(window.history.state, '', next);
+    } catch {}
+  }
+
+  function setIdx(which: 'auto' | 'review', idx: number, commitUrl = false): void {
     const v = Math.max(0, Math.min(n, idx));
     if (which === 'auto') st.auto = Math.max(v, st.review);
     else st.review = Math.min(v, st.auto);
     update();
+    if (commitUrl) syncUrl();
   }
 
   function idxFromX(x: number): number {
@@ -301,6 +334,7 @@ export function initEnforcementGates(): void {
     const end = (e: PointerEvent) => {
       if (h.hasPointerCapture(e.pointerId)) h.releasePointerCapture(e.pointerId);
       root!.classList.remove('is-dragging');
+      syncUrl();
     };
     h.addEventListener('pointerup', end, { signal });
     h.addEventListener('pointercancel', end, { signal });
@@ -309,13 +343,13 @@ export function initEnforcementGates(): void {
       const cur = which === 'auto' ? st.auto : st.review;
       const map: Record<string, number> = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 };
       if (e.key in map) {
-        setIdx(which, cur + map[e.key]);
+        setIdx(which, cur + map[e.key], true);
         e.preventDefault();
       } else if (e.key === 'Home') {
-        setIdx(which, 0);
+        setIdx(which, 0, true);
         e.preventDefault();
       } else if (e.key === 'End') {
-        setIdx(which, n);
+        setIdx(which, n, true);
         e.preventDefault();
       }
     }, { signal });
@@ -328,7 +362,7 @@ export function initEnforcementGates(): void {
       if (dir !== 1 && dir !== -1) return;
       lastHandle = which === 'auto' ? hAuto! : hReview!;
       const cur = which === 'auto' ? st.auto : st.review;
-      setIdx(which, cur + dir);
+      setIdx(which, cur + dir, true);
     }, { signal });
   });
 
@@ -340,6 +374,7 @@ export function initEnforcementGates(): void {
     st.review = PUBLISHED.review;
     lastHandle.focus({ preventScroll: true });
     update(false);
+    syncUrl();
   }, { signal });
 
   layout();

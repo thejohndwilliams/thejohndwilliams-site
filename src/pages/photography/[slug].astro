@@ -107,6 +107,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="container-wide mb-4 sm:mb-6">
       <a
         href="/photography/"
+        data-photo-return={image.file}
         class="inline-flex items-center justify-center gap-1.5 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -252,6 +253,7 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
     <div class="container-narrow text-center">
       <a
         href="/photography/"
+        data-photo-return={image.file}
         class="inline-flex items-center justify-center gap-2 text-sm tracking-[0.15em] uppercase text-mute hover:text-cream transition-colors duration-300 min-h-[44px] min-w-[44px] px-2"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -301,9 +303,20 @@ if (meta.location) exifDetails.push({ label: 'Location', value: meta.location })
       kbAbort = null;
       const prev = document.getElementById('nav-prev') as HTMLAnchorElement | null;
       const next = document.getElementById('nav-next') as HTMLAnchorElement | null;
-      if (!prev && !next) return;
+      const returnLinks = document.querySelectorAll<HTMLAnchorElement>('a[data-photo-return]');
+      if (!prev && !next && !returnLinks.length) return;
       kbAbort = new AbortController();
       const { signal } = kbAbort;
+
+      returnLinks.forEach((a) => {
+        a.addEventListener('click', () => {
+          const file = a.dataset.photoReturn || '';
+          if (!file) return;
+          try { sessionStorage.setItem('jw-return-photo', file); } catch {}
+        }, { signal });
+      });
+
+      if (!prev && !next) return;
 
       function handleKey(e: KeyboardEvent) {
         // Don't intercept if user is in an input or modifier keys held
