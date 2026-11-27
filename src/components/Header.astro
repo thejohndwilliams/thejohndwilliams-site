@@ -13,10 +13,10 @@ const withSlash = (href: string) => (href.endsWith('/') ? href : `${href}/`);
 <header id="site-header" class="py-3 sticky top-0 z-40" transition:persist>
   <div class="nav-shell">
     <nav class="flex items-center justify-between" aria-label="Primary">
-      {/* The monogram stays the mark. aria-hidden keeps those two letters out of
-          the accessible name: the fixed label does not contain "JW", and the
-          label-in-name lock requires visible text to sit inside the name. */}
-      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] min-w-[44px] flex items-center" aria-label="John D. Williams, home">
+      {/* The monogram stays the mark. Keep "JW" at the front of aria-label so
+          WCAG 2.5.3 label-in-name (axe 4.10) matches the visible letters for
+          voice-control users while screen readers still announce full name + home. */}
+      <a href="/" class="text-xl font-serif tracking-tight hover:opacity-70 transition-opacity duration-300 text-cream min-h-[44px] min-w-[44px] flex items-center" aria-label="JW, John D. Williams, home">
         <span aria-hidden="true">JW</span>
       </a>
 

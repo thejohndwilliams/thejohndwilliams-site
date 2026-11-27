@@ -37,6 +37,7 @@
     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
     const lightboxAvif = document.getElementById('lightbox-source-avif') as HTMLSourceElement | null;
     const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxCount = document.getElementById('lightbox-count');
     const lightboxMeta = document.getElementById('lightbox-meta');
     const lightboxDetail = document.getElementById('lightbox-detail') as HTMLAnchorElement | null;
     const items = document.querySelectorAll('.gallery-item');
@@ -163,8 +164,25 @@
       lightboxImg.decoding = 'async';
       lightboxImg.alt = alt;
       if (lightboxCaption) lightboxCaption.textContent = alt;
+      if (lightboxCount) {
+        lightboxCount.textContent = visibleItems.length ? `${currentIndex + 1} / ${visibleItems.length}` : '';
+      }
       if (lightboxMeta) lightboxMeta.textContent = item.dataset.meta || '';
       if (lightboxDetail) lightboxDetail.href = file ? `/photography/${file}/` : '/photography/';
+      syncPhotoParam(file || null);
+    }
+
+    function syncPhotoParam(slug: string | null) {
+      try {
+        const url = new URL(window.location.href);
+        if (slug) url.searchParams.set('photo', slug);
+        else url.searchParams.delete('photo');
+        const next = `${url.pathname}${url.search}${url.hash}`;
+        const cur = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (next !== cur) {
+          window.history.replaceState(window.history.state, '', next);
+        }
+      } catch {}
     }
 
     // Neighbor warmer with a bounded set so swipe bursts cannot re-spawn
@@ -205,7 +223,7 @@
       visibleItems = Array.from(document.querySelectorAll('.gallery-section:not([data-hidden]) .gallery-item'));
     }
 
-    function openLightbox(index: number) {
+    function openLightbox(index: number, skipTransition = false) {
       // P2 fix, 2026-07-19: a pending slide swap from a previous session
       // (Escape mid-slide, reopen) must not fire into this one. Invalidate
       // the token and cancel the timer before anything else.
@@ -215,7 +233,7 @@
       currentIndex = index;
       const item = visibleItems[currentIndex] as HTMLElement;
       if (!item) return;
-      lastFocused = document.activeElement as HTMLElement;
+      lastFocused = (document.activeElement as HTMLElement | null) ?? item;
       const src = tileImg(item);
       const reveal = () => {
         setLightboxImage(item);
@@ -229,7 +247,7 @@
         prefetchNeighbors();
         armIdle();
       };
-      if (canVT() && src) {
+      if (!skipTransition && canVT() && src) {
         // Name handoff: only ONE element may carry lb-photo per snapshot.
         // Old snapshot: the tile. New snapshot: the lightbox image.
         src.style.viewTransitionName = 'lb-photo';
@@ -249,7 +267,13 @@
       navToken++;
       snapComplete();
       const src = tileImg(visibleItems[currentIndex] as HTMLElement);
-      const hide = () => { lightbox.classList.remove('active'); document.documentElement.classList.remove('lb-open'); unlockScroll(); lastFocused?.focus(); };
+      const hide = () => {
+        syncPhotoParam(null);
+        lightbox.classList.remove('active');
+        document.documentElement.classList.remove('lb-open');
+        unlockScroll();
+        lastFocused?.focus();
+      };
       if (canVT() && src) {
         lightboxImg.style.viewTransitionName = 'lb-photo';
         const t = (document as any).startViewTransition(() => {
@@ -347,6 +371,7 @@
       if (me.ctrlKey || me.metaKey || me.shiftKey || me.button !== 0) return;
       navToken++;
       window.clearTimeout(swapTimer);
+      syncPhotoParam(null);
       document.documentElement.classList.remove('lb-open');
       document.body.style.position = '';
       document.body.style.top = '';
@@ -449,6 +474,34 @@
       lightboxImg.style.transform = '';
       lightboxImg.style.opacity = '1';
     }, { passive: true, signal });
+
+    // Shareable viewer deep link (2026-11-26): /photography/?photo=<slug>
+    // opens directly into the lightbox and stages the underlying grid row so
+    // closing the viewer lands on that photograph in context.
+    let initialPhoto = '';
+    try {
+      initialPhoto = new URLSearchParams(window.location.search).get('photo') || '';
+    } catch {}
+    if (initialPhoto) {
+      const deepTarget = Array.from(items).find(
+        (el) => (el as HTMLElement).dataset.file === initialPhoto
+      ) as HTMLElement | undefined;
+      if (deepTarget) {
+        try { sessionStorage.removeItem('jw-return-photo'); } catch {}
+        deepTarget.closest('.gallery-section')?.removeAttribute('data-hidden');
+        updateVisibleItems();
+        const idx = visibleItems.indexOf(deepTarget);
+        if (idx >= 0) {
+          const r = deepTarget.getBoundingClientRect();
+          const y = Math.max(0, Math.round(window.scrollY + r.top - Math.max(96, (window.innerHeight - r.height) / 2)));
+          window.scrollTo(0, y);
+          lastFocused = deepTarget;
+          openLightbox(idx, true);
+          lastFocused = deepTarget;
+          return;
+        }
+      }
+    }
 
     // Return-position memory (2026-11-26): clicking "Gallery" or "Back to gallery"
     // from /photography/<slug>/ restores the exact photograph row in the 88-frame

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassPillGL from '../components/GlassPillGL.astro';
+import { navItems } from '../utils/date';
 import { bleedSizes, photoSrcset } from '../utils/photo-src';
 
 // 2026-11-24 cohesion pass: the 404 was the one page with no photograph.
@@ -28,6 +29,16 @@ const FILE = 'dsc-0329';
         <h1 class="t-title mb-4 sm:mb-5 font-serif tracking-tight">Nothing here</h1>
         <p class="text-base leading-relaxed max-w-xl mb-6 sm:mb-8">This page does not exist.</p>
         <GlassPillGL label="Return home" href="/" variant="c" />
+        <nav aria-label="Primary rooms" class="mt-5 sm:mt-6 flex flex-wrap items-center gap-x-5 gap-y-1">
+          {navItems.map((room) => (
+            <a
+              href={room.href}
+              class="inline-flex items-center min-h-[44px] min-w-[44px] font-mono text-xs tracking-[0.16em] uppercase text-stone-light/85 hover:text-cream transition-colors duration-300"
+            >
+              {room.name}
+            </a>
+          ))}
+        </nav>
       </div>
     </div>
   </section>

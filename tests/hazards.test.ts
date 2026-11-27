@@ -559,3 +559,63 @@ describe('hazard locks: phase 3 continuity rail, gallery return memory, Connect 
     expect(redirects).toMatch(/^\/security\.txt\s+\/\.well-known\/security\.txt\s+301$/m);
   });
 });
+
+describe('hazard locks: phase 4 whitepaper print, RSS syndication, viewer deep links & hardened LHCI (2026-11-26)', () => {
+  const baseLayout = readFileSync(join(SRC, 'layouts', 'BaseLayout.astro'), 'utf8');
+  const printCss = readFileSync(join(SRC, 'styles', 'case-study-print.css'), 'utf8');
+  const rssTs = readFileSync(join(SRC, 'pages', 'rss.xml.ts'), 'utf8');
+  const photoIndex = readFileSync(join(SRC, 'pages', 'photography', 'index.astro'), 'utf8');
+  const galleryScript = readFileSync(join(SRC, 'scripts', 'photography-gallery.ts'), 'utf8');
+  const privacy = readFileSync(join(SRC, 'pages', 'privacy.astro'), 'utf8');
+  const linksPage = readFileSync(join(SRC, 'pages', 'links.astro'), 'utf8');
+  const notFound = readFileSync(join(SRC, 'pages', '404.astro'), 'utf8');
+  const redirects = readFileSync(join(ROOT, 'public', '_redirects'), 'utf8');
+  const llms = readFileSync(join(ROOT, 'public', 'llms.txt'), 'utf8');
+  const lhci = JSON.parse(readFileSync(join(ROOT, '.lighthouserc.json'), 'utf8'));
+
+  it('all four case studies import case-study-print.css and assign unique section ids', () => {
+    expect(printCss).toContain('@media print');
+    expect(printCss).toContain('break-inside: avoid');
+    for (const file of ['enforcement-gates.astro', 'verification-gate.astro', 'agent-governance.astro', 'signal-triage.astro']) {
+      const body = readFileSync(join(SRC, 'pages', 'work', file), 'utf8');
+      expect(body, file).toContain("import '../../styles/case-study-print.css'");
+      const unanchored = body.match(/<section class="enf-block(?![^>]*\bid=)/g) || [];
+      expect(unanchored, `${file} has .enf-block without id`).toEqual([]);
+      const ids = Array.from(body.matchAll(/<section class="enf-block[^"]*" id="([^"]+)"/g), (m) => m[1]);
+      expect(ids.length, file).toBeGreaterThanOrEqual(6);
+      expect(new Set(ids).size, `${file} duplicate section ids`).toBe(ids.length);
+    }
+  });
+
+  it('RSS 2.0 feed, head autodiscovery, /feed.xml + /atom.xml redirects and llms.txt stay wired', () => {
+    expect(rssTs).toContain("Content-Type': 'application/rss+xml");
+    expect(rssTs).not.toContain('—');
+    expect(baseLayout).toContain('type="application/rss+xml"');
+    expect(redirects).toMatch(/^\/feed\.xml\s+\/rss\.xml\s+301$/m);
+    expect(redirects).toMatch(/^\/atom\.xml\s+\/rss\.xml\s+301$/m);
+    expect(llms).toContain('https://thejohndwilliams.com/rss.xml');
+  });
+
+  it('photography viewer carries frame counter and shareable ?photo= deep-link sync', () => {
+    expect(photoIndex).toContain('id="lightbox-count"');
+    expect(galleryScript).toContain("url.searchParams.set('photo', slug)");
+    expect(galleryScript).toContain("new URLSearchParams(window.location.search).get('photo')");
+  });
+
+  it('Privacy disclosure, Links AVIF parity, 404 wayfinding and LHCI error gates stay locked', () => {
+    expect(privacy).toContain("const lastUpdated = '2026-11-26'");
+    expect(privacy).toContain('href="/use-and-credit/"');
+    expect(privacy).not.toContain('I do not query, export, or aggregate them for');
+    expect(linksPage).toContain('item.thumbAvif');
+    for (const name of ['linkedin', 'github', 'instagram', 'behance']) {
+      expect(existsSync(join(ROOT, 'public', 'images', 'links', `${name}-240.avif`)), `${name}-240.avif`).toBe(true);
+    }
+    expect(notFound).toContain('aria-label="Primary rooms"');
+    const urls: string[] = lhci.ci.collect.url;
+    expect(urls).toContain('http://localhost/work/enforcement-gates/index.html');
+    expect(urls).toContain('http://localhost/work/signal-triage/index.html');
+    expect(lhci.ci.assert.assertions['categories:performance'][0]).toBe('error');
+    expect(lhci.ci.assert.assertions['categories:best-practices'][0]).toBe('error');
+    expect(lhci.ci.assert.assertions['color-contrast'][0]).toBe('error');
+  });
+});

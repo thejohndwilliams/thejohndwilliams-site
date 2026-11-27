@@ -1,0 +1,732 @@
+/* Case-study whitepaper print mode (2026-11-26):
+   Imported by all four /work/* case studies. Cmd+P / Save as PDF outputs a
+   crisp black-on-white technical memo: hero photographs, site chrome and
+   interactive toggles stay on screen; scrollytelling unpins into ordered
+   prose; dark-ground SVG plots and unit charts re-key to dark ink on white
+   paper; provenance hashes, citations and CC BY 4.0 credit stay intact. */
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.55in 0.6in;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal,
+  .stagger-children > *,
+  .enf-qa.is-live .enf-qa__grid .enf-qa__cell,
+  .enf-req-list.is-live li,
+  .enf-flow.is-live li,
+  .gov-anim-on [data-gov-anim] .gov-act,
+  .gov-anim-on [data-gov-anim] .gov-rung,
+  .gov-anim-on [data-gov-anim] .gov-duties tbody tr,
+  .gov-anim-on [data-gov-anim] .gov-loop__legend li,
+  .gov-anim-on .gov-inject .gov-inject__reply,
+  .gov-anim-on .gov-inject .gov-inject__arrow {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .enf-flow.is-live li::before {
+    transform: none !important;
+    background: #aaa !important;
+  }
+
+  .gov-anim-on .gov-acts .gov-act__bar {
+    transform: none !important;
+  }
+
+  /* Hide screen-only chrome, hero bitmaps and interactive-only controls */
+  #site-header,
+  footer,
+  #back-to-top,
+  a[href='#content'],
+  .enf-hero picture,
+  .enf-hero .hero-scrim-left,
+  .enf-story-rail,
+  .enf-steppers,
+  .enf-handle,
+  [data-enf-reset],
+  [data-vg-live],
+  [data-sig-live],
+  [data-sig-prox-live],
+  [data-sig-gate-live],
+  .enf-next,
+  .enf-return,
+  [data-gov-fallback],
+  .gov-tabs,
+  .gov-filters {
+    display: none !important;
+  }
+
+  /* Title block */
+  .enf-hero {
+    min-height: 0 !important;
+    margin: 0 0 14pt !important;
+    padding: 0 0 10pt !important;
+    border-bottom: 1pt solid #111 !important;
+    display: block !important;
+    background: #fff !important;
+  }
+
+  .enf-hero__lockup {
+    padding: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .enf-hero .reveal {
+    max-width: none !important;
+  }
+
+  .enf-hero .eyebrow {
+    color: #444 !important;
+    font-size: 8.5pt !important;
+    margin: 0 0 4pt !important;
+  }
+
+  .enf-hero h1 {
+    color: #000 !important;
+    font-size: 21pt !important;
+    line-height: 1.12 !important;
+    margin: 0 0 5pt !important;
+  }
+
+  .enf-deck {
+    color: #222 !important;
+    font-size: 11pt !important;
+    line-height: 1.38 !important;
+    max-width: 44rem !important;
+  }
+
+  /* Article container */
+  .enf-page,
+  .sig-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    container-type: normal !important;
+    overflow: visible !important;
+  }
+
+  .enf-page .enf-wide {
+    width: 100% !important;
+  }
+
+  /* Metadata strip and lede */
+  .enf-meta {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8pt 14pt !important;
+    margin: 0 0 14pt !important;
+    padding: 0 0 8pt !important;
+    border-bottom: 0.5pt solid #aaa !important;
+  }
+
+  .enf-meta dt,
+  .enf-stat__k,
+  .enf-step,
+  .enf-band-label,
+  .enf-flow__k,
+  .enf-key,
+  .enf-run__k,
+  .enf-rule__k,
+  .enf-appeal__k,
+  .vg-label,
+  .vg-out__k,
+  .sig-k,
+  .sig-brief__stamp,
+  .sig-specimen__meta,
+  .sig-specimen__tag,
+  .sig-prox__note,
+  .sig-prox__mark,
+  .sig-loop__n,
+  .sig-loop__return,
+  .sig-gate__state,
+  .sig-care dt,
+  .gov-label,
+  .gov-dl dt,
+  .gov-k,
+  .gov-inject__k,
+  .gov-rung__n {
+    color: #444 !important;
+  }
+
+  .enf-meta dd {
+    color: #000 !important;
+    font-size: 9pt !important;
+    margin-top: 2pt !important;
+  }
+
+  .enf-lede {
+    color: #000 !important;
+    font-size: 12.5pt !important;
+    line-height: 1.38 !important;
+    margin: 0 0 14pt !important;
+    max-width: 44rem !important;
+  }
+
+  .enf-num,
+  .enf-count,
+  .enf-stat__v,
+  .enf-run__v,
+  .enf-flow__v,
+  .enf-rule__v,
+  .enf-rule__n,
+  .enf-req__n,
+  .enf-req-list strong,
+  .vg-out__v,
+  .vg-cases__d,
+  .sig-verdict__v,
+  .sig-stages__blocked,
+  .sig-brief__conf,
+  .sig-w--symptom,
+  .sig-loop__step strong,
+  .gov-block strong,
+  .gov-act__verb,
+  .gov-loop__legend strong,
+  .gov-check {
+    color: #000 !important;
+  }
+
+  .enf-stat__sub,
+  .enf-cap,
+  .enf-prov,
+  .sig-prov,
+  .enf-license,
+  .gov-fine,
+  .gov-note,
+  .gov-sub,
+  .gov-colophon {
+    color: #444 !important;
+  }
+
+  /* Sections and typography */
+  .enf-block {
+    max-width: none !important;
+    margin-top: 18pt !important;
+  }
+
+  .enf-block h2,
+  .gov-block h2,
+  .gov-live h3 {
+    color: #000 !important;
+    font-size: 14pt !important;
+    margin: 0 0 6pt !important;
+    break-after: avoid;
+  }
+
+  .gov-live h3 {
+    font-size: 11.5pt !important;
+  }
+
+  .enf-block p,
+  .gov-block p,
+  .gov-block li,
+  .enf-story li,
+  .sig-brief__cell p,
+  .sig-care dd,
+  .sig-prox__text,
+  .sig-gate__name,
+  .sig-gate__detail,
+  .sig-loop__step > span:last-child,
+  .gov-act__needs,
+  .gov-rung,
+  .gov-loop__legend,
+  .gov-inject__line,
+  .gov-panel p,
+  .gov-dl dd {
+    color: #111 !important;
+    font-size: 9.5pt !important;
+    line-height: 1.48 !important;
+  }
+
+  .enf-block a,
+  .enf-license a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  .enf-code a {
+    display: inline !important;
+    min-height: 0 !important;
+  }
+
+  .enf-code a::after {
+    content: ' (' attr(href) ')';
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 7.5pt;
+    color: #444;
+    text-decoration: none;
+  }
+
+  /* Unpin /work/enforcement-gates/ scrollytelling stage */
+  .enf-fig.is-scrolly .enf-scrolly {
+    position: static !important;
+    height: auto !important;
+  }
+
+  .enf-fig.is-scrolly .enf-stage {
+    position: static !important;
+    height: auto !important;
+    margin-inline: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  .enf-fig.is-scrolly .enf-story {
+    display: block !important;
+    list-style: decimal !important;
+    max-width: 44rem !important;
+    margin: 0 0 10pt !important;
+    padding-left: 1.25rem !important;
+  }
+
+  .enf-fig.is-scrolly .enf-story li {
+    opacity: 1 !important;
+    transform: none !important;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+    margin: 0 0 3pt !important;
+  }
+
+  .enf-fig.is-scrolly .enf-readout {
+    opacity: 1 !important;
+    margin: 0 0 10pt !important;
+  }
+
+  .enf-fig.is-scrolly .enf-baseline,
+  .enf-fig.is-scrolly .enf-tick,
+  .enf-fig.is-scrolly .enf-tick-mark,
+  .enf-fig.is-scrolly .enf-band-label:not(.is-clipped) {
+    opacity: 1 !important;
+  }
+
+  .enf-fig.is-scrolly .enf-band--auto,
+  .enf-fig.is-scrolly .enf-band--review {
+    transform: none !important;
+  }
+
+  /* Re-key Enforcement scatter and interval SVGs onto white paper */
+  .enf-band--auto {
+    fill: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .enf-hatch-line {
+    stroke: rgba(0, 0, 0, 0.16) !important;
+  }
+
+  .enf-baseline,
+  .enf-tick-mark {
+    stroke: #444 !important;
+  }
+
+  .enf-tick,
+  .enf-ci__tick,
+  .enf-ci__n,
+  .enf-ci__label {
+    fill: #222 !important;
+  }
+
+  .d.s,
+  .enf-fig.is-scrolly .d.s {
+    fill: #222 !important;
+    fill-opacity: 0.65 !important;
+    stroke: none !important;
+  }
+
+  .d.h,
+  .enf-fig.is-scrolly .d.h {
+    fill: none !important;
+    stroke: #777 !important;
+    stroke-opacity: 0.85 !important;
+    stroke-width: 1 !important;
+  }
+
+  .d.h.is-wrong,
+  .d.s.is-missed,
+  .enf-fig.is-scrolly .d.h.is-wrong,
+  .enf-fig.is-scrolly .d.s.is-missed {
+    fill: none !important;
+    stroke: #000 !important;
+    stroke-opacity: 1 !important;
+    stroke-width: 2 !important;
+  }
+
+  .enf-swatch--spam {
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .enf-swatch--ham {
+    box-shadow: inset 0 0 0 1px #666 !important;
+    border: 1px solid #666 !important;
+  }
+
+  .enf-swatch--wrong {
+    box-shadow: none !important;
+    border: 2px solid #000 !important;
+  }
+
+  .enf-ci__grid {
+    stroke: #ddd !important;
+  }
+
+  .enf-ci__target {
+    stroke: #000 !important;
+  }
+
+  .enf-ci__tick--target {
+    fill: #000 !important;
+  }
+
+  .enf-ci__range {
+    stroke: #111 !important;
+  }
+
+  .enf-ci__point {
+    fill: #fff !important;
+    stroke: #000 !important;
+  }
+
+  /* Enforcement unit grids & cards on white paper */
+  .enf-rules {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    background: #bbb !important;
+    border-color: #bbb !important;
+  }
+
+  .enf-rule {
+    background: #fff !important;
+    padding: 8pt 10pt !important;
+  }
+
+  .enf-run__cell {
+    background: #e2e2e2 !important;
+  }
+
+  .enf-run__cell.is-cal {
+    background: #777 !important;
+  }
+
+  .enf-run__cell.is-on {
+    background: #111 !important;
+  }
+
+  .enf-qa__cell {
+    background: #555 !important;
+  }
+
+  .enf-qa__cell.is-wrong {
+    background: #000 !important;
+  }
+
+  .enf-qa__cell.is-wrong::after {
+    background:
+      linear-gradient(#fff, #fff) center / 1.5px 70% no-repeat,
+      linear-gradient(#fff, #fff) center / 70% 1.5px no-repeat !important;
+  }
+
+  .enf-appeal__cell {
+    background: #e2e2e2 !important;
+  }
+
+  .enf-appeal__cell.is-wrong {
+    background: #aaa !important;
+  }
+
+  .enf-appeal__cell.is-appeal {
+    background: #fff !important;
+    border: 1.5px solid #111 !important;
+  }
+
+  .enf-appeal__cell.is-wrong.is-appeal {
+    background: #000 !important;
+    border: 0 !important;
+  }
+
+  .enf-appeal__legend {
+    color: #222 !important;
+  }
+
+  .enf-flow li {
+    border-top-color: #bbb !important;
+  }
+
+  /* Tables across all four case studies */
+  .gov-stack {
+    display: table !important;
+    width: 100% !important;
+  }
+
+  .gov-stack thead {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+    display: table-header-group !important;
+  }
+
+  .gov-stack tbody {
+    display: table-row-group !important;
+  }
+
+  .gov-stack tr {
+    display: table-row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  .gov-stack td,
+  .gov-stack tbody th {
+    display: table-cell !important;
+    width: auto !important;
+  }
+
+  .gov-k {
+    display: none !important;
+  }
+
+  .gov-dl {
+    grid-template-columns: 7.5rem 1fr !important;
+    align-items: baseline !important;
+  }
+
+  .gov-dl dt {
+    margin-top: 0 !important;
+  }
+
+  .enf-table th,
+  .enf-table td,
+  .gov-table th,
+  .gov-table td {
+    color: #000 !important;
+    border-bottom: 0.5pt solid #ccc !important;
+    font-size: 8.5pt !important;
+    padding: 4pt 6pt 4pt 0 !important;
+  }
+
+  .enf-table thead th,
+  .gov-table thead th {
+    color: #333 !important;
+    border-bottom: 1pt solid #333 !important;
+  }
+
+  .sig-loop__steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 6pt !important;
+  }
+
+  .sig-loop__step {
+    padding: 6pt 7pt !important;
+  }
+
+  /* Re-key /work/signal-triage/ burst SVG, brief and blocks */
+  .sig-burst__grid {
+    stroke: #e0e0e0 !important;
+  }
+
+  .sig-burst__threshold {
+    stroke: #444 !important;
+  }
+
+  .sig-burst__raw {
+    fill: #d6d6d6 !important;
+  }
+
+  .sig-burst__gated {
+    fill: #555 !important;
+    fill-opacity: 0.9 !important;
+  }
+
+  .sig-burst__gated.is-alert {
+    fill: #000 !important;
+    fill-opacity: 1 !important;
+  }
+
+  .sig-burst__marker {
+    stroke: #555 !important;
+  }
+
+  .sig-burst__marker--alert {
+    stroke: #000 !important;
+  }
+
+  .sig-burst__label,
+  .sig-burst__tick {
+    fill: #222 !important;
+  }
+
+  .sig-burst__label--alert {
+    fill: #000 !important;
+  }
+
+  .sig-swatch--raw {
+    background: #d6d6d6 !important;
+  }
+
+  .sig-swatch--gated {
+    background: #555 !important;
+  }
+
+  .sig-swatch--alert {
+    background: #000 !important;
+  }
+
+  .sig-brief,
+  .sig-loop__step,
+  .gov-rung,
+  .gov-inject__mail,
+  .gov-inject__reply {
+    background: #fff !important;
+    border-color: #999 !important;
+  }
+
+  .sig-loop__step--person {
+    border-color: #000 !important;
+  }
+
+  .sig-brief__head,
+  .sig-prox__posts,
+  .sig-prox__post,
+  .sig-gate__body,
+  .sig-gate__check,
+  .sig-care,
+  .sig-care > div,
+  .gov-acts__list,
+  .gov-act {
+    border-color: #ccc !important;
+  }
+
+  .sig-prox__mark[data-pass='true'] {
+    color: #000 !important;
+    font-weight: 600 !important;
+  }
+
+  [data-sig-prox].is-live .sig-prox__mark {
+    opacity: 1 !important;
+  }
+
+  /* Re-key /work/agent-governance/ semantic figures & expand tabbed panels */
+  [data-gov-live],
+  [data-gov-live][hidden] {
+    display: block !important;
+  }
+
+  .gov-panel,
+  .gov-panel[hidden] {
+    display: block !important;
+    margin-top: 6pt !important;
+    padding-top: 6pt !important;
+    border-top: 0.5pt solid #ccc !important;
+    max-width: none !important;
+  }
+
+  .gov-panel[data-step-name]::before {
+    content: attr(data-step-name);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 8pt;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 2pt;
+  }
+
+  .gov-map tr[hidden] {
+    display: table-row !important;
+  }
+
+  .gov-act__gate {
+    background: #bbb !important;
+  }
+
+  .gov-act__bar {
+    background: #000 !important;
+  }
+
+  .gov-loop__ring {
+    stroke: #ccc !important;
+  }
+
+  .gov-loop__draw {
+    stroke: #222 !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .gov-loop__pin {
+    fill: #fff !important;
+    stroke: #111 !important;
+  }
+
+  .gov-loop__dot {
+    fill: #000 !important;
+  }
+
+  .gov-loop__k {
+    fill: #222 !important;
+  }
+
+  .gov-duties .gov-refuses::before {
+    border-color: #000 !important;
+    background: linear-gradient(135deg, transparent 45%, #000 45%, #000 55%, transparent 55%) !important;
+  }
+
+  .gov-inject__bad {
+    color: #000 !important;
+    text-decoration-color: #000 !important;
+  }
+
+  .gov-inject__arrow {
+    background: #333 !important;
+  }
+
+  .gov-escalate {
+    border-top-color: #777 !important;
+    color: #222 !important;
+  }
+
+  /* Pagination discipline: keep compact figures, table rows, briefs and items intact */
+  tr,
+  .enf-ci,
+  .enf-run,
+  .enf-qa,
+  .enf-appeal,
+  .enf-rules,
+  .enf-flow,
+  .enf-req-list li,
+  .sig-burst,
+  .sig-brief,
+  .sig-care,
+  .gov-acts,
+  .gov-ladder,
+  .gov-loop,
+  .gov-inject,
+  .gov-panel {
+    break-inside: avoid;
+  }
+}

@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate } from '../utils/date';
 
-const lastUpdated = '2026-08-22';
+const lastUpdated = '2026-11-26';
 ---
 
 <BaseLayout
@@ -26,9 +26,11 @@ const lastUpdated = '2026-08-22';
           The site is served through Cloudflare Pages. Cloudflare maintains server-side
           request logs (IP address, user agent, URL requested, response code, timestamp)
           for operational and security purposes. These logs are retained per Cloudflare's
-          default retention policy and are used only to diagnose traffic anomalies and
-          protect the site from abuse. I do not query, export, or aggregate them for
-          any other purpose.
+          default retention policy and are used to diagnose traffic anomalies, protect the
+          site from abuse, and check aggregate zone health. I occasionally query aggregate
+          zone totals (request counts, status codes, cached bytes, and top paths) through
+          Cloudflare's Analytics API to spot broken links and traffic spikes; I do not
+          export individual visitor IP logs or build profiles of visitors.
         </p>
         <p>
           Cloudflare Web Analytics may inject a first-party beacon (Cloudflare Insights)
@@ -67,11 +69,14 @@ const lastUpdated = '2026-08-22';
 
         <h2 class="t-section font-serif pt-4">AI training</h2>
         <p>
-          The photographs on this site are protected intellectual property. The
+          The photographs on this site are protected intellectual property, while the
+          case-study text and figures are licensed separately; see
+          <a href="/use-and-credit/" class="text-cream hover:underline">Use and credit</a>
+          for exact terms. The
           <a href="/robots.txt" class="text-cream hover:underline">robots.txt</a>
           explicitly disallows known AI training crawlers from indexing the site.
           If you operate a model-training crawler that honors robots.txt, please do.
-          If you use this site's content for model training without permission,
+          If you use this site's photographs for model training without permission,
           that is copyright infringement.
         </p>
 

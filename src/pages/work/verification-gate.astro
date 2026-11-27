@@ -4,6 +4,7 @@ import { decide, CASES, type ReviewerInput } from '../../utils/verification-gate
 import { photoSrcset, photoTiers } from '../../utils/photo-src';
 import '../../styles/enforcement-gates.css';
 import '../../styles/verification-gate.css';
+import '../../styles/case-study-print.css';
 
 // Case study: the verification gate John runs over his own AI agents' claims
 // (tri_fleet_gate.py, claim_lint.py and receipt_lint.py in his personal
@@ -88,14 +89,14 @@ const jsonLd = {
 
     <p class="enf-lede">An agent that says <span class="enf-num">done</span> has made a claim. This gate treats every such claim as wrong until two independent reviewers can point to the proof.</p>
 
-    <section class="enf-block">
+    <section class="enf-block" id="problem">
       <p class="enf-step">01</p>
       <h2>Agreement is cheap</h2>
       <p>I run a group of AI agents that research, draft and build for me. Their failure mode is not lying. It is fluency: a confident summary reads like evidence, a second agent agrees with the first, and the claim moves forward without anyone having looked at the record. On anything consequential, I want a step that cannot be talked past.</p>
       <p>This page describes the rules and the code. It makes no claim about how often the gate has blocked; that history is not kept.</p>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="claim-pack">
       <p class="enf-step">02</p>
       <h2>A claim, packed with its evidence</h2>
       <p>The agent that did the work fills in one file before the gate runs. Reviewers see this file and nothing else.</p>
@@ -109,14 +110,14 @@ const jsonLd = {
       </ol>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="reviewers">
       <p class="enf-step">03</p>
       <h2>Two reviewers, told the claim is wrong</h2>
       <p>Each reviewer is a model from a different vendor, with no shared context and no write access. Each is instructed to assume the claim is wrong, to weigh only the raw output, and to return a binary verdict in a fixed schema: pass or fail, the gaps it found, and the exact values it cites. "Looks fine" is a fail.</p>
       <p>The answers are then read strictly. A verdict in prose instead of the schema is a fail. A pass that cites no evidence is demoted to a fail. A reviewer that returns nothing is unusable. And if a vendor quietly serves a weaker model than the one requested, that review is void.</p>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="rule">
       <p class="enf-step">04</p>
       <h2>The rule</h2>
       <p>Consequential claims run strict: both reviewers must pass, and any gap or disagreement blocks. Routine work runs standard: one cited pass carries it, and the dissent is written down beside the result. Fewer than two usable reviewers blocks. A blocked run exits with a non-zero code, so the program that called the gate cannot carry on by ignoring a paragraph of text.</p>
@@ -169,21 +170,21 @@ const jsonLd = {
       <p>Disagreement is never averaged. Two reviewers that split are a signal to go and look at the disputed item, not a score of fifty percent.</p>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="pre-gate-lint">
       <p class="enf-step">05</p>
       <h2>Before the gate</h2>
       <p>Three routine runs in a row were once blocked, and every dissent was about how the claim was scoped or packed, never about the facts. So a lint step now runs in front of the gate. It flags strength words such as all, never and proves; too few verbatim quotes from the raw output; an interpretation that is not labelled as one; a missing re-derivation command; and claims about files with no file path in the evidence.</p>
       <p>A second lint runs on the finished deliverable. Every number, date, link, quote, citation and proper name has to trace to an evidence file the deliverable declares. A deliverable that declares no evidence fails outright: the check fails closed.</p>
     </section>
 
-    <section class="enf-block">
+    <section class="enf-block" id="limits">
       <p class="enf-step">06</p>
       <h2>What it does not do</h2>
       <p>It is a filter on evidence quality, not a truth machine. Two models can share a blind spot. Strict severity will block a true claim whose evidence was only a summary, which is the intended cost. Verdicts vary from run to run, so the rule about reruns is decided before the run: never rerun until it passes. A block on a true claim means the evidence pack was weak; the fix is a better pack, not a friendlier reviewer.</p>
       <p>A gate that can never pass gets ignored, which is worse than no gate. That is why routine work runs at standard severity and only consequential work runs strict.</p>
     </section>
 
-    <section class="enf-block enf-reqs">
+    <section class="enf-block enf-reqs" id="requirements">
       <p class="enf-step">07</p>
       <h2>Requirements I would set</h2>
       <ol class="enf-req-list">
@@ -195,7 +196,7 @@ const jsonLd = {
       </ol>
     </section>
 
-    <section class="enf-block enf-method">
+    <section class="enf-block enf-method" id="method">
       <p class="enf-step">08</p>
       <h2>Method</h2>
       <p>The gate is about 230 lines of Python, with two lint scripts in front of it. Its adversarial framing is adapted from the open-source adversarial-execution pattern (MIT licence). The code runs on my own machine against my own agents and is not public; the decision rule on this page is a tested port of it.</p>

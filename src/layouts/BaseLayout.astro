@@ -73,6 +73,7 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=3" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title="John D. Williams · Selected Work" href={new URL('/rss.xml', siteOrigin)} />
 
     {/* Theme color - brand midnight for mobile status bars */}
     <meta name="theme-color" content="#0a0a0a" />

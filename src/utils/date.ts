@@ -58,8 +58,11 @@ export const socialLinks = [
     connectWebp: connectSet('linkedin', 'webp'),
     w: 1600,
     h: 900,
+    thumbAvif: '/images/links/linkedin-240.avif',
     thumb: '/images/links/linkedin-240.webp',
     thumbFallback: '/images/links/linkedin-240.jpg',
+    thumbW: 240,
+    thumbH: 135,
     heroAlt: 'Macro photograph of wet moss with water droplets and golden highlights'
   },
   {
@@ -73,8 +76,11 @@ export const socialLinks = [
     connectWebp: connectSet('github', 'webp'),
     w: 1600,
     h: 1200,
+    thumbAvif: '/images/links/github-240.avif',
     thumb: '/images/links/github-240.webp',
     thumbFallback: '/images/links/github-240.jpg',
+    thumbW: 240,
+    thumbH: 180,
     heroAlt: 'Thermal visualization of a floor plan in neon pink and cyan'
   },
   {
@@ -88,8 +94,11 @@ export const socialLinks = [
     connectWebp: connectSet('instagram', 'webp'),
     w: 1600,
     h: 900,
+    thumbAvif: '/images/links/instagram-240.avif',
     thumb: '/images/links/instagram-240.webp',
     thumbFallback: '/images/links/instagram-240.jpg',
+    thumbW: 240,
+    thumbH: 135,
     heroAlt: 'Single white cloud against a deep blue night sky'
   },
   {
@@ -103,8 +112,11 @@ export const socialLinks = [
     connectWebp: connectSet('behance', 'webp'),
     w: 1600,
     h: 1008,
+    thumbAvif: '/images/links/behance-240.avif',
     thumb: '/images/links/behance-240.webp',
     thumbFallback: '/images/links/behance-240.jpg',
+    thumbW: 240,
+    thumbH: 151,
     heroAlt: 'Abstract minimalist silhouettes in soft gray and pale green tones'
   }
 ] as const;

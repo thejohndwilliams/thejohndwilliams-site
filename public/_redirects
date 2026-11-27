@@ -15,9 +15,11 @@
 # Single host: www is a duplicate of apex (review 2026-08-22).
 https://www.thejohndwilliams.com/* https://thejohndwilliams.com/:splat 301
 
-# Humans and some tools still request /sitemap.xml and /security.txt.
+# Humans and some tools still request /sitemap.xml, /security.txt and feed aliases.
 /sitemap.xml /sitemap-index.xml 301
 /security.txt /.well-known/security.txt 301
+/feed.xml /rss.xml 301
+/atom.xml /rss.xml 301
 
 # Résumé: the old path (301'd to / from 2026-10-25) and short /resume aliases point at the new file.
 /files/Williams-John-D-Resume.pdf /files/John-D-Williams-Resume.pdf 301

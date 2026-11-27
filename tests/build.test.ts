@@ -1149,9 +1149,22 @@ describe('Web performance pass (2026-11-25)', () => {
   });
   it('Links serves small social thumbnails, Home serves a sized relief card', () => {
     const links = read('links/index.html');
+    expect(links).toContain('/images/links/linkedin-240.avif');
     expect(links).toContain('/images/links/linkedin-240.webp');
     expect(links).not.toContain('/images/linkedin-hero.webp');
+    expect((links.match(/type="image\/avif"/g) || []).length).toBe(8);
     expect(read('index.html')).toContain('/images/relief/card-800.avif 800w');
+  });
+  it('emits valid OPSEC-clean /rss.xml covering all four case studies', () => {
+    const rssPath = path.join(distDir, 'rss.xml');
+    expect(fs.existsSync(rssPath)).toBe(true);
+    const xml = fs.readFileSync(rssPath, 'utf8');
+    expect(xml).toContain('<rss version="2.0"');
+    expect(xml).toContain('CC BY 4.0');
+    expect(xml).not.toContain('—');
+    for (const slug of ['enforcement-gates', 'verification-gate', 'agent-governance', 'signal-triage']) {
+      expect(xml, slug).toContain(`https://thejohndwilliams.com/work/${slug}/`);
+    }
   });
   it('the appeal stages stay readable before the scroll reaches them', () => {
     const css = fs.readFileSync(path.join(process.cwd(), 'src/styles/enforcement-story.css'), 'utf8');

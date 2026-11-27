@@ -175,4 +175,20 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
     const slug = href1!.replace(/^\/photography\/|\/$/g, '');
     await expect(page.locator(`.gallery-item[data-file="${slug}"]`)).toBeFocused({ timeout: 5000 });
   });
+
+  test('deep link ?photo=<slug> opens viewer directly, updates frame counter, and clears on Escape', async ({ page }) => {
+    await page.goto('/photography/?photo=7r52326');
+    await expect(page.locator('#lightbox')).toHaveClass(/active/, { timeout: 6000 });
+    await expect(page.locator('#lightbox-detail')).toHaveAttribute('href', '/photography/7r52326/');
+    await expect(page.locator('#lightbox-count')).toHaveText(/^\d+\s*\/\s*\d+$/);
+    const countBefore = await page.locator('#lightbox-count').textContent();
+
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(() => page.locator('#lightbox-count').textContent(), { timeout: 5000 }).not.toBe(countBefore);
+    await expect(page).toHaveURL(/\/photography\/\?photo=[^&]+$/);
+
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#lightbox')).not.toHaveClass(/active/, { timeout: 8000 });
+    await expect(page).toHaveURL(/\/photography\/?$/);
+  });
 });
