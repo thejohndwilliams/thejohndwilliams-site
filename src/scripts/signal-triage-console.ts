@@ -16,6 +16,19 @@ let abort: AbortController | null = null;
 
 const pct = (v: number, d = 1): string => `${(v * 100).toFixed(d)}%`;
 
+const CLAUSE_KEYS: Array<keyof Clauses> = ['prox', 'excl', 'corr', 'dedup'];
+
+function updateQueryParam(key: string, val: string | null): void {
+  try {
+    const url = new URL(window.location.href);
+    if (val) url.searchParams.set(key, val);
+    else url.searchParams.delete(key);
+    const next = url.pathname + url.search + url.hash;
+    const cur = window.location.pathname + window.location.search + window.location.hash;
+    if (next !== cur) window.history.replaceState(window.history.state, '', next);
+  } catch {}
+}
+
 function init(): void {
   abort?.abort();
   const page = document.querySelector<HTMLElement>('[data-sig-page]');
@@ -41,6 +54,13 @@ function init(): void {
     corr: true,
     dedup: true,
   };
+  const offRaw = new URLSearchParams(window.location.search).get('off') || '';
+  if (offRaw) {
+    const offSet = new Set(offRaw.split(',').map((s) => s.trim()).filter(Boolean));
+    for (const k of CLAUSE_KEYS) {
+      if (offSet.has(k)) state[k] = false;
+    }
+  }
 
   const bindText = (key: string, value: string): void => {
     page.querySelectorAll<HTMLElement>(`[data-sig-bind="${key}"]`).forEach((el) => {
@@ -100,12 +120,15 @@ function init(): void {
 
   root.querySelectorAll<HTMLButtonElement>('[data-clause]').forEach((btn) => {
     const key = btn.dataset.clause as keyof Clauses;
+    btn.setAttribute('aria-pressed', String(state[key]));
     btn.addEventListener(
       'click',
       () => {
         state[key] = !state[key];
         btn.setAttribute('aria-pressed', String(state[key]));
         render();
+        const off = CLAUSE_KEYS.filter((k) => !state[k]);
+        updateQueryParam('off', off.length ? off.join(',') : null);
       },
       { signal },
     );
@@ -124,7 +147,7 @@ function initProx(signal: AbortSignal): void {
   live.hidden = false;
   fig.classList.add('is-live');
   const buttons = fig.querySelectorAll<HTMLButtonElement>('[data-prox-mode]');
-  const choose = (mode: string): void => {
+  const choose = (mode: string, sync = false): void => {
     fig.dataset.mode = mode;
     buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.proxMode === mode)));
     const active = fig.querySelector<HTMLButtonElement>(`[data-prox-mode="${mode}"]`);
@@ -132,8 +155,13 @@ function initProx(signal: AbortSignal): void {
     fig.querySelectorAll<HTMLElement>('.sig-prox__post').forEach((post) => {
       post.dataset.kept = post.dataset[mode] ?? 'false';
     });
+    if (sync) updateQueryParam('prox', mode === 'relevance' ? null : mode);
   };
-  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.proxMode ?? 'relevance'), { signal }));
+  const initMode = new URLSearchParams(window.location.search).get('prox');
+  if (initMode && Array.from(buttons).some((b) => b.dataset.proxMode === initMode)) {
+    choose(initMode, false);
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.proxMode ?? 'relevance', true), { signal }));
 }
 
 // Pre-send gate: scenarios come from src/data/signal-presend.ts.
@@ -145,7 +173,7 @@ function initGate(signal: AbortSignal): void {
   if (!fig || !live || !outcome || !detail) return;
   live.hidden = false;
   const buttons = fig.querySelectorAll<HTMLButtonElement>('[data-scenario-id]');
-  const choose = (id: string): void => {
+  const choose = (id: string, sync = false): void => {
     const sc = SCENARIOS.find((x) => x.id === id) ?? SCENARIOS[0];
     fig.dataset.scenario = sc.id;
     buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scenarioId === sc.id)));
@@ -159,8 +187,13 @@ function initGate(signal: AbortSignal): void {
     }
     outcome.textContent = sc.outcome;
     detail.textContent = sc.detail;
+    if (sync) updateQueryParam('check', sc.id === 'clean' ? null : sc.id);
   };
-  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.scenarioId ?? 'clean'), { signal }));
+  const initCheck = new URLSearchParams(window.location.search).get('check');
+  if (initCheck && SCENARIOS.some((s) => s.id === initCheck)) {
+    choose(initCheck, false);
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.scenarioId ?? 'clean', true), { signal }));
 }
 
 document.addEventListener('astro:page-load', () => {

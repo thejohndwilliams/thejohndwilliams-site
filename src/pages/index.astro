@@ -232,6 +232,7 @@ const charities = [
           const isWide = i === 0 || i === 3;
           const mdSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
           const mdAspect = isWide ? 'md:aspect-[16/9]' : 'md:aspect-[4/3]';
+          const sizes = isWide ? CHARITY_WIDE_SIZES : CHARITY_NARROW_SIZES;
           return (
             <a
               href={link.url}
@@ -240,10 +241,13 @@ const charities = [
               class={`glass-luminous group relative block rounded-card overflow-hidden aspect-square sm:aspect-[16/10] ${mdAspect} ${mdSpan} ring-1 ring-white/5 hover:ring-cream/20 active:ring-cream/25 transition-[box-shadow,outline,outline-offset] duration-500 ease-smooth`}
             >
               <picture>
-                <source srcset={link.hero} type="image/webp" />
+                <source srcset={link.connectAvif} sizes={sizes} type="image/avif" />
+                <source srcset={link.connectWebp} sizes={sizes} type="image/webp" />
                 <img
                   src={link.heroFallback}
                   alt={link.heroAlt}
+                  width={link.w}
+                  height={link.h}
                   class="w-full h-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -310,16 +314,20 @@ const charities = [
       const picture = img.closest('picture');
       if (!picture) return;
       const stem = (src.split('/').pop() || '').replace(/\.webp$/i, '');
-      const row = (photoDims as Record<string, { thumb: { w: number }; gallery: { w: number }; hero: { w: number } }>)[stem];
+      const row = (photoDims as Record<string, { thumb: { w: number }; mid?: { w: number }; gallery: { w: number }; hero: { w: number } }>)[stem];
       if (!row) return;
       picture.querySelectorAll('source').forEach((s) => {
         if (s.hasAttribute('media')) return;
         const ext = s.getAttribute('type') === 'image/avif' ? 'avif' : 'webp';
-        s.srcset = [
+        const candidates = [
           `/images/photography/thumb/${stem}.${ext} ${row.thumb.w}w`,
+          ...(row.mid && row.mid.w !== row.thumb.w && row.mid.w !== row.gallery.w
+            ? [`/images/photography/mid/${stem}.${ext} ${row.mid.w}w`]
+            : []),
           `/images/photography/gallery/${stem}.${ext} ${row.gallery.w}w`,
           `/images/photography/hero/${stem}.${ext} ${row.hero.w}w`,
-        ].join(', ');
+        ];
+        s.srcset = candidates.join(', ');
         s.setAttribute('sizes', `min(100vw, ${row.hero.w}px)`);
       });
       const section = img.closest('section');

@@ -138,6 +138,9 @@ const qPaths = (tag, fromIso, toIso) => `{ viewer { zones(filter: { zoneTag: "${
   paths: httpRequestsAdaptiveGroups(limit: 12, filter: { datetime_geq: "${fromIso}", datetime_lt: "${toIso}" }, orderBy: [count_DESC]) {
     count sum { visits } dimensions { clientRequestPath }
   }
+  notFound: httpRequestsAdaptiveGroups(limit: 10, filter: { datetime_geq: "${fromIso}", datetime_lt: "${toIso}", edgeResponseStatus: 404 }, orderBy: [sum_visits_DESC, count_DESC]) {
+    count sum { visits } dimensions { clientRequestPath }
+  }
 } } }`;
 
 const qCaps = (tag) => `{ viewer { zones(filter: { zoneTag: "${tag}" }) { settings {
@@ -177,9 +180,16 @@ function render(out, { from, to, plan, days, totals, pathsBlock, pathsNote, path
   const browsers = topOf(t.browserMap, 'uaBrowserFamily', 'pageViews', t.pageViews, 5);
   if (browsers) out.push(`  browsers        ${browsers} (of page views)`);
   if (pathsBlock) {
-    out.push('  top paths       (sampled, last 24h — free-plan adaptive cap)');
+    out.push('  top paths       (sampled, last 24h - free-plan adaptive cap)');
     for (const p of pathsBlock.paths ?? []) {
       out.push(`    ${String(p.sum?.visits ?? p.count).padStart(8)}  ${p.dimensions?.clientRequestPath ?? '?'}`);
+    }
+    if (pathsBlock.notFound?.length) {
+      out.push('  top 404 paths   (visits / hits; visits=0 indicates scanner noise)');
+      for (const p of pathsBlock.notFound) {
+        const pair = `${p.sum?.visits ?? 0}v / ${p.count}h`;
+        out.push(`    ${pair.padStart(12)}  ${p.dimensions?.clientRequestPath ?? '?'}`);
+      }
     }
   } else if (pathsNote) {
     out.push(`  top paths       unavailable — ${pathsNote}`);

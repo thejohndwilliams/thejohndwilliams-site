@@ -390,7 +390,11 @@ const ogImageURL = new URL(ogImage, Astro.site || 'https://thejohndwilliams.com'
         if (clean === '/photography') return 1;
         if (clean.startsWith('/photography/')) return 1.1;
         if (clean === '/work') return 2;
-        if (clean.startsWith('/work/')) return 2.1;
+        if (clean === '/work/enforcement-gates') return 2.1;
+        if (clean === '/work/verification-gate') return 2.2;
+        if (clean === '/work/agent-governance') return 2.3;
+        if (clean === '/work/signal-triage') return 2.4;
+        if (clean.startsWith('/work/')) return 2.5;
         if (clean.startsWith('/beyond') || clean.startsWith('/labs') || clean === '/relief') return 3;
         if (clean === '/about') return 4;
         if (clean === '/links') return 4.5;

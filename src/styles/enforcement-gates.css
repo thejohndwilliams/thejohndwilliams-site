@@ -737,6 +737,67 @@
   color: #f4eade;
 }
 
+/* Case-study continuity handoff (2026-11-26): quiet architectural card
+   leading through the four studies in /work/ order. */
+.enf-next {
+  margin-top: 2.5rem;
+  border-top: 1px solid rgba(244, 234, 222, 0.14);
+  border-bottom: 1px solid rgba(244, 234, 222, 0.14);
+}
+
+.enf-next__link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 1.5rem 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.enf-next__link:focus-visible {
+  outline: 1px solid #f4eade;
+  outline-offset: 4px;
+}
+
+.enf-next__k {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a89f8c;
+}
+
+.enf-next__title {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  line-height: 1.25;
+  color: #f4eade;
+}
+
+.enf-next__arrow {
+  display: inline-block;
+  margin-left: 0.25rem;
+  transition: transform 260ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.enf-next__link:hover .enf-next__arrow {
+  transform: translateX(4px);
+}
+
+.enf-next__line {
+  font-size: max(16px, 0.9375rem);
+  line-height: 1.55;
+  color: rgba(244, 234, 222, 0.72);
+  max-width: 38rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enf-next__arrow {
+    transition: none;
+  }
+}
+
 /* Use-and-credit line on every case study (2026-11-26). Body size: phones keep 16px. */
 .enf-license {
   margin-top: 2rem;

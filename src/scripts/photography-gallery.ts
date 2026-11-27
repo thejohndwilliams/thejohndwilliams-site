@@ -449,6 +449,32 @@
       lightboxImg.style.transform = '';
       lightboxImg.style.opacity = '1';
     }, { passive: true, signal });
+
+    // Return-position memory (2026-11-26): clicking "Gallery" or "Back to gallery"
+    // from /photography/<slug>/ restores the exact photograph row in the 88-frame
+    // archive instead of dropping the visitor back at scrollY = 0.
+    let returnSlug = '';
+    try {
+      returnSlug = sessionStorage.getItem('jw-return-photo') || '';
+      if (returnSlug) sessionStorage.removeItem('jw-return-photo');
+    } catch {}
+    if (returnSlug && !window.location.hash) {
+      const target = Array.from(items).find(
+        (el) => (el as HTMLElement).dataset.file === returnSlug
+      ) as HTMLElement | undefined;
+      if (target) {
+        requestAnimationFrame(() => {
+          if (signal.aborted) return;
+          target.closest('.gallery-section')?.removeAttribute('data-hidden');
+          const r = target.getBoundingClientRect();
+          const y = Math.max(0, Math.round(window.scrollY + r.top - Math.max(96, (window.innerHeight - r.height) / 2)));
+          const l = lenis();
+          if (l?.scrollTo) l.scrollTo(y, { immediate: true });
+          else window.scrollTo(0, y);
+          target.focus({ preventScroll: true });
+        });
+      }
+    }
   }
 
   initGallery();

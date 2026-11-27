@@ -169,5 +169,10 @@ test.describe('Photography lightbox composition (2026-07-02 incident locks)', ()
     await expect(page).toHaveURL(new RegExp(`${href1!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
     await expect(page.locator('html')).not.toHaveClass(/lb-open/);
     await expect(page.locator('.photo-note')).toBeVisible();
+
+    await page.locator('a[data-photo-return]').first().click();
+    await expect(page).toHaveURL(/\/photography\/?$/);
+    const slug = href1!.replace(/^\/photography\/|\/$/g, '');
+    await expect(page.locator(`.gallery-item[data-file="${slug}"]`)).toBeFocused({ timeout: 5000 });
   });
 });

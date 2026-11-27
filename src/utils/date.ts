@@ -38,6 +38,9 @@ export const navItems = [
   { name: 'About', href: '/about/' },
 ] as const;
 
+const connectSet = (slug: string, ext: 'avif' | 'webp') =>
+  [400, 800, 1200, 1600].map((w) => `/images/connect/${slug}-${w}.${ext} ${w}w`).join(', ');
+
 /**
  * Connect-section social links. Single source of truth (P3 fix, 2026-07-19):
  * the home page previously rendered its own diverged copy while tests
@@ -51,6 +54,10 @@ export const socialLinks = [
     icon: '/images/previews/linkedin.svg',
     hero: '/images/linkedin-hero.webp',
     heroFallback: '/images/linkedin-hero.jpg',
+    connectAvif: connectSet('linkedin', 'avif'),
+    connectWebp: connectSet('linkedin', 'webp'),
+    w: 1600,
+    h: 900,
     thumb: '/images/links/linkedin-240.webp',
     thumbFallback: '/images/links/linkedin-240.jpg',
     heroAlt: 'Macro photograph of wet moss with water droplets and golden highlights'
@@ -62,6 +69,10 @@ export const socialLinks = [
     icon: '/images/previews/github.svg',
     hero: '/images/github-hero.webp',
     heroFallback: '/images/github-hero.jpg',
+    connectAvif: connectSet('github', 'avif'),
+    connectWebp: connectSet('github', 'webp'),
+    w: 1600,
+    h: 1200,
     thumb: '/images/links/github-240.webp',
     thumbFallback: '/images/links/github-240.jpg',
     heroAlt: 'Thermal visualization of a floor plan in neon pink and cyan'
@@ -73,6 +84,10 @@ export const socialLinks = [
     icon: '/images/previews/instagram.svg',
     hero: '/images/instagram-hero.webp',
     heroFallback: '/images/instagram-hero.jpg',
+    connectAvif: connectSet('instagram', 'avif'),
+    connectWebp: connectSet('instagram', 'webp'),
+    w: 1600,
+    h: 900,
     thumb: '/images/links/instagram-240.webp',
     thumbFallback: '/images/links/instagram-240.jpg',
     heroAlt: 'Single white cloud against a deep blue night sky'
@@ -84,6 +99,10 @@ export const socialLinks = [
     icon: '/images/previews/behance.svg',
     hero: '/images/behance-hero.webp',
     heroFallback: '/images/behance-hero.jpg',
+    connectAvif: connectSet('behance', 'avif'),
+    connectWebp: connectSet('behance', 'webp'),
+    w: 1600,
+    h: 1008,
     thumb: '/images/links/behance-240.webp',
     thumbFallback: '/images/links/behance-240.jpg',
     heroAlt: 'Abstract minimalist silhouettes in soft gray and pale green tones'
