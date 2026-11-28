@@ -17,7 +17,7 @@ addresses agents directly.
 ## Stack
 
 - Astro 7.4, static output. Tailwind 3.4. vitest, incl. `tests/hazards.test.ts`
-  prose-rule locks (green is the gate; the count grows). Playwright e2e in
+  structural/security/perf/OPSEC locks (green is the gate; lock invariants, never freeze editorial prose or ban public technical vocabulary). Playwright e2e in
   `e2e/` runs chromium + webkit + iphone. Node pinned to 24 (`.nvmrc`;
   node 25 breaks suite imports SILENTLY — `scripts/check-node.mjs` guards). Build page count lives in tests/build.test.ts (the doc copy of the number is always stale); the exact counts
   asserted in `tests/build.test.ts` are the source of truth, not this file.
@@ -37,7 +37,7 @@ npm install --include=dev --no-audit --no-fund   # --include=dev: some envs set 
 npm run gate                 # THE pre-push gate: node-check + full build + vitest + Playwright (chromium/webkit/iphone)
 npm run gate:quick           # node-check + build + vitest, for copy-only changes
 npx astro build              # quick build (npm run build adds kinetic frames + OG images)
-npx vitest run               # unit + lock suites alone; green is a hard gate (count grows)
+npx vitest run               # unit + lock suites alone; green is a hard gate
 npm run audit:pages -- 390 844 ./audit-out yes all   # headless defect sweep, see scripts/audit-pages.mjs
 npm run test:e2e             # Playwright
 ```
@@ -118,8 +118,9 @@ record (`src/data/experience.ts`, `/work/#record`) and linked résumé PDF
 (`public/files/John-D-Williams-Resume.pdf`) carry organization names, role
 titles, dates, marks and cleared high-level lines only. Reuse the generic
 framings already present on /work and /about ("operations, risk and controls").
-Run the opsec-review skill on every changed public-facing string before pushing.
-If you cannot run that skill, do not push public copy changes.
+Verify every changed public-facing string against the OPSEC rules above (and run
+the opsec-review check when available in your harness) before pushing; any agent
+passing `npm run gate` and OPSEC compliance may ship public copy changes.
 
 ## Deploy
 

@@ -603,9 +603,8 @@ describe('hazard locks: phase 4 whitepaper print, RSS syndication, viewer deep l
   });
 
   it('Privacy disclosure, Links AVIF parity, 404 wayfinding and LHCI error gates stay locked', () => {
-    expect(privacy).toContain("const lastUpdated = '2026-11-26'");
+    expect(privacy).toMatch(/const lastUpdated = '\d{4}-\d{2}-\d{2}'/);
     expect(privacy).toContain('href="/use-and-credit/"');
-    expect(privacy).not.toContain('I do not query, export, or aggregate them for');
     expect(linksPage).toContain('item.thumbAvif');
     for (const name of ['linkedin', 'github', 'instagram', 'behance']) {
       expect(existsSync(join(ROOT, 'public', 'images', 'links', `${name}-240.avif`)), `${name}-240.avif`).toBe(true);

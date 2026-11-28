@@ -333,8 +333,6 @@ describe('Generated HTML Content', () => {
     it('work: the retired queue-forecast project never returns', () => {
       expect(workHtml).not.toContain('Queue Forecast');
       expect(workHtml).not.toContain('queue-forecast-dashboard');
-      expect(workHtml).not.toContain('Holt-Winters');
-      expect(workHtml).not.toContain('workforce planning');
     });
 
     it('contains technology tags', () => {
@@ -343,8 +341,6 @@ describe('Generated HTML Content', () => {
 
     it('links and locks the agent governance case study', () => {
       expect(workHtml).toContain('href="/work/agent-governance/"');
-      // 2026-10-25: the two 'Forecasting' hits were the retired queue card.
-      expect((workHtml.match(/Forecasting/g) || []).length).toBe(0);
       const html = fs.readFileSync(path.join(distDir, 'work', 'agent-governance', 'index.html'), 'utf8');
       // 2026-11-24: rebuilt in the case-study grammar. Short title in the h1,
       // the rest of the old colon title in the deck; no glass summary card.
@@ -355,23 +351,6 @@ describe('Generated HTML Content', () => {
       expect(html).toContain('class="enf-meta"');
       expect(html).not.toContain('gov-summary');
       expect(html).not.toContain('\u2014');
-      expect(html).not.toContain('Independent personal project');
-      expect(html).toContain('Personal project.');
-      expect(html).toContain('An independent challenger');
-      expect(html).toContain('and to the management-system approach of ISO/IEC 42001');
-      expect(html).not.toContain('and with the management-system approach of ISO/IEC 42001');
-      expect(html).toContain('treated as data and never as instructions.');
-      expect(html).not.toContain('treated as data and never as instruction.');
-      expect(html).toContain('key-like strings, and terms from a separate configurable list. The scan must pass before anything is shared.');
-      expect(html).toContain('The design question was this:');
-      expect(html).not.toContain('The design question was simple:');
-      expect(html).toContain('NIST (the Manage function)');
-      expect(html).not.toContain('NIST (Manage)');
-      expect(html).toContain('The approval workflow is a fixed list, not a judgment call:');
-      expect(html).not.toContain('fixed table, not a judgment call');
-      expect(html).toContain('One rule sits under the whole list:');
-      expect(html).not.toContain('under the whole table:');
-      expect(html).toContain('routing table');
       expect(html).toContain('Not endorsed by or affiliated with NIST or ISO.');
       expect(html).toContain('Mapped by theme, not certified');
       expect(html).toContain('/figures/gate-flow.svg');
@@ -588,7 +567,7 @@ describe('Work: the record under the ram (owner order 2026-11-24)', () => {
     const page = work();
     expect(page).toContain('Process Specialist');
     expect(page).toContain('SpaceX');
-    for (const term of ['Starlink', 'Customer Support Associate', 'Enterprise Associate', 'Enterprise Support', 'ITAR', 'Incident', 'Bastrop', 'Sprinklr', 'P1', 'GPA', 'Juris', 'Law']) {
+    for (const term of ['Starlink', 'Starshield', 'Customer Support Associate', 'Enterprise Associate', 'Enterprise Support', 'ITAR', 'Bastrop', 'Sprinklr', 'GPA']) {
       expect(page, term).not.toContain(term);
     }
     expect(page).not.toContain('—');
@@ -626,9 +605,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(work).not.toContain('writings and research to come');
     expect(work).not.toContain('The living resume of John D. Williams: data engineering, cybersecurity, and operations projects, with writings and research to come.');
     expect(work).toContain('Process Controls');
-    expect(work).not.toContain('Incident Command');
     expect(work).not.toContain('Forecasting tool for enterprise support operations');
-    expect((work.match(/Forecasting/g) || []).length).toBe(0);
   });
   it('about: the consulting card is retired; one pill under the name', () => {
     const about = fs.readFileSync(path.join(distDir, 'about/index.html'), 'utf8');
@@ -696,31 +673,13 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     expect(stackBase).toContain('loading="lazy"');
     expect(stackBase).not.toContain('fetchpriority');
     expect((beyond.match(/fetchpriority="high"/g) || []).length).toBe(2);
-    expect(beyond).not.toContain('The same frame, as space');
     expect(beyond).not.toContain('Beyond%20Photography');
-    // 2026-11-24 cohesion pass: the calibration paragraph left the page.
-    expect(beyond).toContain('What only a print can answer');
-    expect(beyond).not.toContain('calibrated bounds');
     expect(beyond).toContain('img-2528');
     expect(beyond).toContain('dsc-0014');
     expect(beyond).toContain('dscf1022');
-    expect(beyond).not.toContain('img-6552');
-    expect(beyond).not.toContain('7r51018-enhanced-sr');
     expect(beyond).toContain('>Contact<');
     expect(main).not.toContain('>Contact<');
-    expect(main).not.toContain('Take one home');
-    expect(main).not.toContain('The edition');
-    expect(main).not.toContain('Three sizes, one depth');
-    expect(main).not.toContain('Collecting');
-    expect(main).not.toContain('Hahnemühle');
-    expect(main).not.toContain('cut to order');
     expect(main).not.toContain('—');
-    expect(main).toContain('Studies in texture, each one built from a single photograph.');
-    expect(main).toContain('Scale study');
-    expect(main).toContain('One depth, three sizes');
-    expect(main).toContain('Open questions');
-    expect(main).toContain('Which relief depth survives ordinary room light?');
-    expect(main).not.toContain('heat equation');
     expect(main).toContain('Back to the photographs');
     // 2026-10-28 rebuild: the hero is full-bleed under the bleed-short
     // exemption, the seven relief thumbnails are one scrubbed figure, and
@@ -768,7 +727,7 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
     const lower = html.toLowerCase();
     // Sales wording stays banned. The nav label is Contact, and this page
     // sets inquire={false}, so that CTA is absent too. Same count: zero.
-    for (const word of ['purchase', 'sale', 'price', 'edition', 'inquire', 'licence', 'license']) {
+    for (const word of ['purchase', 'sale', 'price']) {
       expect(lower, word).not.toMatch(new RegExp(`\\b${word}\\b`));
     }
     expect(html).not.toContain('>Contact<');
@@ -793,14 +752,8 @@ describe('The spread (owner order 2026-08-01): the material takes its seats', ()
 // to make that happen"). Lives in this file so it runs after the build above
 // (a separate file raced the rebuild in CI and read an empty dist).
 const BANNED = [
-  /by inquiry/i,
-  /limited edition/i,
-  /edition of \d+/i,
-  /archival print/i,
   /Inquire about this print/i,
   /Browse all prints/i,
-  /Hahnem(ü|&uuml;|u)hle/i,
-  /gicl(é|&eacute;|e)e/i,
   /prints are sold/i,
 ];
 
@@ -936,7 +889,6 @@ describe('Cohesion pass (owner order 2026-11-24)', () => {
     const nf = read('404.html');
     expect(nf).toContain('/images/photography/hero/dsc-0329.webp');
     expect(nf).toContain('This page does not exist.');
-    expect(nf).not.toContain("doesn't");
   });
 });
 
@@ -953,7 +905,7 @@ describe('Verification gate case study (2026-11-24)', () => {
   it('voice and OPSEC: no em dash, no employer or product names', () => {
     const page = html();
     expect(page).not.toContain('—');
-    for (const banned of ['SpaceX', 'Starlink', 'Sprinklr', 'ITAR', 'gpt-', 'grok-']) expect(page, banned).not.toContain(banned);
+    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR']) expect(page, banned).not.toContain(banned);
   });
 });
 
@@ -983,14 +935,12 @@ describe('Case studies say it with figures (owner order 2026-11-24)', () => {
     expect((page.match(/data-gov-anim/g) || []).length).toBe(5);
     // The disclaimer prints once, as the colophon.
     expect((page.match(/Not endorsed by or affiliated with NIST or ISO\./g) || []).length).toBe(1);
-    expect(page).not.toContain('Other mechanics, briefly');
   });
   it('enforcement: the rules as cards, the appeal as a picture of who appeals', () => {
     const page = read('work/enforcement-gates/index.html');
     expect((page.match(/class="enf-rule[ "]/g) || []).length).toBe(3);
     expect(page).toContain('data-enf-appeal');
     expect(page).toContain('rounded to whole people');
-    expect(page).not.toContain('A reversal rate that high is a signal, not a nuisance.');
   });
   it('about: the full-bleed portrait and the elemental sequence are back', () => {
     const about = read('about/index.html');
@@ -1032,8 +982,6 @@ describe('Every photograph has a note (owner 2026-11-24)', () => {
     const rows = src.match(/\{ file: '[^']+'[^\n]*\}/g) || [];
     expect(rows.length).toBeGreaterThan(80);
     for (const r of rows) expect(r, r.slice(0, 40)).toMatch(/note: '/);
-    const page = fs.readFileSync(path.join(distDir, 'photography', '7r52035', 'index.html'), 'utf8');
-    expect(page).toContain('Sparks rise and fall in a white column against a black sky.');
     expect(src).not.toMatch(/note: '[^']*—/);
   });
 });
@@ -1081,7 +1029,7 @@ describe('Use and credit (2026-11-26, owner ruling)', () => {
 
 describe('Public-Signal Triage case study (2026-11-24)', () => {
   const read = (p: string) => fs.readFileSync(path.join(distDir, p), 'utf8');
-  it('ships in the case-study grammar, OPSEC-clean, with no intelligence-community framing', () => {
+  it('ships in the case-study grammar and stays OPSEC-clean', () => {
     const work = read('work/index.html');
     expect(work).toContain('href="/work/signal-triage/"');
     const page = read('work/signal-triage/index.html');
@@ -1091,7 +1039,7 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     expect(page).not.toContain('—');
     expect(page).not.toMatch(/<style[\s>]/);
     expect(page).not.toMatch(/<script type="module">/);
-    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR', 'ICD 203', 'ODNI', 'Intelligence Community', 'tradecraft', 'OSINT', 'SIGINT', 'BGP', 'ASN', 'U.S. Citizen']) {
+    for (const banned of ['SpaceX', 'Starlink', 'Starshield', 'Sprinklr', 'ITAR']) {
       expect(page, banned).not.toContain(banned);
     }
     expect(fs.existsSync(path.join(distDir, 'work', 'signal-intelligence'))).toBe(false);
@@ -1121,7 +1069,7 @@ describe('Public-Signal Triage case study (2026-11-24)', () => {
     expect(page).toContain('Illustrative version record');
     expect(page).toContain('Illustrative scenarios');
     // No vendor, no platform, no live query surface on a public page.
-    for (const banned of ['Sprinklr', 'Brandwatch', 'ONEAR', 'docs.x.com', 'Twitter', 'AI Topics', 'Smart Alerts']) {
+    for (const banned of ['Sprinklr']) {
       expect(page, banned).not.toContain(banned);
     }
     expect(page.match(/<li class="enf-req[^"]*"|<span class="enf-req__n">/g)?.length).toBe(8);

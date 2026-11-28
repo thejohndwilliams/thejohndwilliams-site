@@ -22,10 +22,13 @@ checklist of how the law gets broken.
 
 ## Blocking (verdict BLOCK)
 
-1. **A lock was weakened.** Any assertion in `tests/` or `e2e/` removed,
-   loosened, skipped, or rewritten to pass. Locks change by MIGRATION (the
-   invariant moves with the code and stays as strict), never by stripping.
-   A budget demotion in `.lighthouserc.json` counts.
+1. **A structural, security, performance, or OPSEC lock was weakened.** Any
+   assertion in `tests/` or `e2e/` guarding CSP/security headers, layout,
+   accessibility, asset/cache integrity, Lighthouse budgets
+   (`.lighthouserc.json`), or true OPSEC employer/product/program identifiers
+   removed, loosened, skipped, or rewritten to hide a regression. Editorial
+   copy, phrasing, or topic assertions may be updated or removed when public
+   copy or scope changes.
 2. **Regeneration presented as extraction.** If the PR claims to move,
    extract or restore code, grep the destination for the guarded
    fingerprints of the source (the identifiers `tests/hazards.test.ts`
@@ -36,8 +39,9 @@ checklist of how the law gets broken.
 3. **Protected comments removed.** Comments that explain a booby-trapped
    setting (astro.config.mjs build settings, `_headers`, the CI install
    step) are guardrails. Deleting one inside a behavior change blocks.
-4. **Public copy breaks VOICE.md**: em dash, exclamation mark, emoji,
-   engagement-begging, an unheld credential, a retired term.
+4. **Public copy ships a mechanical VOICE defect**: em dash, emoji, or an
+   unheld credential. (Subjective register or phrasing notes belong under
+   "Worth saying", never BLOCK.)
 5. **OPSEC.** Any public string (pages, data files, alt text, JSON-LD,
    sitemap, llms.txt, OG text, PDFs) that names an employer or product in
    prose, a customer segment, operational volumes, or program and

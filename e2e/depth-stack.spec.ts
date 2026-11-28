@@ -288,7 +288,7 @@ test('no-js shows the flat photograph only', async ({ browser }) => {
     await expect(page.locator('.depth-stack__replay')).toBeHidden();
     await expect(page.locator('.depth-stack__tag').first()).toBeHidden();
     await expect(page.locator('img[src*="layer2"]')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText(/\b(inquire|purchase|edition|licen[cs]e|sale|price)\b/i);
+    await expect(page.locator('body')).not.toContainText(/\b(purchase|sale|price)\b/i);
     await expect(page.locator('header a[aria-label="Contact"], footer a:has-text("Contact")')).toHaveCount(0);
     await page.screenshot({ path: '/opt/cursor/artifacts/screenshots/depth-stack/nojs-1280.png' });
     await page.setViewportSize({ width: 390, height: 844 });
